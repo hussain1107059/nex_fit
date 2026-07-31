@@ -72,8 +72,8 @@ class WorkoutSessionRepositoryImpl implements WorkoutSessionRepository {
     final int totalCompleted = await workoutHistoryRepository.countCompleted(
       history.userId,
     );
-    final double totalCalories =
-        await workoutHistoryRepository.getTotalCaloriesBurned(history.userId);
+    final double totalCalories = await workoutHistoryRepository
+        .getTotalCaloriesBurned(history.userId);
 
     await _updateDailyProgress(history.userId, durationMinutes, caloriesBurned);
     final Streak streak = await _updateWorkoutStreak(history.userId);

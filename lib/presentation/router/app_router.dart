@@ -115,7 +115,8 @@ final appRouterProvider = Provider<GoRouter>((ref) {
         name: 'workout-list',
         builder: (BuildContext context, GoRouterState state) =>
             WorkoutListScreen(
-              args: state.extra as WorkoutListArgs? ??
+              args:
+                  state.extra as WorkoutListArgs? ??
                   const WorkoutListArgs.all(),
             ),
       ),
@@ -155,7 +156,8 @@ String? _resolveRedirect(Ref ref, GoRouterState state) {
   final AppUser? user = auth.user;
   final bool signedIn = user != null && user.isSignedIn;
 
-  final bool onPublic = path.startsWith(AppRoutes.login) ||
+  final bool onPublic =
+      path.startsWith(AppRoutes.login) ||
       path.startsWith(AppRoutes.register) ||
       path.startsWith(AppRoutes.forgotPassword);
 

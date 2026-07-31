@@ -78,7 +78,8 @@ class ContinueWorkoutCard extends StatelessWidget {
                     child: LinearProgressIndicator(
                       value: progress,
                       minHeight: 6,
-                      backgroundColor: context.colorScheme.surfaceContainerHighest,
+                      backgroundColor:
+                          context.colorScheme.surfaceContainerHighest,
                     ),
                   ),
                   const SizedBox(height: 4),

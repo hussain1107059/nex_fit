@@ -31,10 +31,7 @@ class WorkoutHistoryScreen extends ConsumerWidget {
       body: SafeArea(
         child: Column(
           children: [
-            CustomAppBar(
-              title: l10n.workoutHistory,
-              showBackButton: true,
-            ),
+            CustomAppBar(title: l10n.workoutHistory, showBackButton: true),
             Expanded(
               child: async.when(
                 data: (WorkoutHistoryData data) {
@@ -44,9 +41,8 @@ class WorkoutHistoryScreen extends ConsumerWidget {
                       subtitle: l10n.workoutNoHistorySubtitle,
                       icon: Icons.history_rounded,
                       actionLabel: l10n.commonRetry,
-                      onActionPressed: () => ref.invalidate(
-                        workoutHistoryProvider,
-                      ),
+                      onActionPressed: () =>
+                          ref.invalidate(workoutHistoryProvider),
                     );
                   }
                   return _HistoryBody(data: data);
@@ -251,10 +247,8 @@ class _SessionTile extends StatelessWidget {
     final DateTime today = DateTime(now.year, now.month, now.day);
     final int difference = today.difference(day).inDays;
 
-    final String hour =
-        date.hour.toString().padLeft(2, '0');
-    final String minute =
-        date.minute.toString().padLeft(2, '0');
+    final String hour = date.hour.toString().padLeft(2, '0');
+    final String minute = date.minute.toString().padLeft(2, '0');
     final String time = '$hour:$minute';
 
     if (difference == 0 || difference == 1) return time;

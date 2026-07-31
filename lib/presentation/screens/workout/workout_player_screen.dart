@@ -35,10 +35,9 @@ class _WorkoutPlayerScreenState extends ConsumerState<WorkoutPlayerScreen> {
   @override
   void initState() {
     super.initState();
-    ref
-        .read(workoutPlayerControllerProvider.notifier)
-        .start(widget.args)
-        .then((_) {
+    ref.read(workoutPlayerControllerProvider.notifier).start(widget.args).then((
+      _,
+    ) {
       if (!mounted) return;
       _timer?.cancel();
       _timer = Timer.periodic(const Duration(seconds: 1), (_) {
@@ -190,8 +189,7 @@ class _WorkoutPlayerScreenState extends ConsumerState<WorkoutPlayerScreen> {
                         ],
                         _CountdownRing(
                           seconds: state.currentRemainingSeconds,
-                          isResting:
-                              state.phase == WorkoutSessionPhase.resting,
+                          isResting: state.phase == WorkoutSessionPhase.resting,
                         ),
                         const SizedBox(height: AppSpacing.lg),
                         Text(
@@ -289,7 +287,10 @@ class _CountdownRing extends StatelessWidget {
         gradient: LinearGradient(
           begin: Alignment.topLeft,
           end: Alignment.bottomRight,
-          colors: <Color>[color.withValues(alpha: 0.18), color.withValues(alpha: 0.06)],
+          colors: <Color>[
+            color.withValues(alpha: 0.18),
+            color.withValues(alpha: 0.06),
+          ],
         ),
         border: Border.all(color: color.withValues(alpha: 0.35), width: 2),
       ),

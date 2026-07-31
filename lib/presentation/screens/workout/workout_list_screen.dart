@@ -49,7 +49,8 @@ class _WorkoutListScreenState extends ConsumerState<WorkoutListScreen> {
   @override
   Widget build(BuildContext context) {
     final AppLocalizations l10n = context.l10n;
-    final String title = widget.args.title ??
+    final String title =
+        widget.args.title ??
         (widget.args.searchMode
             ? l10n.workoutSearchTitle
             : widget.args.favoritesOnly
@@ -67,10 +68,7 @@ class _WorkoutListScreenState extends ConsumerState<WorkoutListScreen> {
       body: SafeArea(
         child: Column(
           children: [
-            CustomAppBar(
-              title: title,
-              showBackButton: true,
-            ),
+            CustomAppBar(title: title, showBackButton: true),
             Expanded(child: body),
           ],
         ),
@@ -96,9 +94,10 @@ class _BrowseBody extends ConsumerWidget {
       async = ref.watch(workoutFavoritesProvider(user.id));
     } else if (args.categorySlug != null) {
       async = ref.watch(
-        workoutCategoryWorkoutsProvider(
-          (userId: user.id, slug: args.categorySlug!),
-        ),
+        workoutCategoryWorkoutsProvider((
+          userId: user.id,
+          slug: args.categorySlug!,
+        )),
       );
     } else {
       async = ref.watch(workoutAllProvider(user.id));
@@ -113,9 +112,10 @@ class _BrowseBody extends ConsumerWidget {
             ref.invalidate(workoutFavoritesProvider(user.id));
           } else if (args.categorySlug != null) {
             ref.invalidate(
-              workoutCategoryWorkoutsProvider(
-                (userId: user.id, slug: args.categorySlug!),
-              ),
+              workoutCategoryWorkoutsProvider((
+                userId: user.id,
+                slug: args.categorySlug!,
+              )),
             );
           } else {
             ref.invalidate(workoutAllProvider(user.id));
@@ -237,40 +237,38 @@ class _SearchBodyState extends ConsumerState<_SearchBody> {
         ),
         const SizedBox(height: AppSpacing.sm),
         Expanded(
-          child: ref.watch(workoutSearchResultsProvider).when(
-            data: (List<Workout> workouts) {
-              if (!active) {
-                return EmptyWidget(
-                  title: l10n.workoutSearchEmptyTitle,
-                  subtitle: l10n.workoutSearchEmptySubtitle,
-                  icon: Icons.search_rounded,
-                );
-              }
-              if (workouts.isEmpty) {
-                return EmptyWidget(
-                  title: l10n.emptyNoResults,
-                  subtitle: l10n.emptyNoResultsSubtitle,
-                  icon: Icons.search_off_rounded,
-                );
-              }
-              return _WorkoutResults(workouts: workouts);
-            },
-            error: (Object error, StackTrace stackTrace) => ErrorWidget(
-              title: l10n.errorDatabase,
-              onRetry: () =>
-                  ref.invalidate(workoutSearchResultsProvider),
-            ),
-            loading: () => const LoadingWidget(),
-          ),
+          child: ref
+              .watch(workoutSearchResultsProvider)
+              .when(
+                data: (List<Workout> workouts) {
+                  if (!active) {
+                    return EmptyWidget(
+                      title: l10n.workoutSearchEmptyTitle,
+                      subtitle: l10n.workoutSearchEmptySubtitle,
+                      icon: Icons.search_rounded,
+                    );
+                  }
+                  if (workouts.isEmpty) {
+                    return EmptyWidget(
+                      title: l10n.emptyNoResults,
+                      subtitle: l10n.emptyNoResultsSubtitle,
+                      icon: Icons.search_off_rounded,
+                    );
+                  }
+                  return _WorkoutResults(workouts: workouts);
+                },
+                error: (Object error, StackTrace stackTrace) => ErrorWidget(
+                  title: l10n.errorDatabase,
+                  onRetry: () => ref.invalidate(workoutSearchResultsProvider),
+                ),
+                loading: () => const LoadingWidget(),
+              ),
         ),
       ],
     );
   }
 
-  String _durationLabel(
-    AppLocalizations l10n,
-    WorkoutDurationFilter duration,
-  ) {
+  String _durationLabel(AppLocalizations l10n, WorkoutDurationFilter duration) {
     return switch (duration) {
       WorkoutDurationFilter.any => l10n.workoutFilterDuration,
       WorkoutDurationFilter.short => l10n.workoutFilterShort,
@@ -301,9 +299,9 @@ class _SearchBodyState extends ConsumerState<_SearchBody> {
       ),
     );
     if (selected != null) {
-      ref
-          .read(workoutSearchFilterProvider.notifier)
-          .state = filter.copyWith(difficulty: selected);
+      ref.read(workoutSearchFilterProvider.notifier).state = filter.copyWith(
+        difficulty: selected,
+      );
     }
   }
 
@@ -312,23 +310,24 @@ class _SearchBodyState extends ConsumerState<_SearchBody> {
     final WorkoutDurationFilter? selected =
         await showModalBottomSheet<WorkoutDurationFilter>(
           context: context,
-          builder: (BuildContext context) => _PickerSheet<WorkoutDurationFilter>(
-            title: context.l10n.workoutFilterDuration,
-            options: <_PickerOption<WorkoutDurationFilter>>[
-              for (final WorkoutDurationFilter duration
-                  in WorkoutDurationFilter.values)
-                _PickerOption<WorkoutDurationFilter>(
-                  label: _durationLabel(context.l10n, duration),
-                  value: duration,
-                  selected: filter.duration == duration,
-                ),
-            ],
-          ),
+          builder: (BuildContext context) =>
+              _PickerSheet<WorkoutDurationFilter>(
+                title: context.l10n.workoutFilterDuration,
+                options: <_PickerOption<WorkoutDurationFilter>>[
+                  for (final WorkoutDurationFilter duration
+                      in WorkoutDurationFilter.values)
+                    _PickerOption<WorkoutDurationFilter>(
+                      label: _durationLabel(context.l10n, duration),
+                      value: duration,
+                      selected: filter.duration == duration,
+                    ),
+                ],
+              ),
         );
     if (selected != null) {
-      ref
-          .read(workoutSearchFilterProvider.notifier)
-          .state = filter.copyWith(duration: selected);
+      ref.read(workoutSearchFilterProvider.notifier).state = filter.copyWith(
+        duration: selected,
+      );
     }
   }
 
@@ -368,9 +367,9 @@ class _SearchBodyState extends ConsumerState<_SearchBody> {
       ),
     );
     if (selected != null) {
-      ref
-          .read(workoutSearchFilterProvider.notifier)
-          .state = filter.copyWith(goal: selected);
+      ref.read(workoutSearchFilterProvider.notifier).state = filter.copyWith(
+        goal: selected,
+      );
     }
   }
 
@@ -406,9 +405,9 @@ class _SearchBodyState extends ConsumerState<_SearchBody> {
       ),
     );
     if (selected != null) {
-      ref
-          .read(workoutSearchFilterProvider.notifier)
-          .state = filter.copyWith(equipment: selected);
+      ref.read(workoutSearchFilterProvider.notifier).state = filter.copyWith(
+        equipment: selected,
+      );
     }
   }
 }
@@ -420,10 +419,10 @@ class _WorkoutResults extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final AsyncValue<WorkoutLibraryData> library =
-        ref.watch(workoutLibraryControllerProvider);
-    final Map<int, WorkoutCategory> categoriesById =
-        library.valueOrNull == null
+    final AsyncValue<WorkoutLibraryData> library = ref.watch(
+      workoutLibraryControllerProvider,
+    );
+    final Map<int, WorkoutCategory> categoriesById = library.valueOrNull == null
         ? const <int, WorkoutCategory>{}
         : <int, WorkoutCategory>{
             for (final WorkoutCategory category
@@ -457,9 +456,7 @@ class _WorkoutResults extends ConsumerWidget {
           category: workout.categoryId == null
               ? null
               : categoriesById[workout.categoryId],
-          onTap: () => context.push(
-            AppRoutes.workoutDetailPath(workout.id!),
-          ),
+          onTap: () => context.push(AppRoutes.workoutDetailPath(workout.id!)),
           onFavorite: () => toggleWorkoutFavorite(ref, workout.id!),
         );
       },
@@ -499,14 +496,10 @@ class _FilterChipButton extends StatelessWidget {
         label: Text(label),
         backgroundColor: selected ? scheme.secondaryContainer : scheme.surface,
         side: BorderSide(
-          color: selected
-              ? Colors.transparent
-              : scheme.outlineVariant,
+          color: selected ? Colors.transparent : scheme.outlineVariant,
         ),
         labelStyle: context.textTheme.labelMedium?.copyWith(
-          color: selected
-              ? scheme.onSecondaryContainer
-              : scheme.onSurface,
+          color: selected ? scheme.onSecondaryContainer : scheme.onSurface,
           fontWeight: selected ? FontWeight.w700 : FontWeight.w500,
         ),
       ),

@@ -4,7 +4,10 @@ import '../../../../core/extensions/context_extensions.dart';
 import '../../../../core/theme/app_radius.dart';
 
 /// Resolves a Material icon name (from the category catalog) into [IconData].
-IconData categoryIconFor(String? iconName, {IconData fallback = Icons.fitness_center_rounded}) {
+IconData categoryIconFor(
+  String? iconName, {
+  IconData fallback = Icons.fitness_center_rounded,
+}) {
   if (iconName == null || iconName.isEmpty) return fallback;
   return switch (iconName) {
     'home' || 'home_workout' => Icons.home_rounded,
@@ -15,7 +18,8 @@ IconData categoryIconFor(String? iconName, {IconData fallback = Icons.fitness_ce
     'sports_gymnastics' => Icons.sports_gymnastics_rounded,
     'health_and_safety' => Icons.health_and_safety_rounded,
     'sports_martial_arts' => Icons.sports_martial_arts_rounded,
-    'airline_seat_flat' || 'stretching' => Icons.airline_seat_legroom_extra_rounded,
+    'airline_seat_flat' ||
+    'stretching' => Icons.airline_seat_legroom_extra_rounded,
     'bolt' || 'hiit' => Icons.bolt_rounded,
     'local_fire_department' || 'cardio' => Icons.local_fire_department_rounded,
     'sports' => Icons.sports_rounded,

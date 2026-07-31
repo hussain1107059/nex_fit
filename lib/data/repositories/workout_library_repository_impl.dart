@@ -46,9 +46,7 @@ class WorkoutLibraryRepositoryImpl implements WorkoutLibraryRepository {
     await ensureSeeded(userId);
 
     final List<WorkoutCategory> categories = await categoryRepository.getAll();
-    final List<Workout> workouts = await workoutRepository.getByUserId(
-      userId,
-    );
+    final List<Workout> workouts = await workoutRepository.getByUserId(userId);
 
     if (workouts.isEmpty) {
       return const WorkoutLibraryData();
@@ -93,10 +91,9 @@ class WorkoutLibraryRepositoryImpl implements WorkoutLibraryRepository {
     if (inProgress != null && inProgress.workoutId != null) {
       final Workout? workout = byId[inProgress.workoutId];
       if (workout != null) {
-        final int completed =
-            await exerciseHistoryRepository.getByWorkoutHistory(
-          inProgress.id!,
-        ).then((List<dynamic> rows) => rows.length);
+        final int completed = await exerciseHistoryRepository
+            .getByWorkoutHistory(inProgress.id!)
+            .then((List<dynamic> rows) => rows.length);
         final int total = await workoutExerciseRepository
             .getDetailsByWorkout(inProgress.workoutId!)
             .then((List<dynamic> rows) => rows.length);
@@ -139,21 +136,22 @@ class WorkoutLibraryRepositoryImpl implements WorkoutLibraryRepository {
         category.slug: category.id!,
     };
 
-    final List<Workout> matched = workouts
-        .where(
-          (Workout workout) =>
-              workout.categoryId != null &&
-              goalCategoryIds.contains(workout.categoryId),
-        )
-        .toList()
-      ..sort((Workout a, Workout b) {
-        final int rankA = _categoryRank(a.categoryId!, slugs, slugToId);
-        final int rankB = _categoryRank(b.categoryId!, slugs, slugToId);
-        final int rank = rankA.compareTo(rankB);
-        return rank != 0
-            ? rank
-            : (b.isFavorite == a.isFavorite ? 0 : (b.isFavorite ? 1 : -1));
-      });
+    final List<Workout> matched =
+        workouts
+            .where(
+              (Workout workout) =>
+                  workout.categoryId != null &&
+                  goalCategoryIds.contains(workout.categoryId),
+            )
+            .toList()
+          ..sort((Workout a, Workout b) {
+            final int rankA = _categoryRank(a.categoryId!, slugs, slugToId);
+            final int rankB = _categoryRank(b.categoryId!, slugs, slugToId);
+            final int rank = rankA.compareTo(rankB);
+            return rank != 0
+                ? rank
+                : (b.isFavorite == a.isFavorite ? 0 : (b.isFavorite ? 1 : -1));
+          });
 
     if (matched.isNotEmpty) {
       return matched.take(_collectionLimit).toList();
@@ -228,15 +226,15 @@ class WorkoutLibraryRepositoryImpl implements WorkoutLibraryRepository {
     final String query = filter.query.trim().toLowerCase();
     if (query.isNotEmpty) {
       results = results
-          .where((Workout workout) => workout.name.toLowerCase().contains(query))
+          .where(
+            (Workout workout) => workout.name.toLowerCase().contains(query),
+          )
           .toList();
     }
 
     if (filter.difficulty != null) {
       results = results
-          .where(
-            (Workout workout) => workout.difficulty == filter.difficulty,
-          )
+          .where((Workout workout) => workout.difficulty == filter.difficulty)
           .toList();
     }
 
@@ -270,8 +268,8 @@ class WorkoutLibraryRepositoryImpl implements WorkoutLibraryRepository {
       final List<String> slugs = _goalCategorySlugs(
         GoalType.fromName(filter.goal),
       );
-      final List<WorkoutCategory> categories =
-          await categoryRepository.getAll();
+      final List<WorkoutCategory> categories = await categoryRepository
+          .getAll();
       final Set<int> ids = categories
           .where((WorkoutCategory category) => slugs.contains(category.slug))
           .map((WorkoutCategory category) => category.id!)

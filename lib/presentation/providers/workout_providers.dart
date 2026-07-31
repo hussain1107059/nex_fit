@@ -40,26 +40,26 @@ final workoutLibraryControllerProvider =
     );
 
 /// A single workout enriched with its category and exercises.
-final workoutDetailProvider =
-    FutureProvider.autoDispose.family<WorkoutDetail, int>((ref, workoutId) {
+final workoutDetailProvider = FutureProvider.autoDispose
+    .family<WorkoutDetail, int>((ref, workoutId) {
       return ref.watch(workoutLibraryRepositoryProvider).getDetail(workoutId);
     });
 
 /// Every workout owned by a user.
-final workoutAllProvider =
-    FutureProvider.autoDispose.family<List<Workout>, String>((ref, userId) {
+final workoutAllProvider = FutureProvider.autoDispose
+    .family<List<Workout>, String>((ref, userId) {
       return ref.watch(workoutRepositoryProvider).getByUserId(userId);
     });
 
 /// The user's favourite workouts.
-final workoutFavoritesProvider =
-    FutureProvider.autoDispose.family<List<Workout>, String>((ref, userId) {
+final workoutFavoritesProvider = FutureProvider.autoDispose
+    .family<List<Workout>, String>((ref, userId) {
       return ref.watch(workoutRepositoryProvider).getFavorites(userId);
     });
 
 /// All workouts inside a category slug for a user.
-final workoutCategoryWorkoutsProvider =
-    FutureProvider.autoDispose.family<List<Workout>, ({String userId, String slug})>(
+final workoutCategoryWorkoutsProvider = FutureProvider.autoDispose
+    .family<List<Workout>, ({String userId, String slug})>(
       (ref, params) => ref
           .watch(workoutLibraryRepositoryProvider)
           .getByCategory(params.userId, params.slug),
@@ -69,25 +69,25 @@ final workoutCategoryWorkoutsProvider =
 final workoutSearchQueryProvider = StateProvider<String>((ref) => '');
 
 /// Currently applied workout filters.
-final workoutSearchFilterProvider =
-    StateProvider<WorkoutFilter>((ref) => const WorkoutFilter());
+final workoutSearchFilterProvider = StateProvider<WorkoutFilter>(
+  (ref) => const WorkoutFilter(),
+);
 
 /// Combined search + filter results.
-final workoutSearchResultsProvider =
-    FutureProvider.autoDispose<List<Workout>>((ref) async {
-      final String query = ref.watch(workoutSearchQueryProvider);
-      final WorkoutFilter filter = ref.watch(workoutSearchFilterProvider);
-      final AppUser? user = ref.watch(currentUserProvider);
-      if (user == null || !user.isSignedIn) return const <Workout>[];
+final workoutSearchResultsProvider = FutureProvider.autoDispose<List<Workout>>((
+  ref,
+) async {
+  final String query = ref.watch(workoutSearchQueryProvider);
+  final WorkoutFilter filter = ref.watch(workoutSearchFilterProvider);
+  final AppUser? user = ref.watch(currentUserProvider);
+  if (user == null || !user.isSignedIn) return const <Workout>[];
 
-      final WorkoutFilter effective = filter.query == query
-          ? filter
-          : filter.copyWith(query: query);
-      if (effective.isEmpty) return const <Workout>[];
-      return ref
-          .watch(workoutLibraryRepositoryProvider)
-          .search(user.id, effective);
-    });
+  final WorkoutFilter effective = filter.query == query
+      ? filter
+      : filter.copyWith(query: query);
+  if (effective.isEmpty) return const <Workout>[];
+  return ref.watch(workoutLibraryRepositoryProvider).search(user.id, effective);
+});
 
 /// Toggles the favourite flag of a workout and refreshes the library.
 Future<void> toggleWorkoutFavorite(WidgetRef ref, int workoutId) async {
@@ -105,16 +105,14 @@ class WorkoutListArgs extends Equatable {
     this.searchMode = false,
   });
 
-  const WorkoutListArgs.search()
-      : this._(searchMode: true);
+  const WorkoutListArgs.search() : this._(searchMode: true);
 
   const WorkoutListArgs.all() : this._();
 
-  const WorkoutListArgs.favorites()
-      : this._(favoritesOnly: true);
+  const WorkoutListArgs.favorites() : this._(favoritesOnly: true);
 
   const WorkoutListArgs.category(String slug, String name)
-      : this._(categorySlug: slug, title: name);
+    : this._(categorySlug: slug, title: name);
 
   final String? title;
   final String? categorySlug;
@@ -146,49 +144,51 @@ class WorkoutHistoryData extends Equatable {
 
   @override
   List<Object?> get props => [
-        sessions,
-        workouts,
-        totalCompleted,
-        totalCalories,
-      ];
+    sessions,
+    workouts,
+    totalCompleted,
+    totalCalories,
+  ];
 }
 
 /// Aggregate loaded for the workout history screen.
-final workoutHistoryProvider = FutureProvider.autoDispose<WorkoutHistoryData>(
-  (ref) async {
-    final AppUser? user = ref.watch(currentUserProvider);
-    if (user == null || !user.isSignedIn) {
-      throw StateError('Workout history requires a signed-in user');
-    }
+final workoutHistoryProvider = FutureProvider.autoDispose<WorkoutHistoryData>((
+  ref,
+) async {
+  final AppUser? user = ref.watch(currentUserProvider);
+  if (user == null || !user.isSignedIn) {
+    throw StateError('Workout history requires a signed-in user');
+  }
 
-    final List<WorkoutHistory> sessions =
-        await ref.watch(workoutHistoryRepositoryProvider).getCompleted(user.id);
-    final List<int> ids = sessions
-        .map((WorkoutHistory history) => history.workoutId)
-        .whereType<int>()
-        .toSet()
-        .toList();
-    final List<Workout> workouts = await ref
-        .watch(workoutRepositoryProvider)
-        .getByIds(ids);
-    final Map<int, Workout> byId = <int, Workout>{
-      for (final Workout workout in workouts)
-        if (workout.id != null) workout.id!: workout,
-    };
-    final int totalCompleted =
-        await ref.watch(workoutHistoryRepositoryProvider).countCompleted(user.id);
-    final double totalCalories = await ref
-        .watch(workoutHistoryRepositoryProvider)
-        .getTotalCaloriesBurned(user.id);
+  final List<WorkoutHistory> sessions = await ref
+      .watch(workoutHistoryRepositoryProvider)
+      .getCompleted(user.id);
+  final List<int> ids = sessions
+      .map((WorkoutHistory history) => history.workoutId)
+      .whereType<int>()
+      .toSet()
+      .toList();
+  final List<Workout> workouts = await ref
+      .watch(workoutRepositoryProvider)
+      .getByIds(ids);
+  final Map<int, Workout> byId = <int, Workout>{
+    for (final Workout workout in workouts)
+      if (workout.id != null) workout.id!: workout,
+  };
+  final int totalCompleted = await ref
+      .watch(workoutHistoryRepositoryProvider)
+      .countCompleted(user.id);
+  final double totalCalories = await ref
+      .watch(workoutHistoryRepositoryProvider)
+      .getTotalCaloriesBurned(user.id);
 
-    return WorkoutHistoryData(
-      sessions: sessions,
-      workouts: byId,
-      totalCompleted: totalCompleted,
-      totalCalories: totalCalories,
-    );
-  },
-);
+  return WorkoutHistoryData(
+    sessions: sessions,
+    workouts: byId,
+    totalCompleted: totalCompleted,
+    totalCalories: totalCalories,
+  );
+});
 
 /// Arguments handed to the workout player.
 class WorkoutPlayerArgs extends Equatable {
@@ -237,8 +237,8 @@ class WorkoutPlayerState extends Equatable {
 
   WorkoutExerciseDetail? get currentExercise =>
       currentIndex < detail.exercises.length
-          ? detail.exercises[currentIndex]
-          : null;
+      ? detail.exercises[currentIndex]
+      : null;
 
   bool get isActive =>
       phase == WorkoutSessionPhase.exercising ||
@@ -271,16 +271,16 @@ class WorkoutPlayerState extends Equatable {
 
   @override
   List<Object?> get props => [
-        detail,
-        historyId,
-        phase,
-        currentIndex,
-        currentRemainingSeconds,
-        elapsedSeconds,
-        caloriesBurned,
-        completedExercises,
-        completion,
-      ];
+    detail,
+    historyId,
+    phase,
+    currentIndex,
+    currentRemainingSeconds,
+    elapsedSeconds,
+    caloriesBurned,
+    completedExercises,
+    completion,
+  ];
 }
 
 /// State machine driving a single workout session.
@@ -312,8 +312,10 @@ class WorkoutPlayerController extends Notifier<WorkoutPlayerState?> {
           .getByWorkoutHistory(historyId);
       completed = rows.length.clamp(0, detail.exercises.length);
       if (args.startedAt != null) {
-        elapsedSeconds =
-            DateTime.now().difference(args.startedAt!).inSeconds.abs();
+        elapsedSeconds = DateTime.now()
+            .difference(args.startedAt!)
+            .inSeconds
+            .abs();
       }
     } else {
       historyId = await ref
@@ -387,16 +389,18 @@ class WorkoutPlayerController extends Notifier<WorkoutPlayerState?> {
       return;
     }
 
-    await ref.read(exerciseHistoryRepositoryProvider).insert(
-      ExerciseHistory(
-        workoutHistoryId: current.historyId,
-        exerciseId: exercise.exercise.id,
-        sets: exercise.sets,
-        reps: exercise.reps,
-        durationSeconds: exercise.durationSeconds,
-        completedAt: DateTime.now(),
-      ),
-    );
+    await ref
+        .read(exerciseHistoryRepositoryProvider)
+        .insert(
+          ExerciseHistory(
+            workoutHistoryId: current.historyId,
+            exerciseId: exercise.exercise.id,
+            sets: exercise.sets,
+            reps: exercise.reps,
+            durationSeconds: exercise.durationSeconds,
+            completedAt: DateTime.now(),
+          ),
+        );
 
     state = current.copyWith(
       caloriesBurned: current.caloriesBurned + exercise.estimatedCalories,
@@ -438,8 +442,10 @@ class WorkoutPlayerController extends Notifier<WorkoutPlayerState?> {
     final WorkoutPlayerState? current = state;
     if (current == null) return;
 
-    final int durationMinutes =
-        (current.elapsedSeconds / 60).ceil().clamp(1, 1 << 31);
+    final int durationMinutes = (current.elapsedSeconds / 60).ceil().clamp(
+      1,
+      1 << 31,
+    );
     final double calories = current.caloriesBurned;
 
     final WorkoutCompletion completion = await ref

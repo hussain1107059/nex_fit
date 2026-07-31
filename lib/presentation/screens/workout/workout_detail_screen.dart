@@ -41,7 +41,8 @@ class WorkoutDetailScreen extends ConsumerWidget {
               Expanded(
                 child: ErrorWidget(
                   title: l10n.errorDatabase,
-                  onRetry: () => ref.invalidate(workoutDetailProvider(workoutId)),
+                  onRetry: () =>
+                      ref.invalidate(workoutDetailProvider(workoutId)),
                 ),
               ),
             ],
@@ -68,177 +69,180 @@ class _DetailContent extends ConsumerWidget {
     final AppLocalizations l10n = context.l10n;
 
     return CustomScrollView(
-        slivers: [
-          SliverAppBar(
-            pinned: true,
-            expandedHeight: 220,
-            leading: const Padding(
-              padding: EdgeInsets.only(left: AppSpacing.xs),
-              child: _RoundBackButton(),
+      slivers: [
+        SliverAppBar(
+          pinned: true,
+          expandedHeight: 220,
+          leading: const Padding(
+            padding: EdgeInsets.only(left: AppSpacing.xs),
+            child: _RoundBackButton(),
+          ),
+          actions: [
+            Padding(
+              padding: const EdgeInsets.only(right: AppSpacing.xs),
+              child: _RoundIconButton(
+                icon: detail.workout.isFavorite
+                    ? Icons.favorite_rounded
+                    : Icons.favorite_border_rounded,
+                onPressed: () => toggleWorkoutFavorite(ref, detail.workout.id!),
+              ),
             ),
-            actions: [
-              Padding(
-                padding: const EdgeInsets.only(right: AppSpacing.xs),
-                child: _RoundIconButton(
-                  icon: detail.workout.isFavorite
-                      ? Icons.favorite_rounded
-                      : Icons.favorite_border_rounded,
-                  onPressed: () => toggleWorkoutFavorite(
-                    ref,
-                    detail.workout.id!,
-                  ),
-                ),
-              ),
-            ],
-            flexibleSpace: FlexibleSpaceBar(
-              background: WorkoutCover(
-                colorValue: detail.category?.color,
-                icon: categoryIconFor(detail.category?.icon),
-                borderRadius: BorderRadius.zero,
-              ),
+          ],
+          flexibleSpace: FlexibleSpaceBar(
+            background: WorkoutCover(
+              colorValue: detail.category?.color,
+              icon: categoryIconFor(detail.category?.icon),
+              borderRadius: BorderRadius.zero,
             ),
           ),
-          SliverToBoxAdapter(
-            child: Padding(
-              padding: const EdgeInsets.all(AppSpacing.md),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.stretch,
-                children: [
-                  if (detail.category != null)
-                    Text(
-                      detail.category!.name,
-                      style: context.textTheme.labelMedium?.copyWith(
-                        color: context.colorScheme.primary,
-                        fontWeight: FontWeight.w700,
-                      ),
-                    ),
-                  const SizedBox(height: 4),
+        ),
+        SliverToBoxAdapter(
+          child: Padding(
+            padding: const EdgeInsets.all(AppSpacing.md),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: [
+                if (detail.category != null)
                   Text(
-                    detail.workout.name,
-                    style: context.textTheme.headlineSmall?.copyWith(
-                      fontWeight: FontWeight.w800,
+                    detail.category!.name,
+                    style: context.textTheme.labelMedium?.copyWith(
+                      color: context.colorScheme.primary,
+                      fontWeight: FontWeight.w700,
                     ),
                   ),
-                  if (detail.workout.difficulty != null) ...[
-                    const SizedBox(height: 8),
-                    Align(
-                      alignment: Alignment.centerLeft,
-                      child: DifficultyChip(difficulty: detail.workout.difficulty!),
+                const SizedBox(height: 4),
+                Text(
+                  detail.workout.name,
+                  style: context.textTheme.headlineSmall?.copyWith(
+                    fontWeight: FontWeight.w800,
+                  ),
+                ),
+                if (detail.workout.difficulty != null) ...[
+                  const SizedBox(height: 8),
+                  Align(
+                    alignment: Alignment.centerLeft,
+                    child: DifficultyChip(
+                      difficulty: detail.workout.difficulty!,
+                    ),
+                  ),
+                ],
+                const SizedBox(height: AppSpacing.md),
+                Row(
+                  children: [
+                    _StatTile(
+                      icon: Icons.schedule_rounded,
+                      value: workoutDurationLabel(
+                        context,
+                        detail.totalDurationMinutes,
+                      ),
+                    ),
+                    _StatTile(
+                      icon: Icons.local_fire_department_rounded,
+                      value:
+                          '${detail.estimatedCalories.round().toString().toBanglaDigits()} '
+                          '${l10n.dashboardKcalUnit}',
+                    ),
+                    _StatTile(
+                      icon: Icons.repeat_rounded,
+                      value:
+                          '${detail.exercises.length.toString().toBanglaDigits()} '
+                          '${l10n.workoutExercises}',
                     ),
                   ],
-                  const SizedBox(height: AppSpacing.md),
-                  Row(
-                    children: [
-                      _StatTile(
-                        icon: Icons.schedule_rounded,
-                        value: workoutDurationLabel(
-                          context,
-                          detail.totalDurationMinutes,
+                ),
+                if (detail.workout.description != null &&
+                    detail.workout.description!.isNotEmpty) ...[
+                  const SizedBox(height: AppSpacing.lg),
+                  Text(
+                    l10n.workoutAbout,
+                    style: context.textTheme.titleMedium?.copyWith(
+                      fontWeight: FontWeight.w700,
+                    ),
+                  ),
+                  const SizedBox(height: 6),
+                  Text(
+                    detail.workout.description!,
+                    style: context.textTheme.bodyMedium?.copyWith(
+                      color: context.colorScheme.onSurfaceVariant,
+                    ),
+                  ),
+                ],
+                if (detail.targetMuscles.isNotEmpty) ...[
+                  const SizedBox(height: AppSpacing.lg),
+                  Text(
+                    l10n.workoutMuscles,
+                    style: context.textTheme.titleMedium?.copyWith(
+                      fontWeight: FontWeight.w700,
+                    ),
+                  ),
+                  const SizedBox(height: 8),
+                  _ChipWrap(
+                    items: detail.targetMuscles
+                        .map((String muscle) => muscle.capitalize())
+                        .toList(),
+                  ),
+                ],
+                if (detail.equipment.isNotEmpty) ...[
+                  const SizedBox(height: AppSpacing.lg),
+                  Text(
+                    l10n.workoutEquipment,
+                    style: context.textTheme.titleMedium?.copyWith(
+                      fontWeight: FontWeight.w700,
+                    ),
+                  ),
+                  const SizedBox(height: 8),
+                  _ChipWrap(items: detail.equipment),
+                ],
+                const SizedBox(height: AppSpacing.lg),
+                Row(
+                  children: [
+                    Expanded(
+                      child: Text(
+                        l10n.workoutRoutine,
+                        style: context.textTheme.titleMedium?.copyWith(
+                          fontWeight: FontWeight.w700,
                         ),
                       ),
-                      _StatTile(
-                        icon: Icons.local_fire_department_rounded,
-                        value:
-                            '${detail.estimatedCalories.round().toString().toBanglaDigits()} '
-                            '${l10n.dashboardKcalUnit}',
-                      ),
-                      _StatTile(
-                        icon: Icons.repeat_rounded,
-                        value:
-                            '${detail.exercises.length.toString().toBanglaDigits()} '
-                            '${l10n.workoutExercises}',
-                      ),
-                    ],
-                  ),
-                  if (detail.workout.description != null &&
-                      detail.workout.description!.isNotEmpty) ...[
-                    const SizedBox(height: AppSpacing.lg),
-                    Text(
-                      l10n.workoutAbout,
-                      style: context.textTheme.titleMedium?.copyWith(
-                        fontWeight: FontWeight.w700,
-                      ),
                     ),
-                    const SizedBox(height: 6),
                     Text(
-                      detail.workout.description!,
-                      style: context.textTheme.bodyMedium?.copyWith(
+                      '${detail.exercises.length.toString().toBanglaDigits()} '
+                      '${l10n.workoutExercises}',
+                      style: context.textTheme.labelMedium?.copyWith(
                         color: context.colorScheme.onSurfaceVariant,
                       ),
                     ),
                   ],
-                  if (detail.targetMuscles.isNotEmpty) ...[
-                    const SizedBox(height: AppSpacing.lg),
-                    Text(
-                      l10n.workoutMuscles,
-                      style: context.textTheme.titleMedium?.copyWith(
-                        fontWeight: FontWeight.w700,
-                      ),
-                    ),
-                    const SizedBox(height: 8),
-                    _ChipWrap(
-                      items: detail.targetMuscles
-                          .map((String muscle) => muscle.capitalize())
-                          .toList(),
-                    ),
-                  ],
-                  if (detail.equipment.isNotEmpty) ...[
-                    const SizedBox(height: AppSpacing.lg),
-                    Text(
-                      l10n.workoutEquipment,
-                      style: context.textTheme.titleMedium?.copyWith(
-                        fontWeight: FontWeight.w700,
-                      ),
-                    ),
-                    const SizedBox(height: 8),
-                    _ChipWrap(items: detail.equipment),
-                  ],
-                  const SizedBox(height: AppSpacing.lg),
-                  Row(
-                    children: [
-                      Expanded(
-                        child: Text(
-                          l10n.workoutRoutine,
-                          style: context.textTheme.titleMedium?.copyWith(
-                            fontWeight: FontWeight.w700,
-                          ),
-                        ),
-                      ),
-                      Text(
-                        '${detail.exercises.length.toString().toBanglaDigits()} '
-                        '${l10n.workoutExercises}',
-                        style: context.textTheme.labelMedium?.copyWith(
-                          color: context.colorScheme.onSurfaceVariant,
-                        ),
-                      ),
-                    ],
+                ),
+                const SizedBox(height: AppSpacing.sm),
+                for (
+                  int index = 0;
+                  index < detail.exercises.length;
+                  index++
+                ) ...[
+                  ExerciseTile(
+                    detail: detail.exercises[index],
+                    index: index,
+                    onTap: () {},
                   ),
-                  const SizedBox(height: AppSpacing.sm),
-                  for (int index = 0; index < detail.exercises.length; index++) ...[
-                    ExerciseTile(
-                      detail: detail.exercises[index],
-                      index: index,
-                      onTap: () {},
-                    ),
-                    if (index < detail.exercises.length - 1)
-                      AppSpacing.sm.heightSpace,
-                  ],
-                  const SizedBox(height: AppSpacing.lg),
-                  AppButton(
-                    onPressed: () => context.push(
-                      AppRoutes.workoutPlayer,
-                      extra: WorkoutPlayerArgs(workoutId: detail.workout.id!),
-                    ),
-                    label: l10n.workoutStartNow,
-                    icon: Icons.play_arrow_rounded,
-                    size: AppButtonSize.large,
-                  ),
-                  const SizedBox(height: AppSpacing.xxl),
+                  if (index < detail.exercises.length - 1)
+                    AppSpacing.sm.heightSpace,
                 ],
-              ),
+                const SizedBox(height: AppSpacing.lg),
+                AppButton(
+                  onPressed: () => context.push(
+                    AppRoutes.workoutPlayer,
+                    extra: WorkoutPlayerArgs(workoutId: detail.workout.id!),
+                  ),
+                  label: l10n.workoutStartNow,
+                  icon: Icons.play_arrow_rounded,
+                  size: AppButtonSize.large,
+                ),
+                const SizedBox(height: AppSpacing.xxl),
+              ],
             ),
           ),
-        ],
+        ),
+      ],
     );
   }
 }
@@ -332,9 +336,7 @@ class _ChipWrap extends StatelessWidget {
             ),
             decoration: BoxDecoration(
               borderRadius: AppRadius.pillRadius,
-              border: Border.all(
-                color: context.colorScheme.outlineVariant,
-              ),
+              border: Border.all(color: context.colorScheme.outlineVariant),
             ),
             child: Text(
               item,

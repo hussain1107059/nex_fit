@@ -43,7 +43,10 @@ class DifficultyChip extends StatelessWidget {
       Difficulty.advanced => context.colorScheme.error,
     };
     return Container(
-      padding: const EdgeInsets.symmetric(horizontal: AppSpacing.sm, vertical: 4),
+      padding: const EdgeInsets.symmetric(
+        horizontal: AppSpacing.sm,
+        vertical: 4,
+      ),
       decoration: BoxDecoration(
         borderRadius: AppRadius.pillRadius,
         color: color.withValues(alpha: 0.14),

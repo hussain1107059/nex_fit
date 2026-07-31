@@ -58,33 +58,34 @@ class _AppShellScreenState extends ConsumerState<AppShellScreen> {
       const ProfileScreen(),
     ];
 
-    final List<AppBottomNavigationItem> destinations = <AppBottomNavigationItem>[
-      AppBottomNavigationItem(
-        label: l10n.tabHome,
-        icon: Icons.home_rounded,
-        selectedIcon: Icons.home_rounded,
-      ),
-      AppBottomNavigationItem(
-        label: l10n.tabWorkout,
-        icon: Icons.fitness_center_rounded,
-        selectedIcon: Icons.fitness_center_rounded,
-      ),
-      AppBottomNavigationItem(
-        label: l10n.tabProgress,
-        icon: Icons.trending_up_rounded,
-        selectedIcon: Icons.trending_up_rounded,
-      ),
-      AppBottomNavigationItem(
-        label: l10n.tabNutrition,
-        icon: Icons.restaurant_rounded,
-        selectedIcon: Icons.restaurant_rounded,
-      ),
-      AppBottomNavigationItem(
-        label: l10n.tabProfile,
-        icon: Icons.person_rounded,
-        selectedIcon: Icons.person_rounded,
-      ),
-    ];
+    final List<AppBottomNavigationItem> destinations =
+        <AppBottomNavigationItem>[
+          AppBottomNavigationItem(
+            label: l10n.tabHome,
+            icon: Icons.home_rounded,
+            selectedIcon: Icons.home_rounded,
+          ),
+          AppBottomNavigationItem(
+            label: l10n.tabWorkout,
+            icon: Icons.fitness_center_rounded,
+            selectedIcon: Icons.fitness_center_rounded,
+          ),
+          AppBottomNavigationItem(
+            label: l10n.tabProgress,
+            icon: Icons.trending_up_rounded,
+            selectedIcon: Icons.trending_up_rounded,
+          ),
+          AppBottomNavigationItem(
+            label: l10n.tabNutrition,
+            icon: Icons.restaurant_rounded,
+            selectedIcon: Icons.restaurant_rounded,
+          ),
+          AppBottomNavigationItem(
+            label: l10n.tabProfile,
+            icon: Icons.person_rounded,
+            selectedIcon: Icons.person_rounded,
+          ),
+        ];
 
     return PopScope(
       canPop: false,
@@ -93,10 +94,7 @@ class _AppShellScreenState extends ConsumerState<AppShellScreen> {
         _handleBackPressed();
       },
       child: Scaffold(
-        body: IndexedStack(
-          index: currentIndex,
-          children: screens,
-        ),
+        body: IndexedStack(index: currentIndex, children: screens),
         bottomNavigationBar: AppBottomNavigationBar(
           currentIndex: currentIndex,
           destinations: destinations,

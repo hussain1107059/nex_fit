@@ -181,7 +181,8 @@ class _WorkoutContent extends StatelessWidget {
                         const SizedBox(height: AppSpacing.lg),
                         _Section(
                           title: l10n.workoutRecent,
-                          onSeeAll: () => context.push(AppRoutes.workoutHistory),
+                          onSeeAll: () =>
+                              context.push(AppRoutes.workoutHistory),
                           child: _WorkoutRail(
                             workouts: data.recent,
                             categoriesById: _categoryMap(data.categories),
@@ -377,8 +378,9 @@ class _WorkoutRail extends StatelessWidget {
             AppSpacing.md.widthSpace,
         itemBuilder: (BuildContext context, int index) {
           final Workout workout = workouts[index];
-          final WorkoutCategory? category =
-              workout.categoryId == null ? null : categoriesById[workout.categoryId];
+          final WorkoutCategory? category = workout.categoryId == null
+              ? null
+              : categoriesById[workout.categoryId];
           return _VerticalWorkoutCard(workout: workout, category: category);
         },
       ),
@@ -398,9 +400,7 @@ class _VerticalWorkoutCard extends StatelessWidget {
       width: 156,
       child: AppCard(
         padding: EdgeInsets.zero,
-        onPressed: () => context.push(
-          AppRoutes.workoutDetailPath(workout.id!),
-        ),
+        onPressed: () => context.push(AppRoutes.workoutDetailPath(workout.id!)),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
