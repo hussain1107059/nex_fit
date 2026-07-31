@@ -1,0 +1,108 @@
+name: nexfit
+description: "NexFit - A premium fitness companion. Offline-first, Bangla-first health, workout and diet tracking app."
+publish_to: 'none'
+
+version: 1.0.0+1
+
+environment:
+  sdk: ^3.12.2
+
+dependencies:
+  flutter:
+    sdk: flutter
+  flutter_localizations:
+    sdk: flutter
+
+  cupertino_icons: ^1.0.8
+
+  # State management
+  flutter_riverpod: ^2.6.1
+
+  # Navigation
+  go_router: ^17.3.0
+
+  # Local database (offline first)
+  sqflite: ^2.4.3
+  path: ^1.9.1
+  path_provider: ^2.1.6
+
+  # Authentication
+  firebase_core: ^4.12.1
+  firebase_auth: ^6.5.6
+  google_sign_in: ^7.2.0
+
+  # Google Drive backup
+  googleapis: ^16.0.0
+  googleapis_auth: ^2.3.3
+
+  # Secure token storage
+  flutter_secure_storage: ^10.3.1
+
+  # Connectivity (offline detection)
+  connectivity_plus: ^7.3.1
+
+  # UI / Design system
+  flutter_svg: ^2.3.0
+  google_fonts: ^8.2.0
+  glassmorphism: ^3.0.0
+  shimmer: ^3.0.0
+  animations: ^2.2.0
+
+  # Utilities
+  intl: 0.20.2
+  equatable: ^2.1.0
+  uuid: ^4.6.0
+  shared_preferences: ^2.5.5
+  logging: ^1.3.0
+  device_info_plus: ^13.2.0
+  http: ^1.6.0
+  _discoveryapis_commons: ^1.0.7
+  sqflite_common_ffi_web: ^1.1.2
+  sqflite_common: ^2.5.11
+  image_picker: ^1.2.3
+  flutter_image_compress: ^2.5.1
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+
+  flutter_lints: ^6.0.0
+  flutter_launcher_icons: ^0.14.4
+  flutter_native_splash: ^2.4.8
+  sqflite_common_ffi: ^2.4.2
+
+flutter:
+  uses-material-design: true
+
+  generate: true
+
+  assets:
+    - assets/images/
+    - assets/icons/
+
+  fonts:
+    - family: Manrope
+      fonts:
+        - asset: assets/fonts/Manrope.ttf
+    - family: NotoSansBengali
+      fonts:
+        - asset: assets/fonts/NotoSansBengali.ttf
+
+flutter_intl:
+  enabled: true
+  class_name: AppLocalizations
+  main_locale: bn
+
+flutter_launcher_icons:
+  android: true
+  ios: true
+  image_path: "assets/images/app_icon.png"
+  adaptive_icon_background: "#0B0F14"
+  adaptive_icon_foreground: "assets/images/app_icon_foreground.png"
+  min_sdk_android: 23
+
+flutter_native_splash:
+  color: "#0B0F14"
+  image: assets/images/splash_logo.png
+  android: true
+  ios: true

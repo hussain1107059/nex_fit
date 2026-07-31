@@ -1,0 +1,2396 @@
+import 'dart:async';
+
+import 'package:flutter/foundation.dart';
+import 'package:flutter/widgets.dart';
+import 'package:flutter_localizations/flutter_localizations.dart';
+import 'package:intl/intl.dart' as intl;
+
+import 'app_localizations_bs.dart';
+import 'app_localizations_en.dart';
+
+// ignore_for_file: type=lint
+
+/// Callers can lookup localized strings with an instance of AppLocalizations
+/// returned by `AppLocalizations.of(context)`.
+///
+/// Applications need to include `AppLocalizations.delegate()` in their app's
+/// `localizationDelegates` list, and the locales they support in the app's
+/// `supportedLocales` list. For example:
+///
+/// ```dart
+/// import 'l10n/app_localizations.dart';
+///
+/// return MaterialApp(
+///   localizationsDelegates: AppLocalizations.localizationsDelegates,
+///   supportedLocales: AppLocalizations.supportedLocales,
+///   home: MyApplicationHome(),
+/// );
+/// ```
+///
+/// ## Update pubspec.yaml
+///
+/// Please make sure to update your pubspec.yaml to include the following
+/// packages:
+///
+/// ```yaml
+/// dependencies:
+///   # Internationalization support.
+///   flutter_localizations:
+///     sdk: flutter
+///   intl: any # Use the pinned version from flutter_localizations
+///
+///   # Rest of dependencies
+/// ```
+///
+/// ## iOS Applications
+///
+/// iOS applications define key application metadata, including supported
+/// locales, in an Info.plist file that is built into the application bundle.
+/// To configure the locales supported by your app, you’ll need to edit this
+/// file.
+///
+/// First, open your project’s ios/Runner.xcworkspace Xcode workspace file.
+/// Then, in the Project Navigator, open the Info.plist file under the Runner
+/// project’s Runner folder.
+///
+/// Next, select the Information Property List item, select Add Item from the
+/// Editor menu, then select Localizations from the pop-up menu.
+///
+/// Select and expand the newly-created Localizations item then, for each
+/// locale your application supports, add a new item and select the locale
+/// you wish to add from the pop-up menu in the Value field. This list should
+/// be consistent with the languages listed in the AppLocalizations.supportedLocales
+/// property.
+abstract class AppLocalizations {
+  AppLocalizations(String locale)
+    : localeName = intl.Intl.canonicalizedLocale(locale.toString());
+
+  final String localeName;
+
+  static AppLocalizations of(BuildContext context) {
+    return Localizations.of<AppLocalizations>(context, AppLocalizations)!;
+  }
+
+  static const LocalizationsDelegate<AppLocalizations> delegate =
+      _AppLocalizationsDelegate();
+
+  /// A list of this localizations delegate along with the default localizations
+  /// delegates.
+  ///
+  /// Returns a list of localizations delegates containing this delegate along with
+  /// GlobalMaterialLocalizations.delegate, GlobalCupertinoLocalizations.delegate,
+  /// and GlobalWidgetsLocalizations.delegate.
+  ///
+  /// Additional delegates can be added by appending to this list in
+  /// MaterialApp. This list does not have to be used at all if a custom list
+  /// of delegates is preferred or required.
+  static const List<LocalizationsDelegate<dynamic>> localizationsDelegates =
+      <LocalizationsDelegate<dynamic>>[
+        delegate,
+        GlobalMaterialLocalizations.delegate,
+        GlobalCupertinoLocalizations.delegate,
+        GlobalWidgetsLocalizations.delegate,
+      ];
+
+  /// A list of this localizations delegate's supported locales.
+  static const List<Locale> supportedLocales = <Locale>[
+    Locale('bs'),
+    Locale('en'),
+  ];
+
+  /// No description provided for @appName.
+  ///
+  /// In bs, this message translates to:
+  /// **'NexFit'**
+  String get appName;
+
+  /// No description provided for @appTagline.
+  ///
+  /// In bs, this message translates to:
+  /// **'আপনার ফিটনেস যাত্রা, শুরু হোক আজ'**
+  String get appTagline;
+
+  /// No description provided for @commonContinue.
+  ///
+  /// In bs, this message translates to:
+  /// **'চালিয়ে যান'**
+  String get commonContinue;
+
+  /// No description provided for @commonCancel.
+  ///
+  /// In bs, this message translates to:
+  /// **'বাতিল'**
+  String get commonCancel;
+
+  /// No description provided for @commonRetry.
+  ///
+  /// In bs, this message translates to:
+  /// **'আবার চেষ্টা করুন'**
+  String get commonRetry;
+
+  /// No description provided for @commonSave.
+  ///
+  /// In bs, this message translates to:
+  /// **'সংরক্ষণ করুন'**
+  String get commonSave;
+
+  /// No description provided for @commonDelete.
+  ///
+  /// In bs, this message translates to:
+  /// **'মুছে ফেলুন'**
+  String get commonDelete;
+
+  /// No description provided for @commonConfirm.
+  ///
+  /// In bs, this message translates to:
+  /// **'নিশ্চিত করুন'**
+  String get commonConfirm;
+
+  /// No description provided for @commonClose.
+  ///
+  /// In bs, this message translates to:
+  /// **'বন্ধ করুন'**
+  String get commonClose;
+
+  /// No description provided for @commonBack.
+  ///
+  /// In bs, this message translates to:
+  /// **'পেছনে যান'**
+  String get commonBack;
+
+  /// No description provided for @commonNext.
+  ///
+  /// In bs, this message translates to:
+  /// **'পরবর্তী'**
+  String get commonNext;
+
+  /// No description provided for @commonDone.
+  ///
+  /// In bs, this message translates to:
+  /// **'সম্পন্ন'**
+  String get commonDone;
+
+  /// No description provided for @commonSkip.
+  ///
+  /// In bs, this message translates to:
+  /// **'এড়িয়ে যান'**
+  String get commonSkip;
+
+  /// No description provided for @commonOk.
+  ///
+  /// In bs, this message translates to:
+  /// **'ঠিক আছে'**
+  String get commonOk;
+
+  /// No description provided for @commonYes.
+  ///
+  /// In bs, this message translates to:
+  /// **'হ্যাঁ'**
+  String get commonYes;
+
+  /// No description provided for @commonNo.
+  ///
+  /// In bs, this message translates to:
+  /// **'না'**
+  String get commonNo;
+
+  /// No description provided for @commonLoading.
+  ///
+  /// In bs, this message translates to:
+  /// **'লোড হচ্ছে...'**
+  String get commonLoading;
+
+  /// No description provided for @commonError.
+  ///
+  /// In bs, this message translates to:
+  /// **'একটি সমস্যা হয়েছে'**
+  String get commonError;
+
+  /// No description provided for @commonTryAgain.
+  ///
+  /// In bs, this message translates to:
+  /// **'আবার চেষ্টা করুন'**
+  String get commonTryAgain;
+
+  /// No description provided for @commonViewAll.
+  ///
+  /// In bs, this message translates to:
+  /// **'সব দেখুন'**
+  String get commonViewAll;
+
+  /// No description provided for @commonSearch.
+  ///
+  /// In bs, this message translates to:
+  /// **'খুঁজুন'**
+  String get commonSearch;
+
+  /// No description provided for @commonSettings.
+  ///
+  /// In bs, this message translates to:
+  /// **'সেটিংস'**
+  String get commonSettings;
+
+  /// No description provided for @commonProfile.
+  ///
+  /// In bs, this message translates to:
+  /// **'প্রোফাইল'**
+  String get commonProfile;
+
+  /// No description provided for @commonLanguage.
+  ///
+  /// In bs, this message translates to:
+  /// **'ভাষা'**
+  String get commonLanguage;
+
+  /// No description provided for @commonTheme.
+  ///
+  /// In bs, this message translates to:
+  /// **'থিম'**
+  String get commonTheme;
+
+  /// No description provided for @commonNotification.
+  ///
+  /// In bs, this message translates to:
+  /// **'বিজ্ঞপ্তি'**
+  String get commonNotification;
+
+  /// No description provided for @commonEdit.
+  ///
+  /// In bs, this message translates to:
+  /// **'সম্পাদনা করুন'**
+  String get commonEdit;
+
+  /// No description provided for @commonAdd.
+  ///
+  /// In bs, this message translates to:
+  /// **'যোগ করুন'**
+  String get commonAdd;
+
+  /// No description provided for @commonToday.
+  ///
+  /// In bs, this message translates to:
+  /// **'আজ'**
+  String get commonToday;
+
+  /// No description provided for @commonYesterday.
+  ///
+  /// In bs, this message translates to:
+  /// **'গতকাল'**
+  String get commonYesterday;
+
+  /// No description provided for @commonWeek.
+  ///
+  /// In bs, this message translates to:
+  /// **'সপ্তাহ'**
+  String get commonWeek;
+
+  /// No description provided for @commonMonth.
+  ///
+  /// In bs, this message translates to:
+  /// **'মাস'**
+  String get commonMonth;
+
+  /// No description provided for @commonYear.
+  ///
+  /// In bs, this message translates to:
+  /// **'বছর'**
+  String get commonYear;
+
+  /// No description provided for @tabHome.
+  ///
+  /// In bs, this message translates to:
+  /// **'হোম'**
+  String get tabHome;
+
+  /// No description provided for @tabWorkout.
+  ///
+  /// In bs, this message translates to:
+  /// **'ওয়ার্কআউট'**
+  String get tabWorkout;
+
+  /// No description provided for @tabDiet.
+  ///
+  /// In bs, this message translates to:
+  /// **'ডায়েট'**
+  String get tabDiet;
+
+  /// No description provided for @tabProgress.
+  ///
+  /// In bs, this message translates to:
+  /// **'অগ্রগতি'**
+  String get tabProgress;
+
+  /// No description provided for @tabNutrition.
+  ///
+  /// In bs, this message translates to:
+  /// **'পুষ্টি'**
+  String get tabNutrition;
+
+  /// No description provided for @tabProfile.
+  ///
+  /// In bs, this message translates to:
+  /// **'প্রোফাইল'**
+  String get tabProfile;
+
+  /// No description provided for @moduleWorkoutSubtitle.
+  ///
+  /// In bs, this message translates to:
+  /// **'এখানে আপনার ওয়ার্কআউট পরিকল্পনা ও ট্র্যাক করুন।'**
+  String get moduleWorkoutSubtitle;
+
+  /// No description provided for @moduleProgressSubtitle.
+  ///
+  /// In bs, this message translates to:
+  /// **'এখানে আপনার অগ্রগতি ও পরিসংখ্যান দেখুন।'**
+  String get moduleProgressSubtitle;
+
+  /// No description provided for @moduleNutritionSubtitle.
+  ///
+  /// In bs, this message translates to:
+  /// **'এখানে আপনার খাবার ও পুষ্টি পরিচালনা করুন।'**
+  String get moduleNutritionSubtitle;
+
+  /// No description provided for @moduleProfileSubtitle.
+  ///
+  /// In bs, this message translates to:
+  /// **'এখানে আপনার অ্যাকাউন্ট ও সেটিংস থাকবে।'**
+  String get moduleProfileSubtitle;
+
+  /// No description provided for @emptyNoData.
+  ///
+  /// In bs, this message translates to:
+  /// **'এখনও কোনো তথ্য নেই'**
+  String get emptyNoData;
+
+  /// No description provided for @emptyNoDataSubtitle.
+  ///
+  /// In bs, this message translates to:
+  /// **'আপনার প্রথম তথ্য যোগ করুন, এটি এখানে দেখা যাবে।'**
+  String get emptyNoDataSubtitle;
+
+  /// No description provided for @emptyNoResults.
+  ///
+  /// In bs, this message translates to:
+  /// **'কোনো ফলাফল পাওয়া যায়নি'**
+  String get emptyNoResults;
+
+  /// No description provided for @emptyNoResultsSubtitle.
+  ///
+  /// In bs, this message translates to:
+  /// **'অন্য কিছু খুঁজে দেখুন।'**
+  String get emptyNoResultsSubtitle;
+
+  /// No description provided for @emptyNoInternet.
+  ///
+  /// In bs, this message translates to:
+  /// **'ইন্টারনেট সংযোগ নেই'**
+  String get emptyNoInternet;
+
+  /// No description provided for @emptyNoInternetSubtitle.
+  ///
+  /// In bs, this message translates to:
+  /// **'সংযোগ ফিরে এলে আবার চেষ্টা করুন।'**
+  String get emptyNoInternetSubtitle;
+
+  /// No description provided for @errorSomethingWentWrong.
+  ///
+  /// In bs, this message translates to:
+  /// **'কিছু একটা সমস্যা হয়েছে'**
+  String get errorSomethingWentWrong;
+
+  /// No description provided for @errorSomethingWentWrongSubtitle.
+  ///
+  /// In bs, this message translates to:
+  /// **'অপ্রত্যাশিত একটি ত্রুটি ঘটেছে। আবার চেষ্টা করুন।'**
+  String get errorSomethingWentWrongSubtitle;
+
+  /// No description provided for @errorNoInternet.
+  ///
+  /// In bs, this message translates to:
+  /// **'ইন্টারনেট সংযোগ নেই'**
+  String get errorNoInternet;
+
+  /// No description provided for @errorNoInternetSubtitle.
+  ///
+  /// In bs, this message translates to:
+  /// **'অনুগ্রহ করে আপনার ইন্টারনেট সংযোগ পরীক্ষা করুন।'**
+  String get errorNoInternetSubtitle;
+
+  /// No description provided for @errorTimeout.
+  ///
+  /// In bs, this message translates to:
+  /// **'সময় শেষ হয়ে গেছে'**
+  String get errorTimeout;
+
+  /// No description provided for @errorTimeoutSubtitle.
+  ///
+  /// In bs, this message translates to:
+  /// **'অনুরোধটি অনেক সময় নিয়েছে। আবার চেষ্টা করুন।'**
+  String get errorTimeoutSubtitle;
+
+  /// No description provided for @errorPermissionDenied.
+  ///
+  /// In bs, this message translates to:
+  /// **'অনুমতি নেই'**
+  String get errorPermissionDenied;
+
+  /// No description provided for @errorPermissionDeniedSubtitle.
+  ///
+  /// In bs, this message translates to:
+  /// **'এই কাজটি করার জন্য আপনার অনুমতি নেই।'**
+  String get errorPermissionDeniedSubtitle;
+
+  /// No description provided for @errorNetwork.
+  ///
+  /// In bs, this message translates to:
+  /// **'নেটওয়ার্ক ত্রুটি'**
+  String get errorNetwork;
+
+  /// No description provided for @errorServer.
+  ///
+  /// In bs, this message translates to:
+  /// **'সার্ভার ত্রুটি'**
+  String get errorServer;
+
+  /// No description provided for @errorServerSubtitle.
+  ///
+  /// In bs, this message translates to:
+  /// **'সার্ভার থেকে সাড়া পাওয়া যায়নি। কিছুক্ষণ পর আবার চেষ্টা করুন।'**
+  String get errorServerSubtitle;
+
+  /// No description provided for @errorDatabase.
+  ///
+  /// In bs, this message translates to:
+  /// **'ডেটাবেস ত্রুটি'**
+  String get errorDatabase;
+
+  /// No description provided for @errorDatabaseSubtitle.
+  ///
+  /// In bs, this message translates to:
+  /// **'লোকাল ডেটাবেস থেকে তথ্য পড়া যাচ্ছে না।'**
+  String get errorDatabaseSubtitle;
+
+  /// No description provided for @errorUnknown.
+  ///
+  /// In bs, this message translates to:
+  /// **'অজানা ত্রুটি'**
+  String get errorUnknown;
+
+  /// No description provided for @authSignInTitle.
+  ///
+  /// In bs, this message translates to:
+  /// **'স্বাগতম ফিরে আসায়'**
+  String get authSignInTitle;
+
+  /// No description provided for @authSignInSubtitle.
+  ///
+  /// In bs, this message translates to:
+  /// **'আপনার অ্যাকাউন্টে প্রবেশ করুন'**
+  String get authSignInSubtitle;
+
+  /// No description provided for @authSignUpTitle.
+  ///
+  /// In bs, this message translates to:
+  /// **'নতুন অ্যাকাউন্ট তৈরি করুন'**
+  String get authSignUpTitle;
+
+  /// No description provided for @authEmail.
+  ///
+  /// In bs, this message translates to:
+  /// **'ইমেইল'**
+  String get authEmail;
+
+  /// No description provided for @authPassword.
+  ///
+  /// In bs, this message translates to:
+  /// **'পাসওয়ার্ড'**
+  String get authPassword;
+
+  /// No description provided for @authConfirmPassword.
+  ///
+  /// In bs, this message translates to:
+  /// **'পাসওয়ার্ড নিশ্চিত করুন'**
+  String get authConfirmPassword;
+
+  /// No description provided for @authSignIn.
+  ///
+  /// In bs, this message translates to:
+  /// **'সাইন ইন'**
+  String get authSignIn;
+
+  /// No description provided for @authSignUp.
+  ///
+  /// In bs, this message translates to:
+  /// **'সাইন আপ'**
+  String get authSignUp;
+
+  /// No description provided for @authSignOut.
+  ///
+  /// In bs, this message translates to:
+  /// **'সাইন আউট'**
+  String get authSignOut;
+
+  /// No description provided for @authForgotPassword.
+  ///
+  /// In bs, this message translates to:
+  /// **'পাসওয়ার্ড ভুলে গেছেন?'**
+  String get authForgotPassword;
+
+  /// No description provided for @authContinueWithGoogle.
+  ///
+  /// In bs, this message translates to:
+  /// **'গুগল দিয়ে চালিয়ে যান'**
+  String get authContinueWithGoogle;
+
+  /// No description provided for @authEmailRequired.
+  ///
+  /// In bs, this message translates to:
+  /// **'ইমেইল প্রয়োজন'**
+  String get authEmailRequired;
+
+  /// No description provided for @authEmailInvalid.
+  ///
+  /// In bs, this message translates to:
+  /// **'সঠিক ইমেইল ঠিকানা দিন'**
+  String get authEmailInvalid;
+
+  /// No description provided for @authPasswordRequired.
+  ///
+  /// In bs, this message translates to:
+  /// **'পাসওয়ার্ড প্রয়োজন'**
+  String get authPasswordRequired;
+
+  /// No description provided for @authPasswordTooShort.
+  ///
+  /// In bs, this message translates to:
+  /// **'পাসওয়ার্ড কমপক্ষে ৬ অক্ষরের হতে হবে'**
+  String get authPasswordTooShort;
+
+  /// No description provided for @authPasswordMismatch.
+  ///
+  /// In bs, this message translates to:
+  /// **'পাসওয়ার্ড মিলছে না'**
+  String get authPasswordMismatch;
+
+  /// No description provided for @authName.
+  ///
+  /// In bs, this message translates to:
+  /// **'নাম'**
+  String get authName;
+
+  /// No description provided for @authNameRequired.
+  ///
+  /// In bs, this message translates to:
+  /// **'নাম প্রয়োজন'**
+  String get authNameRequired;
+
+  /// No description provided for @authUnavailable.
+  ///
+  /// In bs, this message translates to:
+  /// **'অথেনটিকেশন এখন উপলব্ধ নয়। পরে আবার চেষ্টা করুন।'**
+  String get authUnavailable;
+
+  /// No description provided for @authCancelled.
+  ///
+  /// In bs, this message translates to:
+  /// **'সাইন ইন বাতিল করা হয়েছে'**
+  String get authCancelled;
+
+  /// No description provided for @authGoogleSignInFailed.
+  ///
+  /// In bs, this message translates to:
+  /// **'গুগল সাইন ইন ব্যর্থ হয়েছে'**
+  String get authGoogleSignInFailed;
+
+  /// No description provided for @authUserNotFound.
+  ///
+  /// In bs, this message translates to:
+  /// **'এই ইমেইলের কোনো অ্যাকাউন্ট পাওয়া যায়নি'**
+  String get authUserNotFound;
+
+  /// No description provided for @authWrongPassword.
+  ///
+  /// In bs, this message translates to:
+  /// **'ভুল পাসওয়ার্ড'**
+  String get authWrongPassword;
+
+  /// No description provided for @authEmailInUse.
+  ///
+  /// In bs, this message translates to:
+  /// **'এই ইমেইলটি ইতিমধ্যে ব্যবহৃত হচ্ছে'**
+  String get authEmailInUse;
+
+  /// No description provided for @authUserDisabled.
+  ///
+  /// In bs, this message translates to:
+  /// **'এই অ্যাকাউন্টটি নিষ্ক্রিয় করা হয়েছে'**
+  String get authUserDisabled;
+
+  /// No description provided for @authTooManyRequests.
+  ///
+  /// In bs, this message translates to:
+  /// **'অনেকবার চেষ্টা করা হয়েছে। কিছুক্ষণ পর আবার চেষ্টা করুন।'**
+  String get authTooManyRequests;
+
+  /// No description provided for @authOperationNotAllowed.
+  ///
+  /// In bs, this message translates to:
+  /// **'এই অপারেশনটি অনুমোদিত নয়'**
+  String get authOperationNotAllowed;
+
+  /// No description provided for @authAccountExistsWithDifferentCredential.
+  ///
+  /// In bs, this message translates to:
+  /// **'এই ইমেইলে আগে থেকেই একটি অ্যাকাউন্ট আছে। সাইন ইন করে চেষ্টা করুন।'**
+  String get authAccountExistsWithDifferentCredential;
+
+  /// No description provided for @authGeneric.
+  ///
+  /// In bs, this message translates to:
+  /// **'সাইন ইন করতে সমস্যা হয়েছে। আবার চেষ্টা করুন।'**
+  String get authGeneric;
+
+  /// No description provided for @authBusy.
+  ///
+  /// In bs, this message translates to:
+  /// **'অনুগ্রহ করে অপেক্ষা করুন...'**
+  String get authBusy;
+
+  /// No description provided for @authOrContinueWith.
+  ///
+  /// In bs, this message translates to:
+  /// **'অথবা এর মাধ্যমে চালিয়ে যান'**
+  String get authOrContinueWith;
+
+  /// No description provided for @authRememberMe.
+  ///
+  /// In bs, this message translates to:
+  /// **'আমাকে মনে রাখুন'**
+  String get authRememberMe;
+
+  /// No description provided for @authNoAccount.
+  ///
+  /// In bs, this message translates to:
+  /// **'অ্যাকাউন্ট নেই?'**
+  String get authNoAccount;
+
+  /// No description provided for @authHaveAccount.
+  ///
+  /// In bs, this message translates to:
+  /// **'ইতিমধ্যে অ্যাকাউন্ট আছে?'**
+  String get authHaveAccount;
+
+  /// No description provided for @authCreateAccount.
+  ///
+  /// In bs, this message translates to:
+  /// **'অ্যাকাউন্ট তৈরি করুন'**
+  String get authCreateAccount;
+
+  /// No description provided for @authNameHint.
+  ///
+  /// In bs, this message translates to:
+  /// **'আপনার পুরো নাম'**
+  String get authNameHint;
+
+  /// No description provided for @authSignUpSubtitle.
+  ///
+  /// In bs, this message translates to:
+  /// **'একটি নতুন অ্যাকাউন্ট তৈরি করুন এবং শুরু করুন'**
+  String get authSignUpSubtitle;
+
+  /// No description provided for @authPasswordWeak.
+  ///
+  /// In bs, this message translates to:
+  /// **'পাসওয়ার্ডটি যথেষ্ট শক্তিশালী নয়। বড় হাতের, ছোট হাতের অক্ষর, সংখ্যা এবং চিহ্ন ব্যবহার করুন'**
+  String get authPasswordWeak;
+
+  /// No description provided for @authPasswordStrengthWeak.
+  ///
+  /// In bs, this message translates to:
+  /// **'দুর্বল'**
+  String get authPasswordStrengthWeak;
+
+  /// No description provided for @authPasswordStrengthMedium.
+  ///
+  /// In bs, this message translates to:
+  /// **'মাঝারি'**
+  String get authPasswordStrengthMedium;
+
+  /// No description provided for @authPasswordStrengthStrong.
+  ///
+  /// In bs, this message translates to:
+  /// **'শক্তিশালী'**
+  String get authPasswordStrengthStrong;
+
+  /// No description provided for @authEmailVerificationTitle.
+  ///
+  /// In bs, this message translates to:
+  /// **'ইমেইল নিশ্চিত করুন'**
+  String get authEmailVerificationTitle;
+
+  /// No description provided for @authEmailVerificationSubtitle.
+  ///
+  /// In bs, this message translates to:
+  /// **'চালিয়ে যাওয়ার আগে আপনার ইমেইল ঠিকানা নিশ্চিত করুন'**
+  String get authEmailVerificationSubtitle;
+
+  /// No description provided for @authEmailVerificationSentTo.
+  ///
+  /// In bs, this message translates to:
+  /// **'আমরা একটি নিশ্চিতকরণ লিংক পাঠিয়েছি'**
+  String get authEmailVerificationSentTo;
+
+  /// No description provided for @authEmailNotVerified.
+  ///
+  /// In bs, this message translates to:
+  /// **'ইমেইল যাচাইকৃত নয়'**
+  String get authEmailNotVerified;
+
+  /// No description provided for @authResendEmail.
+  ///
+  /// In bs, this message translates to:
+  /// **'আবার নিশ্চিতকরণ ইমেইল পাঠান'**
+  String get authResendEmail;
+
+  /// No description provided for @authRefreshStatus.
+  ///
+  /// In bs, this message translates to:
+  /// **'যাচাই করেছি, স্ট্যাটাস রিফ্রেশ করুন'**
+  String get authRefreshStatus;
+
+  /// No description provided for @authVerificationSent.
+  ///
+  /// In bs, this message translates to:
+  /// **'নিশ্চিতকরণ ইমেইল পাঠানো হয়েছে'**
+  String get authVerificationSent;
+
+  /// No description provided for @authVerificationNotYet.
+  ///
+  /// In bs, this message translates to:
+  /// **'আপনার ইমেইল এখনও নিশ্চিত হয়নি। আগে ইনবক্সের লিংকে ক্লিক করুন'**
+  String get authVerificationNotYet;
+
+  /// No description provided for @authEmailVerified.
+  ///
+  /// In bs, this message translates to:
+  /// **'ইমেইল যাচাইকৃত'**
+  String get authEmailVerified;
+
+  /// No description provided for @authEmailVerificationFailed.
+  ///
+  /// In bs, this message translates to:
+  /// **'নিশ্চিতকরণ ইমেইল পাঠানো যায়নি'**
+  String get authEmailVerificationFailed;
+
+  /// No description provided for @authAccountCreated.
+  ///
+  /// In bs, this message translates to:
+  /// **'অ্যাকাউন্ট তৈরি হয়েছে!'**
+  String get authAccountCreated;
+
+  /// No description provided for @authAccountCreatedSubtitle.
+  ///
+  /// In bs, this message translates to:
+  /// **'আপনার অ্যাকাউন্ট প্রস্তুত। আমরা আপনার ইমেইলে একটি নিশ্চিতকরণ লিংক পাঠিয়েছি'**
+  String get authAccountCreatedSubtitle;
+
+  /// No description provided for @authForgotPasswordTitle.
+  ///
+  /// In bs, this message translates to:
+  /// **'পাসওয়ার্ড ভুলে গেছেন'**
+  String get authForgotPasswordTitle;
+
+  /// No description provided for @authForgotPasswordSubtitle.
+  ///
+  /// In bs, this message translates to:
+  /// **'আপনার ইমেইল দিন, আমরা একটি রিসেট লিংক পাঠাব'**
+  String get authForgotPasswordSubtitle;
+
+  /// No description provided for @authSendResetLink.
+  ///
+  /// In bs, this message translates to:
+  /// **'রিসেট লিংক পাঠান'**
+  String get authSendResetLink;
+
+  /// No description provided for @authResetLinkSent.
+  ///
+  /// In bs, this message translates to:
+  /// **'রিসেট লিংক পাঠানো হয়েছে!'**
+  String get authResetLinkSent;
+
+  /// No description provided for @authResetLinkSentSubtitle.
+  ///
+  /// In bs, this message translates to:
+  /// **'আপনার ইনবক্স বা স্প্যাম ফোল্ডার দেখুন এবং লিংকটি অনুসরণ করুন'**
+  String get authResetLinkSentSubtitle;
+
+  /// No description provided for @authBackToLogin.
+  ///
+  /// In bs, this message translates to:
+  /// **'সাইন ইন পেজে ফিরে যান'**
+  String get authBackToLogin;
+
+  /// No description provided for @authSignOutConfirmTitle.
+  ///
+  /// In bs, this message translates to:
+  /// **'সাইন আউট করবেন?'**
+  String get authSignOutConfirmTitle;
+
+  /// No description provided for @authSignOutConfirmMessage.
+  ///
+  /// In bs, this message translates to:
+  /// **'আপনি কি নিশ্চিত যে সাইন আউট করতে চান?'**
+  String get authSignOutConfirmMessage;
+
+  /// No description provided for @dashboardTemporaryTitle.
+  ///
+  /// In bs, this message translates to:
+  /// **'অস্থায়ী ড্যাশবোর্ড'**
+  String get dashboardTemporaryTitle;
+
+  /// No description provided for @dashboardTemporarySubtitle.
+  ///
+  /// In bs, this message translates to:
+  /// **'এটি একটি অস্থায়ী স্ক্রিন। আসল ড্যাশবোর্ড পরবর্তী ধাপে তৈরি হবে'**
+  String get dashboardTemporarySubtitle;
+
+  /// No description provided for @dashboardMemberSince.
+  ///
+  /// In bs, this message translates to:
+  /// **'সদস্য সূচনাকাল'**
+  String get dashboardMemberSince;
+
+  /// No description provided for @dashboardLastLogin.
+  ///
+  /// In bs, this message translates to:
+  /// **'শেষ লগইন'**
+  String get dashboardLastLogin;
+
+  /// No description provided for @connectivityOnline.
+  ///
+  /// In bs, this message translates to:
+  /// **'আপনি অনলাইনে আছেন'**
+  String get connectivityOnline;
+
+  /// No description provided for @connectivityOffline.
+  ///
+  /// In bs, this message translates to:
+  /// **'আপনি অফলাইনে আছেন'**
+  String get connectivityOffline;
+
+  /// No description provided for @connectivityBackOnline.
+  ///
+  /// In bs, this message translates to:
+  /// **'সংযোগ ফিরে এসেছে'**
+  String get connectivityBackOnline;
+
+  /// No description provided for @themeSystem.
+  ///
+  /// In bs, this message translates to:
+  /// **'সিস্টেম'**
+  String get themeSystem;
+
+  /// No description provided for @themeLight.
+  ///
+  /// In bs, this message translates to:
+  /// **'লাইট'**
+  String get themeLight;
+
+  /// No description provided for @themeDark.
+  ///
+  /// In bs, this message translates to:
+  /// **'ডার্ক'**
+  String get themeDark;
+
+  /// No description provided for @splashLoading.
+  ///
+  /// In bs, this message translates to:
+  /// **'NexFit প্রস্তুত হচ্ছে...'**
+  String get splashLoading;
+
+  /// No description provided for @backupTitle.
+  ///
+  /// In bs, this message translates to:
+  /// **'ব্যাকআপ ও রিস্টোর'**
+  String get backupTitle;
+
+  /// No description provided for @backupLastBackup.
+  ///
+  /// In bs, this message translates to:
+  /// **'শেষ ব্যাকআপ'**
+  String get backupLastBackup;
+
+  /// No description provided for @backupNever.
+  ///
+  /// In bs, this message translates to:
+  /// **'কখনো নয়'**
+  String get backupNever;
+
+  /// No description provided for @backupUploading.
+  ///
+  /// In bs, this message translates to:
+  /// **'ব্যাকআপ আপলোড হচ্ছে...'**
+  String get backupUploading;
+
+  /// No description provided for @backupRestoring.
+  ///
+  /// In bs, this message translates to:
+  /// **'রিস্টোর হচ্ছে...'**
+  String get backupRestoring;
+
+  /// No description provided for @backupSuccess.
+  ///
+  /// In bs, this message translates to:
+  /// **'ব্যাকআপ সফল হয়েছে'**
+  String get backupSuccess;
+
+  /// No description provided for @backupFailed.
+  ///
+  /// In bs, this message translates to:
+  /// **'ব্যাকআপ ব্যর্থ হয়েছে'**
+  String get backupFailed;
+
+  /// No description provided for @backupDriveDisconnected.
+  ///
+  /// In bs, this message translates to:
+  /// **'গুগল ড্রাইভ সংযুক্ত নয়'**
+  String get backupDriveDisconnected;
+
+  /// No description provided for @backupNotFound.
+  ///
+  /// In bs, this message translates to:
+  /// **'ব্যাকআপ পাওয়া যায়নি'**
+  String get backupNotFound;
+
+  /// No description provided for @backupCorrupted.
+  ///
+  /// In bs, this message translates to:
+  /// **'ব্যাকআপ ফাইলটি ক্ষতিগ্রস্ত'**
+  String get backupCorrupted;
+
+  /// No description provided for @dashboardGreetingMorning.
+  ///
+  /// In bs, this message translates to:
+  /// **'শুভ সকাল'**
+  String get dashboardGreetingMorning;
+
+  /// No description provided for @dashboardGreetingAfternoon.
+  ///
+  /// In bs, this message translates to:
+  /// **'শুভ অপরাহ্ন'**
+  String get dashboardGreetingAfternoon;
+
+  /// No description provided for @dashboardGreetingEvening.
+  ///
+  /// In bs, this message translates to:
+  /// **'শুভ সন্ধ্যা'**
+  String get dashboardGreetingEvening;
+
+  /// No description provided for @dashboardTodayOverview.
+  ///
+  /// In bs, this message translates to:
+  /// **'আজকের সারসংক্ষেপ'**
+  String get dashboardTodayOverview;
+
+  /// No description provided for @dashboardCaloriesBurned.
+  ///
+  /// In bs, this message translates to:
+  /// **'ক্যালরি পুড়েছে'**
+  String get dashboardCaloriesBurned;
+
+  /// No description provided for @dashboardWater.
+  ///
+  /// In bs, this message translates to:
+  /// **'পানি'**
+  String get dashboardWater;
+
+  /// No description provided for @dashboardSteps.
+  ///
+  /// In bs, this message translates to:
+  /// **'পদক্ষেপ'**
+  String get dashboardSteps;
+
+  /// No description provided for @dashboardWeight.
+  ///
+  /// In bs, this message translates to:
+  /// **'ওজন'**
+  String get dashboardWeight;
+
+  /// No description provided for @dashboardBmi.
+  ///
+  /// In bs, this message translates to:
+  /// **'বিএমআই'**
+  String get dashboardBmi;
+
+  /// No description provided for @dashboardStreak.
+  ///
+  /// In bs, this message translates to:
+  /// **'ধারাবাহিকতা'**
+  String get dashboardStreak;
+
+  /// No description provided for @dashboardQuickActions.
+  ///
+  /// In bs, this message translates to:
+  /// **'দ্রুত কর্ম'**
+  String get dashboardQuickActions;
+
+  /// No description provided for @dashboardStartWorkout.
+  ///
+  /// In bs, this message translates to:
+  /// **'ওয়ার্কআউট শুরু'**
+  String get dashboardStartWorkout;
+
+  /// No description provided for @dashboardLogWater.
+  ///
+  /// In bs, this message translates to:
+  /// **'পানি যোগ করুন'**
+  String get dashboardLogWater;
+
+  /// No description provided for @dashboardAddMeal.
+  ///
+  /// In bs, this message translates to:
+  /// **'খাবার যোগ করুন'**
+  String get dashboardAddMeal;
+
+  /// No description provided for @dashboardLogWeight.
+  ///
+  /// In bs, this message translates to:
+  /// **'ওজন যোগ করুন'**
+  String get dashboardLogWeight;
+
+  /// No description provided for @dashboardBmiCalculator.
+  ///
+  /// In bs, this message translates to:
+  /// **'বিএমআই হিসাব'**
+  String get dashboardBmiCalculator;
+
+  /// No description provided for @dashboardSleepTracker.
+  ///
+  /// In bs, this message translates to:
+  /// **'ঘুম ট্র্যাকার'**
+  String get dashboardSleepTracker;
+
+  /// No description provided for @dashboardTodaysGoal.
+  ///
+  /// In bs, this message translates to:
+  /// **'আজকের লক্ষ্য'**
+  String get dashboardTodaysGoal;
+
+  /// No description provided for @dashboardWorkoutMinutes.
+  ///
+  /// In bs, this message translates to:
+  /// **'ওয়ার্কআউট (মিনিট)'**
+  String get dashboardWorkoutMinutes;
+
+  /// No description provided for @dashboardCalories.
+  ///
+  /// In bs, this message translates to:
+  /// **'ক্যালরি'**
+  String get dashboardCalories;
+
+  /// No description provided for @dashboardRecentActivity.
+  ///
+  /// In bs, this message translates to:
+  /// **'সাম্প্রতিক কার্যকলাপ'**
+  String get dashboardRecentActivity;
+
+  /// No description provided for @dashboardNoActivity.
+  ///
+  /// In bs, this message translates to:
+  /// **'এখনো কোনো কার্যকলাপ নেই'**
+  String get dashboardNoActivity;
+
+  /// No description provided for @dashboardNoActivitySubtitle.
+  ///
+  /// In bs, this message translates to:
+  /// **'আপনার কার্যকলাপ এখানে দেখা যাবে।'**
+  String get dashboardNoActivitySubtitle;
+
+  /// No description provided for @dashboardNoWorkoutYet.
+  ///
+  /// In bs, this message translates to:
+  /// **'কোনো ওয়ার্কআউট নেই'**
+  String get dashboardNoWorkoutYet;
+
+  /// No description provided for @dashboardNoWorkoutYetSubtitle.
+  ///
+  /// In bs, this message translates to:
+  /// **'আপনার প্রথম ওয়ার্কআউট শুরু করুন এবং আজই শক্তি তৈরি করুন!'**
+  String get dashboardNoWorkoutYetSubtitle;
+
+  /// No description provided for @dashboardFirstWorkout.
+  ///
+  /// In bs, this message translates to:
+  /// **'প্রথম ওয়ার্কআউট'**
+  String get dashboardFirstWorkout;
+
+  /// No description provided for @dashboardNoWeightYet.
+  ///
+  /// In bs, this message translates to:
+  /// **'ওজন যোগ করা হয়নি'**
+  String get dashboardNoWeightYet;
+
+  /// No description provided for @dashboardNoWeightYetSubtitle.
+  ///
+  /// In bs, this message translates to:
+  /// **'আপনার অগ্রগতি ট্র্যাক করতে আজই ওজন যোগ করুন।'**
+  String get dashboardNoWeightYetSubtitle;
+
+  /// No description provided for @dashboardNoBadgeYet.
+  ///
+  /// In bs, this message translates to:
+  /// **'এখনো কোনো ব্যাজ নেই'**
+  String get dashboardNoBadgeYet;
+
+  /// No description provided for @dashboardMotivation.
+  ///
+  /// In bs, this message translates to:
+  /// **'অনুপ্রেরণা'**
+  String get dashboardMotivation;
+
+  /// No description provided for @dashboardAchievements.
+  ///
+  /// In bs, this message translates to:
+  /// **'অর্জন'**
+  String get dashboardAchievements;
+
+  /// No description provided for @dashboardCurrentStreak.
+  ///
+  /// In bs, this message translates to:
+  /// **'বর্তমান ধারা'**
+  String get dashboardCurrentStreak;
+
+  /// No description provided for @dashboardDays.
+  ///
+  /// In bs, this message translates to:
+  /// **'দিন'**
+  String get dashboardDays;
+
+  /// No description provided for @dashboardUpcomingReminders.
+  ///
+  /// In bs, this message translates to:
+  /// **'আজকের রিমাইন্ডার'**
+  String get dashboardUpcomingReminders;
+
+  /// No description provided for @dashboardNoReminders.
+  ///
+  /// In bs, this message translates to:
+  /// **'আজ কোনো রিমাইন্ডার নেই'**
+  String get dashboardNoReminders;
+
+  /// No description provided for @dashboardNoRemindersSubtitle.
+  ///
+  /// In bs, this message translates to:
+  /// **'নতুন রিমাইন্ডার যোগ করতে সেটিংস দেখুন।'**
+  String get dashboardNoRemindersSubtitle;
+
+  /// No description provided for @dashboardWeeklyStats.
+  ///
+  /// In bs, this message translates to:
+  /// **'সাপ্তাহিক পরিসংখ্যান'**
+  String get dashboardWeeklyStats;
+
+  /// No description provided for @dashboardNoDataWeek.
+  ///
+  /// In bs, this message translates to:
+  /// **'এই সপ্তাহে কোনো তথ্য নেই'**
+  String get dashboardNoDataWeek;
+
+  /// No description provided for @dashboardNoWeightData.
+  ///
+  /// In bs, this message translates to:
+  /// **'এই সপ্তাহে কোনো ওজন নেই'**
+  String get dashboardNoWeightData;
+
+  /// No description provided for @dashboardGoalNotSet.
+  ///
+  /// In bs, this message translates to:
+  /// **'লক্ষ্য নির্ধারণ করা হয়নি'**
+  String get dashboardGoalNotSet;
+
+  /// No description provided for @dashboardComingSoon.
+  ///
+  /// In bs, this message translates to:
+  /// **'এই মডিউলটি শীঘ্রই আসছে'**
+  String get dashboardComingSoon;
+
+  /// No description provided for @dashboardLogWaterTitle.
+  ///
+  /// In bs, this message translates to:
+  /// **'পানি যোগ করুন'**
+  String get dashboardLogWaterTitle;
+
+  /// No description provided for @dashboardLogWaterHint.
+  ///
+  /// In bs, this message translates to:
+  /// **'পরিমাণ নির্বাচন করুন (মিলি)'**
+  String get dashboardLogWaterHint;
+
+  /// No description provided for @dashboardLogWaterSuccess.
+  ///
+  /// In bs, this message translates to:
+  /// **'পানি যোগ করা হয়েছে'**
+  String get dashboardLogWaterSuccess;
+
+  /// No description provided for @dashboardLogWeightTitle.
+  ///
+  /// In bs, this message translates to:
+  /// **'ওজন যোগ করুন'**
+  String get dashboardLogWeightTitle;
+
+  /// No description provided for @dashboardLogWeightHint.
+  ///
+  /// In bs, this message translates to:
+  /// **'ওজন (কেজি)'**
+  String get dashboardLogWeightHint;
+
+  /// No description provided for @dashboardLogWeightSuccess.
+  ///
+  /// In bs, this message translates to:
+  /// **'ওজন যোগ করা হয়েছে'**
+  String get dashboardLogWeightSuccess;
+
+  /// No description provided for @dashboardBmiTitle.
+  ///
+  /// In bs, this message translates to:
+  /// **'বিএমআই ক্যালকুলেটর'**
+  String get dashboardBmiTitle;
+
+  /// No description provided for @dashboardHeightCm.
+  ///
+  /// In bs, this message translates to:
+  /// **'উচ্চতা (সেমি)'**
+  String get dashboardHeightCm;
+
+  /// No description provided for @dashboardWeightKg.
+  ///
+  /// In bs, this message translates to:
+  /// **'ওজন (কেজি)'**
+  String get dashboardWeightKg;
+
+  /// No description provided for @dashboardBmiResult.
+  ///
+  /// In bs, this message translates to:
+  /// **'বিএমআই'**
+  String get dashboardBmiResult;
+
+  /// No description provided for @dashboardBmiSaved.
+  ///
+  /// In bs, this message translates to:
+  /// **'বিএমআই সংরক্ষিত হয়েছে'**
+  String get dashboardBmiSaved;
+
+  /// No description provided for @dashboardSearchHint.
+  ///
+  /// In bs, this message translates to:
+  /// **'ওয়ার্কআউট, খাবার, ব্যায়াম খুঁজুন...'**
+  String get dashboardSearchHint;
+
+  /// No description provided for @dashboardSearchWorkouts.
+  ///
+  /// In bs, this message translates to:
+  /// **'ওয়ার্কআউট'**
+  String get dashboardSearchWorkouts;
+
+  /// No description provided for @dashboardSearchExercises.
+  ///
+  /// In bs, this message translates to:
+  /// **'ব্যায়াম'**
+  String get dashboardSearchExercises;
+
+  /// No description provided for @dashboardSearchFoods.
+  ///
+  /// In bs, this message translates to:
+  /// **'খাবার'**
+  String get dashboardSearchFoods;
+
+  /// No description provided for @dashboardSearchMeals.
+  ///
+  /// In bs, this message translates to:
+  /// **'খাবার (মিল)'**
+  String get dashboardSearchMeals;
+
+  /// No description provided for @dashboardLoadError.
+  ///
+  /// In bs, this message translates to:
+  /// **'ড্যাশবোর্ড লোড করা যায়নি'**
+  String get dashboardLoadError;
+
+  /// No description provided for @dashboardActivityWorkout.
+  ///
+  /// In bs, this message translates to:
+  /// **'ওয়ার্কআউট'**
+  String get dashboardActivityWorkout;
+
+  /// No description provided for @dashboardActivityWater.
+  ///
+  /// In bs, this message translates to:
+  /// **'পানি'**
+  String get dashboardActivityWater;
+
+  /// No description provided for @dashboardActivityMeal.
+  ///
+  /// In bs, this message translates to:
+  /// **'খাবার'**
+  String get dashboardActivityMeal;
+
+  /// No description provided for @dashboardActivityWeight.
+  ///
+  /// In bs, this message translates to:
+  /// **'ওজন'**
+  String get dashboardActivityWeight;
+
+  /// No description provided for @dashboardActivitySleep.
+  ///
+  /// In bs, this message translates to:
+  /// **'ঘুম'**
+  String get dashboardActivitySleep;
+
+  /// No description provided for @dashboardMinutesShort.
+  ///
+  /// In bs, this message translates to:
+  /// **'মিনিট'**
+  String get dashboardMinutesShort;
+
+  /// No description provided for @dashboardHoursShort.
+  ///
+  /// In bs, this message translates to:
+  /// **'ঘণ্টা'**
+  String get dashboardHoursShort;
+
+  /// No description provided for @dashboardMlUnit.
+  ///
+  /// In bs, this message translates to:
+  /// **'মিলি'**
+  String get dashboardMlUnit;
+
+  /// No description provided for @dashboardKgUnit.
+  ///
+  /// In bs, this message translates to:
+  /// **'কেজি'**
+  String get dashboardKgUnit;
+
+  /// No description provided for @dashboardKcalUnit.
+  ///
+  /// In bs, this message translates to:
+  /// **'কিলোক্যালরি'**
+  String get dashboardKcalUnit;
+
+  /// No description provided for @dashboardEarnedOn.
+  ///
+  /// In bs, this message translates to:
+  /// **'অর্জিত'**
+  String get dashboardEarnedOn;
+
+  /// No description provided for @bmiUnderweight.
+  ///
+  /// In bs, this message translates to:
+  /// **'ওজনে কম'**
+  String get bmiUnderweight;
+
+  /// No description provided for @bmiNormal.
+  ///
+  /// In bs, this message translates to:
+  /// **'স্বাভাবিক'**
+  String get bmiNormal;
+
+  /// No description provided for @bmiOverweight.
+  ///
+  /// In bs, this message translates to:
+  /// **'ওজন বেশি'**
+  String get bmiOverweight;
+
+  /// No description provided for @bmiObese.
+  ///
+  /// In bs, this message translates to:
+  /// **'স্থূলকায়'**
+  String get bmiObese;
+
+  /// No description provided for @dialogConfirmTitle.
+  ///
+  /// In bs, this message translates to:
+  /// **'আপনি কি নিশ্চিত?'**
+  String get dialogConfirmTitle;
+
+  /// No description provided for @dialogExitApp.
+  ///
+  /// In bs, this message translates to:
+  /// **'আপনি কি অ্যাপটি ছেড়ে যেতে চান?'**
+  String get dialogExitApp;
+
+  /// No description provided for @dialogDiscardChanges.
+  ///
+  /// In bs, this message translates to:
+  /// **'আপনি কি পরিবর্তনগুলো বাতিল করতে চান?'**
+  String get dialogDiscardChanges;
+
+  /// No description provided for @exitAppHint.
+  ///
+  /// In bs, this message translates to:
+  /// **'বের হতে আবার পেছনে যান'**
+  String get exitAppHint;
+
+  /// No description provided for @formFieldRequired.
+  ///
+  /// In bs, this message translates to:
+  /// **'এই ঘরটি প্রয়োজন'**
+  String get formFieldRequired;
+
+  /// No description provided for @formFieldTooShort.
+  ///
+  /// In bs, this message translates to:
+  /// **'মানটি খুব ছোট'**
+  String get formFieldTooShort;
+
+  /// No description provided for @formFieldTooLong.
+  ///
+  /// In bs, this message translates to:
+  /// **'মানটি খুব বড়'**
+  String get formFieldTooLong;
+
+  /// No description provided for @formFieldInvalid.
+  ///
+  /// In bs, this message translates to:
+  /// **'মানটি সঠিক নয়'**
+  String get formFieldInvalid;
+
+  /// No description provided for @profileTitle.
+  ///
+  /// In bs, this message translates to:
+  /// **'প্রোফাইল'**
+  String get profileTitle;
+
+  /// No description provided for @profileMemberSince.
+  ///
+  /// In bs, this message translates to:
+  /// **'সদস্য হিসেবে যুক্ত'**
+  String get profileMemberSince;
+
+  /// No description provided for @profileEditProfile.
+  ///
+  /// In bs, this message translates to:
+  /// **'প্রোফাইল সম্পাদনা'**
+  String get profileEditProfile;
+
+  /// No description provided for @profileCompleteProfile.
+  ///
+  /// In bs, this message translates to:
+  /// **'আপনার প্রোফাইল সম্পূর্ণ করুন'**
+  String get profileCompleteProfile;
+
+  /// No description provided for @profileCompleteProfileSubtitle.
+  ///
+  /// In bs, this message translates to:
+  /// **'শারীরিক তথ্য যোগ করে BMI, BMR ও দৈনিক লক্ষ্যমাত্রা আনলক করুন।'**
+  String get profileCompleteProfileSubtitle;
+
+  /// No description provided for @profilePhysicalInfo.
+  ///
+  /// In bs, this message translates to:
+  /// **'শারীরিক তথ্য'**
+  String get profilePhysicalInfo;
+
+  /// No description provided for @profileAge.
+  ///
+  /// In bs, this message translates to:
+  /// **'বয়স'**
+  String get profileAge;
+
+  /// No description provided for @profileYears.
+  ///
+  /// In bs, this message translates to:
+  /// **'বছর'**
+  String get profileYears;
+
+  /// No description provided for @profileGender.
+  ///
+  /// In bs, this message translates to:
+  /// **'লিঙ্গ'**
+  String get profileGender;
+
+  /// No description provided for @profileHeight.
+  ///
+  /// In bs, this message translates to:
+  /// **'উচ্চতা'**
+  String get profileHeight;
+
+  /// No description provided for @profileCurrentWeight.
+  ///
+  /// In bs, this message translates to:
+  /// **'বর্তমান ওজন'**
+  String get profileCurrentWeight;
+
+  /// No description provided for @profileTargetWeight.
+  ///
+  /// In bs, this message translates to:
+  /// **'টার্গেট ওজন'**
+  String get profileTargetWeight;
+
+  /// No description provided for @profileFitnessGoal.
+  ///
+  /// In bs, this message translates to:
+  /// **'ফিটনেস লক্ষ্য'**
+  String get profileFitnessGoal;
+
+  /// No description provided for @profileActivityLevel.
+  ///
+  /// In bs, this message translates to:
+  /// **'কর্মক্ষমতার মাত্রা'**
+  String get profileActivityLevel;
+
+  /// No description provided for @profileBmi.
+  ///
+  /// In bs, this message translates to:
+  /// **'BMI'**
+  String get profileBmi;
+
+  /// No description provided for @profileBmiValue.
+  ///
+  /// In bs, this message translates to:
+  /// **'আপনার BMI'**
+  String get profileBmiValue;
+
+  /// No description provided for @profileBmiCategory.
+  ///
+  /// In bs, this message translates to:
+  /// **'শ্রেণি'**
+  String get profileBmiCategory;
+
+  /// No description provided for @profileHealthyRange.
+  ///
+  /// In bs, this message translates to:
+  /// **'সুস্থ পরিসর'**
+  String get profileHealthyRange;
+
+  /// No description provided for @profileSuggestion.
+  ///
+  /// In bs, this message translates to:
+  /// **'পরামর্শ'**
+  String get profileSuggestion;
+
+  /// No description provided for @profileBmr.
+  ///
+  /// In bs, this message translates to:
+  /// **'BMR'**
+  String get profileBmr;
+
+  /// No description provided for @profileDailyCalories.
+  ///
+  /// In bs, this message translates to:
+  /// **'দৈনিক ক্যালোরি'**
+  String get profileDailyCalories;
+
+  /// No description provided for @profileDailyCaloriesTarget.
+  ///
+  /// In bs, this message translates to:
+  /// **'দৈনিক ক্যালোরি লক্ষ্যমাত্রা'**
+  String get profileDailyCaloriesTarget;
+
+  /// No description provided for @profileDailyWaterTarget.
+  ///
+  /// In bs, this message translates to:
+  /// **'দৈনিক পানি লক্ষ্যমাত্রা'**
+  String get profileDailyWaterTarget;
+
+  /// No description provided for @profileDailyStepTarget.
+  ///
+  /// In bs, this message translates to:
+  /// **'দৈনিক পদক্ষেপ লক্ষ্যমাত্রা'**
+  String get profileDailyStepTarget;
+
+  /// No description provided for @profileDailyTargets.
+  ///
+  /// In bs, this message translates to:
+  /// **'দৈনিক লক্ষ্যমাত্রা'**
+  String get profileDailyTargets;
+
+  /// No description provided for @profileStatistics.
+  ///
+  /// In bs, this message translates to:
+  /// **'পরিসংখ্যান'**
+  String get profileStatistics;
+
+  /// No description provided for @profileTotalWorkouts.
+  ///
+  /// In bs, this message translates to:
+  /// **'মোট ওয়ার্কআউট'**
+  String get profileTotalWorkouts;
+
+  /// No description provided for @profileCurrentStreak.
+  ///
+  /// In bs, this message translates to:
+  /// **'বর্তমান ধারা'**
+  String get profileCurrentStreak;
+
+  /// No description provided for @profileLongestStreak.
+  ///
+  /// In bs, this message translates to:
+  /// **'সর্বোচ্চ ধারা'**
+  String get profileLongestStreak;
+
+  /// No description provided for @profileCaloriesBurned.
+  ///
+  /// In bs, this message translates to:
+  /// **'পোড়া ক্যালোরি'**
+  String get profileCaloriesBurned;
+
+  /// No description provided for @profileWaterIntake.
+  ///
+  /// In bs, this message translates to:
+  /// **'পানি গ্রহণ'**
+  String get profileWaterIntake;
+
+  /// No description provided for @profileWeightLost.
+  ///
+  /// In bs, this message translates to:
+  /// **'ওজন হ্রাস'**
+  String get profileWeightLost;
+
+  /// No description provided for @profileDays.
+  ///
+  /// In bs, this message translates to:
+  /// **'দিন'**
+  String get profileDays;
+
+  /// No description provided for @profileNotSet.
+  ///
+  /// In bs, this message translates to:
+  /// **'নির্ধারিত নয়'**
+  String get profileNotSet;
+
+  /// No description provided for @profileIncomplete.
+  ///
+  /// In bs, this message translates to:
+  /// **'এটি দেখতে প্রোফাইল সম্পূর্ণ করুন'**
+  String get profileIncomplete;
+
+  /// No description provided for @settingsDarkMode.
+  ///
+  /// In bs, this message translates to:
+  /// **'ডার্ক মোড'**
+  String get settingsDarkMode;
+
+  /// No description provided for @settingsLanguage.
+  ///
+  /// In bs, this message translates to:
+  /// **'ভাষা'**
+  String get settingsLanguage;
+
+  /// No description provided for @settingsNotifications.
+  ///
+  /// In bs, this message translates to:
+  /// **'বিজ্ঞপ্তি'**
+  String get settingsNotifications;
+
+  /// No description provided for @settingsBackupRestore.
+  ///
+  /// In bs, this message translates to:
+  /// **'ব্যাকআপ ও রিস্টোর'**
+  String get settingsBackupRestore;
+
+  /// No description provided for @settingsAbout.
+  ///
+  /// In bs, this message translates to:
+  /// **'সম্পর্কে'**
+  String get settingsAbout;
+
+  /// No description provided for @settingsLogout.
+  ///
+  /// In bs, this message translates to:
+  /// **'লগ আউট'**
+  String get settingsLogout;
+
+  /// No description provided for @settingsComingSoon.
+  ///
+  /// In bs, this message translates to:
+  /// **'এই ফিচারটি শীঘ্রই আসছে'**
+  String get settingsComingSoon;
+
+  /// No description provided for @settingsLastBackup.
+  ///
+  /// In bs, this message translates to:
+  /// **'সর্বশেষ ব্যাকআপ'**
+  String get settingsLastBackup;
+
+  /// No description provided for @settingsNever.
+  ///
+  /// In bs, this message translates to:
+  /// **'কখনোই নয়'**
+  String get settingsNever;
+
+  /// No description provided for @settingsAboutTitle.
+  ///
+  /// In bs, this message translates to:
+  /// **'NexFit সম্পর্কে'**
+  String get settingsAboutTitle;
+
+  /// No description provided for @settingsAboutMessage.
+  ///
+  /// In bs, this message translates to:
+  /// **'NexFit একটি প্রিমিয়াম, অফলাইন-প্রথম ফিটনেস সহচর যা আপনার ওয়ার্কআউট, পুষ্টি, শারীরিক পরিমাপ ও দৈনিক অগ্রগতি ট্র্যাক করে।'**
+  String get settingsAboutMessage;
+
+  /// No description provided for @settingsAboutVersion.
+  ///
+  /// In bs, this message translates to:
+  /// **'সংস্করণ'**
+  String get settingsAboutVersion;
+
+  /// No description provided for @editProfileTitle.
+  ///
+  /// In bs, this message translates to:
+  /// **'প্রোফাইল সম্পাদনা'**
+  String get editProfileTitle;
+
+  /// No description provided for @editName.
+  ///
+  /// In bs, this message translates to:
+  /// **'নাম'**
+  String get editName;
+
+  /// No description provided for @editNameHint.
+  ///
+  /// In bs, this message translates to:
+  /// **'আপনার পূর্ণ নাম'**
+  String get editNameHint;
+
+  /// No description provided for @editDateOfBirth.
+  ///
+  /// In bs, this message translates to:
+  /// **'জন্ম তারিখ'**
+  String get editDateOfBirth;
+
+  /// No description provided for @editCountry.
+  ///
+  /// In bs, this message translates to:
+  /// **'দেশ'**
+  String get editCountry;
+
+  /// No description provided for @editCountryHint.
+  ///
+  /// In bs, this message translates to:
+  /// **'আপনার দেশ'**
+  String get editCountryHint;
+
+  /// No description provided for @editLanguage.
+  ///
+  /// In bs, this message translates to:
+  /// **'ভাষা'**
+  String get editLanguage;
+
+  /// No description provided for @editLanguageBangla.
+  ///
+  /// In bs, this message translates to:
+  /// **'বাংলা'**
+  String get editLanguageBangla;
+
+  /// No description provided for @editLanguageEnglish.
+  ///
+  /// In bs, this message translates to:
+  /// **'ইংরেজি'**
+  String get editLanguageEnglish;
+
+  /// No description provided for @editHeightCm.
+  ///
+  /// In bs, this message translates to:
+  /// **'উচ্চতা (সেমি)'**
+  String get editHeightCm;
+
+  /// No description provided for @editWeightKg.
+  ///
+  /// In bs, this message translates to:
+  /// **'ওজন (কেজি)'**
+  String get editWeightKg;
+
+  /// No description provided for @editTargetWeightKg.
+  ///
+  /// In bs, this message translates to:
+  /// **'টার্গেট ওজন (কেজি)'**
+  String get editTargetWeightKg;
+
+  /// No description provided for @editProfilePhoto.
+  ///
+  /// In bs, this message translates to:
+  /// **'প্রোফাইল ছবি'**
+  String get editProfilePhoto;
+
+  /// No description provided for @editChangePhoto.
+  ///
+  /// In bs, this message translates to:
+  /// **'ছবি পরিবর্তন করুন'**
+  String get editChangePhoto;
+
+  /// No description provided for @editTakePhoto.
+  ///
+  /// In bs, this message translates to:
+  /// **'ছবি তুলুন'**
+  String get editTakePhoto;
+
+  /// No description provided for @editChooseFromGallery.
+  ///
+  /// In bs, this message translates to:
+  /// **'গ্যালারি থেকে বেছে নিন'**
+  String get editChooseFromGallery;
+
+  /// No description provided for @editRemovePhoto.
+  ///
+  /// In bs, this message translates to:
+  /// **'ছবি মুছে ফেলুন'**
+  String get editRemovePhoto;
+
+  /// No description provided for @editProfileSaved.
+  ///
+  /// In bs, this message translates to:
+  /// **'প্রোফাইল আপডেট হয়েছে'**
+  String get editProfileSaved;
+
+  /// No description provided for @editProfileSavedSubtitle.
+  ///
+  /// In bs, this message translates to:
+  /// **'আপনার প্রোফাইল সফলভাবে আপডেট হয়েছে।'**
+  String get editProfileSavedSubtitle;
+
+  /// No description provided for @editSelectGender.
+  ///
+  /// In bs, this message translates to:
+  /// **'লিঙ্গ নির্বাচন করুন'**
+  String get editSelectGender;
+
+  /// No description provided for @genderMale.
+  ///
+  /// In bs, this message translates to:
+  /// **'পুরুষ'**
+  String get genderMale;
+
+  /// No description provided for @genderFemale.
+  ///
+  /// In bs, this message translates to:
+  /// **'নারী'**
+  String get genderFemale;
+
+  /// No description provided for @genderOther.
+  ///
+  /// In bs, this message translates to:
+  /// **'অন্যান্য'**
+  String get genderOther;
+
+  /// No description provided for @goalWeightLoss.
+  ///
+  /// In bs, this message translates to:
+  /// **'ওজন কমানো'**
+  String get goalWeightLoss;
+
+  /// No description provided for @goalWeightGain.
+  ///
+  /// In bs, this message translates to:
+  /// **'ওজন বাড়ানো'**
+  String get goalWeightGain;
+
+  /// No description provided for @goalMaintainWeight.
+  ///
+  /// In bs, this message translates to:
+  /// **'ওজন বজায় রাখা'**
+  String get goalMaintainWeight;
+
+  /// No description provided for @goalMuscleGain.
+  ///
+  /// In bs, this message translates to:
+  /// **'মাসল গেইন'**
+  String get goalMuscleGain;
+
+  /// No description provided for @goalGeneralFitness.
+  ///
+  /// In bs, this message translates to:
+  /// **'সাধারণ ফিটনেস'**
+  String get goalGeneralFitness;
+
+  /// No description provided for @activitySedentary.
+  ///
+  /// In bs, this message translates to:
+  /// **'অচল'**
+  String get activitySedentary;
+
+  /// No description provided for @activityLight.
+  ///
+  /// In bs, this message translates to:
+  /// **'সামান্য সক্রিয়'**
+  String get activityLight;
+
+  /// No description provided for @activityModerate.
+  ///
+  /// In bs, this message translates to:
+  /// **'মাঝারি সক্রিয়'**
+  String get activityModerate;
+
+  /// No description provided for @activityVeryActive.
+  ///
+  /// In bs, this message translates to:
+  /// **'খুব সক্রিয়'**
+  String get activityVeryActive;
+
+  /// No description provided for @activityAthlete.
+  ///
+  /// In bs, this message translates to:
+  /// **'অ্যাথলিট'**
+  String get activityAthlete;
+
+  /// No description provided for @providerEmail.
+  ///
+  /// In bs, this message translates to:
+  /// **'ইমেইল'**
+  String get providerEmail;
+
+  /// No description provided for @providerGoogle.
+  ///
+  /// In bs, this message translates to:
+  /// **'গুগল'**
+  String get providerGoogle;
+
+  /// No description provided for @bmiSuggestionUnderweight.
+  ///
+  /// In bs, this message translates to:
+  /// **'সুস্থ ওজনে পৌঁছাতে ক্যালোরি সাপ্লাস ও শক্তি প্রশিক্ষণ বিবেচনা করুন।'**
+  String get bmiSuggestionUnderweight;
+
+  /// No description provided for @bmiSuggestionNormal.
+  ///
+  /// In bs, this message translates to:
+  /// **'দারুণ! সুষম খাদ্য ও নিয়মিত ব্যায়াম দিয়ে ওজন বজায় রাখুন।'**
+  String get bmiSuggestionNormal;
+
+  /// No description provided for @bmiSuggestionOverweight.
+  ///
+  /// In bs, this message translates to:
+  /// **'নিয়মিত কার্ডিও ও ক্যালোরি ঘাটতি সুস্থ ওজনে পৌঁছাতে সাহায্য করবে।'**
+  String get bmiSuggestionOverweight;
+
+  /// No description provided for @bmiSuggestionObese.
+  ///
+  /// In bs, this message translates to:
+  /// **'স্বাস্থ্য বিশেষজ্ঞের পরামর্শ নিন এবং ধীরে ধীরে ওজন কমানোর পরিকল্পনা অনুসরণ করুন।'**
+  String get bmiSuggestionObese;
+
+  /// No description provided for @profileNameRequired.
+  ///
+  /// In bs, this message translates to:
+  /// **'নাম প্রয়োজন'**
+  String get profileNameRequired;
+
+  /// No description provided for @profileHeightInvalid.
+  ///
+  /// In bs, this message translates to:
+  /// **'৬০ থেকে ২৫০ সেমি এর মধ্যে উচ্চতা লিখুন'**
+  String get profileHeightInvalid;
+
+  /// No description provided for @profileWeightInvalid.
+  ///
+  /// In bs, this message translates to:
+  /// **'২০ থেকে ৪০০ কেজি এর মধ্যে ওজন লিখুন'**
+  String get profileWeightInvalid;
+
+  /// No description provided for @profileTargetWeightInvalid.
+  ///
+  /// In bs, this message translates to:
+  /// **'২০ থেকে ৪০০ কেজি এর মধ্যে টার্গেট ওজন লিখুন'**
+  String get profileTargetWeightInvalid;
+
+  /// No description provided for @profileBirthInvalid.
+  ///
+  /// In bs, this message translates to:
+  /// **'সঠিক জন্ম তারিখ নির্বাচন করুন'**
+  String get profileBirthInvalid;
+
+  /// No description provided for @profileCountryInvalid.
+  ///
+  /// In bs, this message translates to:
+  /// **'দেশের নাম খুব দীর্ঘ'**
+  String get profileCountryInvalid;
+
+  /// No description provided for @profilePhotoChanged.
+  ///
+  /// In bs, this message translates to:
+  /// **'প্রোফাইল ছবি আপডেট হয়েছে'**
+  String get profilePhotoChanged;
+
+  /// No description provided for @profilePhotoRemoved.
+  ///
+  /// In bs, this message translates to:
+  /// **'প্রোফাইল ছবি মুছে ফেলা হয়েছে'**
+  String get profilePhotoRemoved;
+
+  /// No description provided for @profilePhotoError.
+  ///
+  /// In bs, this message translates to:
+  /// **'প্রোফাইল ছবি আপডেট করা যায়নি'**
+  String get profilePhotoError;
+
+  /// No description provided for @commonClear.
+  ///
+  /// In bs, this message translates to:
+  /// **'মুছুন'**
+  String get commonClear;
+
+  /// No description provided for @workoutHistory.
+  ///
+  /// In bs, this message translates to:
+  /// **'ওয়ার্কআউট ইতিহাস'**
+  String get workoutHistory;
+
+  /// No description provided for @workoutSearchHint.
+  ///
+  /// In bs, this message translates to:
+  /// **'ওয়ার্কআউট, ব্যায়াম খুঁজুন...'**
+  String get workoutSearchHint;
+
+  /// No description provided for @workoutSearchTitle.
+  ///
+  /// In bs, this message translates to:
+  /// **'ওয়ার্কআউট খুঁজুন'**
+  String get workoutSearchTitle;
+
+  /// No description provided for @workoutSearchEmptyTitle.
+  ///
+  /// In bs, this message translates to:
+  /// **'লাইব্রেরি খুঁজুন'**
+  String get workoutSearchEmptyTitle;
+
+  /// No description provided for @workoutSearchEmptySubtitle.
+  ///
+  /// In bs, this message translates to:
+  /// **'নিখুঁত ওয়ার্কআউট পেতে কীওয়ার্ড লিখুন বা ফিল্টার ব্যবহার করুন।'**
+  String get workoutSearchEmptySubtitle;
+
+  /// No description provided for @workoutRecommended.
+  ///
+  /// In bs, this message translates to:
+  /// **'আপনার জন্য সুপারিশকৃত'**
+  String get workoutRecommended;
+
+  /// No description provided for @workoutPopular.
+  ///
+  /// In bs, this message translates to:
+  /// **'জনপ্রিয় ওয়ার্কআউট'**
+  String get workoutPopular;
+
+  /// No description provided for @workoutRecent.
+  ///
+  /// In bs, this message translates to:
+  /// **'সম্প্রতি সম্পন্ন'**
+  String get workoutRecent;
+
+  /// No description provided for @workoutFavorites.
+  ///
+  /// In bs, this message translates to:
+  /// **'পছন্দের তালিকা'**
+  String get workoutFavorites;
+
+  /// No description provided for @workoutEmptyTitle.
+  ///
+  /// In bs, this message translates to:
+  /// **'এখনও কোনো ওয়ার্কআউট নেই'**
+  String get workoutEmptyTitle;
+
+  /// No description provided for @workoutEmptySubtitle.
+  ///
+  /// In bs, this message translates to:
+  /// **'আপনার ওয়ার্কআউট লাইব্রেরি এখানে দেখা যাবে।'**
+  String get workoutEmptySubtitle;
+
+  /// No description provided for @workoutContinueTitle.
+  ///
+  /// In bs, this message translates to:
+  /// **'ওয়ার্কআউট চালিয়ে যান'**
+  String get workoutContinueTitle;
+
+  /// No description provided for @workoutResume.
+  ///
+  /// In bs, this message translates to:
+  /// **'চালিয়ে যান'**
+  String get workoutResume;
+
+  /// No description provided for @workoutExercises.
+  ///
+  /// In bs, this message translates to:
+  /// **'ব্যায়াম'**
+  String get workoutExercises;
+
+  /// No description provided for @workoutExercise.
+  ///
+  /// In bs, this message translates to:
+  /// **'ব্যায়াম'**
+  String get workoutExercise;
+
+  /// No description provided for @workoutRoutine.
+  ///
+  /// In bs, this message translates to:
+  /// **'রুটিন'**
+  String get workoutRoutine;
+
+  /// No description provided for @workoutAbout.
+  ///
+  /// In bs, this message translates to:
+  /// **'এই ওয়ার্কআউট সম্পর্কে'**
+  String get workoutAbout;
+
+  /// No description provided for @workoutMuscles.
+  ///
+  /// In bs, this message translates to:
+  /// **'যে পেশি কাজ করে'**
+  String get workoutMuscles;
+
+  /// No description provided for @workoutEquipment.
+  ///
+  /// In bs, this message translates to:
+  /// **'প্রয়োজনীয় সরঞ্জাম'**
+  String get workoutEquipment;
+
+  /// No description provided for @workoutStartNow.
+  ///
+  /// In bs, this message translates to:
+  /// **'ওয়ার্কআউট শুরু করুন'**
+  String get workoutStartNow;
+
+  /// No description provided for @workoutDifficultyBeginner.
+  ///
+  /// In bs, this message translates to:
+  /// **'শিক্ষানবিস'**
+  String get workoutDifficultyBeginner;
+
+  /// No description provided for @workoutDifficultyIntermediate.
+  ///
+  /// In bs, this message translates to:
+  /// **'মাঝারি'**
+  String get workoutDifficultyIntermediate;
+
+  /// No description provided for @workoutDifficultyAdvanced.
+  ///
+  /// In bs, this message translates to:
+  /// **'অগ্রসর'**
+  String get workoutDifficultyAdvanced;
+
+  /// No description provided for @workoutSets.
+  ///
+  /// In bs, this message translates to:
+  /// **'সেট'**
+  String get workoutSets;
+
+  /// No description provided for @workoutReps.
+  ///
+  /// In bs, this message translates to:
+  /// **'রিপ'**
+  String get workoutReps;
+
+  /// No description provided for @workoutSeconds.
+  ///
+  /// In bs, this message translates to:
+  /// **'সেকেন্ড'**
+  String get workoutSeconds;
+
+  /// No description provided for @workoutTimed.
+  ///
+  /// In bs, this message translates to:
+  /// **'সময়ভিত্তিক'**
+  String get workoutTimed;
+
+  /// No description provided for @workoutRest.
+  ///
+  /// In bs, this message translates to:
+  /// **'বিশ্রাম'**
+  String get workoutRest;
+
+  /// No description provided for @workoutRestTitle.
+  ///
+  /// In bs, this message translates to:
+  /// **'বিশ্রাম'**
+  String get workoutRestTitle;
+
+  /// No description provided for @workoutRestTime.
+  ///
+  /// In bs, this message translates to:
+  /// **'বিশ্রামের সময়'**
+  String get workoutRestTime;
+
+  /// No description provided for @workoutSkipRest.
+  ///
+  /// In bs, this message translates to:
+  /// **'বিশ্রাম এড়িয়ে যান'**
+  String get workoutSkipRest;
+
+  /// No description provided for @workoutEndRest.
+  ///
+  /// In bs, this message translates to:
+  /// **'বিশ্রাম শেষ করুন'**
+  String get workoutEndRest;
+
+  /// No description provided for @workoutComplete.
+  ///
+  /// In bs, this message translates to:
+  /// **'সম্পন্ন করুন'**
+  String get workoutComplete;
+
+  /// No description provided for @workoutFinish.
+  ///
+  /// In bs, this message translates to:
+  /// **'সব শেষ!'**
+  String get workoutFinish;
+
+  /// No description provided for @workoutExitTitle.
+  ///
+  /// In bs, this message translates to:
+  /// **'ওয়ার্কআউট ছেড়ে যাবেন?'**
+  String get workoutExitTitle;
+
+  /// No description provided for @workoutExitMessage.
+  ///
+  /// In bs, this message translates to:
+  /// **'আপনার অগ্রগতি সংরক্ষিত থাকবে, পরে আবার চালিয়ে নিতে পারবেন।'**
+  String get workoutExitMessage;
+
+  /// No description provided for @workoutExit.
+  ///
+  /// In bs, this message translates to:
+  /// **'ছেড়ে যান'**
+  String get workoutExit;
+
+  /// No description provided for @workoutDuration.
+  ///
+  /// In bs, this message translates to:
+  /// **'সময়কাল'**
+  String get workoutDuration;
+
+  /// No description provided for @workoutCaloriesBurned.
+  ///
+  /// In bs, this message translates to:
+  /// **'পোড়া ক্যালোরি'**
+  String get workoutCaloriesBurned;
+
+  /// No description provided for @workoutTotalWorkouts.
+  ///
+  /// In bs, this message translates to:
+  /// **'ওয়ার্কআউট'**
+  String get workoutTotalWorkouts;
+
+  /// No description provided for @workoutNoHistory.
+  ///
+  /// In bs, this message translates to:
+  /// **'এখনও কোনো ওয়ার্কআউট নেই'**
+  String get workoutNoHistory;
+
+  /// No description provided for @workoutNoHistorySubtitle.
+  ///
+  /// In bs, this message translates to:
+  /// **'একটি ওয়ার্কআউট সম্পন্ন করুন, এটি এখানে দেখা যাবে।'**
+  String get workoutNoHistorySubtitle;
+
+  /// No description provided for @workoutCompleteTitle.
+  ///
+  /// In bs, this message translates to:
+  /// **'ওয়ার্কআউট সম্পন্ন!'**
+  String get workoutCompleteTitle;
+
+  /// No description provided for @workoutCompleteSubtitle.
+  ///
+  /// In bs, this message translates to:
+  /// **'দারুণ কাজ! এই ধারাবাহিকতা বজায় রাখুন।'**
+  String get workoutCompleteSubtitle;
+
+  /// No description provided for @workoutNewAchievements.
+  ///
+  /// In bs, this message translates to:
+  /// **'অর্জন উন্মোচিত হয়েছে'**
+  String get workoutNewAchievements;
+
+  /// No description provided for @workoutDone.
+  ///
+  /// In bs, this message translates to:
+  /// **'সম্পন্ন'**
+  String get workoutDone;
+
+  /// No description provided for @workoutFilterAll.
+  ///
+  /// In bs, this message translates to:
+  /// **'সব'**
+  String get workoutFilterAll;
+
+  /// No description provided for @workoutFilterDifficulty.
+  ///
+  /// In bs, this message translates to:
+  /// **'স্তর'**
+  String get workoutFilterDifficulty;
+
+  /// No description provided for @workoutFilterDuration.
+  ///
+  /// In bs, this message translates to:
+  /// **'সময়কাল'**
+  String get workoutFilterDuration;
+
+  /// No description provided for @workoutFilterShort.
+  ///
+  /// In bs, this message translates to:
+  /// **'সংক্ষিপ্ত (<২০ মিনিট)'**
+  String get workoutFilterShort;
+
+  /// No description provided for @workoutFilterMedium.
+  ///
+  /// In bs, this message translates to:
+  /// **'মাঝারি (২০-৪০ মিনিট)'**
+  String get workoutFilterMedium;
+
+  /// No description provided for @workoutFilterLong.
+  ///
+  /// In bs, this message translates to:
+  /// **'দীর্ঘ (৪০+ মিনিট)'**
+  String get workoutFilterLong;
+
+  /// No description provided for @workoutFilterGoal.
+  ///
+  /// In bs, this message translates to:
+  /// **'লক্ষ্য'**
+  String get workoutFilterGoal;
+
+  /// No description provided for @workoutFilterEquipment.
+  ///
+  /// In bs, this message translates to:
+  /// **'সরঞ্জাম'**
+  String get workoutFilterEquipment;
+
+  /// No description provided for @workoutClearFilters.
+  ///
+  /// In bs, this message translates to:
+  /// **'ফিল্টার মুছুন'**
+  String get workoutClearFilters;
+}
+
+class _AppLocalizationsDelegate
+    extends LocalizationsDelegate<AppLocalizations> {
+  const _AppLocalizationsDelegate();
+
+  @override
+  Future<AppLocalizations> load(Locale locale) {
+    return SynchronousFuture<AppLocalizations>(lookupAppLocalizations(locale));
+  }
+
+  @override
+  bool isSupported(Locale locale) =>
+      <String>['bs', 'en'].contains(locale.languageCode);
+
+  @override
+  bool shouldReload(_AppLocalizationsDelegate old) => false;
+}
+
+AppLocalizations lookupAppLocalizations(Locale locale) {
+  // Lookup logic when only language code is specified.
+  switch (locale.languageCode) {
+    case 'bs':
+      return AppLocalizationsBs();
+    case 'en':
+      return AppLocalizationsEn();
+  }
+
+  throw FlutterError(
+    'AppLocalizations.delegate failed to load unsupported locale "$locale". This is likely '
+    'an issue with the localizations generation tool. Please file an issue '
+    'on GitHub with a reproducible sample app and the gen-l10n configuration '
+    'that was used.',
+  );
+}
