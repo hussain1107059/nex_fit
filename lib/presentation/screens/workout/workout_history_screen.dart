@@ -174,7 +174,7 @@ class _SessionTile extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final AppLocalizations l10n = context.l10n;
-    final DateTime? endedAt = history.endedAt ?? history.startedAt;
+    final DateTime endedAt = history.endedAt ?? history.startedAt;
 
     return AppCard(
       onPressed: () {
@@ -245,8 +245,7 @@ class _SessionTile extends StatelessWidget {
     );
   }
 
-  String _formatDate(DateTime? date) {
-    if (date == null) return '';
+  String _formatDate(DateTime date) {
     final DateTime now = DateTime.now();
     final DateTime day = DateTime(date.year, date.month, date.day);
     final DateTime today = DateTime(now.year, now.month, now.day);
@@ -258,8 +257,7 @@ class _SessionTile extends StatelessWidget {
         date.minute.toString().padLeft(2, '0');
     final String time = '$hour:$minute';
 
-    if (difference == 0) return '$time';
-    if (difference == 1) return '$time';
+    if (difference == 0 || difference == 1) return time;
     final String month = switch (date.month) {
       1 => 'Jan',
       2 => 'Feb',

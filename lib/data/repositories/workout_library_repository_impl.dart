@@ -1,5 +1,3 @@
-import 'package:logging/logging.dart';
-
 import '../../domain/entities/common_enums.dart';
 import '../../domain/entities/user_profile.dart';
 import '../../domain/entities/workout.dart';
@@ -21,43 +19,34 @@ import '../services/workout_seeder.dart';
 /// Aggregates the offline workout library from the low level repositories.
 class WorkoutLibraryRepositoryImpl implements WorkoutLibraryRepository {
   WorkoutLibraryRepositoryImpl({
-    required WorkoutRepository workoutRepository,
-    required WorkoutCategoryRepository categoryRepository,
-    required WorkoutHistoryRepository historyRepository,
-    required WorkoutExerciseRepository workoutExerciseRepository,
-    required ExerciseHistoryRepository exerciseHistoryRepository,
-    required UserFitnessProfileRepository userProfileRepository,
-    required WorkoutSeeder seeder,
-    Logger? logger,
-  }) : _workoutRepository = workoutRepository,
-       _categoryRepository = categoryRepository,
-       _historyRepository = historyRepository,
-       _workoutExerciseRepository = workoutExerciseRepository,
-       _exerciseHistoryRepository = exerciseHistoryRepository,
-       _userProfileRepository = userProfileRepository,
-       _seeder = seeder,
-       _logger = logger ?? Logger('WorkoutLibraryRepository');
+    required this.workoutRepository,
+    required this.categoryRepository,
+    required this.historyRepository,
+    required this.workoutExerciseRepository,
+    required this.exerciseHistoryRepository,
+    required this.userProfileRepository,
+    required this.seeder,
+  });
 
   static const int _collectionLimit = 6;
 
-  final WorkoutRepository _workoutRepository;
-  final WorkoutCategoryRepository _categoryRepository;
-  final WorkoutHistoryRepository _historyRepository;
-  final WorkoutExerciseRepository _workoutExerciseRepository;
-  final ExerciseHistoryRepository _exerciseHistoryRepository;
-  final UserFitnessProfileRepository _userProfileRepository;
-  final WorkoutSeeder _seeder;
-  final Logger _logger;
+  final WorkoutRepository workoutRepository;
+  final WorkoutCategoryRepository categoryRepository;
+  final WorkoutHistoryRepository historyRepository;
+  final WorkoutExerciseRepository workoutExerciseRepository;
+  final ExerciseHistoryRepository exerciseHistoryRepository;
+  final UserFitnessProfileRepository userProfileRepository;
+  final WorkoutSeeder seeder;
 
   @override
-  Future<void> ensureSeeded(String userId) => _seeder.seedForUser(userId);
+  Future<void> ensureSeeded(String userId) => seeder.seedForUser(userId);
 
   @override
   Future<WorkoutLibraryData> loadLibrary(String userId) async {
     await ensureSeeded(userId);
 
-    final List<WorkoutCategory> categories = await _categoryRepository.getAll();
-    final List<Workout> workouts = await _workoutRepository.getByUserId(
+    final List<WorkoutCategory> categories = await categoryRepository.getAll();
+    final List<Workout> workouts = await workoutRepository.getByUserId(
       userId,
     );
 
@@ -65,18 +54,18 @@ class WorkoutLibraryRepositoryImpl implements WorkoutLibraryRepository {
       return const WorkoutLibraryData();
     }
 
-    final List<Workout> favorites = await _workoutRepository.getFavorites(
+    final List<Workout> favorites = await workoutRepository.getFavorites(
       userId,
     );
-    final List<int> popularIds = await _historyRepository.getPopularWorkoutIds(
-      userId,
-      limit: _collectionLimit,
-    );
-    final List<int> recentIds = await _historyRepository.getRecentWorkoutIds(
+    final List<int> popularIds = await historyRepository.getPopularWorkoutIds(
       userId,
       limit: _collectionLimit,
     );
-    final WorkoutHistory? inProgress = await _historyRepository.getInProgress(
+    final List<int> recentIds = await historyRepository.getRecentWorkoutIds(
+      userId,
+      limit: _collectionLimit,
+    );
+    final WorkoutHistory? inProgress = await historyRepository.getInProgress(
       userId,
     );
 
@@ -86,11 +75,11 @@ class WorkoutLibraryRepositoryImpl implements WorkoutLibraryRepository {
     };
 
     final List<Workout> popular = popularIds
-        .map(byId.get)
+        .map((int id) => byId[id])
         .whereType<Workout>()
         .toList();
     final List<Workout> recent = recentIds
-        .map(byId.get)
+        .map((int id) => byId[id])
         .whereType<Workout>()
         .toList();
     final List<Workout> recommended = await _recommendedFor(
@@ -105,10 +94,10 @@ class WorkoutLibraryRepositoryImpl implements WorkoutLibraryRepository {
       final Workout? workout = byId[inProgress.workoutId];
       if (workout != null) {
         final int completed =
-            await _exerciseHistoryRepository.getByWorkoutHistory(
+            await exerciseHistoryRepository.getByWorkoutHistory(
           inProgress.id!,
         ).then((List<dynamic> rows) => rows.length);
-        final int total = await _workoutExerciseRepository
+        final int total = await workoutExerciseRepository
             .getDetailsByWorkout(inProgress.workoutId!)
             .then((List<dynamic> rows) => rows.length);
         continueWorkout = ContinueWorkout(
@@ -137,7 +126,7 @@ class WorkoutLibraryRepositoryImpl implements WorkoutLibraryRepository {
     List<WorkoutCategory> categories,
     Map<int, Workout> byId,
   ) async {
-    final UserProfile? profile = await _userProfileRepository.getById(userId);
+    final UserProfile? profile = await userProfileRepository.getById(userId);
     final List<String> slugs = _goalCategorySlugs(profile?.fitnessGoal);
 
     final Set<int> goalCategoryIds = <int>{};
@@ -194,6 +183,8 @@ class WorkoutLibraryRepositoryImpl implements WorkoutLibraryRepository {
         return const <String>['muscle-gain', 'strength', 'beginner'];
       case GoalType.other:
         return const <String>['full-body', 'beginner', 'home-workout'];
+      case null:
+        return const <String>['full-body', 'beginner', 'home-workout'];
     }
   }
 
@@ -210,18 +201,18 @@ class WorkoutLibraryRepositoryImpl implements WorkoutLibraryRepository {
 
   @override
   Future<WorkoutDetail> getDetail(int workoutId) async {
-    final Workout? workout = await _workoutRepository.getById(workoutId);
+    final Workout? workout = await workoutRepository.getById(workoutId);
     if (workout == null) {
       throw StateError('Workout $workoutId does not exist');
     }
 
     WorkoutCategory? category;
     if (workout.categoryId != null) {
-      category = await _categoryRepository.getById(workout.categoryId!);
+      category = await categoryRepository.getById(workout.categoryId!);
     }
 
     final List<WorkoutExerciseDetail> exercises =
-        await _workoutExerciseRepository.getDetailsByWorkout(workoutId);
+        await workoutExerciseRepository.getDetailsByWorkout(workoutId);
     return WorkoutDetail(
       workout: workout,
       category: category,
@@ -231,7 +222,7 @@ class WorkoutLibraryRepositoryImpl implements WorkoutLibraryRepository {
 
   @override
   Future<List<Workout>> search(String userId, WorkoutFilter filter) async {
-    final List<Workout> all = await _workoutRepository.getByUserId(userId);
+    final List<Workout> all = await workoutRepository.getByUserId(userId);
     List<Workout> results = all;
 
     final String query = filter.query.trim().toLowerCase();
@@ -263,7 +254,7 @@ class WorkoutLibraryRepositoryImpl implements WorkoutLibraryRepository {
     }
 
     if (filter.categorySlug != null && filter.categorySlug!.isNotEmpty) {
-      final WorkoutCategory? category = await _categoryRepository.getBySlug(
+      final WorkoutCategory? category = await categoryRepository.getBySlug(
         filter.categorySlug!,
       );
       final int? categoryId = category?.id;
@@ -280,7 +271,7 @@ class WorkoutLibraryRepositoryImpl implements WorkoutLibraryRepository {
         GoalType.fromName(filter.goal),
       );
       final List<WorkoutCategory> categories =
-          await _categoryRepository.getAll();
+          await categoryRepository.getAll();
       final Set<int> ids = categories
           .where((WorkoutCategory category) => slugs.contains(category.slug))
           .map((WorkoutCategory category) => category.id!)
@@ -299,7 +290,7 @@ class WorkoutLibraryRepositoryImpl implements WorkoutLibraryRepository {
           .map((Workout workout) => workout.id!)
           .toList();
       final Map<int, List<WorkoutExerciseDetail>> details =
-          await _workoutExerciseRepository.getDetailsByWorkouts(ids);
+          await workoutExerciseRepository.getDetailsByWorkouts(ids);
       results = results.where((Workout workout) {
         final List<WorkoutExerciseDetail> exerciseDetails =
             details[workout.id!] ?? const <WorkoutExerciseDetail>[];
@@ -318,21 +309,21 @@ class WorkoutLibraryRepositoryImpl implements WorkoutLibraryRepository {
     String userId,
     String categorySlug,
   ) async {
-    final WorkoutCategory? category = await _categoryRepository.getBySlug(
+    final WorkoutCategory? category = await categoryRepository.getBySlug(
       categorySlug,
     );
     if (category == null) return const <Workout>[];
-    return _workoutRepository.getByCategoryForUser(userId, category.id!);
+    return workoutRepository.getByCategoryForUser(userId, category.id!);
   }
 
   @override
   Future<bool> toggleFavorite(int workoutId) async {
-    final Workout? workout = await _workoutRepository.getById(workoutId);
+    final Workout? workout = await workoutRepository.getById(workoutId);
     if (workout == null) {
       throw StateError('Workout $workoutId does not exist');
     }
     final bool next = !workout.isFavorite;
-    await _workoutRepository.setFavorite(workoutId, next);
+    await workoutRepository.setFavorite(workoutId, next);
     return next;
   }
 }

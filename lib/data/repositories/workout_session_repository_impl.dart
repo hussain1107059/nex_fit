@@ -1,5 +1,3 @@
-import 'package:logging/logging.dart';
-
 import '../../domain/entities/achievement.dart';
 import '../../domain/entities/common_enums.dart';
 import '../../domain/entities/daily_progress.dart';
@@ -16,25 +14,18 @@ import '../../domain/repositories/workout_session_repository.dart';
 /// SQLite backed session lifecycle: start + complete with all side-effects.
 class WorkoutSessionRepositoryImpl implements WorkoutSessionRepository {
   WorkoutSessionRepositoryImpl({
-    required WorkoutHistoryRepository workoutHistoryRepository,
-    required ExerciseHistoryRepository exerciseHistoryRepository,
-    required DailyProgressRepository dailyProgressRepository,
-    required StreakRepository streakRepository,
-    required AchievementRepository achievementRepository,
-    Logger? logger,
-  }) : _workoutHistoryRepository = workoutHistoryRepository,
-       _exerciseHistoryRepository = exerciseHistoryRepository,
-       _dailyProgressRepository = dailyProgressRepository,
-       _streakRepository = streakRepository,
-       _achievementRepository = achievementRepository,
-       _logger = logger ?? Logger('WorkoutSessionRepository');
+    required this.workoutHistoryRepository,
+    required this.exerciseHistoryRepository,
+    required this.dailyProgressRepository,
+    required this.streakRepository,
+    required this.achievementRepository,
+  });
 
-  final WorkoutHistoryRepository _workoutHistoryRepository;
-  final ExerciseHistoryRepository _exerciseHistoryRepository;
-  final DailyProgressRepository _dailyProgressRepository;
-  final StreakRepository _streakRepository;
-  final AchievementRepository _achievementRepository;
-  final Logger _logger;
+  final WorkoutHistoryRepository workoutHistoryRepository;
+  final ExerciseHistoryRepository exerciseHistoryRepository;
+  final DailyProgressRepository dailyProgressRepository;
+  final StreakRepository streakRepository;
+  final AchievementRepository achievementRepository;
 
   @override
   Future<int> startSession({
@@ -42,7 +33,7 @@ class WorkoutSessionRepositoryImpl implements WorkoutSessionRepository {
     required int workoutId,
   }) async {
     final DateTime now = DateTime.now();
-    return _workoutHistoryRepository.insert(
+    return workoutHistoryRepository.insert(
       WorkoutHistory(
         userId: userId,
         workoutId: workoutId,
@@ -58,8 +49,9 @@ class WorkoutSessionRepositoryImpl implements WorkoutSessionRepository {
     required int historyId,
     required int durationMinutes,
     required double caloriesBurned,
+    required int totalExercises,
   }) async {
-    final WorkoutHistory? history = await _workoutHistoryRepository.getById(
+    final WorkoutHistory? history = await workoutHistoryRepository.getById(
       historyId,
     );
     if (history == null) {
@@ -67,7 +59,7 @@ class WorkoutSessionRepositoryImpl implements WorkoutSessionRepository {
     }
 
     final DateTime now = DateTime.now();
-    await _workoutHistoryRepository.update(
+    await workoutHistoryRepository.update(
       history.copyWith(
         endedAt: now,
         durationMinutes: durationMinutes,
@@ -77,11 +69,11 @@ class WorkoutSessionRepositoryImpl implements WorkoutSessionRepository {
     );
 
     final int exercisesCompleted = await _countExercises(historyId);
-    final int totalCompleted = await _workoutHistoryRepository.countCompleted(
+    final int totalCompleted = await workoutHistoryRepository.countCompleted(
       history.userId,
     );
     final double totalCalories =
-        await _workoutHistoryRepository.getTotalCaloriesBurned(history.userId);
+        await workoutHistoryRepository.getTotalCaloriesBurned(history.userId);
 
     await _updateDailyProgress(history.userId, durationMinutes, caloriesBurned);
     final Streak streak = await _updateWorkoutStreak(history.userId);
@@ -98,14 +90,14 @@ class WorkoutSessionRepositoryImpl implements WorkoutSessionRepository {
       durationMinutes: durationMinutes,
       caloriesBurned: caloriesBurned,
       exercisesCompleted: exercisesCompleted,
-      totalExercises: 0,
+      totalExercises: totalExercises,
       completedAt: now,
       newAchievements: unlocked,
     );
   }
 
   Future<int> _countExercises(int historyId) async {
-    final List<dynamic> rows = await _exerciseHistoryRepository
+    final List<dynamic> rows = await exerciseHistoryRepository
         .getByWorkoutHistory(historyId);
     return rows.length;
   }
@@ -117,11 +109,11 @@ class WorkoutSessionRepositoryImpl implements WorkoutSessionRepository {
   ) async {
     final DateTime now = DateTime.now();
     final DateTime today = DateTime(now.year, now.month, now.day);
-    final DailyProgress? current = await _dailyProgressRepository
+    final DailyProgress? current = await dailyProgressRepository
         .getByUserAndDate(userId, today);
 
     if (current == null) {
-      await _dailyProgressRepository.upsert(
+      await dailyProgressRepository.upsert(
         DailyProgress(
           userId: userId,
           progressDate: today,
@@ -134,7 +126,7 @@ class WorkoutSessionRepositoryImpl implements WorkoutSessionRepository {
       return;
     }
 
-    await _dailyProgressRepository.upsert(
+    await dailyProgressRepository.upsert(
       current.copyWith(
         caloriesBurned: current.caloriesBurned + caloriesBurned,
         workoutMinutes: current.workoutMinutes + durationMinutes,
@@ -146,7 +138,7 @@ class WorkoutSessionRepositoryImpl implements WorkoutSessionRepository {
   Future<Streak> _updateWorkoutStreak(String userId) async {
     final DateTime now = DateTime.now();
     final DateTime today = DateTime(now.year, now.month, now.day);
-    final Streak? existing = await _streakRepository.getByUserAndType(
+    final Streak? existing = await streakRepository.getByUserAndType(
       userId,
       StreakType.workout.name,
     );
@@ -162,7 +154,7 @@ class WorkoutSessionRepositoryImpl implements WorkoutSessionRepository {
         createdAt: now,
         updatedAt: now,
       );
-      await _streakRepository.upsert(streak);
+      await streakRepository.upsert(streak);
       return streak;
     }
 
@@ -191,7 +183,7 @@ class WorkoutSessionRepositoryImpl implements WorkoutSessionRepository {
       bestDate: longest > existing.longestStreak ? today : existing.bestDate,
       updatedAt: now,
     );
-    await _streakRepository.upsert(updated);
+    await streakRepository.upsert(updated);
     return updated;
   }
 
@@ -202,7 +194,7 @@ class WorkoutSessionRepositoryImpl implements WorkoutSessionRepository {
     required int currentStreak,
   }) async {
     final DateTime now = DateTime.now();
-    final List<Achievement> existing = await _achievementRepository.getByUserId(
+    final List<Achievement> existing = await achievementRepository.getByUserId(
       userId,
     );
     final Set<String> owned = existing
@@ -292,7 +284,7 @@ class WorkoutSessionRepositoryImpl implements WorkoutSessionRepository {
     final List<Achievement> unlocked = <Achievement>[];
     for (final Achievement achievement in candidates) {
       if (owned.contains(achievement.achievementType)) continue;
-      await _achievementRepository.insert(achievement);
+      await achievementRepository.insert(achievement);
       unlocked.add(achievement);
     }
     return unlocked;

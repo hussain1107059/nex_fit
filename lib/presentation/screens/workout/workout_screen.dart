@@ -3,12 +3,12 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
 import '../../../core/extensions/context_extensions.dart';
+import '../../../core/extensions/string_extensions.dart';
 import '../../../core/theme/app_radius.dart';
 import '../../../core/theme/app_spacing.dart';
 import '../../../core/widgets/cards/app_card.dart';
 import '../../../core/widgets/feedback/error_widget.dart';
 import '../../../core/widgets/feedback/loading_widget.dart';
-import '../../../core/widgets/layout/custom_app_bar.dart';
 import '../../../domain/entities/app_user.dart';
 import '../../../domain/entities/workout.dart';
 import '../../../domain/entities/workout_category.dart';

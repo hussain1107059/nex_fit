@@ -178,7 +178,7 @@ class _DetailContent extends ConsumerWidget {
                     const SizedBox(height: 8),
                     _ChipWrap(
                       items: detail.targetMuscles
-                          .map((String muscle) => muscle.capitalize)
+                          .map((String muscle) => muscle.capitalize())
                           .toList(),
                     ),
                   ],

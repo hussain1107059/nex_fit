@@ -1,7 +1,6 @@
 import 'package:logging/logging.dart';
 import 'package:sqflite/sqflite.dart' hide DatabaseException;
 
-import '../../domain/entities/common_enums.dart';
 import '../datasources/local/app_database.dart';
 import '../datasources/local/workout_seed_data.dart';
 import '../models/exercise_model.dart';
@@ -16,10 +15,9 @@ import '../models/workout_model.dart';
 /// account gets a personalised, editable library backed entirely by SQLite.
 class WorkoutSeeder {
   WorkoutSeeder({
-    required AppDatabase database,
+    required this._database,
     Logger? logger,
-  }) : _database = database,
-       _logger = logger ?? Logger('WorkoutSeeder');
+  }) : _logger = logger ?? Logger('WorkoutSeeder');
 
   final AppDatabase _database;
   final Logger _logger;

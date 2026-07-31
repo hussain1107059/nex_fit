@@ -45,6 +45,26 @@ final workoutDetailProvider =
       return ref.watch(workoutLibraryRepositoryProvider).getDetail(workoutId);
     });
 
+/// Every workout owned by a user.
+final workoutAllProvider =
+    FutureProvider.autoDispose.family<List<Workout>, String>((ref, userId) {
+      return ref.watch(workoutRepositoryProvider).getByUserId(userId);
+    });
+
+/// The user's favourite workouts.
+final workoutFavoritesProvider =
+    FutureProvider.autoDispose.family<List<Workout>, String>((ref, userId) {
+      return ref.watch(workoutRepositoryProvider).getFavorites(userId);
+    });
+
+/// All workouts inside a category slug for a user.
+final workoutCategoryWorkoutsProvider =
+    FutureProvider.autoDispose.family<List<Workout>, ({String userId, String slug})>(
+      (ref, params) => ref
+          .watch(workoutLibraryRepositoryProvider)
+          .getByCategory(params.userId, params.slug),
+    );
+
 /// Current text in the workout search field.
 final workoutSearchQueryProvider = StateProvider<String>((ref) => '');
 
@@ -315,6 +335,10 @@ class WorkoutPlayerController extends Notifier<WorkoutPlayerState?> {
       elapsedSeconds: elapsedSeconds,
       completedExercises: completed,
     );
+
+    if (first == null) {
+      await _finish();
+    }
   }
 
   /// Advances one wall-clock second of the session.
@@ -424,6 +448,7 @@ class WorkoutPlayerController extends Notifier<WorkoutPlayerState?> {
           historyId: current.historyId,
           durationMinutes: durationMinutes,
           caloriesBurned: calories,
+          totalExercises: current.detail.exercises.length,
         );
 
     state = current.copyWith(

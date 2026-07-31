@@ -1,4 +1,3 @@
-import '../entities/exercise_history.dart';
 import '../entities/workout_completion.dart';
 
 /// Manages the lifecycle of a workout session: starting a session, and
@@ -16,6 +15,6 @@ abstract interface class WorkoutSessionRepository {
     required int historyId,
     required int durationMinutes,
     required double caloriesBurned,
-    required List<ExerciseHistory> exerciseHistories,
+    required int totalExercises,
   });
 }

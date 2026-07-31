@@ -15,6 +15,7 @@ import '../../../domain/entities/common_enums.dart';
 import '../../../domain/entities/workout.dart';
 import '../../../domain/entities/workout_category.dart';
 import '../../../domain/entities/workout_filter.dart';
+import '../../../domain/entities/workout_library.dart';
 import '../../../l10n/app_localizations.dart';
 import '../../providers/auth_provider.dart';
 import '../../providers/workout_providers.dart';
@@ -90,29 +91,36 @@ class _BrowseBody extends ConsumerWidget {
       return const SizedBox.shrink();
     }
 
-    final FutureProvider<List<Workout>> source;
+    final AsyncValue<List<Workout>> async;
     if (args.favoritesOnly) {
-      source = FutureProvider.autoDispose<List<Workout>>(
-        (ref) => ref.watch(workoutRepositoryProvider).getFavorites(user.id),
-      );
+      async = ref.watch(workoutFavoritesProvider(user.id));
     } else if (args.categorySlug != null) {
-      final String slug = args.categorySlug!;
-      source = FutureProvider.autoDispose<List<Workout>>(
-        (ref) => ref
-            .watch(workoutLibraryRepositoryProvider)
-            .getByCategory(user.id, slug),
+      async = ref.watch(
+        workoutCategoryWorkoutsProvider(
+          (userId: user.id, slug: args.categorySlug!),
+        ),
       );
     } else {
-      source = FutureProvider.autoDispose<List<Workout>>(
-        (ref) => ref.watch(workoutRepositoryProvider).getByUserId(user.id),
-      );
+      async = ref.watch(workoutAllProvider(user.id));
     }
 
-    return ref.watch(source).when(
+    return async.when(
       data: (List<Workout> workouts) => _WorkoutResults(workouts: workouts),
       error: (Object error, StackTrace stackTrace) => ErrorWidget(
         title: context.l10n.errorDatabase,
-        onRetry: () => ref.invalidate(source),
+        onRetry: () {
+          if (args.favoritesOnly) {
+            ref.invalidate(workoutFavoritesProvider(user.id));
+          } else if (args.categorySlug != null) {
+            ref.invalidate(
+              workoutCategoryWorkoutsProvider(
+                (userId: user.id, slug: args.categorySlug!),
+              ),
+            );
+          } else {
+            ref.invalidate(workoutAllProvider(user.id));
+          }
+        },
       ),
       loading: () => const LoadingWidget(),
     );

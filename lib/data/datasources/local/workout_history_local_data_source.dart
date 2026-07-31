@@ -160,6 +160,27 @@ class WorkoutHistoryLocalDataSource extends BaseLocalDataSource {
     });
   }
 
+  Future<List<WorkoutHistory>> getByDateRange(
+    String userId,
+    DateTime start,
+    DateTime end,
+  ) {
+    return guard('get_by_date_range', () async {
+      final Database db = await dbConnection;
+      final List<Map<String, Object?>> rows = await db.query(
+        WorkoutHistoryModel.table,
+        where: 'user_id = ? AND started_at >= ? AND started_at < ?',
+        whereArgs: <Object?>[
+          userId,
+          start.millisecondsSinceEpoch,
+          end.millisecondsSinceEpoch,
+        ],
+        orderBy: 'started_at DESC',
+      );
+      return rows.map(WorkoutHistoryModel.fromMap).toList();
+    });
+  }
+
   Future<void> delete(int id) {
     return guard('delete', () async {
       final Database db = await dbConnection;

@@ -16,6 +16,7 @@ import '../../../domain/entities/workout_completion.dart';
 import '../../../domain/entities/workout_exercise_detail.dart';
 import '../../../l10n/app_localizations.dart';
 import '../../providers/workout_providers.dart';
+import '../../router/app_router.dart';
 
 /// Drives a single workout session with a live countdown.
 class WorkoutPlayerScreen extends ConsumerStatefulWidget {
@@ -60,14 +61,14 @@ class _WorkoutPlayerScreenState extends ConsumerState<WorkoutPlayerScreen> {
   }
 
   Future<void> _confirmExit() async {
-    final bool leave = await AppDialog.confirm(
+    final bool? leave = await AppDialog.confirm(
       context: context,
       title: context.l10n.workoutExitTitle,
       message: context.l10n.workoutExitMessage,
       confirmLabel: context.l10n.workoutExit,
       destructive: true,
     );
-    if (leave && mounted) {
+    if (leave == true && mounted) {
       _timer?.cancel();
       context.pop();
     }
