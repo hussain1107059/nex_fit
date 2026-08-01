@@ -15,9 +15,11 @@ import '../../../domain/entities/backup_metadata.dart';
 import '../../../domain/entities/backup_preview.dart';
 import '../../../domain/entities/common_enums.dart';
 import '../../../domain/entities/remote_backup_file.dart';
+import '../../../data/services/sync/sync_engine.dart';
 import '../../../injection/dependency_injection.dart';
 import '../../providers/backup_providers.dart';
 import '../../providers/settings_providers.dart';
+import '../../providers/sync_providers.dart';
 import 'widgets/settings_widgets.dart';
 
 /// Google Drive Backup & Restore: manual/automatic encrypted backups of the
@@ -58,6 +60,8 @@ class _BackupSettingsScreenState extends ConsumerState<BackupSettingsScreen> {
           _buildDriveCard(connected),
           const SizedBox(height: AppSpacing.sm),
           _buildBackupAction(ui, canBackup),
+          const SizedBox(height: AppSpacing.sm),
+          _buildSyncStatusCard(),
           const SizedBox(height: AppSpacing.lg),
           SettingsSectionTitle(context.l10n.settingsAutoBackup),
           SettingsCard(
@@ -290,6 +294,40 @@ class _BackupSettingsScreenState extends ConsumerState<BackupSettingsScreen> {
             onPressed: canBackup ? _backupNow : null,
             icon: const Icon(Icons.backup_rounded),
             label: Text(context.l10n.settingsBackupNow),
+          ),
+        ),
+      ],
+    );
+  }
+
+  Widget _buildSyncStatusCard() {
+    final SyncUiState sync = ref.watch(syncControllerProvider);
+    final SyncQueueSnapshot? snapshot = sync.snapshot;
+
+    final String status = sync.isSyncing
+        ? context.l10n.settingsSyncInProgress
+        : snapshot == null
+        ? context.l10n.settingsSyncNever
+        : snapshot.isClean
+        ? context.l10n.settingsSyncHealthy
+        : '${snapshot.pending + snapshot.failed} '
+              '${context.l10n.settingsSyncPending}';
+
+    return SettingsCard(
+      children: [
+        SettingsTile(
+          icon: Icons.sync_rounded,
+          title: context.l10n.settingsSyncStatus,
+          subtitle: status,
+          showChevron: false,
+          trailing: FilledButton.tonalIcon(
+            onPressed: sync.isSyncing
+                ? null
+                : () => ref.read(syncControllerProvider.notifier).runSync(),
+            icon: Icon(
+              sync.isSyncing ? Icons.sync_rounded : Icons.cloud_sync_rounded,
+            ),
+            label: Text(context.l10n.settingsSyncNow),
           ),
         ),
       ],

@@ -57,4 +57,17 @@ class AppSecurityService {
       // The channel is missing on some Android flavours; ignore gracefully.
     }
   }
+
+  /// Blocks screenshots / screen recording by applying the same FLAG_SECURE
+  /// flag used to hide the recents preview. No-op on unsupported platforms.
+  Future<void> applyScreenshotLock(bool enabled) async {
+    if (defaultTargetPlatform != TargetPlatform.android) return;
+    try {
+      await _channel.invokeMethod<void>('setSecure', <String, Object?>{
+        'enabled': enabled,
+      });
+    } catch (_) {
+      // The channel is missing on some Android flavours; ignore gracefully.
+    }
+  }
 }

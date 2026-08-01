@@ -1078,5 +1078,44 @@
   "backupVersionUnsupported": "Backup format not supported",
   "backupNotSupportedOnWeb": "Restore is not supported on web",
   "backupDecryptFailed": "Could not decrypt the backup",
-  "backupInvalidKey": "Backup key is invalid"
+  "backupInvalidKey": "Backup key is invalid",
+  "dashboardSystemHealth": "System health",
+  "healthSync": "Sync",
+  "healthSecurity": "Security",
+  "healthSecurityLocked": "Locked",
+  "healthSecurityOpen": "Open",
+  "healthDatabase": "Database",
+  "healthBackup": "Backup",
+  "healthLastSync": "Last sync",
+  "healthDatabaseError": "Error",
+  "settingsSyncStatus": "Sync status",
+  "settingsSyncInProgress": "Syncing...",
+  "settingsSyncNever": "Never synced",
+  "settingsSyncPending": "pending",
+  "settingsSyncHealthy": "All up to date",
+  "settingsSyncNow": "Sync now",
+  "settingsScreenshotLock": "Screenshot lock",
+  "settingsScreenshotLockSubtitle": "Block screenshots and screen recording",
+  "settingsSessionTimeout": "Session timeout",
+  "settingsSessionTimeoutMinutes": "{minutes} minutes",
+  "@settingsSessionTimeoutMinutes": {
+    "placeholders": {
+      "minutes": {
+        "type": "int"
+      }
+    }
+  },
+  "settingsSessionTimeoutHours": "{hours} hours",
+  "@settingsSessionTimeoutHours": {
+    "placeholders": {
+      "hours": {
+        "type": "int"
+      }
+    }
+  },
+  "settingsEncryption": "Data encryption",
+  "settingsEncryptionSubtitle": "Encrypt sensitive data at rest",
+  "settingsRunOptimization": "Run database optimization",
+  "settingsRunOptimizationSubtitle": "Vacuum, clear caches and prune old logs",
+  "settingsOptimizationDone": "Optimization complete"
 }

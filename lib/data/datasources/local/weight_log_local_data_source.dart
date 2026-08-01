@@ -1,7 +1,11 @@
+import 'dart:async';
+
 import 'package:sqflite/sqflite.dart' hide DatabaseException;
 
+import '../../../domain/entities/security_enums.dart';
 import '../../../domain/entities/weight_log.dart';
 import '../../models/weight_log_model.dart';
+import '../../services/sync/sync_event_recorder.dart';
 import 'base_local_data_source.dart';
 
 /// SQLite data source for the `weight_log` table.
@@ -12,10 +16,19 @@ class WeightLogLocalDataSource extends BaseLocalDataSource {
   Future<int> insert(WeightLog log) {
     return guard('insert', () async {
       final Database db = await dbConnection;
-      return db.insert(
+      final int id = await db.insert(
         WeightLogModel.table,
         WeightLogModel.toMap(log),
       );
+      unawaited(
+        SyncEventRecorder.record(
+          entity: WeightLogModel.table,
+          entityId: '$id',
+          operation: SyncOperation.create,
+          userId: log.userId,
+        ),
+      );
+      return id;
     });
   }
 
@@ -27,6 +40,14 @@ class WeightLogLocalDataSource extends BaseLocalDataSource {
         WeightLogModel.toMap(log),
         where: 'id = ?',
         whereArgs: <Object?>[log.id],
+      );
+      unawaited(
+        SyncEventRecorder.record(
+          entity: WeightLogModel.table,
+          entityId: '${log.id}',
+          operation: SyncOperation.update,
+          userId: log.userId,
+        ),
       );
     });
   }
@@ -101,6 +122,13 @@ class WeightLogLocalDataSource extends BaseLocalDataSource {
         WeightLogModel.table,
         where: 'id = ?',
         whereArgs: <Object?>[id],
+      );
+      unawaited(
+        SyncEventRecorder.record(
+          entity: WeightLogModel.table,
+          entityId: '$id',
+          operation: SyncOperation.delete,
+        ),
       );
     });
   }

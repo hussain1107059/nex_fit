@@ -1,4 +1,5 @@
 import '../../domain/entities/weight_log.dart';
+import '../services/security/encryption_service.dart';
 import 'model_codec.dart';
 
 /// Maps [WeightLog] to and from rows in the `weight_log` table.
@@ -12,7 +13,7 @@ class WeightLogModel {
       'id': log.id,
       'user_id': log.userId,
       'weight_kg': log.weightKg,
-      'note': log.note,
+      'note': FieldEncryption.encrypt(log.note),
       'logged_at': ModelCodec.epochMs(log.loggedAt),
       'created_at': ModelCodec.epochMs(log.createdAt),
     };
@@ -23,7 +24,7 @@ class WeightLogModel {
       id: row['id'] as int?,
       userId: row['user_id'] as String,
       weightKg: ModelCodec.toDouble(row['weight_kg']) ?? 0,
-      note: row['note'] as String?,
+      note: FieldEncryption.decrypt(row['note'] as String?),
       loggedAt:
           ModelCodec.fromEpochMs(row['logged_at'] as int?) ?? DateTime.now(),
       createdAt:

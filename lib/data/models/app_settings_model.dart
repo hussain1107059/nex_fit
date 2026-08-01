@@ -74,6 +74,9 @@ class AppSettingsModel {
       'hide_recent_apps': ModelCodec.boolToInt(settings.hideRecentApps),
       'logs_enabled': ModelCodec.boolToInt(settings.logsEnabled),
       'last_active_at': ModelCodec.epochMs(settings.lastActiveAt),
+      'screenshot_lock': ModelCodec.boolToInt(settings.screenshotLock),
+      'encryption_enabled': ModelCodec.boolToInt(settings.encryptionEnabled),
+      'last_sync_at': ModelCodec.epochMs(settings.lastSyncAt),
       'updated_at': ModelCodec.epochMs(settings.updatedAt),
     };
   }
@@ -138,6 +141,9 @@ class AppSettingsModel {
       hideRecentApps: ModelCodec.intToBool(row['hide_recent_apps']),
       logsEnabled: ModelCodec.intToBool(row['logs_enabled']),
       lastActiveAt: ModelCodec.fromEpochMs(row['last_active_at'] as int?),
+      screenshotLock: ModelCodec.intToBool(row['screenshot_lock']),
+      encryptionEnabled: ModelCodec.intToBool(row['encryption_enabled']),
+      lastSyncAt: ModelCodec.fromEpochMs(row['last_sync_at'] as int?),
       updatedAt:
           ModelCodec.fromEpochMs(row['updated_at'] as int?) ?? DateTime.now(),
     );

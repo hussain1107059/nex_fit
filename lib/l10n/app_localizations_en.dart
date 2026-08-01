@@ -3241,4 +3241,85 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get backupInvalidKey => 'Backup key is invalid';
+
+  @override
+  String get dashboardSystemHealth => 'System health';
+
+  @override
+  String get healthSync => 'Sync';
+
+  @override
+  String get healthSecurity => 'Security';
+
+  @override
+  String get healthSecurityLocked => 'Locked';
+
+  @override
+  String get healthSecurityOpen => 'Open';
+
+  @override
+  String get healthDatabase => 'Database';
+
+  @override
+  String get healthBackup => 'Backup';
+
+  @override
+  String get healthLastSync => 'Last sync';
+
+  @override
+  String get healthDatabaseError => 'Error';
+
+  @override
+  String get settingsSyncStatus => 'Sync status';
+
+  @override
+  String get settingsSyncInProgress => 'Syncing...';
+
+  @override
+  String get settingsSyncNever => 'Never synced';
+
+  @override
+  String get settingsSyncPending => 'pending';
+
+  @override
+  String get settingsSyncHealthy => 'All up to date';
+
+  @override
+  String get settingsSyncNow => 'Sync now';
+
+  @override
+  String get settingsScreenshotLock => 'Screenshot lock';
+
+  @override
+  String get settingsScreenshotLockSubtitle =>
+      'Block screenshots and screen recording';
+
+  @override
+  String get settingsSessionTimeout => 'Session timeout';
+
+  @override
+  String settingsSessionTimeoutMinutes(int minutes) {
+    return '$minutes minutes';
+  }
+
+  @override
+  String settingsSessionTimeoutHours(int hours) {
+    return '$hours hours';
+  }
+
+  @override
+  String get settingsEncryption => 'Data encryption';
+
+  @override
+  String get settingsEncryptionSubtitle => 'Encrypt sensitive data at rest';
+
+  @override
+  String get settingsRunOptimization => 'Run database optimization';
+
+  @override
+  String get settingsRunOptimizationSubtitle =>
+      'Vacuum, clear caches and prune old logs';
+
+  @override
+  String get settingsOptimizationDone => 'Optimization complete';
 }

@@ -6,6 +6,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../core/errors/failure.dart';
 import '../../core/errors/failure_mapper.dart';
 import '../../core/utils/result.dart';
+import '../../data/services/sync/sync_event_recorder.dart';
 import '../../domain/entities/app_user.dart';
 import '../../domain/repositories/auth_repository.dart';
 import '../../injection/dependency_injection.dart';
@@ -54,6 +55,9 @@ class AuthController extends Notifier<AuthState> {  StreamSubscription<AppUser?>
     final repository = ref.watch(authRepositoryProvider);
     _subscription = repository.authStateChanges.listen(
       (AppUser? user) {
+        SyncEventRecorder.setActiveUser(
+          user?.isSignedIn == true ? user?.id : null,
+        );
         state = state.copyWith(
           user: user,
           status: AuthActionStatus.idle,
@@ -81,6 +85,9 @@ class AuthController extends Notifier<AuthState> {  StreamSubscription<AppUser?>
     await _subscription?.cancel();
     _subscription = repository.authStateChanges.listen(
       (AppUser? user) {
+        SyncEventRecorder.setActiveUser(
+          user?.isSignedIn == true ? user?.id : null,
+        );
         state = state.copyWith(
           user: user,
           status: AuthActionStatus.idle,

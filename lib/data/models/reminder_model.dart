@@ -2,12 +2,14 @@ import 'dart:convert';
 
 import '../../domain/entities/common_enums.dart';
 import '../../domain/entities/reminder.dart';
+import '../services/security/encryption_service.dart';
 import 'model_codec.dart';
 
 /// Maps [Reminder] to and from rows in the `reminder` table.
 ///
 /// List columns ([Reminder.daysOfWeek], [Reminder.times]) are persisted as
 /// comma-separated / JSON strings so they survive round-trips unchanged.
+/// Free-text title/body are field-encrypted when encryption is enabled.
 class ReminderModel {
   ReminderModel._();
 
@@ -19,8 +21,8 @@ class ReminderModel {
     return <String, Object?>{
       'id': reminder.id,
       'user_id': reminder.userId,
-      'title': reminder.title,
-      'body': reminder.body,
+      'title': FieldEncryption.encrypt(reminder.title),
+      'body': FieldEncryption.encrypt(reminder.body),
       'reminder_type': reminder.reminderType.name,
       'time': reminder.time,
       'days_of_week': reminder.daysOfWeek.join(_separator),
@@ -48,8 +50,8 @@ class ReminderModel {
     return Reminder(
       id: row['id'] as int?,
       userId: row['user_id'] as String,
-      title: row['title'] as String,
-      body: row['body'] as String?,
+      title: FieldEncryption.decrypt(row['title'] as String) ?? '',
+      body: FieldEncryption.decrypt(row['body'] as String?),
       reminderType: ReminderType.fromName(row['reminder_type'] as String?),
       time: row['time'] as String,
       daysOfWeek: days == null || days.isEmpty

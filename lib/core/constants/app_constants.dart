@@ -6,7 +6,7 @@ class AppConstants {
   static const String appVersion = '1.0.0';
 
   static const String databaseName = 'nexfit.db';
-  static const int databaseVersion = 12;
+  static const int databaseVersion = 13;
 
   static const Duration splashDuration = Duration(milliseconds: 1800);
   static const Duration debounceDuration = Duration(milliseconds: 400);
@@ -32,4 +32,31 @@ class AppConstants {
   static const int backupMaxRetention = 20;
   static const String backupKeyStorageKey = 'nexfit.backup.key';
   static const String backupFileNamePrefix = 'nexfit_backup';
+
+  // ---------------------------------------------------------------------
+  // Security & offline sync
+  // ---------------------------------------------------------------------
+  /// Secure-storage prefix for versioned field-encryption keys.
+  static const String encryptionKeyPrefix = 'nexfit.encryption.key.';
+  /// Secure-storage key pointing to the active encryption key version.
+  static const String encryptionActiveKeyStorageKey =
+      'nexfit.encryption.active.key';
+  /// Secure-storage key for the stable per-install device id.
+  static const String deviceIdStorageKey = 'nexfit.device.id';
+  static const int encryptionKeyLengthBytes = 32;
+  static const int encryptionNonceLengthBytes = 12;
+  static const int encryptionTagLengthBits = 128;
+
+  /// Prefix stamped on encrypted field values so `nf1:<base64>` values are
+  /// recognisable during decryption.
+  static const String encryptionFieldPrefix = 'nf1:';
+
+  /// How long completed sync events are kept before being pruned.
+  static const Duration syncEventRetention = Duration(days: 14);
+  /// How long error logs are kept before being pruned.
+  static const Duration errorLogRetention = Duration(days: 30);
+  /// How long inactive session records are kept before being pruned.
+  static const Duration sessionRetention = Duration(days: 30);
+  /// Maximum retry attempts before a sync event is moved to failed.
+  static const int syncEventMaxRetries = 3;
 }

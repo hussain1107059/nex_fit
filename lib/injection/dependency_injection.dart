@@ -12,6 +12,7 @@ import '../data/datasources/local/bmi_log_local_data_source.dart';
 import '../data/datasources/local/body_measurement_local_data_source.dart';
 import '../data/datasources/local/calorie_log_local_data_source.dart';
 import '../data/datasources/local/daily_progress_local_data_source.dart';
+import '../data/datasources/local/error_log_local_data_source.dart';
 import '../data/datasources/local/exercise_history_local_data_source.dart';
 import '../data/datasources/local/exercise_local_data_source.dart';
 import '../data/datasources/local/fitness_goal_local_data_source.dart';
@@ -25,9 +26,11 @@ import '../data/datasources/local/milestone_local_data_source.dart';
 import '../data/datasources/local/reminder_history_local_data_source.dart';
 import '../data/datasources/local/reminder_local_data_source.dart';
 import '../data/datasources/local/reward_local_data_source.dart';
+import '../data/datasources/local/session_local_data_source.dart';
 import '../data/datasources/local/sleep_log_local_data_source.dart';
 import '../data/datasources/local/step_log_local_data_source.dart';
 import '../data/datasources/local/streak_local_data_source.dart';
+import '../data/datasources/local/sync_event_local_data_source.dart';
 import '../data/datasources/local/user_local_data_source.dart';
 import '../data/datasources/local/user_profile_local_data_source.dart';
 import '../data/datasources/local/water_log_local_data_source.dart';
@@ -51,6 +54,7 @@ import '../data/repositories/bmi_log_repository_impl.dart';
 import '../data/repositories/body_measurement_repository_impl.dart';
 import '../data/repositories/calorie_log_repository_impl.dart';
 import '../data/repositories/daily_progress_repository_impl.dart';
+import '../data/repositories/error_log_repository_impl.dart';
 import '../data/repositories/exercise_history_repository_impl.dart';
 import '../data/repositories/exercise_repository_impl.dart';
 import '../data/repositories/fitness_goal_repository_impl.dart';
@@ -65,10 +69,12 @@ import '../data/repositories/milestone_repository_impl.dart';
 import '../data/repositories/reminder_history_repository_impl.dart';
 import '../data/repositories/reminder_repository_impl.dart';
 import '../data/repositories/reward_repository_impl.dart';
+import '../data/repositories/session_repository_impl.dart';
 import '../data/repositories/sleep_log_repository_impl.dart';
 import '../data/repositories/smart_reminder_repository_impl.dart';
 import '../data/repositories/step_log_repository_impl.dart';
 import '../data/repositories/streak_repository_impl.dart';
+import '../data/repositories/sync_event_repository_impl.dart';
 import '../data/repositories/user_fitness_profile_repository_impl.dart';
 import '../data/repositories/xp_history_repository_impl.dart';
 import '../data/repositories/user_profile_repository_impl.dart';
@@ -93,10 +99,17 @@ import '../data/services/backup/google_drive_backup_service.dart';
 import '../data/services/firebase_service.dart';
 import '../data/services/notifications/local_notification_service.dart';
 import '../data/services/report/report_exporter.dart';
+import '../data/services/security/app_error_logger.dart';
 import '../data/services/security/app_security_service.dart';
+import '../data/services/security/encryption_service.dart';
+import '../data/services/security/key_manager.dart';
+import '../data/services/security/recovery_manager.dart';
+import '../data/services/security/session_manager.dart';
+import '../data/services/storage/database_optimizer_service.dart';
 import '../data/services/storage/profile_photo_service.dart';
 import '../data/services/storage/secure_storage_service.dart';
 import '../data/services/storage/settings_storage_service.dart';
+import '../data/services/sync/sync_engine.dart';
 import '../data/services/food_seeder.dart';
 import '../data/services/workout_seeder.dart';
 import '../domain/repositories/app_preferences_repository.dart';
@@ -130,10 +143,12 @@ import '../domain/repositories/progress_analytics_repository.dart';
 import '../domain/repositories/reminder_history_repository.dart';
 import '../domain/repositories/reminder_repository.dart';
 import '../domain/repositories/reward_repository.dart';
+import '../domain/repositories/session_repository.dart';
 import '../domain/repositories/sleep_log_repository.dart';
 import '../domain/repositories/smart_reminder_repository.dart';
 import '../domain/repositories/step_log_repository.dart';
 import '../domain/repositories/streak_repository.dart';
+import '../domain/repositories/sync_event_repository.dart';
 import '../domain/repositories/user_fitness_profile_repository.dart';
 import '../domain/repositories/xp_history_repository.dart';
 import '../domain/repositories/user_profile_repository.dart';
@@ -146,6 +161,7 @@ import '../domain/repositories/workout_history_repository.dart';
 import '../domain/repositories/workout_library_repository.dart';
 import '../domain/repositories/workout_repository.dart';
 import '../domain/repositories/workout_session_repository.dart';
+import '../domain/repositories/error_log_repository.dart';
 import '../domain/usecases/auth/reload_user_usecase.dart';
 import '../domain/usecases/auth/delete_account_usecase.dart';
 import '../domain/usecases/auth/reset_password_usecase.dart';
@@ -767,4 +783,73 @@ final resetPasswordUsecaseProvider = Provider<ResetPasswordUsecase>(
 
 final deleteAccountUsecaseProvider = Provider<DeleteAccountUsecase>(
   (ref) => DeleteAccountUsecase(ref.watch(authRepositoryProvider)),
+);
+
+// ---------------------------------------------------------------------
+// Security, encryption & offline sync
+// ---------------------------------------------------------------------
+
+final keyManagerProvider = Provider<KeyManager>(
+  (ref) => KeyManager(storage: ref.watch(secureStorageServiceProvider)),
+);
+
+final encryptionServiceProvider = Provider<EncryptionService>(
+  (ref) => EncryptionService(),
+);
+
+final sessionLocalDataSourceProvider = Provider<SessionLocalDataSource>(
+  (ref) => SessionLocalDataSource(database: ref.watch(appDatabaseProvider)),
+);
+
+final syncEventLocalDataSourceProvider = Provider<SyncEventLocalDataSource>(
+  (ref) => SyncEventLocalDataSource(database: ref.watch(appDatabaseProvider)),
+);
+
+final errorLogLocalDataSourceProvider = Provider<ErrorLogLocalDataSource>(
+  (ref) => ErrorLogLocalDataSource(database: ref.watch(appDatabaseProvider)),
+);
+
+final sessionRepositoryProvider = Provider<SessionRepository>(
+  (ref) => SessionRepositoryImpl(ref.watch(sessionLocalDataSourceProvider)),
+);
+
+final syncEventRepositoryProvider = Provider<SyncEventRepository>(
+  (ref) => SyncEventRepositoryImpl(ref.watch(syncEventLocalDataSourceProvider)),
+);
+
+final errorLogRepositoryProvider = Provider<ErrorLogRepository>(
+  (ref) => ErrorLogRepositoryImpl(ref.watch(errorLogLocalDataSourceProvider)),
+);
+
+final sessionManagerProvider = Provider<SessionManager>(
+  (ref) => SessionManager(
+    repository: ref.watch(sessionRepositoryProvider),
+    storage: ref.watch(secureStorageServiceProvider),
+  ),
+);
+
+final syncEngineProvider = Provider<SyncEngine>(
+  (ref) => SyncEngine(repository: ref.watch(syncEventRepositoryProvider)),
+);
+
+final errorLoggerProvider = Provider<AppErrorLogger>(
+  (ref) => AppErrorLogger(repository: ref.watch(errorLogRepositoryProvider)),
+);
+
+final databaseOptimizerServiceProvider = Provider<DatabaseOptimizerService>(
+  (ref) => DatabaseOptimizerService(
+    database: ref.watch(appDatabaseProvider),
+    storageService: ref.watch(settingsStorageServiceProvider),
+    syncEventRepository: ref.watch(syncEventRepositoryProvider),
+    errorLogRepository: ref.watch(errorLogRepositoryProvider),
+    sessionRepository: ref.watch(sessionRepositoryProvider),
+  ),
+);
+
+final recoveryManagerProvider = Provider<RecoveryManager>(
+  (ref) => RecoveryManager(
+    database: ref.watch(appDatabaseProvider),
+    backupService: ref.watch(backupServiceProvider),
+    errorLogger: ref.watch(errorLoggerProvider),
+  ),
 );

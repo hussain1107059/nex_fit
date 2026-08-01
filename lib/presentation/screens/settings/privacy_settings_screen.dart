@@ -41,6 +41,15 @@ class PrivacySettingsScreen extends ConsumerWidget {
                 onChanged: (bool value) =>
                     controller.setHideRecentApps(value),
               ),
+              const Divider(height: 1, indent: AppSpacing.xxl),
+              SettingsSwitchTile(
+                icon: Icons.screenshot_rounded,
+                title: context.l10n.settingsScreenshotLock,
+                subtitle: context.l10n.settingsScreenshotLockSubtitle,
+                value: settings?.screenshotLock ?? false,
+                onChanged: (bool value) =>
+                    controller.setScreenshotLock(value),
+              ),
             ],
           ),
           SettingsSectionTitle(context.l10n.settingsDangerZone),

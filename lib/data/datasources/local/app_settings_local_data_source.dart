@@ -1,7 +1,11 @@
+import 'dart:async';
+
 import 'package:sqflite/sqflite.dart' hide DatabaseException;
 
 import '../../../domain/entities/app_settings.dart';
+import '../../../domain/entities/security_enums.dart';
 import '../../models/app_settings_model.dart';
+import '../../services/sync/sync_event_recorder.dart';
 import 'base_local_data_source.dart';
 
 /// SQLite data source for the `app_settings` table (one row per user).
@@ -12,11 +16,20 @@ class AppSettingsLocalDataSource extends BaseLocalDataSource {
   Future<int> upsert(AppSettings settings) {
     return guard('upsert', () async {
       final Database db = await dbConnection;
-      return db.insert(
+      final int id = await db.insert(
         AppSettingsModel.table,
         AppSettingsModel.toMap(settings),
         conflictAlgorithm: ConflictAlgorithm.replace,
       );
+      unawaited(
+        SyncEventRecorder.record(
+          entity: AppSettingsModel.table,
+          entityId: settings.userId,
+          operation: SyncOperation.update,
+          userId: settings.userId,
+        ),
+      );
+      return id;
     });
   }
 

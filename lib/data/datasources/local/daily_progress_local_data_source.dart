@@ -1,7 +1,11 @@
+import 'dart:async';
+
 import 'package:sqflite/sqflite.dart' hide DatabaseException;
 
 import '../../../domain/entities/daily_progress.dart';
+import '../../../domain/entities/security_enums.dart';
 import '../../models/daily_progress_model.dart';
+import '../../services/sync/sync_event_recorder.dart';
 import 'base_local_data_source.dart';
 
 /// SQLite data source for the `daily_progress` table (unique per user + date).
@@ -12,11 +16,20 @@ class DailyProgressLocalDataSource extends BaseLocalDataSource {
   Future<int> upsert(DailyProgress progress) {
     return guard('upsert', () async {
       final Database db = await dbConnection;
-      return db.insert(
+      final int id = await db.insert(
         DailyProgressModel.table,
         DailyProgressModel.toMap(progress),
         conflictAlgorithm: ConflictAlgorithm.replace,
       );
+      unawaited(
+        SyncEventRecorder.record(
+          entity: DailyProgressModel.table,
+          entityId: '$id',
+          operation: SyncOperation.update,
+          userId: progress.userId,
+        ),
+      );
+      return id;
     });
   }
 
@@ -65,6 +78,13 @@ class DailyProgressLocalDataSource extends BaseLocalDataSource {
         DailyProgressModel.table,
         where: 'id = ?',
         whereArgs: <Object?>[id],
+      );
+      unawaited(
+        SyncEventRecorder.record(
+          entity: DailyProgressModel.table,
+          entityId: '$id',
+          operation: SyncOperation.delete,
+        ),
       );
     });
   }

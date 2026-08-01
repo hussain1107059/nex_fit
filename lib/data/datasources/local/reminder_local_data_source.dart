@@ -1,7 +1,11 @@
+import 'dart:async';
+
 import 'package:sqflite/sqflite.dart' hide DatabaseException;
 
 import '../../../domain/entities/reminder.dart';
+import '../../../domain/entities/security_enums.dart';
 import '../../models/reminder_model.dart';
+import '../../services/sync/sync_event_recorder.dart';
 import 'base_local_data_source.dart';
 
 /// SQLite data source for the `reminder` table.
@@ -12,10 +16,19 @@ class ReminderLocalDataSource extends BaseLocalDataSource {
   Future<int> insert(Reminder reminder) {
     return guard('insert', () async {
       final Database db = await dbConnection;
-      return db.insert(
+      final int id = await db.insert(
         ReminderModel.table,
         ReminderModel.toMap(reminder),
       );
+      unawaited(
+        SyncEventRecorder.record(
+          entity: ReminderModel.table,
+          entityId: '$id',
+          operation: SyncOperation.create,
+          userId: reminder.userId,
+        ),
+      );
+      return id;
     });
   }
 
@@ -27,6 +40,14 @@ class ReminderLocalDataSource extends BaseLocalDataSource {
         ReminderModel.toMap(reminder),
         where: 'id = ?',
         whereArgs: <Object?>[reminder.id],
+      );
+      unawaited(
+        SyncEventRecorder.record(
+          entity: ReminderModel.table,
+          entityId: '${reminder.id}',
+          operation: SyncOperation.update,
+          userId: reminder.userId,
+        ),
       );
     });
   }
@@ -78,6 +99,13 @@ class ReminderLocalDataSource extends BaseLocalDataSource {
         ReminderModel.table,
         where: 'id = ?',
         whereArgs: <Object?>[id],
+      );
+      unawaited(
+        SyncEventRecorder.record(
+          entity: ReminderModel.table,
+          entityId: '$id',
+          operation: SyncOperation.delete,
+        ),
       );
     });
   }

@@ -1,7 +1,11 @@
+import 'dart:async';
+
 import 'package:sqflite/sqflite.dart' hide DatabaseException;
 
 import '../../../domain/entities/body_measurement.dart';
+import '../../../domain/entities/security_enums.dart';
 import '../../models/body_measurement_model.dart';
+import '../../services/sync/sync_event_recorder.dart';
 import 'base_local_data_source.dart';
 
 /// SQLite data source for the `body_measurement` table.
@@ -12,10 +16,19 @@ class BodyMeasurementLocalDataSource extends BaseLocalDataSource {
   Future<int> insert(BodyMeasurement measurement) {
     return guard('insert', () async {
       final Database db = await dbConnection;
-      return db.insert(
+      final int id = await db.insert(
         BodyMeasurementModel.table,
         BodyMeasurementModel.toMap(measurement),
       );
+      unawaited(
+        SyncEventRecorder.record(
+          entity: BodyMeasurementModel.table,
+          entityId: '$id',
+          operation: SyncOperation.create,
+          userId: measurement.userId,
+        ),
+      );
+      return id;
     });
   }
 
@@ -27,6 +40,14 @@ class BodyMeasurementLocalDataSource extends BaseLocalDataSource {
         BodyMeasurementModel.toMap(measurement),
         where: 'id = ?',
         whereArgs: <Object?>[measurement.id],
+      );
+      unawaited(
+        SyncEventRecorder.record(
+          entity: BodyMeasurementModel.table,
+          entityId: '${measurement.id}',
+          operation: SyncOperation.update,
+          userId: measurement.userId,
+        ),
       );
     });
   }
@@ -101,6 +122,13 @@ class BodyMeasurementLocalDataSource extends BaseLocalDataSource {
         BodyMeasurementModel.table,
         where: 'id = ?',
         whereArgs: <Object?>[id],
+      );
+      unawaited(
+        SyncEventRecorder.record(
+          entity: BodyMeasurementModel.table,
+          entityId: '$id',
+          operation: SyncOperation.delete,
+        ),
       );
     });
   }

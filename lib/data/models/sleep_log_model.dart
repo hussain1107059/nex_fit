@@ -1,4 +1,5 @@
 import '../../domain/entities/sleep_log.dart';
+import '../services/security/encryption_service.dart';
 import 'model_codec.dart';
 
 /// Maps [SleepLog] to and from rows in the `sleep_log` table.
@@ -16,7 +17,7 @@ class SleepLogModel {
       'bedtime': ModelCodec.epochMs(log.bedtime),
       'wake_time': ModelCodec.epochMs(log.wakeTime),
       'quality': log.quality,
-      'note': log.note,
+      'note': FieldEncryption.encrypt(log.note),
       'created_at': ModelCodec.epochMs(log.createdAt),
     };
   }
@@ -31,7 +32,7 @@ class SleepLogModel {
       bedtime: ModelCodec.fromEpochMs(row['bedtime'] as int?),
       wakeTime: ModelCodec.fromEpochMs(row['wake_time'] as int?),
       quality: ModelCodec.toInt(row['quality']),
-      note: row['note'] as String?,
+      note: FieldEncryption.decrypt(row['note'] as String?),
       createdAt:
           ModelCodec.fromEpochMs(row['created_at'] as int?) ?? DateTime.now(),
     );

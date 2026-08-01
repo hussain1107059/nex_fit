@@ -1,12 +1,18 @@
+import 'dart:async';
+
 import 'package:dynamic_color/dynamic_color.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
 import 'core/theme/app_theme.dart';
+import 'data/services/security/session_manager.dart';
 import 'domain/entities/app_settings.dart';
+import 'domain/entities/app_user.dart';
 import 'domain/entities/common_enums.dart';
+import 'injection/dependency_injection.dart';
 import 'l10n/app_localizations.dart';
+import 'presentation/providers/auth_provider.dart';
 import 'presentation/providers/locale_provider.dart';
 import 'presentation/providers/settings_providers.dart';
 import 'presentation/router/app_router.dart';
@@ -55,6 +61,19 @@ class _NexFitAppState extends ConsumerState<NexFitApp>
   Future<void> _handleResume() async {
     final DateTime? backgrounded = _backgroundedAt;
     _backgroundedAt = null;
+
+    // Keep the secure session alive: slide the expiry window whenever the app
+    // returns to the foreground.
+    final AppUser? user = ref.read(currentUserProvider);
+    if (user?.isSignedIn == true) {
+      final SessionManager session = ref.read(sessionManagerProvider);
+      final Duration timeout = Duration(
+        minutes:
+            ref.read(settingsControllerProvider).valueOrNull?.sessionTimeoutMinutes ??
+            30,
+      );
+      unawaited(session.touch(user!.id, timeout: timeout));
+    }
 
     final AppSettings? settings =
         ref.read(settingsControllerProvider).valueOrNull;

@@ -6355,6 +6355,156 @@ abstract class AppLocalizations {
   /// In bs, this message translates to:
   /// **'ব্যাকআপ কী বৈধ নয়'**
   String get backupInvalidKey;
+
+  /// No description provided for @dashboardSystemHealth.
+  ///
+  /// In bs, this message translates to:
+  /// **'সিস্টেম স্বাস্থ্য'**
+  String get dashboardSystemHealth;
+
+  /// No description provided for @healthSync.
+  ///
+  /// In bs, this message translates to:
+  /// **'সিঙ্ক'**
+  String get healthSync;
+
+  /// No description provided for @healthSecurity.
+  ///
+  /// In bs, this message translates to:
+  /// **'নিরাপত্তা'**
+  String get healthSecurity;
+
+  /// No description provided for @healthSecurityLocked.
+  ///
+  /// In bs, this message translates to:
+  /// **'সুরক্ষিত'**
+  String get healthSecurityLocked;
+
+  /// No description provided for @healthSecurityOpen.
+  ///
+  /// In bs, this message translates to:
+  /// **'খোলা'**
+  String get healthSecurityOpen;
+
+  /// No description provided for @healthDatabase.
+  ///
+  /// In bs, this message translates to:
+  /// **'ডেটাবেস'**
+  String get healthDatabase;
+
+  /// No description provided for @healthBackup.
+  ///
+  /// In bs, this message translates to:
+  /// **'ব্যাকআপ'**
+  String get healthBackup;
+
+  /// No description provided for @healthLastSync.
+  ///
+  /// In bs, this message translates to:
+  /// **'সর্বশেষ সিঙ্ক'**
+  String get healthLastSync;
+
+  /// No description provided for @healthDatabaseError.
+  ///
+  /// In bs, this message translates to:
+  /// **'ত্রুটি'**
+  String get healthDatabaseError;
+
+  /// No description provided for @settingsSyncStatus.
+  ///
+  /// In bs, this message translates to:
+  /// **'সিঙ্ক অবস্থা'**
+  String get settingsSyncStatus;
+
+  /// No description provided for @settingsSyncInProgress.
+  ///
+  /// In bs, this message translates to:
+  /// **'সিঙ্ক চলছে...'**
+  String get settingsSyncInProgress;
+
+  /// No description provided for @settingsSyncNever.
+  ///
+  /// In bs, this message translates to:
+  /// **'কখনো সিঙ্ক হয়নি'**
+  String get settingsSyncNever;
+
+  /// No description provided for @settingsSyncPending.
+  ///
+  /// In bs, this message translates to:
+  /// **'মুলতুবি'**
+  String get settingsSyncPending;
+
+  /// No description provided for @settingsSyncHealthy.
+  ///
+  /// In bs, this message translates to:
+  /// **'সব ঠিক আছে'**
+  String get settingsSyncHealthy;
+
+  /// No description provided for @settingsSyncNow.
+  ///
+  /// In bs, this message translates to:
+  /// **'এখন সিঙ্ক'**
+  String get settingsSyncNow;
+
+  /// No description provided for @settingsScreenshotLock.
+  ///
+  /// In bs, this message translates to:
+  /// **'স্ক্রিনশট লক'**
+  String get settingsScreenshotLock;
+
+  /// No description provided for @settingsScreenshotLockSubtitle.
+  ///
+  /// In bs, this message translates to:
+  /// **'স্ক্রিনশট ও স্ক্রিন রেকর্ডিং আটকান'**
+  String get settingsScreenshotLockSubtitle;
+
+  /// No description provided for @settingsSessionTimeout.
+  ///
+  /// In bs, this message translates to:
+  /// **'সেশন টাইমআউট'**
+  String get settingsSessionTimeout;
+
+  /// No description provided for @settingsSessionTimeoutMinutes.
+  ///
+  /// In bs, this message translates to:
+  /// **'{minutes} মিনিট'**
+  String settingsSessionTimeoutMinutes(int minutes);
+
+  /// No description provided for @settingsSessionTimeoutHours.
+  ///
+  /// In bs, this message translates to:
+  /// **'{hours} ঘণ্টা'**
+  String settingsSessionTimeoutHours(int hours);
+
+  /// No description provided for @settingsEncryption.
+  ///
+  /// In bs, this message translates to:
+  /// **'ডেটা এনক্রিপশন'**
+  String get settingsEncryption;
+
+  /// No description provided for @settingsEncryptionSubtitle.
+  ///
+  /// In bs, this message translates to:
+  /// **'সংবেদনশীল ডেটা এনক্রিপ্ট করে সংরক্ষণ করুন'**
+  String get settingsEncryptionSubtitle;
+
+  /// No description provided for @settingsRunOptimization.
+  ///
+  /// In bs, this message translates to:
+  /// **'ডেটাবেস অপটিমাইজ করুন'**
+  String get settingsRunOptimization;
+
+  /// No description provided for @settingsRunOptimizationSubtitle.
+  ///
+  /// In bs, this message translates to:
+  /// **'ভ্যাকুয়াম, ক্যাশ ও পুরনো লগ পরিষ্কার করুন'**
+  String get settingsRunOptimizationSubtitle;
+
+  /// No description provided for @settingsOptimizationDone.
+  ///
+  /// In bs, this message translates to:
+  /// **'অপটিমাইজেশন সম্পন্ন'**
+  String get settingsOptimizationDone;
 }
 
 class _AppLocalizationsDelegate

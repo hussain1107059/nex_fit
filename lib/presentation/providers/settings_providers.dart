@@ -7,6 +7,8 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:logging/logging.dart';
 
 import '../../core/constants/app_constants.dart';
+import '../../data/services/security/encryption_service.dart';
+import '../../data/services/security/key_manager.dart';
 import '../../domain/entities/app_settings.dart';
 import '../../domain/entities/app_user.dart';
 import '../../domain/entities/common_enums.dart';
@@ -20,6 +22,15 @@ import 'reminder_providers.dart';
 /// Salt prepended to the PIN before hashing so the stored digest is not a
 /// plain SHA-256 of the raw digits.
 const String _pinSalt = 'nexfit.app.lock.v1';
+
+/// Applies the field-encryption facade configuration so the data models start
+/// encrypting/decrypting sensitive values.
+Future<void> configureFieldEncryption(
+  KeyManager keyManager, {
+  required bool enabled,
+}) {
+  return FieldEncryption.configure(keyManager: keyManager, enabled: enabled);
+}
 
 String _hashPin(String pin) {
   return sha256.convert(utf8.encode('$_pinSalt:$pin')).toString();
@@ -276,6 +287,27 @@ class SettingsController extends AsyncNotifier<AppSettings?> {
         .read(appSecurityServiceProvider)
         .applyHideRecentApps(enabled);
   }
+
+  /// Blocks screenshots and screen recording via FLAG_SECURE.
+  Future<void> setScreenshotLock(bool enabled) async {
+    await _update((settings) => settings.copyWith(screenshotLock: enabled));
+    await ref.read(appSecurityServiceProvider).applyScreenshotLock(enabled);
+  }
+
+  /// Toggles field-level encryption. When enabled, the encryption key is
+  /// (re)loaded into the [FieldEncryption] facade; when disabled the facade is
+  /// switched off so writes stay plaintext.
+  Future<void> setEncryptionEnabled(bool enabled) async {
+    await _update((settings) => settings.copyWith(encryptionEnabled: enabled));
+    await configureFieldEncryption(
+      ref.read(keyManagerProvider),
+      enabled: enabled,
+    );
+  }
+
+  /// Records the last successful sync queue processing run.
+  Future<void> setLastSyncAt(DateTime at) =>
+      _update((settings) => settings.copyWith(lastSyncAt: at));
 
   /// Records the last active moment (used by the auto-lock gate).
   Future<void> markActive() =>

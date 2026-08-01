@@ -3248,4 +3248,86 @@ class AppLocalizationsBs extends AppLocalizations {
 
   @override
   String get backupInvalidKey => 'ব্যাকআপ কী বৈধ নয়';
+
+  @override
+  String get dashboardSystemHealth => 'সিস্টেম স্বাস্থ্য';
+
+  @override
+  String get healthSync => 'সিঙ্ক';
+
+  @override
+  String get healthSecurity => 'নিরাপত্তা';
+
+  @override
+  String get healthSecurityLocked => 'সুরক্ষিত';
+
+  @override
+  String get healthSecurityOpen => 'খোলা';
+
+  @override
+  String get healthDatabase => 'ডেটাবেস';
+
+  @override
+  String get healthBackup => 'ব্যাকআপ';
+
+  @override
+  String get healthLastSync => 'সর্বশেষ সিঙ্ক';
+
+  @override
+  String get healthDatabaseError => 'ত্রুটি';
+
+  @override
+  String get settingsSyncStatus => 'সিঙ্ক অবস্থা';
+
+  @override
+  String get settingsSyncInProgress => 'সিঙ্ক চলছে...';
+
+  @override
+  String get settingsSyncNever => 'কখনো সিঙ্ক হয়নি';
+
+  @override
+  String get settingsSyncPending => 'মুলতুবি';
+
+  @override
+  String get settingsSyncHealthy => 'সব ঠিক আছে';
+
+  @override
+  String get settingsSyncNow => 'এখন সিঙ্ক';
+
+  @override
+  String get settingsScreenshotLock => 'স্ক্রিনশট লক';
+
+  @override
+  String get settingsScreenshotLockSubtitle =>
+      'স্ক্রিনশট ও স্ক্রিন রেকর্ডিং আটকান';
+
+  @override
+  String get settingsSessionTimeout => 'সেশন টাইমআউট';
+
+  @override
+  String settingsSessionTimeoutMinutes(int minutes) {
+    return '$minutes মিনিট';
+  }
+
+  @override
+  String settingsSessionTimeoutHours(int hours) {
+    return '$hours ঘণ্টা';
+  }
+
+  @override
+  String get settingsEncryption => 'ডেটা এনক্রিপশন';
+
+  @override
+  String get settingsEncryptionSubtitle =>
+      'সংবেদনশীল ডেটা এনক্রিপ্ট করে সংরক্ষণ করুন';
+
+  @override
+  String get settingsRunOptimization => 'ডেটাবেস অপটিমাইজ করুন';
+
+  @override
+  String get settingsRunOptimizationSubtitle =>
+      'ভ্যাকুয়াম, ক্যাশ ও পুরনো লগ পরিষ্কার করুন';
+
+  @override
+  String get settingsOptimizationDone => 'অপটিমাইজেশন সম্পন্ন';
 }

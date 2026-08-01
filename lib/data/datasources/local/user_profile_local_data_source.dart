@@ -1,7 +1,11 @@
+import 'dart:async';
+
 import 'package:sqflite/sqflite.dart' hide DatabaseException;
 
+import '../../../domain/entities/security_enums.dart';
 import '../../../domain/entities/user_profile.dart';
 import '../../models/user_profile_model.dart';
+import '../../services/sync/sync_event_recorder.dart';
 import 'base_local_data_source.dart';
 
 /// SQLite data source for the `user_profile` table.
@@ -12,11 +16,20 @@ class UserProfileLocalDataSource extends BaseLocalDataSource {
   Future<int> upsert(UserProfile profile) {
     return guard('upsert', () async {
       final Database db = await dbConnection;
-      return db.insert(
+      final int id = await db.insert(
         UserProfileModel.table,
         UserProfileModel.toMap(profile),
         conflictAlgorithm: ConflictAlgorithm.replace,
       );
+      unawaited(
+        SyncEventRecorder.record(
+          entity: UserProfileModel.table,
+          entityId: profile.userId,
+          operation: SyncOperation.update,
+          userId: profile.userId,
+        ),
+      );
+      return id;
     });
   }
 

@@ -1,4 +1,5 @@
 import '../../domain/entities/workout_history.dart';
+import '../services/security/encryption_service.dart';
 import 'model_codec.dart';
 
 /// Maps [WorkoutHistory] to and from rows in the `workout_history` table.
@@ -16,7 +17,7 @@ class WorkoutHistoryModel {
       'ended_at': ModelCodec.epochMs(history.endedAt),
       'duration_minutes': history.durationMinutes,
       'calories_burn': history.caloriesBurn,
-      'notes': history.notes,
+      'notes': FieldEncryption.encrypt(history.notes),
       'is_completed': ModelCodec.boolToInt(history.isCompleted),
       'created_at': ModelCodec.epochMs(history.createdAt),
     };
@@ -32,7 +33,7 @@ class WorkoutHistoryModel {
       endedAt: ModelCodec.fromEpochMs(row['ended_at'] as int?),
       durationMinutes: row['duration_minutes'] as int?,
       caloriesBurn: ModelCodec.toDouble(row['calories_burn']),
-      notes: row['notes'] as String?,
+      notes: FieldEncryption.decrypt(row['notes'] as String?),
       isCompleted: ModelCodec.intToBool(row['is_completed']),
       createdAt:
           ModelCodec.fromEpochMs(row['created_at'] as int?) ?? DateTime.now(),

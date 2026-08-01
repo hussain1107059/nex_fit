@@ -1078,5 +1078,44 @@
   "backupVersionUnsupported": "ব্যাকআপ ফরম্যাট সমর্থিত নয়",
   "backupNotSupportedOnWeb": "ওয়েবে পুনরুদ্ধার সমর্থিত নয়",
   "backupDecryptFailed": "ব্যাকআপ ডিক্রিপ্ট করা যায়নি",
-  "backupInvalidKey": "ব্যাকআপ কী বৈধ নয়"
+  "backupInvalidKey": "ব্যাকআপ কী বৈধ নয়",
+  "dashboardSystemHealth": "সিস্টেম স্বাস্থ্য",
+  "healthSync": "সিঙ্ক",
+  "healthSecurity": "নিরাপত্তা",
+  "healthSecurityLocked": "সুরক্ষিত",
+  "healthSecurityOpen": "খোলা",
+  "healthDatabase": "ডেটাবেস",
+  "healthBackup": "ব্যাকআপ",
+  "healthLastSync": "সর্বশেষ সিঙ্ক",
+  "healthDatabaseError": "ত্রুটি",
+  "settingsSyncStatus": "সিঙ্ক অবস্থা",
+  "settingsSyncInProgress": "সিঙ্ক চলছে...",
+  "settingsSyncNever": "কখনো সিঙ্ক হয়নি",
+  "settingsSyncPending": "মুলতুবি",
+  "settingsSyncHealthy": "সব ঠিক আছে",
+  "settingsSyncNow": "এখন সিঙ্ক",
+  "settingsScreenshotLock": "স্ক্রিনশট লক",
+  "settingsScreenshotLockSubtitle": "স্ক্রিনশট ও স্ক্রিন রেকর্ডিং আটকান",
+  "settingsSessionTimeout": "সেশন টাইমআউট",
+  "settingsSessionTimeoutMinutes": "{minutes} মিনিট",
+  "@settingsSessionTimeoutMinutes": {
+    "placeholders": {
+      "minutes": {
+        "type": "int"
+      }
+    }
+  },
+  "settingsSessionTimeoutHours": "{hours} ঘণ্টা",
+  "@settingsSessionTimeoutHours": {
+    "placeholders": {
+      "hours": {
+        "type": "int"
+      }
+    }
+  },
+  "settingsEncryption": "ডেটা এনক্রিপশন",
+  "settingsEncryptionSubtitle": "সংবেদনশীল ডেটা এনক্রিপ্ট করে সংরক্ষণ করুন",
+  "settingsRunOptimization": "ডেটাবেস অপটিমাইজ করুন",
+  "settingsRunOptimizationSubtitle": "ভ্যাকুয়াম, ক্যাশ ও পুরনো লগ পরিষ্কার করুন",
+  "settingsOptimizationDone": "অপটিমাইজেশন সম্পন্ন"
 }

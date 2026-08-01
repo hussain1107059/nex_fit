@@ -8,6 +8,7 @@ import '../../../domain/entities/app_user.dart';
 import '../../../domain/entities/dashboard_data.dart';
 import '../../providers/auth_provider.dart';
 import '../../providers/dashboard_providers.dart';
+import '../../providers/sync_providers.dart';
 import 'widgets/achievements_section.dart';
 import 'widgets/backup_card.dart';
 import 'widgets/dashboard_header.dart';
@@ -20,6 +21,7 @@ import 'widgets/quick_actions_section.dart';
 import 'widgets/recent_activity_section.dart';
 import 'widgets/reminders_section.dart';
 import 'widgets/search_results_card.dart';
+import 'widgets/system_health_card.dart';
 import 'widgets/today_goals_section.dart';
 import 'widgets/weekly_stats_section.dart';
 
@@ -48,6 +50,13 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
     final AsyncValue<DashboardData> async = ref.watch(
       dashboardControllerProvider,
     );
+
+    // Keep the offline sync queue snapshot fresh for the health card.
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (mounted) {
+        ref.read(syncControllerProvider.notifier).refresh();
+      }
+    });
 
     return Scaffold(
       body: SafeArea(
@@ -112,6 +121,8 @@ class _DashboardContent extends StatelessWidget {
                 DashboardSummaryCard(summary: data.summary),
                 const SizedBox(height: AppSpacing.lg),
                 const BackupCard(),
+                const SizedBox(height: AppSpacing.lg),
+                const SystemHealthCard(),
                 const SizedBox(height: AppSpacing.lg),
                 const GamificationOverviewCard(),
                 if (!data.summary.hasWeight) ...[

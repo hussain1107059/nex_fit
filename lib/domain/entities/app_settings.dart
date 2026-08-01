@@ -54,6 +54,9 @@ class AppSettings extends Equatable {
     this.hideRecentApps = false,
     this.logsEnabled = false,
     this.lastActiveAt,
+    this.encryptionEnabled = true,
+    this.screenshotLock = false,
+    this.lastSyncAt,
     required this.updatedAt,
   });
 
@@ -123,6 +126,13 @@ class AppSettings extends Equatable {
   /// auto-lock gate to decide whether a PIN prompt must be shown again.
   final DateTime? lastActiveAt;
 
+  // Security & encryption
+  final bool encryptionEnabled;
+  final bool screenshotLock;
+
+  /// Timestamp of the last successful sync queue processing run.
+  final DateTime? lastSyncAt;
+
   final DateTime updatedAt;
 
   AppSettings copyWith({
@@ -172,6 +182,9 @@ class AppSettings extends Equatable {
     bool? hideRecentApps,
     bool? logsEnabled,
     DateTime? lastActiveAt,
+    bool? encryptionEnabled,
+    bool? screenshotLock,
+    DateTime? lastSyncAt,
     DateTime? updatedAt,
   }) {
     return AppSettings(
@@ -226,6 +239,9 @@ class AppSettings extends Equatable {
       hideRecentApps: hideRecentApps ?? this.hideRecentApps,
       logsEnabled: logsEnabled ?? this.logsEnabled,
       lastActiveAt: lastActiveAt ?? this.lastActiveAt,
+      encryptionEnabled: encryptionEnabled ?? this.encryptionEnabled,
+      screenshotLock: screenshotLock ?? this.screenshotLock,
+      lastSyncAt: lastSyncAt ?? this.lastSyncAt,
       updatedAt: updatedAt ?? this.updatedAt,
     );
   }
@@ -278,6 +294,9 @@ class AppSettings extends Equatable {
         hideRecentApps,
         logsEnabled,
         lastActiveAt,
+        encryptionEnabled,
+        screenshotLock,
+        lastSyncAt,
         updatedAt,
       ];
 }

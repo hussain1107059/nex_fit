@@ -43,6 +43,7 @@ class AppDatabase {
     DatabaseMigration(version: 10, apply: _migrationV10GamificationModule),
     DatabaseMigration(version: 11, apply: _migrationV11SettingsModule),
     DatabaseMigration(version: 12, apply: _migrationV12BackupModule),
+    DatabaseMigration(version: 13, apply: _migrationV13SecuritySyncModule),
   ];
 
   Future<Database> get database async {
@@ -1410,5 +1411,101 @@ class AppDatabase {
     await db.execute(
       'ALTER TABLE backup_history ADD COLUMN encrypted INTEGER NOT NULL DEFAULT 1',
     );
+  }
+
+  /// v13: the security, encryption & offline sync module.
+  ///
+  /// * `sync_event` - every local Create/Update/Delete is recorded as a
+  ///   durable, offline-first event ready for a future cloud transport. The
+  ///   queue tracks pending/completed/failed states with a retry counter.
+  /// * `error_logs` - structured crash/error records across every subsystem
+  ///   (auth, sync, notification, backup, database, ui).
+  /// * `sessions` - secure session records (token, device id, expiry, last
+  ///   activity) backing session validation and secure logout.
+  /// * `app_settings` gains the encryption, screenshot-lock and last-sync
+  ///   preferences. Every column is nullable/defaulted so the upgrade is safe
+  ///   for existing rows.
+  static Future<void> _migrationV13SecuritySyncModule(
+    DatabaseExecutor executor,
+    int version,
+  ) async {
+    final DatabaseExecutor db = executor;
+
+    await db.execute('''
+      CREATE TABLE sync_event (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        user_id TEXT NOT NULL,
+        entity TEXT NOT NULL,
+        entity_id TEXT NOT NULL,
+        operation TEXT NOT NULL,
+        payload TEXT,
+        status TEXT NOT NULL DEFAULT 'pending',
+        retry_count INTEGER NOT NULL DEFAULT 0,
+        conflict_strategy TEXT NOT NULL DEFAULT 'latest_wins',
+        created_at INTEGER NOT NULL,
+        updated_at INTEGER NOT NULL,
+        synced_at INTEGER,
+        last_error TEXT,
+        FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
+      )
+    ''');
+
+    await db.execute('''
+      CREATE TABLE error_logs (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        user_id TEXT,
+        category TEXT NOT NULL,
+        message TEXT NOT NULL,
+        stack_trace TEXT,
+        context TEXT,
+        created_at INTEGER NOT NULL,
+        FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
+      )
+    ''');
+
+    await db.execute('''
+      CREATE TABLE sessions (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        user_id TEXT NOT NULL,
+        token TEXT NOT NULL,
+        device_id TEXT NOT NULL,
+        created_at INTEGER NOT NULL,
+        expires_at INTEGER NOT NULL,
+        last_activity_at INTEGER NOT NULL,
+        is_active INTEGER NOT NULL DEFAULT 1,
+        FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
+      )
+    ''');
+
+    await db.execute(
+      'CREATE INDEX IF NOT EXISTS idx_sync_event_user_status '
+      'ON sync_event(user_id, status)',
+    );
+    await db.execute(
+      'CREATE INDEX IF NOT EXISTS idx_sync_event_entity '
+      'ON sync_event(entity, entity_id)',
+    );
+    await db.execute(
+      'CREATE INDEX IF NOT EXISTS idx_error_logs_user '
+      'ON error_logs(user_id)',
+    );
+    await db.execute(
+      'CREATE INDEX IF NOT EXISTS idx_error_logs_created '
+      'ON error_logs(created_at)',
+    );
+    await db.execute(
+      'CREATE INDEX IF NOT EXISTS idx_sessions_user '
+      'ON sessions(user_id)',
+    );
+
+    await db.execute(
+      'ALTER TABLE app_settings ADD COLUMN screenshot_lock INTEGER NOT NULL '
+      'DEFAULT 0',
+    );
+    await db.execute(
+      'ALTER TABLE app_settings ADD COLUMN encryption_enabled INTEGER NOT NULL '
+      'DEFAULT 1',
+    );
+    await db.execute('ALTER TABLE app_settings ADD COLUMN last_sync_at INTEGER');
   }
 }

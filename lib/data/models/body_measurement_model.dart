@@ -1,4 +1,5 @@
 import '../../domain/entities/body_measurement.dart';
+import '../services/security/encryption_service.dart';
 import 'model_codec.dart';
 
 /// Maps [BodyMeasurement] to and from rows in the `body_measurement` table.
@@ -24,7 +25,7 @@ class BodyMeasurementModel {
       'right_thigh_cm': measurement.rightThighCm,
       'left_calf_cm': measurement.leftCalfCm,
       'right_calf_cm': measurement.rightCalfCm,
-      'note': measurement.note,
+      'note': FieldEncryption.encrypt(measurement.note),
       'measured_at': ModelCodec.epochMs(measurement.measuredAt),
       'created_at': ModelCodec.epochMs(measurement.createdAt),
     };
@@ -47,7 +48,7 @@ class BodyMeasurementModel {
       rightThighCm: ModelCodec.toDouble(row['right_thigh_cm']),
       leftCalfCm: ModelCodec.toDouble(row['left_calf_cm']),
       rightCalfCm: ModelCodec.toDouble(row['right_calf_cm']),
-      note: row['note'] as String?,
+      note: FieldEncryption.decrypt(row['note'] as String?),
       measuredAt:
           ModelCodec.fromEpochMs(row['measured_at'] as int?) ?? DateTime.now(),
       createdAt:

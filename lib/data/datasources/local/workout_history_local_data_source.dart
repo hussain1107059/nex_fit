@@ -1,8 +1,12 @@
+import 'dart:async';
+
 import 'package:sqflite/sqflite.dart' hide DatabaseException;
 
+import '../../../domain/entities/security_enums.dart';
 import '../../../domain/entities/workout_history.dart';
 import '../../models/model_codec.dart';
 import '../../models/workout_history_model.dart';
+import '../../services/sync/sync_event_recorder.dart';
 import 'base_local_data_source.dart';
 
 /// SQLite data source for the `workout_history` table.
@@ -13,10 +17,19 @@ class WorkoutHistoryLocalDataSource extends BaseLocalDataSource {
   Future<int> insert(WorkoutHistory history) {
     return guard('insert', () async {
       final Database db = await dbConnection;
-      return db.insert(
+      final int id = await db.insert(
         WorkoutHistoryModel.table,
         WorkoutHistoryModel.toMap(history),
       );
+      unawaited(
+        SyncEventRecorder.record(
+          entity: WorkoutHistoryModel.table,
+          entityId: '$id',
+          operation: SyncOperation.create,
+          userId: history.userId,
+        ),
+      );
+      return id;
     });
   }
 
@@ -28,6 +41,14 @@ class WorkoutHistoryLocalDataSource extends BaseLocalDataSource {
         WorkoutHistoryModel.toMap(history),
         where: 'id = ?',
         whereArgs: <Object?>[history.id],
+      );
+      unawaited(
+        SyncEventRecorder.record(
+          entity: WorkoutHistoryModel.table,
+          entityId: '${history.id}',
+          operation: SyncOperation.update,
+          userId: history.userId,
+        ),
       );
     });
   }
@@ -188,6 +209,13 @@ class WorkoutHistoryLocalDataSource extends BaseLocalDataSource {
         WorkoutHistoryModel.table,
         where: 'id = ?',
         whereArgs: <Object?>[id],
+      );
+      unawaited(
+        SyncEventRecorder.record(
+          entity: WorkoutHistoryModel.table,
+          entityId: '$id',
+          operation: SyncOperation.delete,
+        ),
       );
     });
   }
