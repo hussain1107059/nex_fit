@@ -14,6 +14,7 @@ import '../../providers/profile_providers.dart';
 import '../../router/app_router.dart';
 import 'widgets/profile_bmi_card.dart';
 import 'widgets/profile_energy_card.dart';
+import 'widgets/profile_gamification_card.dart';
 import 'widgets/profile_goal_card.dart';
 import 'widgets/profile_grid_cards.dart';
 import 'widgets/profile_header_card.dart';
@@ -95,6 +96,8 @@ class _ProfileContent extends ConsumerWidget {
                   const SizedBox(height: AppSpacing.md),
                   const _CompleteProfileCard(),
                 ],
+                const SizedBox(height: AppSpacing.lg),
+                const ProfileGamificationCard(),
                 const SizedBox(height: AppSpacing.lg),
                 ProfilePhysicalCard(profile: data.profile),
                 ProfileGoalCard(profile: data.profile),

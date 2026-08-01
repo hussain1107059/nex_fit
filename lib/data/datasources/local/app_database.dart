@@ -40,6 +40,7 @@ class AppDatabase {
     DatabaseMigration(version: 7, apply: _migrationV7WaterModule),
     DatabaseMigration(version: 8, apply: _migrationV8WeightModule),
     DatabaseMigration(version: 9, apply: _migrationV9ReminderModule),
+    DatabaseMigration(version: 10, apply: _migrationV10GamificationModule),
   ];
 
   Future<Database> get database async {
@@ -1107,5 +1108,110 @@ class AppDatabase {
       'CREATE INDEX IF NOT EXISTS idx_reminder_history_reminder_id '
       'ON reminder_history(reminder_id)',
     );
+  }
+
+  /// v10: the offline gamification progression layer.
+  static Future<void> _migrationV10GamificationModule(
+    DatabaseExecutor executor,
+    int version,
+  ) async {
+    final DatabaseExecutor db = executor;
+
+    await db.execute('''
+      CREATE TABLE IF NOT EXISTS xp_history (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        user_id TEXT NOT NULL,
+        source TEXT NOT NULL,
+        reason TEXT NOT NULL,
+        xp INTEGER NOT NULL DEFAULT 0,
+        total_xp INTEGER NOT NULL DEFAULT 0,
+        metadata TEXT,
+        created_at INTEGER NOT NULL,
+        FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
+      )
+    ''');
+
+    await db.execute('''
+      CREATE TABLE IF NOT EXISTS user_level (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        user_id TEXT NOT NULL,
+        level INTEGER NOT NULL DEFAULT 1,
+        current_xp INTEGER NOT NULL DEFAULT 0,
+        required_xp INTEGER NOT NULL DEFAULT 100,
+        total_xp INTEGER NOT NULL DEFAULT 0,
+        created_at INTEGER NOT NULL,
+        updated_at INTEGER NOT NULL,
+        UNIQUE (user_id),
+        FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
+      )
+    ''');
+
+    await db.execute('''
+      CREATE TABLE IF NOT EXISTS challenge (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        user_id TEXT NOT NULL,
+        title TEXT NOT NULL,
+        type TEXT NOT NULL,
+        description TEXT,
+        difficulty TEXT NOT NULL DEFAULT 'medium',
+        target INTEGER NOT NULL DEFAULT 0,
+        progress INTEGER NOT NULL DEFAULT 0,
+        reward_xp INTEGER NOT NULL DEFAULT 0,
+        is_completed INTEGER NOT NULL DEFAULT 0,
+        completed_at INTEGER,
+        created_at INTEGER NOT NULL,
+        updated_at INTEGER NOT NULL,
+        UNIQUE (user_id, type),
+        FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
+      )
+    ''');
+
+    await db.execute('''
+      CREATE TABLE IF NOT EXISTS milestone (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        user_id TEXT NOT NULL,
+        challenge_id INTEGER,
+        title TEXT NOT NULL,
+        target_value INTEGER NOT NULL DEFAULT 0,
+        current_value INTEGER NOT NULL DEFAULT 0,
+        is_reached INTEGER NOT NULL DEFAULT 0,
+        created_at INTEGER NOT NULL,
+        updated_at INTEGER NOT NULL,
+        FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE,
+        FOREIGN KEY (challenge_id) REFERENCES challenge(id) ON DELETE CASCADE
+      )
+    ''');
+
+    await db.execute('''
+      CREATE TABLE IF NOT EXISTS reward (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        user_id TEXT NOT NULL,
+        type TEXT NOT NULL,
+        title TEXT NOT NULL,
+        amount INTEGER NOT NULL DEFAULT 0,
+        icon TEXT,
+        is_claimed INTEGER NOT NULL DEFAULT 0,
+        claimed_at INTEGER,
+        created_at INTEGER NOT NULL,
+        updated_at INTEGER NOT NULL,
+        UNIQUE (user_id, type, title),
+        FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
+      )
+    ''');
+
+    await db.execute('''
+      CREATE UNIQUE INDEX IF NOT EXISTS idx_achievement_user_type
+      ON achievement (user_id, achievement_type)
+    ''');
+
+    await db.execute('''
+      CREATE UNIQUE INDEX IF NOT EXISTS idx_badge_user_type
+      ON badge (user_id, badge_type)
+    ''');
+
+    await db.execute('''
+      CREATE UNIQUE INDEX IF NOT EXISTS idx_xp_history_user_source_reason
+      ON xp_history (user_id, source, reason)
+    ''');
   }
 }
