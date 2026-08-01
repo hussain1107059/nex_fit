@@ -2587,6 +2587,600 @@ abstract class AppLocalizations {
   /// In bs, this message translates to:
   /// **'দিন'**
   String get workoutSummaryDays;
+
+  /// No description provided for @foodCategoryRice.
+  ///
+  /// In bs, this message translates to:
+  /// **'চাল'**
+  String get foodCategoryRice;
+
+  /// No description provided for @foodCategoryBread.
+  ///
+  /// In bs, this message translates to:
+  /// **'রুটি'**
+  String get foodCategoryBread;
+
+  /// No description provided for @foodCategoryMeat.
+  ///
+  /// In bs, this message translates to:
+  /// **'মাংস'**
+  String get foodCategoryMeat;
+
+  /// No description provided for @foodCategoryChicken.
+  ///
+  /// In bs, this message translates to:
+  /// **'মুরগি'**
+  String get foodCategoryChicken;
+
+  /// No description provided for @foodCategoryFish.
+  ///
+  /// In bs, this message translates to:
+  /// **'মাছ'**
+  String get foodCategoryFish;
+
+  /// No description provided for @foodCategoryEgg.
+  ///
+  /// In bs, this message translates to:
+  /// **'ডিম'**
+  String get foodCategoryEgg;
+
+  /// No description provided for @foodCategoryVegetables.
+  ///
+  /// In bs, this message translates to:
+  /// **'সবজি'**
+  String get foodCategoryVegetables;
+
+  /// No description provided for @foodCategoryFruits.
+  ///
+  /// In bs, this message translates to:
+  /// **'ফল'**
+  String get foodCategoryFruits;
+
+  /// No description provided for @foodCategoryMilk.
+  ///
+  /// In bs, this message translates to:
+  /// **'দুধ'**
+  String get foodCategoryMilk;
+
+  /// No description provided for @foodCategoryDairy.
+  ///
+  /// In bs, this message translates to:
+  /// **'দুগ্ধজাত'**
+  String get foodCategoryDairy;
+
+  /// No description provided for @foodCategoryFastFood.
+  ///
+  /// In bs, this message translates to:
+  /// **'ফাস্ট ফুড'**
+  String get foodCategoryFastFood;
+
+  /// No description provided for @foodCategoryDessert.
+  ///
+  /// In bs, this message translates to:
+  /// **'মিষ্টান্ন'**
+  String get foodCategoryDessert;
+
+  /// No description provided for @foodCategoryDrinks.
+  ///
+  /// In bs, this message translates to:
+  /// **'পানীয়'**
+  String get foodCategoryDrinks;
+
+  /// No description provided for @foodCategoryNuts.
+  ///
+  /// In bs, this message translates to:
+  /// **'বাদাম'**
+  String get foodCategoryNuts;
+
+  /// No description provided for @foodCategorySeeds.
+  ///
+  /// In bs, this message translates to:
+  /// **'বীজ'**
+  String get foodCategorySeeds;
+
+  /// No description provided for @foodCategoryHealthySnacks.
+  ///
+  /// In bs, this message translates to:
+  /// **'স্বাস্থ্যকর স্ন্যাকস'**
+  String get foodCategoryHealthySnacks;
+
+  /// No description provided for @nutritionKcal.
+  ///
+  /// In bs, this message translates to:
+  /// **'কিলোক্যালরি'**
+  String get nutritionKcal;
+
+  /// No description provided for @nutritionMacros.
+  ///
+  /// In bs, this message translates to:
+  /// **'ম্যাক্রো'**
+  String get nutritionMacros;
+
+  /// No description provided for @nutritionProtein.
+  ///
+  /// In bs, this message translates to:
+  /// **'প্রোটিন'**
+  String get nutritionProtein;
+
+  /// No description provided for @nutritionCarbs.
+  ///
+  /// In bs, this message translates to:
+  /// **'কার্ব'**
+  String get nutritionCarbs;
+
+  /// No description provided for @nutritionFat.
+  ///
+  /// In bs, this message translates to:
+  /// **'ফ্যাট'**
+  String get nutritionFat;
+
+  /// No description provided for @nutritionRemaining.
+  ///
+  /// In bs, this message translates to:
+  /// **'বাকি আছে'**
+  String get nutritionRemaining;
+
+  /// No description provided for @nutritionGoalMet.
+  ///
+  /// In bs, this message translates to:
+  /// **'লক্ষ্য অর্জনে এগিয়ে'**
+  String get nutritionGoalMet;
+
+  /// No description provided for @nutritionGoalProgress.
+  ///
+  /// In bs, this message translates to:
+  /// **'প্রগতি চলছে'**
+  String get nutritionGoalProgress;
+
+  /// No description provided for @nutritionWaterIntake.
+  ///
+  /// In bs, this message translates to:
+  /// **'পানি গ্রহণ'**
+  String get nutritionWaterIntake;
+
+  /// No description provided for @nutritionWaterHint.
+  ///
+  /// In bs, this message translates to:
+  /// **'ওয়াটার মডিউল থেকে ট্র্যাক করা হয়'**
+  String get nutritionWaterHint;
+
+  /// No description provided for @nutritionMeals.
+  ///
+  /// In bs, this message translates to:
+  /// **'খাবার'**
+  String get nutritionMeals;
+
+  /// No description provided for @nutritionMealEmpty.
+  ///
+  /// In bs, this message translates to:
+  /// **'এখনো কোনো খাবার যোগ হয়নি'**
+  String get nutritionMealEmpty;
+
+  /// No description provided for @nutritionItems.
+  ///
+  /// In bs, this message translates to:
+  /// **'টি'**
+  String get nutritionItems;
+
+  /// No description provided for @nutritionNoFoodLogged.
+  ///
+  /// In bs, this message translates to:
+  /// **'এই খাবারে এখনো কিছু লগ হয়নি।'**
+  String get nutritionNoFoodLogged;
+
+  /// No description provided for @nutritionAddFood.
+  ///
+  /// In bs, this message translates to:
+  /// **'খাবার যোগ করুন'**
+  String get nutritionAddFood;
+
+  /// No description provided for @nutritionAddToMeal.
+  ///
+  /// In bs, this message translates to:
+  /// **'খাবারে যোগ করুন'**
+  String get nutritionAddToMeal;
+
+  /// No description provided for @nutritionAddToLog.
+  ///
+  /// In bs, this message translates to:
+  /// **'লগে যোগ করুন'**
+  String get nutritionAddToLog;
+
+  /// No description provided for @nutritionMealType.
+  ///
+  /// In bs, this message translates to:
+  /// **'খাবারের ধরন'**
+  String get nutritionMealType;
+
+  /// No description provided for @nutritionQuantity.
+  ///
+  /// In bs, this message translates to:
+  /// **'পরিমাণ'**
+  String get nutritionQuantity;
+
+  /// No description provided for @nutritionCalories.
+  ///
+  /// In bs, this message translates to:
+  /// **'ক্যালোরি'**
+  String get nutritionCalories;
+
+  /// No description provided for @nutritionSelectMeal.
+  ///
+  /// In bs, this message translates to:
+  /// **'আগে একটি খাবার স্লট বেছে নিন'**
+  String get nutritionSelectMeal;
+
+  /// No description provided for @nutritionFoodAdded.
+  ///
+  /// In bs, this message translates to:
+  /// **'খাবার যোগ হয়েছে'**
+  String get nutritionFoodAdded;
+
+  /// No description provided for @nutritionEditQuantity.
+  ///
+  /// In bs, this message translates to:
+  /// **'পরিমাণ পরিবর্তন'**
+  String get nutritionEditQuantity;
+
+  /// No description provided for @nutritionRemoveFood.
+  ///
+  /// In bs, this message translates to:
+  /// **'খাবার সরান'**
+  String get nutritionRemoveFood;
+
+  /// No description provided for @nutritionRemoveFoodMessage.
+  ///
+  /// In bs, this message translates to:
+  /// **'লগ থেকে এই খাবারটি সরিয়ে ফেলবেন?'**
+  String get nutritionRemoveFoodMessage;
+
+  /// No description provided for @nutritionDuplicate.
+  ///
+  /// In bs, this message translates to:
+  /// **'ডুপ্লিকেট'**
+  String get nutritionDuplicate;
+
+  /// No description provided for @nutritionCopyYesterday.
+  ///
+  /// In bs, this message translates to:
+  /// **'গতকাল কপি করুন'**
+  String get nutritionCopyYesterday;
+
+  /// No description provided for @nutritionCopyYesterdayDone.
+  ///
+  /// In bs, this message translates to:
+  /// **'গতকাল থেকে {count}টি আইটেম কপি হয়েছে'**
+  String nutritionCopyYesterdayDone(Object count);
+
+  /// No description provided for @nutritionDaysAgo.
+  ///
+  /// In bs, this message translates to:
+  /// **'দিন আগে'**
+  String get nutritionDaysAgo;
+
+  /// No description provided for @nutritionDaysLater.
+  ///
+  /// In bs, this message translates to:
+  /// **'দিন পরে'**
+  String get nutritionDaysLater;
+
+  /// No description provided for @nutritionDaysShort.
+  ///
+  /// In bs, this message translates to:
+  /// **'দিন'**
+  String get nutritionDaysShort;
+
+  /// No description provided for @nutritionMacroTracker.
+  ///
+  /// In bs, this message translates to:
+  /// **'ম্যাক্রো ট্র্যাকার'**
+  String get nutritionMacroTracker;
+
+  /// No description provided for @nutritionHistory.
+  ///
+  /// In bs, this message translates to:
+  /// **'পুষ্টি ইতিহাস'**
+  String get nutritionHistory;
+
+  /// No description provided for @nutritionAvgMacros.
+  ///
+  /// In bs, this message translates to:
+  /// **'গড় ম্যাক্রো'**
+  String get nutritionAvgMacros;
+
+  /// No description provided for @nutritionAvgCalories.
+  ///
+  /// In bs, this message translates to:
+  /// **'গড় কিলোক্যালরি'**
+  String get nutritionAvgCalories;
+
+  /// No description provided for @nutritionAvgWater.
+  ///
+  /// In bs, this message translates to:
+  /// **'গড় পানি'**
+  String get nutritionAvgWater;
+
+  /// No description provided for @nutritionLoggedDays.
+  ///
+  /// In bs, this message translates to:
+  /// **'লগ হওয়া দিন'**
+  String get nutritionLoggedDays;
+
+  /// No description provided for @nutritionCalorieTrend.
+  ///
+  /// In bs, this message translates to:
+  /// **'ক্যালোরির ধারা'**
+  String get nutritionCalorieTrend;
+
+  /// No description provided for @nutritionGoalAdherence.
+  ///
+  /// In bs, this message translates to:
+  /// **'লক্ষ্য পূরণের হার'**
+  String get nutritionGoalAdherence;
+
+  /// No description provided for @nutritionDailyBreakdown.
+  ///
+  /// In bs, this message translates to:
+  /// **'দৈনিক বিশ্লেষণ'**
+  String get nutritionDailyBreakdown;
+
+  /// No description provided for @nutritionNoHistory.
+  ///
+  /// In bs, this message translates to:
+  /// **'এই সময়ের কোনো তথ্য নেই'**
+  String get nutritionNoHistory;
+
+  /// No description provided for @nutritionNoHistorySubtitle.
+  ///
+  /// In bs, this message translates to:
+  /// **'খাবার লগ করুন, ইতিহাস এখানে দেখা যাবে।'**
+  String get nutritionNoHistorySubtitle;
+
+  /// No description provided for @nutritionFoodDatabase.
+  ///
+  /// In bs, this message translates to:
+  /// **'খাদ্য ডেটাবেস'**
+  String get nutritionFoodDatabase;
+
+  /// No description provided for @nutritionFoodSearchHint.
+  ///
+  /// In bs, this message translates to:
+  /// **'খাবার খুঁজুন...'**
+  String get nutritionFoodSearchHint;
+
+  /// No description provided for @nutritionAllFoods.
+  ///
+  /// In bs, this message translates to:
+  /// **'সব খাবার'**
+  String get nutritionAllFoods;
+
+  /// No description provided for @nutritionFavorites.
+  ///
+  /// In bs, this message translates to:
+  /// **'প্রিয়'**
+  String get nutritionFavorites;
+
+  /// No description provided for @nutritionRecent.
+  ///
+  /// In bs, this message translates to:
+  /// **'সাম্প্রতিক'**
+  String get nutritionRecent;
+
+  /// No description provided for @nutritionFrequent.
+  ///
+  /// In bs, this message translates to:
+  /// **'ঘন ঘন'**
+  String get nutritionFrequent;
+
+  /// No description provided for @nutritionNoResults.
+  ///
+  /// In bs, this message translates to:
+  /// **'কোনো খাবার পাওয়া যায়নি'**
+  String get nutritionNoResults;
+
+  /// No description provided for @nutritionNoResultsSubtitle.
+  ///
+  /// In bs, this message translates to:
+  /// **'অন্য কিছু খুঁজুন বা ফিল্টার বদলান।'**
+  String get nutritionNoResultsSubtitle;
+
+  /// No description provided for @nutritionNoFavorites.
+  ///
+  /// In bs, this message translates to:
+  /// **'এখনো কোনো প্রিয় নেই'**
+  String get nutritionNoFavorites;
+
+  /// No description provided for @nutritionNoFavoritesSubtitle.
+  ///
+  /// In bs, this message translates to:
+  /// **'যেকোনো খাবারে হার্ট চেপে এখানে সংরক্ষণ করুন।'**
+  String get nutritionNoFavoritesSubtitle;
+
+  /// No description provided for @nutritionNoRecent.
+  ///
+  /// In bs, this message translates to:
+  /// **'সাম্প্রতিক খাবার নেই'**
+  String get nutritionNoRecent;
+
+  /// No description provided for @nutritionNoRecentSubtitle.
+  ///
+  /// In bs, this message translates to:
+  /// **'যে খাবার লগ করবেন তা এখানে দেখা যাবে।'**
+  String get nutritionNoRecentSubtitle;
+
+  /// No description provided for @nutritionNoFrequent.
+  ///
+  /// In bs, this message translates to:
+  /// **'ঘন ঘন খাবার নেই'**
+  String get nutritionNoFrequent;
+
+  /// No description provided for @nutritionNoFrequentSubtitle.
+  ///
+  /// In bs, this message translates to:
+  /// **'যে খাবার বারবার লগ করবেন তা এখানে দেখা যাবে।'**
+  String get nutritionNoFrequentSubtitle;
+
+  /// No description provided for @nutritionNutritionFacts.
+  ///
+  /// In bs, this message translates to:
+  /// **'পুষ্টি উপাদান'**
+  String get nutritionNutritionFacts;
+
+  /// No description provided for @nutritionServingSize.
+  ///
+  /// In bs, this message translates to:
+  /// **'পরিবেশন পরিমাণ'**
+  String get nutritionServingSize;
+
+  /// No description provided for @nutritionFiber.
+  ///
+  /// In bs, this message translates to:
+  /// **'আঁশ'**
+  String get nutritionFiber;
+
+  /// No description provided for @nutritionSugar.
+  ///
+  /// In bs, this message translates to:
+  /// **'চিনি'**
+  String get nutritionSugar;
+
+  /// No description provided for @nutritionSodium.
+  ///
+  /// In bs, this message translates to:
+  /// **'সোডিয়াম'**
+  String get nutritionSodium;
+
+  /// No description provided for @nutritionPotassium.
+  ///
+  /// In bs, this message translates to:
+  /// **'পটাশিয়াম'**
+  String get nutritionPotassium;
+
+  /// No description provided for @nutritionCalcium.
+  ///
+  /// In bs, this message translates to:
+  /// **'ক্যালসিয়াম'**
+  String get nutritionCalcium;
+
+  /// No description provided for @nutritionIron.
+  ///
+  /// In bs, this message translates to:
+  /// **'আয়রন'**
+  String get nutritionIron;
+
+  /// No description provided for @nutritionVitaminA.
+  ///
+  /// In bs, this message translates to:
+  /// **'ভিটামিন এ'**
+  String get nutritionVitaminA;
+
+  /// No description provided for @nutritionVitaminC.
+  ///
+  /// In bs, this message translates to:
+  /// **'ভিটামিন সি'**
+  String get nutritionVitaminC;
+
+  /// No description provided for @nutritionWaterContent.
+  ///
+  /// In bs, this message translates to:
+  /// **'পানির পরিমাণ'**
+  String get nutritionWaterContent;
+
+  /// No description provided for @nutritionMealPlanner.
+  ///
+  /// In bs, this message translates to:
+  /// **'খাবার পরিকল্পনা'**
+  String get nutritionMealPlanner;
+
+  /// No description provided for @nutritionNewTemplate.
+  ///
+  /// In bs, this message translates to:
+  /// **'নতুন টেমপ্লেট'**
+  String get nutritionNewTemplate;
+
+  /// No description provided for @nutritionNoTemplates.
+  ///
+  /// In bs, this message translates to:
+  /// **'কোনো খাবার টেমপ্লেট নেই'**
+  String get nutritionNoTemplates;
+
+  /// No description provided for @nutritionNoTemplatesSubtitle.
+  ///
+  /// In bs, this message translates to:
+  /// **'প্রিয় খাবার সংরক্ষণ করুন এবং এক ট্যাপে লগ করুন।'**
+  String get nutritionNoTemplatesSubtitle;
+
+  /// No description provided for @nutritionSaveTemplate.
+  ///
+  /// In bs, this message translates to:
+  /// **'টেমপ্লেট সংরক্ষণ করুন'**
+  String get nutritionSaveTemplate;
+
+  /// No description provided for @nutritionTemplateName.
+  ///
+  /// In bs, this message translates to:
+  /// **'টেমপ্লেটের নাম'**
+  String get nutritionTemplateName;
+
+  /// No description provided for @nutritionTemplateNameHint.
+  ///
+  /// In bs, this message translates to:
+  /// **'যেমন: ওয়ার্কআউট পরবর্তী খাবার'**
+  String get nutritionTemplateNameHint;
+
+  /// No description provided for @nutritionTemplateNameRequired.
+  ///
+  /// In bs, this message translates to:
+  /// **'টেমপ্লেটের নাম লিখুন'**
+  String get nutritionTemplateNameRequired;
+
+  /// No description provided for @nutritionTemplateNoFoods.
+  ///
+  /// In bs, this message translates to:
+  /// **'এখনো কোনো খাবার বাছাই করা হয়নি'**
+  String get nutritionTemplateNoFoods;
+
+  /// No description provided for @nutritionSelectedFoods.
+  ///
+  /// In bs, this message translates to:
+  /// **'{count}টি খাবার বাছাই হয়েছে'**
+  String nutritionSelectedFoods(Object count);
+
+  /// No description provided for @nutritionTemplateSaved.
+  ///
+  /// In bs, this message translates to:
+  /// **'টেমপ্লেট সংরক্ষিত হয়েছে'**
+  String get nutritionTemplateSaved;
+
+  /// No description provided for @nutritionTemplateLogged.
+  ///
+  /// In bs, this message translates to:
+  /// **'টেমপ্লেট লগ হয়েছে'**
+  String get nutritionTemplateLogged;
+
+  /// No description provided for @nutritionTemplateDeleted.
+  ///
+  /// In bs, this message translates to:
+  /// **'টেমপ্লেট মুছে ফেলা হয়েছে'**
+  String get nutritionTemplateDeleted;
+
+  /// No description provided for @nutritionLogTemplate.
+  ///
+  /// In bs, this message translates to:
+  /// **'টেমপ্লেট লগ করুন'**
+  String get nutritionLogTemplate;
+
+  /// No description provided for @nutritionDeleteTemplate.
+  ///
+  /// In bs, this message translates to:
+  /// **'টেমপ্লেট মুছবেন?'**
+  String get nutritionDeleteTemplate;
+
+  /// No description provided for @nutritionDeleteTemplateMessage.
+  ///
+  /// In bs, this message translates to:
+  /// **'\'{name}\' মুছে ফেলবেন? এটি ফেরানো যাবে না।'**
+  String nutritionDeleteTemplateMessage(Object name);
 }
 
 class _AppLocalizationsDelegate

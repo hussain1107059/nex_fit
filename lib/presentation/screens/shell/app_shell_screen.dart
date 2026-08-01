@@ -10,6 +10,7 @@ import '../../../l10n/app_localizations.dart';
 import '../../providers/connectivity_provider.dart';
 import '../../providers/dashboard_providers.dart';
 import '../dashboard/dashboard_screen.dart';
+import '../nutrition/nutrition_screen.dart';
 import '../profile/profile_screen.dart';
 import '../workout/workout_screen.dart';
 import 'module_placeholder_screen.dart';
@@ -50,11 +51,7 @@ class _AppShellScreenState extends ConsumerState<AppShellScreen> {
         icon: AppAssets.homeIcon,
         subtitle: l10n.moduleProgressSubtitle,
       ),
-      ModulePlaceholderScreen(
-        title: l10n.tabNutrition,
-        icon: AppAssets.dietIcon,
-        subtitle: l10n.moduleNutritionSubtitle,
-      ),
+      const NutritionScreen(),
       const ProfileScreen(),
     ];
 

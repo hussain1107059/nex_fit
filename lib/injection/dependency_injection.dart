@@ -17,6 +17,7 @@ import '../data/datasources/local/fitness_goal_local_data_source.dart';
 import '../data/datasources/local/food_item_local_data_source.dart';
 import '../data/datasources/local/food_log_local_data_source.dart';
 import '../data/datasources/local/meal_category_local_data_source.dart';
+import '../data/datasources/local/meal_item_local_data_source.dart';
 import '../data/datasources/local/meal_local_data_source.dart';
 import '../data/datasources/local/reminder_local_data_source.dart';
 import '../data/datasources/local/sleep_log_local_data_source.dart';
@@ -48,6 +49,7 @@ import '../data/repositories/fitness_goal_repository_impl.dart';
 import '../data/repositories/food_item_repository_impl.dart';
 import '../data/repositories/food_log_repository_impl.dart';
 import '../data/repositories/meal_category_repository_impl.dart';
+import '../data/repositories/meal_item_repository_impl.dart';
 import '../data/repositories/meal_repository_impl.dart';
 import '../data/repositories/reminder_repository_impl.dart';
 import '../data/repositories/sleep_log_repository_impl.dart';
@@ -60,6 +62,7 @@ import '../data/repositories/weight_log_repository_impl.dart';
 import '../data/repositories/workout_category_repository_impl.dart';
 import '../data/repositories/workout_exercise_repository_impl.dart';
 import '../data/repositories/workout_history_repository_impl.dart';
+import '../data/repositories/nutrition_repository_impl.dart';
 import '../data/repositories/workout_library_repository_impl.dart';
 import '../data/repositories/workout_repository_impl.dart';
 import '../data/repositories/workout_session_repository_impl.dart';
@@ -71,6 +74,7 @@ import '../data/services/backup/google_drive_backup_service.dart';
 import '../data/services/firebase_service.dart';
 import '../data/services/storage/profile_photo_service.dart';
 import '../data/services/storage/secure_storage_service.dart';
+import '../data/services/food_seeder.dart';
 import '../data/services/workout_seeder.dart';
 import '../domain/repositories/app_preferences_repository.dart';
 import '../domain/repositories/app_settings_repository.dart';
@@ -79,6 +83,7 @@ import '../domain/repositories/auth_repository.dart';
 import '../domain/repositories/dashboard_repository.dart';
 import '../domain/repositories/global_search_repository.dart';
 import '../domain/repositories/backup_history_repository.dart';
+import '../domain/repositories/nutrition_repository.dart';
 import '../domain/repositories/backup_repository.dart';
 import '../domain/repositories/badge_repository.dart';
 import '../domain/repositories/bmi_log_repository.dart';
@@ -91,6 +96,7 @@ import '../domain/repositories/fitness_goal_repository.dart';
 import '../domain/repositories/food_item_repository.dart';
 import '../domain/repositories/food_log_repository.dart';
 import '../domain/repositories/meal_category_repository.dart';
+import '../domain/repositories/meal_item_repository.dart';
 import '../domain/repositories/meal_repository.dart';
 import '../domain/repositories/profile_repository.dart';
 import '../domain/repositories/reminder_repository.dart';
@@ -358,6 +364,31 @@ final foodItemRepositoryProvider = Provider<FoodItemRepository>(
 
 final foodLogRepositoryProvider = Provider<FoodLogRepository>(
   (ref) => FoodLogRepositoryImpl(ref.watch(foodLogLocalDataSourceProvider)),
+);
+
+final mealItemLocalDataSourceProvider = Provider<MealItemLocalDataSource>(
+  (ref) => MealItemLocalDataSource(database: ref.watch(appDatabaseProvider)),
+);
+
+final mealItemRepositoryProvider = Provider<MealItemRepository>(
+  (ref) => MealItemRepositoryImpl(ref.watch(mealItemLocalDataSourceProvider)),
+);
+
+final foodSeederProvider = Provider<FoodSeeder>(
+  (ref) => FoodSeeder(database: ref.watch(appDatabaseProvider)),
+);
+
+final nutritionRepositoryProvider = Provider<NutritionRepository>(
+  (ref) => NutritionRepositoryImpl(
+    foodItemRepository: ref.watch(foodItemRepositoryProvider),
+    foodLogRepository: ref.watch(foodLogRepositoryProvider),
+    mealCategoryRepository: ref.watch(mealCategoryRepositoryProvider),
+    mealRepository: ref.watch(mealRepositoryProvider),
+    mealItemRepository: ref.watch(mealItemRepositoryProvider),
+    waterLogRepository: ref.watch(waterLogRepositoryProvider),
+    userProfileRepository: ref.watch(userFitnessProfileRepositoryProvider),
+    foodSeeder: ref.watch(foodSeederProvider),
+  ),
 );
 
 final waterLogRepositoryProvider = Provider<WaterLogRepository>(

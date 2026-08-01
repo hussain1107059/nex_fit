@@ -13,6 +13,11 @@ import '../screens/auth/register_screen.dart';
 import '../screens/exercise/exercise_detail_screen.dart';
 import '../screens/exercise/exercise_library_screen.dart';
 import '../screens/exercise/exercise_player_screen.dart';
+import '../screens/nutrition/food_database_screen.dart';
+import '../screens/nutrition/food_detail_screen.dart';
+import '../screens/nutrition/macro_tracker_screen.dart';
+import '../screens/nutrition/meal_planner_screen.dart';
+import '../screens/nutrition/nutrition_history_screen.dart';
 import '../screens/profile/edit_profile_screen.dart';
 import '../screens/shell/app_shell_screen.dart';
 import '../screens/splash/splash_screen.dart';
@@ -37,6 +42,11 @@ abstract final class AppRoutes {
   static const String exerciseList = '/exercise/list';
   static const String exerciseDetail = '/exercise/detail/:exerciseId';
   static const String exercisePlayer = '/exercise/player';
+  static const String foodDatabase = '/nutrition/food-database';
+  static const String foodDetail = '/nutrition/food/:foodId';
+  static const String macroTracker = '/nutrition/macro-tracker';
+  static const String nutritionHistory = '/nutrition/history';
+  static const String mealPlanner = '/nutrition/meal-planner';
 
   /// The landing route for a freshly signed-in user.
   static String destinationFor(AppUser user) {
@@ -50,6 +60,9 @@ abstract final class AppRoutes {
   /// Resolved detail route for [exerciseId].
   static String exerciseDetailPath(int exerciseId) =>
       '/exercise/detail/$exerciseId';
+
+  /// Resolved detail route for [foodId].
+  static String foodDetailPath(int foodId) => '/nutrition/food/$foodId';
 }
 
 /// Central [GoRouter] configuration.
@@ -166,6 +179,42 @@ final appRouterProvider = Provider<GoRouter>((ref) {
           final ExercisePlayerArgs args = state.extra as ExercisePlayerArgs;
           return ExercisePlayerScreen(args: args);
         },
+      ),
+      GoRoute(
+        path: AppRoutes.foodDatabase,
+        name: 'food-database',
+        builder: (BuildContext context, GoRouterState state) {
+          final FoodDatabaseArgs args =
+              state.extra as FoodDatabaseArgs? ??
+              const FoodDatabaseArgs();
+          return FoodDatabaseScreen(args: args);
+        },
+      ),
+      GoRoute(
+        path: AppRoutes.foodDetail,
+        name: 'food-detail',
+        builder: (BuildContext context, GoRouterState state) =>
+            FoodDetailScreen(
+              foodId: int.parse(state.pathParameters['foodId']!),
+            ),
+      ),
+      GoRoute(
+        path: AppRoutes.macroTracker,
+        name: 'macro-tracker',
+        builder: (BuildContext context, GoRouterState state) =>
+            const MacroTrackerScreen(),
+      ),
+      GoRoute(
+        path: AppRoutes.nutritionHistory,
+        name: 'nutrition-history',
+        builder: (BuildContext context, GoRouterState state) =>
+            const NutritionHistoryScreen(),
+      ),
+      GoRoute(
+        path: AppRoutes.mealPlanner,
+        name: 'meal-planner',
+        builder: (BuildContext context, GoRouterState state) =>
+            const MealPlannerScreen(),
       ),
     ],
     errorBuilder: (BuildContext context, GoRouterState state) {

@@ -2,6 +2,9 @@ import '../../domain/entities/food_item.dart';
 import 'model_codec.dart';
 
 /// Maps [FoodItem] to and from rows in the `food_item` table.
+///
+/// [FoodItem.isFavorite] is a per-user derived flag (resolved from the
+/// `food_favorite` join table) and is therefore not persisted here.
 class FoodItemModel {
   FoodItemModel._();
 
@@ -22,6 +25,15 @@ class FoodItemModel {
       'fat': item.fat,
       'fiber': item.fiber,
       'sugar': item.sugar,
+      'sodium': item.sodium,
+      'potassium': item.potassium,
+      'calcium': item.calcium,
+      'iron': item.iron,
+      'vitamin_a': item.vitaminA,
+      'vitamin_c': item.vitaminC,
+      'water_percentage': item.waterPercentage,
+      'barcode': item.barcode,
+      'image_path': item.imagePath,
       'is_custom': ModelCodec.boolToInt(item.isCustom),
       'created_at': ModelCodec.epochMs(item.createdAt),
     };
@@ -42,6 +54,15 @@ class FoodItemModel {
       fat: ModelCodec.toDouble(row['fat']) ?? 0,
       fiber: ModelCodec.toDouble(row['fiber']) ?? 0,
       sugar: ModelCodec.toDouble(row['sugar']) ?? 0,
+      sodium: ModelCodec.toDouble(row['sodium']) ?? 0,
+      potassium: ModelCodec.toDouble(row['potassium']) ?? 0,
+      calcium: ModelCodec.toDouble(row['calcium']) ?? 0,
+      iron: ModelCodec.toDouble(row['iron']) ?? 0,
+      vitaminA: ModelCodec.toDouble(row['vitamin_a']) ?? 0,
+      vitaminC: ModelCodec.toDouble(row['vitamin_c']) ?? 0,
+      waterPercentage: ModelCodec.toDouble(row['water_percentage']) ?? 0,
+      barcode: row['barcode'] as String?,
+      imagePath: row['image_path'] as String?,
       isCustom: ModelCodec.intToBool(row['is_custom']),
       createdAt:
           ModelCodec.fromEpochMs(row['created_at'] as int?) ?? DateTime.now(),

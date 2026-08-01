@@ -1,6 +1,8 @@
 import 'package:sqflite/sqflite.dart' hide DatabaseException;
 
+import '../../../domain/entities/food_item.dart';
 import '../../../domain/entities/food_log.dart';
+import '../../models/food_item_model.dart';
 import '../../models/food_log_model.dart';
 import 'base_local_data_source.dart';
 
@@ -16,6 +18,20 @@ class FoodLogLocalDataSource extends BaseLocalDataSource {
         FoodLogModel.table,
         FoodLogModel.toMap(log),
       );
+    });
+  }
+
+  Future<void> insertAll(List<FoodLog> logs) {
+    return guard('insert_all', () async {
+      final Database db = await dbConnection;
+      final Batch batch = db.batch();
+      for (final FoodLog log in logs) {
+        batch.insert(
+          FoodLogModel.table,
+          FoodLogModel.toMap(log),
+        );
+      }
+      await batch.commit(noResult: true);
     });
   }
 
@@ -73,9 +89,43 @@ class FoodLogLocalDataSource extends BaseLocalDataSource {
           start.millisecondsSinceEpoch,
           end.millisecondsSinceEpoch,
         ],
-        orderBy: 'logged_at DESC',
+        orderBy: 'logged_at ASC',
       );
       return rows.map(FoodLogModel.fromMap).toList();
+    });
+  }
+
+  /// The most recently logged foods (distinct, deduplicated by name).
+  Future<List<FoodItem>> getRecentFoods(String userId, {int limit = 12}) {
+    return guard('get_recent_foods', () async {
+      final Database db = await dbConnection;
+      final List<Map<String, Object?>> rows = await db.rawQuery(
+        'SELECT fi.* FROM food_log fl '
+        'INNER JOIN ${FoodItemModel.table} fi ON fi.id = fl.food_item_id '
+        'WHERE fl.user_id = ? '
+        'GROUP BY fl.food_item_id '
+        'ORDER BY MAX(fl.logged_at) DESC '
+        'LIMIT ?',
+        <Object?>[userId, limit],
+      );
+      return rows.map(FoodItemModel.fromMap).toList();
+    });
+  }
+
+  /// The most frequently logged foods (distinct, ordered by usage).
+  Future<List<FoodItem>> getFrequentFoods(String userId, {int limit = 12}) {
+    return guard('get_frequent_foods', () async {
+      final Database db = await dbConnection;
+      final List<Map<String, Object?>> rows = await db.rawQuery(
+        'SELECT fi.*, COUNT(fl.id) AS usage_count FROM food_log fl '
+        'INNER JOIN ${FoodItemModel.table} fi ON fi.id = fl.food_item_id '
+        'WHERE fl.user_id = ? '
+        'GROUP BY fl.food_item_id '
+        'ORDER BY usage_count DESC, MAX(fl.logged_at) DESC '
+        'LIMIT ?',
+        <Object?>[userId, limit],
+      );
+      return rows.map(FoodItemModel.fromMap).toList();
     });
   }
 

@@ -1288,4 +1288,311 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get workoutSummaryDays => 'day(s)';
+
+  @override
+  String get foodCategoryRice => 'Rice';
+
+  @override
+  String get foodCategoryBread => 'Bread';
+
+  @override
+  String get foodCategoryMeat => 'Meat';
+
+  @override
+  String get foodCategoryChicken => 'Chicken';
+
+  @override
+  String get foodCategoryFish => 'Fish';
+
+  @override
+  String get foodCategoryEgg => 'Egg';
+
+  @override
+  String get foodCategoryVegetables => 'Vegetables';
+
+  @override
+  String get foodCategoryFruits => 'Fruits';
+
+  @override
+  String get foodCategoryMilk => 'Milk';
+
+  @override
+  String get foodCategoryDairy => 'Dairy';
+
+  @override
+  String get foodCategoryFastFood => 'Fast Food';
+
+  @override
+  String get foodCategoryDessert => 'Desserts';
+
+  @override
+  String get foodCategoryDrinks => 'Drinks';
+
+  @override
+  String get foodCategoryNuts => 'Nuts';
+
+  @override
+  String get foodCategorySeeds => 'Seeds';
+
+  @override
+  String get foodCategoryHealthySnacks => 'Healthy Snacks';
+
+  @override
+  String get nutritionKcal => 'kcal';
+
+  @override
+  String get nutritionMacros => 'Macros';
+
+  @override
+  String get nutritionProtein => 'Protein';
+
+  @override
+  String get nutritionCarbs => 'Carbs';
+
+  @override
+  String get nutritionFat => 'Fat';
+
+  @override
+  String get nutritionRemaining => 'Remaining';
+
+  @override
+  String get nutritionGoalMet => 'Goal on track';
+
+  @override
+  String get nutritionGoalProgress => 'Building progress';
+
+  @override
+  String get nutritionWaterIntake => 'Water intake';
+
+  @override
+  String get nutritionWaterHint => 'Tracked from the water module';
+
+  @override
+  String get nutritionMeals => 'Meals';
+
+  @override
+  String get nutritionMealEmpty => 'No food added yet';
+
+  @override
+  String get nutritionItems => 'items';
+
+  @override
+  String get nutritionNoFoodLogged => 'Nothing logged for this meal yet.';
+
+  @override
+  String get nutritionAddFood => 'Add food';
+
+  @override
+  String get nutritionAddToMeal => 'Add to meal';
+
+  @override
+  String get nutritionAddToLog => 'Add to log';
+
+  @override
+  String get nutritionMealType => 'Meal';
+
+  @override
+  String get nutritionQuantity => 'Quantity';
+
+  @override
+  String get nutritionCalories => 'Calories';
+
+  @override
+  String get nutritionSelectMeal => 'Choose a meal slot first';
+
+  @override
+  String get nutritionFoodAdded => 'Food added';
+
+  @override
+  String get nutritionEditQuantity => 'Edit quantity';
+
+  @override
+  String get nutritionRemoveFood => 'Remove food';
+
+  @override
+  String get nutritionRemoveFoodMessage => 'Remove this food from your log?';
+
+  @override
+  String get nutritionDuplicate => 'Duplicate';
+
+  @override
+  String get nutritionCopyYesterday => 'Copy yesterday';
+
+  @override
+  String nutritionCopyYesterdayDone(Object count) {
+    return '$count items copied from yesterday';
+  }
+
+  @override
+  String get nutritionDaysAgo => 'days ago';
+
+  @override
+  String get nutritionDaysLater => 'days later';
+
+  @override
+  String get nutritionDaysShort => 'days';
+
+  @override
+  String get nutritionMacroTracker => 'Macro tracker';
+
+  @override
+  String get nutritionHistory => 'Nutrition history';
+
+  @override
+  String get nutritionAvgMacros => 'Average macros';
+
+  @override
+  String get nutritionAvgCalories => 'Avg kcal';
+
+  @override
+  String get nutritionAvgWater => 'Avg water';
+
+  @override
+  String get nutritionLoggedDays => 'Logged days';
+
+  @override
+  String get nutritionCalorieTrend => 'Calorie trend';
+
+  @override
+  String get nutritionGoalAdherence => 'Goal adherence';
+
+  @override
+  String get nutritionDailyBreakdown => 'Daily breakdown';
+
+  @override
+  String get nutritionNoHistory => 'No data for this period';
+
+  @override
+  String get nutritionNoHistorySubtitle =>
+      'Log your meals and your history will appear here.';
+
+  @override
+  String get nutritionFoodDatabase => 'Food database';
+
+  @override
+  String get nutritionFoodSearchHint => 'Search foods...';
+
+  @override
+  String get nutritionAllFoods => 'All foods';
+
+  @override
+  String get nutritionFavorites => 'Favorites';
+
+  @override
+  String get nutritionRecent => 'Recent';
+
+  @override
+  String get nutritionFrequent => 'Frequent';
+
+  @override
+  String get nutritionNoResults => 'No foods found';
+
+  @override
+  String get nutritionNoResultsSubtitle => 'Try a different search or filter.';
+
+  @override
+  String get nutritionNoFavorites => 'No favorites yet';
+
+  @override
+  String get nutritionNoFavoritesSubtitle =>
+      'Tap the heart on any food to save it here.';
+
+  @override
+  String get nutritionNoRecent => 'No recent foods';
+
+  @override
+  String get nutritionNoRecentSubtitle => 'Foods you log will appear here.';
+
+  @override
+  String get nutritionNoFrequent => 'No frequent foods yet';
+
+  @override
+  String get nutritionNoFrequentSubtitle =>
+      'Foods you log often will appear here.';
+
+  @override
+  String get nutritionNutritionFacts => 'Nutrition facts';
+
+  @override
+  String get nutritionServingSize => 'Serving size';
+
+  @override
+  String get nutritionFiber => 'Fiber';
+
+  @override
+  String get nutritionSugar => 'Sugar';
+
+  @override
+  String get nutritionSodium => 'Sodium';
+
+  @override
+  String get nutritionPotassium => 'Potassium';
+
+  @override
+  String get nutritionCalcium => 'Calcium';
+
+  @override
+  String get nutritionIron => 'Iron';
+
+  @override
+  String get nutritionVitaminA => 'Vitamin A';
+
+  @override
+  String get nutritionVitaminC => 'Vitamin C';
+
+  @override
+  String get nutritionWaterContent => 'Water content';
+
+  @override
+  String get nutritionMealPlanner => 'Meal planner';
+
+  @override
+  String get nutritionNewTemplate => 'New template';
+
+  @override
+  String get nutritionNoTemplates => 'No meal templates yet';
+
+  @override
+  String get nutritionNoTemplatesSubtitle =>
+      'Save your favourite meals and log them in one tap.';
+
+  @override
+  String get nutritionSaveTemplate => 'Save template';
+
+  @override
+  String get nutritionTemplateName => 'Template name';
+
+  @override
+  String get nutritionTemplateNameHint => 'e.g. Post-workout meal';
+
+  @override
+  String get nutritionTemplateNameRequired => 'Enter a template name';
+
+  @override
+  String get nutritionTemplateNoFoods => 'No foods selected yet';
+
+  @override
+  String nutritionSelectedFoods(Object count) {
+    return '$count foods selected';
+  }
+
+  @override
+  String get nutritionTemplateSaved => 'Template saved';
+
+  @override
+  String get nutritionTemplateLogged => 'Template logged';
+
+  @override
+  String get nutritionTemplateDeleted => 'Template deleted';
+
+  @override
+  String get nutritionLogTemplate => 'Log template';
+
+  @override
+  String get nutritionDeleteTemplate => 'Delete template?';
+
+  @override
+  String nutritionDeleteTemplateMessage(Object name) {
+    return 'Delete \'$name\'? This can\'t be undone.';
+  }
 }

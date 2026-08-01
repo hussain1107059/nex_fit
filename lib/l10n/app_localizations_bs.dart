@@ -1296,4 +1296,312 @@ class AppLocalizationsBs extends AppLocalizations {
 
   @override
   String get workoutSummaryDays => 'দিন';
+
+  @override
+  String get foodCategoryRice => 'চাল';
+
+  @override
+  String get foodCategoryBread => 'রুটি';
+
+  @override
+  String get foodCategoryMeat => 'মাংস';
+
+  @override
+  String get foodCategoryChicken => 'মুরগি';
+
+  @override
+  String get foodCategoryFish => 'মাছ';
+
+  @override
+  String get foodCategoryEgg => 'ডিম';
+
+  @override
+  String get foodCategoryVegetables => 'সবজি';
+
+  @override
+  String get foodCategoryFruits => 'ফল';
+
+  @override
+  String get foodCategoryMilk => 'দুধ';
+
+  @override
+  String get foodCategoryDairy => 'দুগ্ধজাত';
+
+  @override
+  String get foodCategoryFastFood => 'ফাস্ট ফুড';
+
+  @override
+  String get foodCategoryDessert => 'মিষ্টান্ন';
+
+  @override
+  String get foodCategoryDrinks => 'পানীয়';
+
+  @override
+  String get foodCategoryNuts => 'বাদাম';
+
+  @override
+  String get foodCategorySeeds => 'বীজ';
+
+  @override
+  String get foodCategoryHealthySnacks => 'স্বাস্থ্যকর স্ন্যাকস';
+
+  @override
+  String get nutritionKcal => 'কিলোক্যালরি';
+
+  @override
+  String get nutritionMacros => 'ম্যাক্রো';
+
+  @override
+  String get nutritionProtein => 'প্রোটিন';
+
+  @override
+  String get nutritionCarbs => 'কার্ব';
+
+  @override
+  String get nutritionFat => 'ফ্যাট';
+
+  @override
+  String get nutritionRemaining => 'বাকি আছে';
+
+  @override
+  String get nutritionGoalMet => 'লক্ষ্য অর্জনে এগিয়ে';
+
+  @override
+  String get nutritionGoalProgress => 'প্রগতি চলছে';
+
+  @override
+  String get nutritionWaterIntake => 'পানি গ্রহণ';
+
+  @override
+  String get nutritionWaterHint => 'ওয়াটার মডিউল থেকে ট্র্যাক করা হয়';
+
+  @override
+  String get nutritionMeals => 'খাবার';
+
+  @override
+  String get nutritionMealEmpty => 'এখনো কোনো খাবার যোগ হয়নি';
+
+  @override
+  String get nutritionItems => 'টি';
+
+  @override
+  String get nutritionNoFoodLogged => 'এই খাবারে এখনো কিছু লগ হয়নি।';
+
+  @override
+  String get nutritionAddFood => 'খাবার যোগ করুন';
+
+  @override
+  String get nutritionAddToMeal => 'খাবারে যোগ করুন';
+
+  @override
+  String get nutritionAddToLog => 'লগে যোগ করুন';
+
+  @override
+  String get nutritionMealType => 'খাবারের ধরন';
+
+  @override
+  String get nutritionQuantity => 'পরিমাণ';
+
+  @override
+  String get nutritionCalories => 'ক্যালোরি';
+
+  @override
+  String get nutritionSelectMeal => 'আগে একটি খাবার স্লট বেছে নিন';
+
+  @override
+  String get nutritionFoodAdded => 'খাবার যোগ হয়েছে';
+
+  @override
+  String get nutritionEditQuantity => 'পরিমাণ পরিবর্তন';
+
+  @override
+  String get nutritionRemoveFood => 'খাবার সরান';
+
+  @override
+  String get nutritionRemoveFoodMessage => 'লগ থেকে এই খাবারটি সরিয়ে ফেলবেন?';
+
+  @override
+  String get nutritionDuplicate => 'ডুপ্লিকেট';
+
+  @override
+  String get nutritionCopyYesterday => 'গতকাল কপি করুন';
+
+  @override
+  String nutritionCopyYesterdayDone(Object count) {
+    return 'গতকাল থেকে $countটি আইটেম কপি হয়েছে';
+  }
+
+  @override
+  String get nutritionDaysAgo => 'দিন আগে';
+
+  @override
+  String get nutritionDaysLater => 'দিন পরে';
+
+  @override
+  String get nutritionDaysShort => 'দিন';
+
+  @override
+  String get nutritionMacroTracker => 'ম্যাক্রো ট্র্যাকার';
+
+  @override
+  String get nutritionHistory => 'পুষ্টি ইতিহাস';
+
+  @override
+  String get nutritionAvgMacros => 'গড় ম্যাক্রো';
+
+  @override
+  String get nutritionAvgCalories => 'গড় কিলোক্যালরি';
+
+  @override
+  String get nutritionAvgWater => 'গড় পানি';
+
+  @override
+  String get nutritionLoggedDays => 'লগ হওয়া দিন';
+
+  @override
+  String get nutritionCalorieTrend => 'ক্যালোরির ধারা';
+
+  @override
+  String get nutritionGoalAdherence => 'লক্ষ্য পূরণের হার';
+
+  @override
+  String get nutritionDailyBreakdown => 'দৈনিক বিশ্লেষণ';
+
+  @override
+  String get nutritionNoHistory => 'এই সময়ের কোনো তথ্য নেই';
+
+  @override
+  String get nutritionNoHistorySubtitle =>
+      'খাবার লগ করুন, ইতিহাস এখানে দেখা যাবে।';
+
+  @override
+  String get nutritionFoodDatabase => 'খাদ্য ডেটাবেস';
+
+  @override
+  String get nutritionFoodSearchHint => 'খাবার খুঁজুন...';
+
+  @override
+  String get nutritionAllFoods => 'সব খাবার';
+
+  @override
+  String get nutritionFavorites => 'প্রিয়';
+
+  @override
+  String get nutritionRecent => 'সাম্প্রতিক';
+
+  @override
+  String get nutritionFrequent => 'ঘন ঘন';
+
+  @override
+  String get nutritionNoResults => 'কোনো খাবার পাওয়া যায়নি';
+
+  @override
+  String get nutritionNoResultsSubtitle => 'অন্য কিছু খুঁজুন বা ফিল্টার বদলান।';
+
+  @override
+  String get nutritionNoFavorites => 'এখনো কোনো প্রিয় নেই';
+
+  @override
+  String get nutritionNoFavoritesSubtitle =>
+      'যেকোনো খাবারে হার্ট চেপে এখানে সংরক্ষণ করুন।';
+
+  @override
+  String get nutritionNoRecent => 'সাম্প্রতিক খাবার নেই';
+
+  @override
+  String get nutritionNoRecentSubtitle =>
+      'যে খাবার লগ করবেন তা এখানে দেখা যাবে।';
+
+  @override
+  String get nutritionNoFrequent => 'ঘন ঘন খাবার নেই';
+
+  @override
+  String get nutritionNoFrequentSubtitle =>
+      'যে খাবার বারবার লগ করবেন তা এখানে দেখা যাবে।';
+
+  @override
+  String get nutritionNutritionFacts => 'পুষ্টি উপাদান';
+
+  @override
+  String get nutritionServingSize => 'পরিবেশন পরিমাণ';
+
+  @override
+  String get nutritionFiber => 'আঁশ';
+
+  @override
+  String get nutritionSugar => 'চিনি';
+
+  @override
+  String get nutritionSodium => 'সোডিয়াম';
+
+  @override
+  String get nutritionPotassium => 'পটাশিয়াম';
+
+  @override
+  String get nutritionCalcium => 'ক্যালসিয়াম';
+
+  @override
+  String get nutritionIron => 'আয়রন';
+
+  @override
+  String get nutritionVitaminA => 'ভিটামিন এ';
+
+  @override
+  String get nutritionVitaminC => 'ভিটামিন সি';
+
+  @override
+  String get nutritionWaterContent => 'পানির পরিমাণ';
+
+  @override
+  String get nutritionMealPlanner => 'খাবার পরিকল্পনা';
+
+  @override
+  String get nutritionNewTemplate => 'নতুন টেমপ্লেট';
+
+  @override
+  String get nutritionNoTemplates => 'কোনো খাবার টেমপ্লেট নেই';
+
+  @override
+  String get nutritionNoTemplatesSubtitle =>
+      'প্রিয় খাবার সংরক্ষণ করুন এবং এক ট্যাপে লগ করুন।';
+
+  @override
+  String get nutritionSaveTemplate => 'টেমপ্লেট সংরক্ষণ করুন';
+
+  @override
+  String get nutritionTemplateName => 'টেমপ্লেটের নাম';
+
+  @override
+  String get nutritionTemplateNameHint => 'যেমন: ওয়ার্কআউট পরবর্তী খাবার';
+
+  @override
+  String get nutritionTemplateNameRequired => 'টেমপ্লেটের নাম লিখুন';
+
+  @override
+  String get nutritionTemplateNoFoods => 'এখনো কোনো খাবার বাছাই করা হয়নি';
+
+  @override
+  String nutritionSelectedFoods(Object count) {
+    return '$countটি খাবার বাছাই হয়েছে';
+  }
+
+  @override
+  String get nutritionTemplateSaved => 'টেমপ্লেট সংরক্ষিত হয়েছে';
+
+  @override
+  String get nutritionTemplateLogged => 'টেমপ্লেট লগ হয়েছে';
+
+  @override
+  String get nutritionTemplateDeleted => 'টেমপ্লেট মুছে ফেলা হয়েছে';
+
+  @override
+  String get nutritionLogTemplate => 'টেমপ্লেট লগ করুন';
+
+  @override
+  String get nutritionDeleteTemplate => 'টেমপ্লেট মুছবেন?';
+
+  @override
+  String nutritionDeleteTemplateMessage(Object name) {
+    return '\'$name\' মুছে ফেলবেন? এটি ফেরানো যাবে না।';
+  }
 }

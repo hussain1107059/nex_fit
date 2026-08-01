@@ -36,6 +36,7 @@ class AppDatabase {
     DatabaseMigration(version: 3, apply: _migrationV3AddProfileFields),
     DatabaseMigration(version: 4, apply: _migrationV4WorkoutModule),
     DatabaseMigration(version: 5, apply: _migrationV5ExerciseLibrary),
+    DatabaseMigration(version: 6, apply: _migrationV6NutritionModule),
   ];
 
   Future<Database> get database async {
@@ -896,6 +897,105 @@ class AppDatabase {
         FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE,
         FOREIGN KEY (exercise_id) REFERENCES exercise(id) ON DELETE CASCADE
       )
+    ''');
+  }
+
+  /// v6: the nutrition & calorie tracker module.
+  ///
+  /// * `food_item` gains the micronutrient/meta columns required by the food
+  ///   database (sodium, potassium, calcium, iron, vitamin A/C, water %, plus
+  ///   optional barcode and image). All nullable so existing rows stay valid.
+  /// * `food_log` snapshots fiber and sugar (alongside the existing macros)
+  ///   and links each entry to a meal slot via `meal_type_id`.
+  /// * New per-user `food_favorite` join table for the favourites collection.
+  /// * New `meal_item` join table so saved meal templates can reference foods.
+  /// * The global `meal_category` catalog grows from 4 to the 6 meal slots
+  ///   (Breakfast, Morning Snack, Lunch, Evening Snack, Dinner, Late Night
+  ///   Snack); the old `snacks` row is renamed in place to keep ids stable.
+  static Future<void> _migrationV6NutritionModule(
+    DatabaseExecutor executor,
+    int version,
+  ) async {
+    final DatabaseExecutor db = executor;
+
+    await db.execute('ALTER TABLE food_item ADD COLUMN sodium REAL');
+    await db.execute('ALTER TABLE food_item ADD COLUMN potassium REAL');
+    await db.execute('ALTER TABLE food_item ADD COLUMN calcium REAL');
+    await db.execute('ALTER TABLE food_item ADD COLUMN iron REAL');
+    await db.execute('ALTER TABLE food_item ADD COLUMN vitamin_a REAL');
+    await db.execute('ALTER TABLE food_item ADD COLUMN vitamin_c REAL');
+    await db.execute(
+      'ALTER TABLE food_item ADD COLUMN water_percentage REAL',
+    );
+    await db.execute('ALTER TABLE food_item ADD COLUMN barcode TEXT');
+    await db.execute('ALTER TABLE food_item ADD COLUMN image_path TEXT');
+
+    await db.execute(
+      'ALTER TABLE food_log ADD COLUMN fiber REAL NOT NULL DEFAULT 0',
+    );
+    await db.execute(
+      'ALTER TABLE food_log ADD COLUMN sugar REAL NOT NULL DEFAULT 0',
+    );
+    await db.execute('ALTER TABLE food_log ADD COLUMN meal_type_id INTEGER');
+
+    await db.execute('''
+      CREATE TABLE food_favorite (
+        user_id TEXT NOT NULL,
+        food_item_id INTEGER NOT NULL,
+        created_at INTEGER NOT NULL,
+        PRIMARY KEY (user_id, food_item_id),
+        FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE,
+        FOREIGN KEY (food_item_id) REFERENCES food_item(id) ON DELETE CASCADE
+      )
+    ''');
+
+    await db.execute('''
+      CREATE TABLE meal_item (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        meal_id INTEGER NOT NULL,
+        food_item_id INTEGER NOT NULL,
+        quantity REAL NOT NULL DEFAULT 1,
+        sort_order INTEGER NOT NULL DEFAULT 0,
+        FOREIGN KEY (meal_id) REFERENCES meal(id) ON DELETE CASCADE,
+        FOREIGN KEY (food_item_id) REFERENCES food_item(id) ON DELETE CASCADE
+      )
+    ''');
+
+    await db.execute(
+      'CREATE INDEX IF NOT EXISTS idx_food_favorite_user_id '
+      'ON food_favorite(user_id)',
+    );
+    await db.execute(
+      'CREATE INDEX IF NOT EXISTS idx_meal_item_meal_id ON meal_item(meal_id)',
+    );
+
+    final int now = DateTime.now().millisecondsSinceEpoch;
+
+    // Rename the generic Snacks slot to the evening snack, keeping its id.
+    await db.execute('''
+      UPDATE meal_category SET
+        name = 'Evening Snack',
+        slug = 'evening_snack',
+        sort_order = 4
+      WHERE slug = 'snacks'
+    ''');
+
+    // Add the two new slots and normalise the ordering of the full catalog.
+    await db.execute('''
+      INSERT OR IGNORE INTO meal_category (name, slug, sort_order, created_at)
+      VALUES
+        ('Morning Snack', 'morning_snack', 2, $now),
+        ('Late Night Snack', 'late_night_snack', 6, $now)
+    ''');
+
+    await db.execute('''
+      UPDATE meal_category SET sort_order = 1 WHERE slug = 'breakfast'
+    ''');
+    await db.execute('''
+      UPDATE meal_category SET sort_order = 3 WHERE slug = 'lunch'
+    ''');
+    await db.execute('''
+      UPDATE meal_category SET sort_order = 5 WHERE slug = 'dinner'
     ''');
   }
 }

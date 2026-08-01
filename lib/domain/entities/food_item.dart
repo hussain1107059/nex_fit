@@ -1,5 +1,7 @@
 import 'package:equatable/equatable.dart';
 
+import 'food_category.dart';
+
 /// A food with per-serving nutrition. Built-in foods have a null [userId];
 /// user-created foods carry the owner's account id.
 class FoodItem extends Equatable {
@@ -17,7 +19,17 @@ class FoodItem extends Equatable {
     this.fat = 0,
     this.fiber = 0,
     this.sugar = 0,
+    this.sodium = 0,
+    this.potassium = 0,
+    this.calcium = 0,
+    this.iron = 0,
+    this.vitaminA = 0,
+    this.vitaminC = 0,
+    this.waterPercentage = 0,
+    this.barcode,
+    this.imagePath,
     this.isCustom = false,
+    this.isFavorite = false,
     required this.createdAt,
   });
 
@@ -25,6 +37,8 @@ class FoodItem extends Equatable {
   final String? userId;
   final String name;
   final String? brand;
+
+  /// Raw category slug, resolved through [categoryEnum].
   final String? category;
   final String? servingSize;
   final double? servingGrams;
@@ -34,10 +48,29 @@ class FoodItem extends Equatable {
   final double fat;
   final double fiber;
   final double sugar;
+
+  /// Micronutrients per serving (mg / mcg as stored on the catalog).
+  final double sodium;
+  final double potassium;
+  final double calcium;
+  final double iron;
+  final double vitaminA;
+  final double vitaminC;
+
+  /// Water content as a percentage of a serving.
+  final double waterPercentage;
+  final String? barcode;
+  final String? imagePath;
   final bool isCustom;
+  final bool isFavorite;
   final DateTime createdAt;
 
   bool get isBuiltIn => userId == null;
+
+  FoodCategory get categoryEnum => FoodCategory.fromName(category);
+
+  /// Macro split of the serving as grams per 100 calories, used by charts.
+  double get totalMacros => protein + carbs + fat;
 
   FoodItem copyWith({
     int? id,
@@ -53,7 +86,17 @@ class FoodItem extends Equatable {
     double? fat,
     double? fiber,
     double? sugar,
+    double? sodium,
+    double? potassium,
+    double? calcium,
+    double? iron,
+    double? vitaminA,
+    double? vitaminC,
+    double? waterPercentage,
+    String? barcode,
+    String? imagePath,
     bool? isCustom,
+    bool? isFavorite,
     DateTime? createdAt,
   }) {
     return FoodItem(
@@ -70,7 +113,17 @@ class FoodItem extends Equatable {
       fat: fat ?? this.fat,
       fiber: fiber ?? this.fiber,
       sugar: sugar ?? this.sugar,
+      sodium: sodium ?? this.sodium,
+      potassium: potassium ?? this.potassium,
+      calcium: calcium ?? this.calcium,
+      iron: iron ?? this.iron,
+      vitaminA: vitaminA ?? this.vitaminA,
+      vitaminC: vitaminC ?? this.vitaminC,
+      waterPercentage: waterPercentage ?? this.waterPercentage,
+      barcode: barcode ?? this.barcode,
+      imagePath: imagePath ?? this.imagePath,
       isCustom: isCustom ?? this.isCustom,
+      isFavorite: isFavorite ?? this.isFavorite,
       createdAt: createdAt ?? this.createdAt,
     );
   }
@@ -90,7 +143,17 @@ class FoodItem extends Equatable {
         fat,
         fiber,
         sugar,
+        sodium,
+        potassium,
+        calcium,
+        iron,
+        vitaminA,
+        vitaminC,
+        waterPercentage,
+        barcode,
+        imagePath,
         isCustom,
+        isFavorite,
         createdAt,
       ];
 }
