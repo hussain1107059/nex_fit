@@ -1830,4 +1830,288 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get errorWaterGoalTooHigh => 'Goal cannot exceed 10000 ml';
+
+  @override
+  String get dashboardCmUnit => 'cm';
+
+  @override
+  String get weightTracker => 'Weight Tracker';
+
+  @override
+  String get weightHistory => 'Weight History';
+
+  @override
+  String get weightStatistics => 'Weight Statistics';
+
+  @override
+  String get weightCurrent => 'Current weight';
+
+  @override
+  String get weightSinceStart => 'since start';
+
+  @override
+  String get weightGoalLabel => 'Goal';
+
+  @override
+  String get weightGoalNotSet => 'Goal not set';
+
+  @override
+  String get weightGoalReached => 'Goal reached';
+
+  @override
+  String get weightRemainingLabel => 'to goal';
+
+  @override
+  String get weightTargetProgress => 'progress to goal';
+
+  @override
+  String get weightBmi => 'BMI';
+
+  @override
+  String get weightIdealWeight => 'Ideal weight';
+
+  @override
+  String get weightWeeklyChange => 'Weekly change';
+
+  @override
+  String get weightCalculators => 'Calculators';
+
+  @override
+  String get weightBmr => 'BMR';
+
+  @override
+  String get weightDailyCalories => 'Daily calories';
+
+  @override
+  String get weightHealthyRange => 'Healthy range';
+
+  @override
+  String get weightNeedProfile => 'Complete your profile';
+
+  @override
+  String get weightComposition => 'Body composition';
+
+  @override
+  String get weightBodyFat => 'Body fat';
+
+  @override
+  String get weightLeanMass => 'Lean mass';
+
+  @override
+  String get weightBodyFatHint =>
+      'Adding neck, waist and hip measurements gives a more accurate body fat estimate.';
+
+  @override
+  String get weightTrend => 'Trend';
+
+  @override
+  String get weightHistoryDaily => 'Daily';
+
+  @override
+  String get weightHistoryWeekly => 'Weekly';
+
+  @override
+  String get weightHistoryMonthly => 'Monthly';
+
+  @override
+  String get weightHistoryYearly => 'Yearly';
+
+  @override
+  String get weightNoHistory => 'No data yet';
+
+  @override
+  String get weightNoHistorySubtitle =>
+      'Your weight history will appear here once you start logging.';
+
+  @override
+  String get weightEntries => 'Entries';
+
+  @override
+  String get weightLogTitle => 'Log weight';
+
+  @override
+  String get weightNoEntries => 'No weight logged yet';
+
+  @override
+  String get weightNoEntriesSubtitle =>
+      'Log your weight using the button below';
+
+  @override
+  String get weightEditEntry => 'Edit entry';
+
+  @override
+  String get weightValue => 'Weight';
+
+  @override
+  String get weightNote => 'Note';
+
+  @override
+  String get weightLogSuccess => 'Weight logged';
+
+  @override
+  String get weightLogUpdated => 'Entry updated';
+
+  @override
+  String get weightLogDeleted => 'Entry deleted';
+
+  @override
+  String get weightDeleteEntry => 'Delete this entry?';
+
+  @override
+  String get weightDeleteEntryMessage => 'This weight entry will be deleted.';
+
+  @override
+  String get weightGoalSheetTitle => 'Weight goal';
+
+  @override
+  String get weightGoalSuggested => 'Suggested goals';
+
+  @override
+  String get weightGoalSaved => 'Goal saved';
+
+  @override
+  String get errorWeightNegative => 'Enter a weight greater than 0';
+
+  @override
+  String get errorWeightUnrealistic => 'That weight is not realistic';
+
+  @override
+  String get errorWeightGoalTooLow => 'Goal must be at least 20 kg';
+
+  @override
+  String get errorWeightGoalTooHigh => 'Goal cannot exceed 400 kg';
+
+  @override
+  String get weightHistoryStart => 'Start';
+
+  @override
+  String get weightHistoryCurrent => 'Current';
+
+  @override
+  String get weightHistoryChange => 'Change';
+
+  @override
+  String get weightHistoryLogged => 'Logged';
+
+  @override
+  String get weightStatStart => 'Start weight';
+
+  @override
+  String get weightStatCurrent => 'Current weight';
+
+  @override
+  String get weightStatMin => 'Minimum';
+
+  @override
+  String get weightStatMax => 'Maximum';
+
+  @override
+  String get weightStatAverage => 'Average';
+
+  @override
+  String get weightStatTotalChange => 'Total change';
+
+  @override
+  String get weightStatDaysTracked => 'Tracked days';
+
+  @override
+  String get weightStatTotalEntries => 'Total entries';
+
+  @override
+  String get weightStatCurrentStreak => 'Current streak';
+
+  @override
+  String get weightStatLongestStreak => 'Longest streak';
+
+  @override
+  String weightStreakDays(Object count) {
+    return '$count days';
+  }
+
+  @override
+  String get weightStatTrackedPeriod => 'Tracked period';
+
+  @override
+  String get measurementAddTitle => 'Add measurement';
+
+  @override
+  String get measurementEditTitle => 'Edit measurement';
+
+  @override
+  String get measurementAddSubtitle => 'Record circumferences in centimetres';
+
+  @override
+  String get measurementUpdated => 'Measurement updated';
+
+  @override
+  String get measurementAdded => 'Measurement added';
+
+  @override
+  String get measurementDeleted => 'Measurement deleted';
+
+  @override
+  String get measurementDeleteTitle => 'Delete this measurement?';
+
+  @override
+  String get measurementDeleteMessage =>
+      'This body measurement record will be deleted.';
+
+  @override
+  String get measurementParts => 'parts';
+
+  @override
+  String get measurementChest => 'Chest';
+
+  @override
+  String get measurementWaist => 'Waist';
+
+  @override
+  String get measurementHip => 'Hip';
+
+  @override
+  String get measurementNeck => 'Neck';
+
+  @override
+  String get measurementLeftArm => 'Left arm';
+
+  @override
+  String get measurementRightArm => 'Right arm';
+
+  @override
+  String get measurementLeftThigh => 'Left thigh';
+
+  @override
+  String get measurementRightThigh => 'Right thigh';
+
+  @override
+  String get measurementLeftCalf => 'Left calf';
+
+  @override
+  String get measurementRightCalf => 'Right calf';
+
+  @override
+  String get errorMeasurementInvalid => 'Enter a value greater than 0';
+
+  @override
+  String get errorMeasurementEmpty => 'Enter at least one measurement';
+
+  @override
+  String get measurementHistory => 'History';
+
+  @override
+  String get measurementNoMeasurements => 'No measurements yet';
+
+  @override
+  String get measurementNoMeasurementsSubtitle =>
+      'Add your first body measurement to start tracking';
+
+  @override
+  String get measurementTrend => 'Measurement trend';
+
+  @override
+  String get measurementTrendEmpty =>
+      'No measurements recorded for this part yet';
+
+  @override
+  String get bodyMeasurementTitle => 'Body Measurements';
 }

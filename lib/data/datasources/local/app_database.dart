@@ -38,6 +38,7 @@ class AppDatabase {
     DatabaseMigration(version: 5, apply: _migrationV5ExerciseLibrary),
     DatabaseMigration(version: 6, apply: _migrationV6NutritionModule),
     DatabaseMigration(version: 7, apply: _migrationV7WaterModule),
+    DatabaseMigration(version: 8, apply: _migrationV8WeightModule),
   ];
 
   Future<Database> get database async {
@@ -1012,5 +1013,34 @@ class AppDatabase {
   ) async {
     final DatabaseExecutor db = executor;
     await db.execute('ALTER TABLE water_log ADD COLUMN note TEXT');
+  }
+
+  /// v8: the weight tracker & body measurement module.
+  ///
+  /// The core `weight_log`, `bmi_log` and `body_measurement` tables already
+  /// existed from v2; this migration expands `body_measurement` with the full
+  /// left/right limb set (left/right arm, left/right thigh, left/right calf)
+  /// used by the body measurement tracker. Every new column is nullable so the
+  /// upgrade is safe for existing rows.
+  static Future<void> _migrationV8WeightModule(
+    DatabaseExecutor executor,
+    int version,
+  ) async {
+    final DatabaseExecutor db = executor;
+
+    await db.execute('ALTER TABLE body_measurement ADD COLUMN left_arm_cm REAL');
+    await db.execute('ALTER TABLE body_measurement ADD COLUMN right_arm_cm REAL');
+    await db.execute(
+      'ALTER TABLE body_measurement ADD COLUMN left_thigh_cm REAL',
+    );
+    await db.execute(
+      'ALTER TABLE body_measurement ADD COLUMN right_thigh_cm REAL',
+    );
+    await db.execute(
+      'ALTER TABLE body_measurement ADD COLUMN left_calf_cm REAL',
+    );
+    await db.execute(
+      'ALTER TABLE body_measurement ADD COLUMN right_calf_cm REAL',
+    );
   }
 }

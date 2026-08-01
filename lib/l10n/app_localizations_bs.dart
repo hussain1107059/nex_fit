@@ -1839,4 +1839,285 @@ class AppLocalizationsBs extends AppLocalizations {
 
   @override
   String get errorWaterGoalTooHigh => 'লক্ষ্য ১০০০০ মিলির বেশি হতে পারবে না';
+
+  @override
+  String get dashboardCmUnit => 'সেমি';
+
+  @override
+  String get weightTracker => 'ওজন ট্র্যাকার';
+
+  @override
+  String get weightHistory => 'ওজনের ইতিহাস';
+
+  @override
+  String get weightStatistics => 'ওজনের পরিসংখ্যান';
+
+  @override
+  String get weightCurrent => 'বর্তমান ওজন';
+
+  @override
+  String get weightSinceStart => 'শুরু থেকে';
+
+  @override
+  String get weightGoalLabel => 'লক্ষ্য';
+
+  @override
+  String get weightGoalNotSet => 'লক্ষ্য নির্ধারিত নেই';
+
+  @override
+  String get weightGoalReached => 'লক্ষ্য পূরণ হয়েছে';
+
+  @override
+  String get weightRemainingLabel => 'বাকি';
+
+  @override
+  String get weightTargetProgress => 'লক্ষ্যের অগ্রগতি';
+
+  @override
+  String get weightBmi => 'BMI';
+
+  @override
+  String get weightIdealWeight => 'আদর্শ ওজন';
+
+  @override
+  String get weightWeeklyChange => 'সাপ্তাহিক পরিবর্তন';
+
+  @override
+  String get weightCalculators => 'ক্যালকুলেটর';
+
+  @override
+  String get weightBmr => 'BMR';
+
+  @override
+  String get weightDailyCalories => 'দৈনিক ক্যালোরি';
+
+  @override
+  String get weightHealthyRange => 'স্বাস্থ্যকর পরিসর';
+
+  @override
+  String get weightNeedProfile => 'প্রোফাইল সম্পূর্ণ করুন';
+
+  @override
+  String get weightComposition => 'শারীরিক গঠন';
+
+  @override
+  String get weightBodyFat => 'শরীরের চর্বি';
+
+  @override
+  String get weightLeanMass => 'মাংসপেশির ভর';
+
+  @override
+  String get weightBodyFatHint =>
+      'গলা, কোমর ও নিতম্বের মাপ দিলে শরীরের চর্বির আরও নির্ভুল হিসাব পাওয়া যাবে।';
+
+  @override
+  String get weightTrend => 'প্রবণতা';
+
+  @override
+  String get weightHistoryDaily => 'দৈনিক';
+
+  @override
+  String get weightHistoryWeekly => 'সাপ্তাহিক';
+
+  @override
+  String get weightHistoryMonthly => 'মাসিক';
+
+  @override
+  String get weightHistoryYearly => 'বার্ষিক';
+
+  @override
+  String get weightNoHistory => 'কোনো তথ্য নেই';
+
+  @override
+  String get weightNoHistorySubtitle => 'ওজন যোগ করলে এখানে ইতিহাস দেখতে পাবেন';
+
+  @override
+  String get weightEntries => 'এন্ট্রি';
+
+  @override
+  String get weightLogTitle => 'ওজন যোগ করুন';
+
+  @override
+  String get weightNoEntries => 'এখনো কোনো ওজন যোগ হয়নি';
+
+  @override
+  String get weightNoEntriesSubtitle => 'নিচের বোতাম থেকে ওজন যোগ করুন';
+
+  @override
+  String get weightEditEntry => 'এন্ট্রি সম্পাদনা';
+
+  @override
+  String get weightValue => 'ওজন';
+
+  @override
+  String get weightNote => 'নোট';
+
+  @override
+  String get weightLogSuccess => 'ওজন যোগ করা হয়েছে';
+
+  @override
+  String get weightLogUpdated => 'এন্ট্রি হালনাগাদ হয়েছে';
+
+  @override
+  String get weightLogDeleted => 'এন্ট্রি মুছে ফেলা হয়েছে';
+
+  @override
+  String get weightDeleteEntry => 'এই এন্ট্রি মুছবেন?';
+
+  @override
+  String get weightDeleteEntryMessage => 'এই ওজনের এন্ট্রিটি মুছে ফেলা হবে।';
+
+  @override
+  String get weightGoalSheetTitle => 'ওজনের লক্ষ্য';
+
+  @override
+  String get weightGoalSuggested => 'প্রস্তাবিত লক্ষ্য';
+
+  @override
+  String get weightGoalSaved => 'লক্ষ্য সংরক্ষিত হয়েছে';
+
+  @override
+  String get errorWeightNegative => 'অনুগ্রহ করে ০-এর বেশি ওজন দিন';
+
+  @override
+  String get errorWeightUnrealistic => 'এই ওজন বাস্তবসম্মত নয়';
+
+  @override
+  String get errorWeightGoalTooLow => 'লক্ষ্য কমপক্ষে ২০ কেজি হতে হবে';
+
+  @override
+  String get errorWeightGoalTooHigh => 'লক্ষ্য ৪০০ কেজির বেশি হতে পারবে না';
+
+  @override
+  String get weightHistoryStart => 'শুরু';
+
+  @override
+  String get weightHistoryCurrent => 'বর্তমান';
+
+  @override
+  String get weightHistoryChange => 'পরিবর্তন';
+
+  @override
+  String get weightHistoryLogged => 'লগ হওয়া';
+
+  @override
+  String get weightStatStart => 'শুরুর ওজন';
+
+  @override
+  String get weightStatCurrent => 'বর্তমান ওজন';
+
+  @override
+  String get weightStatMin => 'সর্বনিম্ন';
+
+  @override
+  String get weightStatMax => 'সর্বোচ্চ';
+
+  @override
+  String get weightStatAverage => 'গড়';
+
+  @override
+  String get weightStatTotalChange => 'মোট পরিবর্তন';
+
+  @override
+  String get weightStatDaysTracked => 'ট্র্যাক করা দিন';
+
+  @override
+  String get weightStatTotalEntries => 'মোট এন্ট্রি';
+
+  @override
+  String get weightStatCurrentStreak => 'বর্তমান ধারা';
+
+  @override
+  String get weightStatLongestStreak => 'সর্বোচ্চ ধারা';
+
+  @override
+  String weightStreakDays(Object count) {
+    return '$count দিন';
+  }
+
+  @override
+  String get weightStatTrackedPeriod => 'ট্র্যাক করা সময়কাল';
+
+  @override
+  String get measurementAddTitle => 'মাপ যোগ করুন';
+
+  @override
+  String get measurementEditTitle => 'মাপ সম্পাদনা';
+
+  @override
+  String get measurementAddSubtitle => 'সেন্টিমিটারে মাপ রেকর্ড করুন';
+
+  @override
+  String get measurementUpdated => 'মাপ হালনাগাদ হয়েছে';
+
+  @override
+  String get measurementAdded => 'মাপ যোগ করা হয়েছে';
+
+  @override
+  String get measurementDeleted => 'মাপ মুছে ফেলা হয়েছে';
+
+  @override
+  String get measurementDeleteTitle => 'এই মাপ মুছবেন?';
+
+  @override
+  String get measurementDeleteMessage =>
+      'এই শারীরিক মাপের রেকর্ডটি মুছে ফেলা হবে।';
+
+  @override
+  String get measurementParts => 'টি মাপ';
+
+  @override
+  String get measurementChest => 'বুক';
+
+  @override
+  String get measurementWaist => 'কোমর';
+
+  @override
+  String get measurementHip => 'নিতম্ব';
+
+  @override
+  String get measurementNeck => 'গলা';
+
+  @override
+  String get measurementLeftArm => 'বাম হাত';
+
+  @override
+  String get measurementRightArm => 'ডান হাত';
+
+  @override
+  String get measurementLeftThigh => 'বাম উরু';
+
+  @override
+  String get measurementRightThigh => 'ডান উরু';
+
+  @override
+  String get measurementLeftCalf => 'বাম কাফ';
+
+  @override
+  String get measurementRightCalf => 'ডান কাফ';
+
+  @override
+  String get errorMeasurementInvalid => 'অনুগ্রহ করে ০-এর বেশি মান দিন';
+
+  @override
+  String get errorMeasurementEmpty => 'কমপক্ষে একটি মাপ দিন';
+
+  @override
+  String get measurementHistory => 'ইতিহাস';
+
+  @override
+  String get measurementNoMeasurements => 'কোনো মাপ নেই';
+
+  @override
+  String get measurementNoMeasurementsSubtitle =>
+      'ট্র্যাকিং শুরু করতে আপনার প্রথম শারীরিক মাপ যোগ করুন';
+
+  @override
+  String get measurementTrend => 'মাপের প্রবণতা';
+
+  @override
+  String get measurementTrendEmpty => 'এই অংশের জন্য এখনো কোনো মাপ নেই';
+
+  @override
+  String get bodyMeasurementTitle => 'শারীরিক মাপ';
 }

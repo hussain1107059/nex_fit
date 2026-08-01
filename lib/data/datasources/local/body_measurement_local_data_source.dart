@@ -58,6 +58,42 @@ class BodyMeasurementLocalDataSource extends BaseLocalDataSource {
     });
   }
 
+  Future<List<BodyMeasurement>> getByDateRange(
+    String userId,
+    DateTime start,
+    DateTime end,
+  ) {
+    return guard('get_by_date_range', () async {
+      final Database db = await dbConnection;
+      final List<Map<String, Object?>> rows = await db.query(
+        BodyMeasurementModel.table,
+        where: 'user_id = ? AND measured_at >= ? AND measured_at < ?',
+        whereArgs: <Object?>[
+          userId,
+          start.millisecondsSinceEpoch,
+          end.millisecondsSinceEpoch,
+        ],
+        orderBy: 'measured_at DESC',
+      );
+      return rows.map(BodyMeasurementModel.fromMap).toList();
+    });
+  }
+
+  Future<BodyMeasurement?> getLatest(String userId) {
+    return guard('get_latest', () async {
+      final Database db = await dbConnection;
+      final List<Map<String, Object?>> rows = await db.query(
+        BodyMeasurementModel.table,
+        where: 'user_id = ?',
+        whereArgs: <Object?>[userId],
+        orderBy: 'measured_at DESC',
+        limit: 1,
+      );
+      if (rows.isEmpty) return null;
+      return BodyMeasurementModel.fromMap(rows.first);
+    });
+  }
+
   Future<void> delete(int id) {
     return guard('delete', () async {
       final Database db = await dbConnection;

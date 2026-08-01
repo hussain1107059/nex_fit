@@ -25,6 +25,9 @@ import '../screens/water/water_history_screen.dart';
 import '../screens/water/water_reminders_screen.dart';
 import '../screens/water/water_screen.dart';
 import '../screens/water/water_statistics_screen.dart';
+import '../screens/weight/body_measurement_screen.dart';
+import '../screens/weight/weight_history_screen.dart';
+import '../screens/weight/weight_statistics_screen.dart';
 import '../screens/workout/workout_detail_screen.dart';
 import '../screens/workout/workout_history_screen.dart';
 import '../screens/workout/workout_list_screen.dart';
@@ -55,6 +58,9 @@ abstract final class AppRoutes {
   static const String waterHistory = '/water/history';
   static const String waterStatistics = '/water/statistics';
   static const String waterReminders = '/water/reminders';
+  static const String weightHistory = '/weight/history';
+  static const String weightStatistics = '/weight/statistics';
+  static const String bodyMeasurement = '/weight/measurements';
 
   /// The landing route for a freshly signed-in user.
   static String destinationFor(AppUser user) {
@@ -247,6 +253,24 @@ final appRouterProvider = Provider<GoRouter>((ref) {
         name: 'water-reminders',
         builder: (BuildContext context, GoRouterState state) =>
             const WaterRemindersScreen(),
+      ),
+      GoRoute(
+        path: AppRoutes.weightHistory,
+        name: 'weight-history',
+        builder: (BuildContext context, GoRouterState state) =>
+            const WeightHistoryScreen(),
+      ),
+      GoRoute(
+        path: AppRoutes.weightStatistics,
+        name: 'weight-statistics',
+        builder: (BuildContext context, GoRouterState state) =>
+            const WeightStatisticsScreen(),
+      ),
+      GoRoute(
+        path: AppRoutes.bodyMeasurement,
+        name: 'body-measurement',
+        builder: (BuildContext context, GoRouterState state) =>
+            const BodyMeasurementScreen(),
       ),
     ],
     errorBuilder: (BuildContext context, GoRouterState state) {

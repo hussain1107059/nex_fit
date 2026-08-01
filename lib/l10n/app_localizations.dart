@@ -3643,6 +3643,558 @@ abstract class AppLocalizations {
   /// In bs, this message translates to:
   /// **'লক্ষ্য ১০০০০ মিলির বেশি হতে পারবে না'**
   String get errorWaterGoalTooHigh;
+
+  /// No description provided for @dashboardCmUnit.
+  ///
+  /// In bs, this message translates to:
+  /// **'সেমি'**
+  String get dashboardCmUnit;
+
+  /// No description provided for @weightTracker.
+  ///
+  /// In bs, this message translates to:
+  /// **'ওজন ট্র্যাকার'**
+  String get weightTracker;
+
+  /// No description provided for @weightHistory.
+  ///
+  /// In bs, this message translates to:
+  /// **'ওজনের ইতিহাস'**
+  String get weightHistory;
+
+  /// No description provided for @weightStatistics.
+  ///
+  /// In bs, this message translates to:
+  /// **'ওজনের পরিসংখ্যান'**
+  String get weightStatistics;
+
+  /// No description provided for @weightCurrent.
+  ///
+  /// In bs, this message translates to:
+  /// **'বর্তমান ওজন'**
+  String get weightCurrent;
+
+  /// No description provided for @weightSinceStart.
+  ///
+  /// In bs, this message translates to:
+  /// **'শুরু থেকে'**
+  String get weightSinceStart;
+
+  /// No description provided for @weightGoalLabel.
+  ///
+  /// In bs, this message translates to:
+  /// **'লক্ষ্য'**
+  String get weightGoalLabel;
+
+  /// No description provided for @weightGoalNotSet.
+  ///
+  /// In bs, this message translates to:
+  /// **'লক্ষ্য নির্ধারিত নেই'**
+  String get weightGoalNotSet;
+
+  /// No description provided for @weightGoalReached.
+  ///
+  /// In bs, this message translates to:
+  /// **'লক্ষ্য পূরণ হয়েছে'**
+  String get weightGoalReached;
+
+  /// No description provided for @weightRemainingLabel.
+  ///
+  /// In bs, this message translates to:
+  /// **'বাকি'**
+  String get weightRemainingLabel;
+
+  /// No description provided for @weightTargetProgress.
+  ///
+  /// In bs, this message translates to:
+  /// **'লক্ষ্যের অগ্রগতি'**
+  String get weightTargetProgress;
+
+  /// No description provided for @weightBmi.
+  ///
+  /// In bs, this message translates to:
+  /// **'BMI'**
+  String get weightBmi;
+
+  /// No description provided for @weightIdealWeight.
+  ///
+  /// In bs, this message translates to:
+  /// **'আদর্শ ওজন'**
+  String get weightIdealWeight;
+
+  /// No description provided for @weightWeeklyChange.
+  ///
+  /// In bs, this message translates to:
+  /// **'সাপ্তাহিক পরিবর্তন'**
+  String get weightWeeklyChange;
+
+  /// No description provided for @weightCalculators.
+  ///
+  /// In bs, this message translates to:
+  /// **'ক্যালকুলেটর'**
+  String get weightCalculators;
+
+  /// No description provided for @weightBmr.
+  ///
+  /// In bs, this message translates to:
+  /// **'BMR'**
+  String get weightBmr;
+
+  /// No description provided for @weightDailyCalories.
+  ///
+  /// In bs, this message translates to:
+  /// **'দৈনিক ক্যালোরি'**
+  String get weightDailyCalories;
+
+  /// No description provided for @weightHealthyRange.
+  ///
+  /// In bs, this message translates to:
+  /// **'স্বাস্থ্যকর পরিসর'**
+  String get weightHealthyRange;
+
+  /// No description provided for @weightNeedProfile.
+  ///
+  /// In bs, this message translates to:
+  /// **'প্রোফাইল সম্পূর্ণ করুন'**
+  String get weightNeedProfile;
+
+  /// No description provided for @weightComposition.
+  ///
+  /// In bs, this message translates to:
+  /// **'শারীরিক গঠন'**
+  String get weightComposition;
+
+  /// No description provided for @weightBodyFat.
+  ///
+  /// In bs, this message translates to:
+  /// **'শরীরের চর্বি'**
+  String get weightBodyFat;
+
+  /// No description provided for @weightLeanMass.
+  ///
+  /// In bs, this message translates to:
+  /// **'মাংসপেশির ভর'**
+  String get weightLeanMass;
+
+  /// No description provided for @weightBodyFatHint.
+  ///
+  /// In bs, this message translates to:
+  /// **'গলা, কোমর ও নিতম্বের মাপ দিলে শরীরের চর্বির আরও নির্ভুল হিসাব পাওয়া যাবে।'**
+  String get weightBodyFatHint;
+
+  /// No description provided for @weightTrend.
+  ///
+  /// In bs, this message translates to:
+  /// **'প্রবণতা'**
+  String get weightTrend;
+
+  /// No description provided for @weightHistoryDaily.
+  ///
+  /// In bs, this message translates to:
+  /// **'দৈনিক'**
+  String get weightHistoryDaily;
+
+  /// No description provided for @weightHistoryWeekly.
+  ///
+  /// In bs, this message translates to:
+  /// **'সাপ্তাহিক'**
+  String get weightHistoryWeekly;
+
+  /// No description provided for @weightHistoryMonthly.
+  ///
+  /// In bs, this message translates to:
+  /// **'মাসিক'**
+  String get weightHistoryMonthly;
+
+  /// No description provided for @weightHistoryYearly.
+  ///
+  /// In bs, this message translates to:
+  /// **'বার্ষিক'**
+  String get weightHistoryYearly;
+
+  /// No description provided for @weightNoHistory.
+  ///
+  /// In bs, this message translates to:
+  /// **'কোনো তথ্য নেই'**
+  String get weightNoHistory;
+
+  /// No description provided for @weightNoHistorySubtitle.
+  ///
+  /// In bs, this message translates to:
+  /// **'ওজন যোগ করলে এখানে ইতিহাস দেখতে পাবেন'**
+  String get weightNoHistorySubtitle;
+
+  /// No description provided for @weightEntries.
+  ///
+  /// In bs, this message translates to:
+  /// **'এন্ট্রি'**
+  String get weightEntries;
+
+  /// No description provided for @weightLogTitle.
+  ///
+  /// In bs, this message translates to:
+  /// **'ওজন যোগ করুন'**
+  String get weightLogTitle;
+
+  /// No description provided for @weightNoEntries.
+  ///
+  /// In bs, this message translates to:
+  /// **'এখনো কোনো ওজন যোগ হয়নি'**
+  String get weightNoEntries;
+
+  /// No description provided for @weightNoEntriesSubtitle.
+  ///
+  /// In bs, this message translates to:
+  /// **'নিচের বোতাম থেকে ওজন যোগ করুন'**
+  String get weightNoEntriesSubtitle;
+
+  /// No description provided for @weightEditEntry.
+  ///
+  /// In bs, this message translates to:
+  /// **'এন্ট্রি সম্পাদনা'**
+  String get weightEditEntry;
+
+  /// No description provided for @weightValue.
+  ///
+  /// In bs, this message translates to:
+  /// **'ওজন'**
+  String get weightValue;
+
+  /// No description provided for @weightNote.
+  ///
+  /// In bs, this message translates to:
+  /// **'নোট'**
+  String get weightNote;
+
+  /// No description provided for @weightLogSuccess.
+  ///
+  /// In bs, this message translates to:
+  /// **'ওজন যোগ করা হয়েছে'**
+  String get weightLogSuccess;
+
+  /// No description provided for @weightLogUpdated.
+  ///
+  /// In bs, this message translates to:
+  /// **'এন্ট্রি হালনাগাদ হয়েছে'**
+  String get weightLogUpdated;
+
+  /// No description provided for @weightLogDeleted.
+  ///
+  /// In bs, this message translates to:
+  /// **'এন্ট্রি মুছে ফেলা হয়েছে'**
+  String get weightLogDeleted;
+
+  /// No description provided for @weightDeleteEntry.
+  ///
+  /// In bs, this message translates to:
+  /// **'এই এন্ট্রি মুছবেন?'**
+  String get weightDeleteEntry;
+
+  /// No description provided for @weightDeleteEntryMessage.
+  ///
+  /// In bs, this message translates to:
+  /// **'এই ওজনের এন্ট্রিটি মুছে ফেলা হবে।'**
+  String get weightDeleteEntryMessage;
+
+  /// No description provided for @weightGoalSheetTitle.
+  ///
+  /// In bs, this message translates to:
+  /// **'ওজনের লক্ষ্য'**
+  String get weightGoalSheetTitle;
+
+  /// No description provided for @weightGoalSuggested.
+  ///
+  /// In bs, this message translates to:
+  /// **'প্রস্তাবিত লক্ষ্য'**
+  String get weightGoalSuggested;
+
+  /// No description provided for @weightGoalSaved.
+  ///
+  /// In bs, this message translates to:
+  /// **'লক্ষ্য সংরক্ষিত হয়েছে'**
+  String get weightGoalSaved;
+
+  /// No description provided for @errorWeightNegative.
+  ///
+  /// In bs, this message translates to:
+  /// **'অনুগ্রহ করে ০-এর বেশি ওজন দিন'**
+  String get errorWeightNegative;
+
+  /// No description provided for @errorWeightUnrealistic.
+  ///
+  /// In bs, this message translates to:
+  /// **'এই ওজন বাস্তবসম্মত নয়'**
+  String get errorWeightUnrealistic;
+
+  /// No description provided for @errorWeightGoalTooLow.
+  ///
+  /// In bs, this message translates to:
+  /// **'লক্ষ্য কমপক্ষে ২০ কেজি হতে হবে'**
+  String get errorWeightGoalTooLow;
+
+  /// No description provided for @errorWeightGoalTooHigh.
+  ///
+  /// In bs, this message translates to:
+  /// **'লক্ষ্য ৪০০ কেজির বেশি হতে পারবে না'**
+  String get errorWeightGoalTooHigh;
+
+  /// No description provided for @weightHistoryStart.
+  ///
+  /// In bs, this message translates to:
+  /// **'শুরু'**
+  String get weightHistoryStart;
+
+  /// No description provided for @weightHistoryCurrent.
+  ///
+  /// In bs, this message translates to:
+  /// **'বর্তমান'**
+  String get weightHistoryCurrent;
+
+  /// No description provided for @weightHistoryChange.
+  ///
+  /// In bs, this message translates to:
+  /// **'পরিবর্তন'**
+  String get weightHistoryChange;
+
+  /// No description provided for @weightHistoryLogged.
+  ///
+  /// In bs, this message translates to:
+  /// **'লগ হওয়া'**
+  String get weightHistoryLogged;
+
+  /// No description provided for @weightStatStart.
+  ///
+  /// In bs, this message translates to:
+  /// **'শুরুর ওজন'**
+  String get weightStatStart;
+
+  /// No description provided for @weightStatCurrent.
+  ///
+  /// In bs, this message translates to:
+  /// **'বর্তমান ওজন'**
+  String get weightStatCurrent;
+
+  /// No description provided for @weightStatMin.
+  ///
+  /// In bs, this message translates to:
+  /// **'সর্বনিম্ন'**
+  String get weightStatMin;
+
+  /// No description provided for @weightStatMax.
+  ///
+  /// In bs, this message translates to:
+  /// **'সর্বোচ্চ'**
+  String get weightStatMax;
+
+  /// No description provided for @weightStatAverage.
+  ///
+  /// In bs, this message translates to:
+  /// **'গড়'**
+  String get weightStatAverage;
+
+  /// No description provided for @weightStatTotalChange.
+  ///
+  /// In bs, this message translates to:
+  /// **'মোট পরিবর্তন'**
+  String get weightStatTotalChange;
+
+  /// No description provided for @weightStatDaysTracked.
+  ///
+  /// In bs, this message translates to:
+  /// **'ট্র্যাক করা দিন'**
+  String get weightStatDaysTracked;
+
+  /// No description provided for @weightStatTotalEntries.
+  ///
+  /// In bs, this message translates to:
+  /// **'মোট এন্ট্রি'**
+  String get weightStatTotalEntries;
+
+  /// No description provided for @weightStatCurrentStreak.
+  ///
+  /// In bs, this message translates to:
+  /// **'বর্তমান ধারা'**
+  String get weightStatCurrentStreak;
+
+  /// No description provided for @weightStatLongestStreak.
+  ///
+  /// In bs, this message translates to:
+  /// **'সর্বোচ্চ ধারা'**
+  String get weightStatLongestStreak;
+
+  /// No description provided for @weightStreakDays.
+  ///
+  /// In bs, this message translates to:
+  /// **'{count} দিন'**
+  String weightStreakDays(Object count);
+
+  /// No description provided for @weightStatTrackedPeriod.
+  ///
+  /// In bs, this message translates to:
+  /// **'ট্র্যাক করা সময়কাল'**
+  String get weightStatTrackedPeriod;
+
+  /// No description provided for @measurementAddTitle.
+  ///
+  /// In bs, this message translates to:
+  /// **'মাপ যোগ করুন'**
+  String get measurementAddTitle;
+
+  /// No description provided for @measurementEditTitle.
+  ///
+  /// In bs, this message translates to:
+  /// **'মাপ সম্পাদনা'**
+  String get measurementEditTitle;
+
+  /// No description provided for @measurementAddSubtitle.
+  ///
+  /// In bs, this message translates to:
+  /// **'সেন্টিমিটারে মাপ রেকর্ড করুন'**
+  String get measurementAddSubtitle;
+
+  /// No description provided for @measurementUpdated.
+  ///
+  /// In bs, this message translates to:
+  /// **'মাপ হালনাগাদ হয়েছে'**
+  String get measurementUpdated;
+
+  /// No description provided for @measurementAdded.
+  ///
+  /// In bs, this message translates to:
+  /// **'মাপ যোগ করা হয়েছে'**
+  String get measurementAdded;
+
+  /// No description provided for @measurementDeleted.
+  ///
+  /// In bs, this message translates to:
+  /// **'মাপ মুছে ফেলা হয়েছে'**
+  String get measurementDeleted;
+
+  /// No description provided for @measurementDeleteTitle.
+  ///
+  /// In bs, this message translates to:
+  /// **'এই মাপ মুছবেন?'**
+  String get measurementDeleteTitle;
+
+  /// No description provided for @measurementDeleteMessage.
+  ///
+  /// In bs, this message translates to:
+  /// **'এই শারীরিক মাপের রেকর্ডটি মুছে ফেলা হবে।'**
+  String get measurementDeleteMessage;
+
+  /// No description provided for @measurementParts.
+  ///
+  /// In bs, this message translates to:
+  /// **'টি মাপ'**
+  String get measurementParts;
+
+  /// No description provided for @measurementChest.
+  ///
+  /// In bs, this message translates to:
+  /// **'বুক'**
+  String get measurementChest;
+
+  /// No description provided for @measurementWaist.
+  ///
+  /// In bs, this message translates to:
+  /// **'কোমর'**
+  String get measurementWaist;
+
+  /// No description provided for @measurementHip.
+  ///
+  /// In bs, this message translates to:
+  /// **'নিতম্ব'**
+  String get measurementHip;
+
+  /// No description provided for @measurementNeck.
+  ///
+  /// In bs, this message translates to:
+  /// **'গলা'**
+  String get measurementNeck;
+
+  /// No description provided for @measurementLeftArm.
+  ///
+  /// In bs, this message translates to:
+  /// **'বাম হাত'**
+  String get measurementLeftArm;
+
+  /// No description provided for @measurementRightArm.
+  ///
+  /// In bs, this message translates to:
+  /// **'ডান হাত'**
+  String get measurementRightArm;
+
+  /// No description provided for @measurementLeftThigh.
+  ///
+  /// In bs, this message translates to:
+  /// **'বাম উরু'**
+  String get measurementLeftThigh;
+
+  /// No description provided for @measurementRightThigh.
+  ///
+  /// In bs, this message translates to:
+  /// **'ডান উরু'**
+  String get measurementRightThigh;
+
+  /// No description provided for @measurementLeftCalf.
+  ///
+  /// In bs, this message translates to:
+  /// **'বাম কাফ'**
+  String get measurementLeftCalf;
+
+  /// No description provided for @measurementRightCalf.
+  ///
+  /// In bs, this message translates to:
+  /// **'ডান কাফ'**
+  String get measurementRightCalf;
+
+  /// No description provided for @errorMeasurementInvalid.
+  ///
+  /// In bs, this message translates to:
+  /// **'অনুগ্রহ করে ০-এর বেশি মান দিন'**
+  String get errorMeasurementInvalid;
+
+  /// No description provided for @errorMeasurementEmpty.
+  ///
+  /// In bs, this message translates to:
+  /// **'কমপক্ষে একটি মাপ দিন'**
+  String get errorMeasurementEmpty;
+
+  /// No description provided for @measurementHistory.
+  ///
+  /// In bs, this message translates to:
+  /// **'ইতিহাস'**
+  String get measurementHistory;
+
+  /// No description provided for @measurementNoMeasurements.
+  ///
+  /// In bs, this message translates to:
+  /// **'কোনো মাপ নেই'**
+  String get measurementNoMeasurements;
+
+  /// No description provided for @measurementNoMeasurementsSubtitle.
+  ///
+  /// In bs, this message translates to:
+  /// **'ট্র্যাকিং শুরু করতে আপনার প্রথম শারীরিক মাপ যোগ করুন'**
+  String get measurementNoMeasurementsSubtitle;
+
+  /// No description provided for @measurementTrend.
+  ///
+  /// In bs, this message translates to:
+  /// **'মাপের প্রবণতা'**
+  String get measurementTrend;
+
+  /// No description provided for @measurementTrendEmpty.
+  ///
+  /// In bs, this message translates to:
+  /// **'এই অংশের জন্য এখনো কোনো মাপ নেই'**
+  String get measurementTrendEmpty;
+
+  /// No description provided for @bodyMeasurementTitle.
+  ///
+  /// In bs, this message translates to:
+  /// **'শারীরিক মাপ'**
+  String get bodyMeasurementTitle;
 }
 
 class _AppLocalizationsDelegate

@@ -8,6 +8,7 @@ import '../../../../core/theme/app_radius.dart';
 import '../../../../core/theme/app_spacing.dart';
 import '../../../../core/widgets/feedback/app_snackbar.dart';
 import '../../../../domain/entities/dashboard_data.dart';
+import '../../../providers/dashboard_providers.dart';
 import '../../../router/app_router.dart';
 import 'dashboard_dialogs.dart';
 import 'section_header.dart';
@@ -100,7 +101,7 @@ class QuickActionsSection extends ConsumerWidget {
         AppSnackbar.info(context, context.l10n.dashboardComingSoon);
         break;
       case 3:
-        DashboardDialogs.showLogWeight(context, ref, userId);
+        ref.read(shellTabIndexProvider.notifier).state = 2;
         break;
       case 4:
         DashboardDialogs.showBmiCalculator(

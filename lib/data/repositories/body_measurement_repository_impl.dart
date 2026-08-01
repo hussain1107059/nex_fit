@@ -24,5 +24,16 @@ class BodyMeasurementRepositoryImpl implements BodyMeasurementRepository {
       _dataSource.getByUserId(userId);
 
   @override
+  Future<List<BodyMeasurement>> getByDateRange(
+    String userId,
+    DateTime start,
+    DateTime end,
+  ) => _dataSource.getByDateRange(userId, start, end);
+
+  @override
+  Future<BodyMeasurement?> getLatest(String userId) =>
+      _dataSource.getLatest(userId);
+
+  @override
   Future<void> delete(int id) => _dataSource.delete(id);
 }

@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-import '../../../core/constants/app_assets.dart';
 import '../../../core/extensions/context_extensions.dart';
 import '../../../core/widgets/feedback/app_snackbar.dart';
 import '../../../core/widgets/layout/app_bottom_navigation_bar.dart';
@@ -12,8 +11,8 @@ import '../../providers/dashboard_providers.dart';
 import '../dashboard/dashboard_screen.dart';
 import '../nutrition/nutrition_screen.dart';
 import '../profile/profile_screen.dart';
+import '../weight/weight_screen.dart';
 import '../workout/workout_screen.dart';
-import 'module_placeholder_screen.dart';
 
 /// Root scaffold hosting the five-module bottom navigation.
 class AppShellScreen extends ConsumerStatefulWidget {
@@ -46,11 +45,7 @@ class _AppShellScreenState extends ConsumerState<AppShellScreen> {
     final List<Widget> screens = <Widget>[
       const DashboardScreen(),
       const WorkoutScreen(),
-      ModulePlaceholderScreen(
-        title: l10n.tabProgress,
-        icon: AppAssets.homeIcon,
-        subtitle: l10n.moduleProgressSubtitle,
-      ),
+      const WeightScreen(),
       const NutritionScreen(),
       const ProfileScreen(),
     ];

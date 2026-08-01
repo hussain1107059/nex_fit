@@ -60,6 +60,7 @@ import '../data/repositories/user_fitness_profile_repository_impl.dart';
 import '../data/repositories/user_profile_repository_impl.dart';
 import '../data/repositories/water_log_repository_impl.dart';
 import '../data/repositories/weight_log_repository_impl.dart';
+import '../data/repositories/weight_repository_impl.dart';
 import '../data/repositories/workout_category_repository_impl.dart';
 import '../data/repositories/workout_exercise_repository_impl.dart';
 import '../data/repositories/workout_history_repository_impl.dart';
@@ -110,6 +111,7 @@ import '../domain/repositories/user_fitness_profile_repository.dart';
 import '../domain/repositories/user_profile_repository.dart';
 import '../domain/repositories/water_log_repository.dart';
 import '../domain/repositories/weight_log_repository.dart';
+import '../domain/repositories/weight_repository.dart';
 import '../domain/repositories/workout_category_repository.dart';
 import '../domain/repositories/workout_exercise_repository.dart';
 import '../domain/repositories/workout_history_repository.dart';
@@ -422,6 +424,15 @@ final bmiLogRepositoryProvider = Provider<BmiLogRepository>(
 final bodyMeasurementRepositoryProvider = Provider<BodyMeasurementRepository>(
   (ref) => BodyMeasurementRepositoryImpl(
     ref.watch(bodyMeasurementLocalDataSourceProvider),
+  ),
+);
+
+final weightRepositoryProvider = Provider<WeightRepository>(
+  (ref) => WeightRepositoryImpl(
+    weightLogRepository: ref.watch(weightLogRepositoryProvider),
+    bmiLogRepository: ref.watch(bmiLogRepositoryProvider),
+    bodyMeasurementRepository: ref.watch(bodyMeasurementRepositoryProvider),
+    userProfileRepository: ref.watch(userFitnessProfileRepositoryProvider),
   ),
 );
 

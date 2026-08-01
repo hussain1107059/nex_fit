@@ -41,6 +41,9 @@ dependencies:
   # Connectivity (offline detection)
   connectivity_plus: ^7.3.1
 
+  # Charts (weight / measurement trends)
+  fl_chart: ^1.2.0
+
   # UI / Design system
   flutter_svg: ^2.3.0
   google_fonts: ^8.2.0
