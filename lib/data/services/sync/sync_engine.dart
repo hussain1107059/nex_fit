@@ -148,69 +148,92 @@ class SyncEngine {
     );
   }
 
+  /// Maximum number of pending events fetched per queue-processing pass.
+  static const int _queuePageSize = 500;
+
   /// Processes the pending queue for [userId]. Without a [transport] every
   /// event is acknowledged locally (offline-first). With a transport, events
   /// are pushed and conflicts are resolved with [ConflictResolver].
+  ///
+  /// The queue is drained in bounded pages so a very large backlog never loads
+  /// the entire pending list into memory.
   Future<SyncRunResult> processQueue(
     String userId, {
     SyncTransport? transport,
     ConflictResolver? resolver,
   }) async {
     final ConflictResolver conflictResolver = resolver ?? const ConflictResolver();
-    final List<SyncEvent> pending = await repository.getPendingByUserId(userId);
     SyncRunResult result = const SyncRunResult();
 
-    for (final SyncEvent event in pending) {
-      result = result.copyWith(processed: result.processed + 1);
-      try {
-        if (transport == null) {
-          await _complete(event);
-          result = result.copyWith(succeeded: result.succeeded + 1);
-          continue;
-        }
+    int offset = 0;
+    while (true) {
+      final List<SyncEvent> page = await repository.getPendingByUserId(
+        userId,
+        limit: _queuePageSize,
+        offset: offset,
+      );
+      if (page.isEmpty) break;
 
-        final SyncEvent remote = await transport.push(event);
-        final ConflictDecision decision = conflictResolver.resolve(
-          local: event,
-          remote: remote,
-          strategy: event.conflictStrategy,
-        );
-        switch (decision) {
-          case ConflictDecision.local:
-          case ConflictDecision.remote:
-            await _complete(event);
+      // Completed events are accumulated and acknowledged in a single batched
+      // update per page instead of one UPDATE round trip per event.
+      final List<SyncEvent> toComplete = <SyncEvent>[];
+
+      for (final SyncEvent event in page) {
+        result = result.copyWith(processed: result.processed + 1);
+        try {
+          if (transport == null) {
+            toComplete.add(_completed(event));
             result = result.copyWith(succeeded: result.succeeded + 1);
-          case ConflictDecision.manual:
-            await repository.update(
-              event.copyWith(
-                lastError: 'manual_merge_required',
-                updatedAt: DateTime.now(),
-              ),
-            );
-            result = result.copyWith(conflicts: result.conflicts + 1);
+            continue;
+          }
+
+          final SyncEvent remote = await transport.push(event);
+          final ConflictDecision decision = conflictResolver.resolve(
+            local: event,
+            remote: remote,
+            strategy: event.conflictStrategy,
+          );
+          switch (decision) {
+            case ConflictDecision.local:
+            case ConflictDecision.remote:
+              toComplete.add(_completed(event));
+              result = result.copyWith(succeeded: result.succeeded + 1);
+            case ConflictDecision.manual:
+              await repository.update(
+                event.copyWith(
+                  lastError: 'manual_merge_required',
+                  updatedAt: DateTime.now(),
+                ),
+              );
+              result = result.copyWith(conflicts: result.conflicts + 1);
+          }
+        } catch (error, stackTrace) {
+          _logger.warning(
+            'Sync event ${event.id} failed: $error',
+            error,
+            stackTrace,
+          );
+          result = result.copyWith(failed: result.failed + 1);
+          await _markFailed(event, error);
         }
-      } catch (error, stackTrace) {
-        _logger.warning(
-          'Sync event ${event.id} failed: $error',
-          error,
-          stackTrace,
-        );
-        result = result.copyWith(failed: result.failed + 1);
-        await _markFailed(event, error);
       }
+
+      if (toComplete.isNotEmpty) {
+        await repository.updateAll(toComplete);
+      }
+
+      offset += page.length;
     }
 
     return result;
   }
 
-  Future<void> _complete(SyncEvent event) async {
-    await repository.update(
-      event.copyWith(
-        status: SyncStatus.completed,
-        syncedAt: DateTime.now(),
-        updatedAt: DateTime.now(),
-        clearError: true,
-      ),
+  SyncEvent _completed(SyncEvent event) {
+    return event.copyWith(
+      status: SyncStatus.completed,
+      syncedAt: DateTime.now(),
+      updatedAt: DateTime.now(),
+      clearError: true,
     );
   }
 

@@ -112,6 +112,10 @@ void main() {
     );
     final DateTime originalExpiry = session.expiresAt;
 
+    // Let the clock advance so touch can be observed sliding the window even
+    // when both calls land within the same millisecond.
+    await Future<void>.delayed(const Duration(milliseconds: 2));
+
     await manager.touch(
       'user-1',
       timeout: const Duration(minutes: 30),

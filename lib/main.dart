@@ -7,10 +7,12 @@ import 'package:sqflite_common/sqflite.dart' show databaseFactory;
 import 'package:sqflite_common_ffi_web/sqflite_ffi_web.dart';
 
 import 'app.dart';
+import 'core/utils/release_logger.dart';
 import 'injection/dependency_injection.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
+  configureLogging();
 
   await SystemChrome.setPreferredOrientations([
     DeviceOrientation.portraitUp,

@@ -33,9 +33,21 @@ class WorkoutSeeder {
 
   Future<void> _seedExercises(Transaction txn) async {
     _logger.info('Seeding ${kSeedExercises.length} built-in exercises');
+
+    final List<Map<String, Object?>> rows = await txn.query(
+      ExerciseModel.table,
+      columns: <String>['name'],
+      where: 'user_id IS NULL',
+    );
+    final Set<String> existingNames = rows
+        .map((Map<String, Object?> row) => row['name'] as String)
+        .toSet();
+
     final int now = DateTime.now().millisecondsSinceEpoch;
     int updated = 0;
     int inserted = 0;
+
+    final Batch batch = txn.batch();
     for (final SeedExercise exercise in kSeedExercises) {
       final Map<String, Object?> values = <String, Object?>{
         'name': exercise.name,
@@ -66,19 +78,20 @@ class WorkoutSeeder {
 
       // Backfill existing built-in rows in place (keeps ids and therefore the
       // workout_exercise links valid) and insert any new catalog entries.
-      final int changed = await txn.update(
-        ExerciseModel.table,
-        values,
-        where: 'user_id IS NULL AND name = ?',
-        whereArgs: <Object?>[exercise.name],
-      );
-      if (changed > 0) {
+      if (existingNames.contains(exercise.name)) {
+        batch.update(
+          ExerciseModel.table,
+          values,
+          where: 'user_id IS NULL AND name = ?',
+          whereArgs: <Object?>[exercise.name],
+        );
         updated++;
         continue;
       }
-      await txn.insert(ExerciseModel.table, values);
+      batch.insert(ExerciseModel.table, values);
       inserted++;
     }
+    await batch.commit(noResult: true);
     _logger.info('Built-in exercises seeded (updated: $updated, inserted: $inserted)');
   }
 

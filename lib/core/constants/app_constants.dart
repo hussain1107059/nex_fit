@@ -8,7 +8,7 @@ class AppConstants {
   static const String databaseName = 'nexfit.db';
   static const int databaseVersion = 13;
 
-  static const Duration splashDuration = Duration(milliseconds: 1800);
+  static const Duration splashDuration = Duration(milliseconds: 900);
   static const Duration debounceDuration = Duration(milliseconds: 400);
   static const Duration animationDuration = Duration(milliseconds: 280);
 

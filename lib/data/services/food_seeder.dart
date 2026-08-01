@@ -28,11 +28,23 @@ class FoodSeeder {
       final int count = existing.first['count'] as int? ?? 0;
       if (count >= kSeedFoods.length) return;
 
+      // Fetch existing built-in names once so the update/insert decision is
+      // made in memory and every write is queued into a single batch.
+      final List<Map<String, Object?>> rows = await txn.query(
+        FoodItemModel.table,
+        columns: <String>['name'],
+        where: 'user_id IS NULL',
+      );
+      final Set<String> existingNames = rows
+          .map((Map<String, Object?> row) => row['name'] as String)
+          .toSet();
+
       _logger.info('Seeding ${kSeedFoods.length} built-in foods');
       final int now = DateTime.now().millisecondsSinceEpoch;
       int inserted = 0;
       int updated = 0;
 
+      final Batch batch = txn.batch();
       for (final SeedFood food in kSeedFoods) {
         final Map<String, Object?> values = <String, Object?>{
           'name': food.name,
@@ -61,19 +73,20 @@ class FoodSeeder {
 
         // Backfill existing built-in rows in place (keeps ids and therefore
         // any log/favorite links valid) and insert new catalog entries.
-        final int changed = await txn.update(
-          FoodItemModel.table,
-          values,
-          where: 'user_id IS NULL AND name = ?',
-          whereArgs: <Object?>[food.name],
-        );
-        if (changed > 0) {
+        if (existingNames.contains(food.name)) {
+          batch.update(
+            FoodItemModel.table,
+            values,
+            where: 'user_id IS NULL AND name = ?',
+            whereArgs: <Object?>[food.name],
+          );
           updated++;
           continue;
         }
-        await txn.insert(FoodItemModel.table, values);
+        batch.insert(FoodItemModel.table, values);
         inserted++;
       }
+      await batch.commit(noResult: true);
       _logger.info('Built-in foods seeded (updated: $updated, inserted: $inserted)');
     });
   }

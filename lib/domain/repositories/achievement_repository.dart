@@ -4,6 +4,9 @@ import '../entities/achievement.dart';
 abstract interface class AchievementRepository {
   Future<int> insert(Achievement achievement);
 
+  /// Batches a set of new achievements in a single transaction.
+  Future<void> insertAll(List<Achievement> achievements);
+
   Future<void> update(Achievement achievement);
 
   Future<Achievement?> getById(int id);

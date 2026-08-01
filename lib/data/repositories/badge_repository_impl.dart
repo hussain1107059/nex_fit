@@ -12,6 +12,12 @@ class BadgeRepositoryImpl implements BadgeRepository {
   Future<int> insert(Badge badge) => _dataSource.insert(badge);
 
   @override
+  Future<void> insertAll(List<Badge> badges) => _dataSource.insertAll(badges);
+
+  @override
+  Future<void> updateAll(List<Badge> badges) => _dataSource.updateAll(badges);
+
+  @override
   Future<void> update(Badge badge) => _dataSource.update(badge);
 
   @override

@@ -10,6 +10,7 @@ import '../../../core/constants/app_constants.dart';
 import '../../../core/extensions/context_extensions.dart';
 import '../../../core/extensions/string_extensions.dart';
 import '../../../core/theme/app_spacing.dart';
+import '../../../core/utils/release_logger.dart';
 import '../../../data/datasources/local/app_database.dart';
 import '../../../data/services/auth/google_sign_in_service.dart';
 import '../../../data/services/firebase_service.dart';
@@ -119,11 +120,27 @@ class _SplashScreenState extends ConsumerState<SplashScreen>
         }
       }
 
-      // Background: check DB integrity (auto-restore latest backup when
-      // corrupted) and run a maintenance pass.
-      unawaited(
-        ref.read(recoveryManagerProvider).checkAndRecover(userId: user?.id),
-      );
+      // Background: recover/integrity, maintenance, reminders and scheduled
+      // backup all run after navigation so they never delay first paint.
+      unawaited(_runBackgroundTasks(user));
+    } catch (error, stackTrace) {
+      // A failing service must never leave the app stuck on the splash
+      // spinner; log it and let the router guard pick a destination.
+      devLog('Splash bootstrap failed: $error', error: error, stackTrace: stackTrace);
+    }
+
+    if (!mounted) return;
+    // The router redirect sends signed-in users to the correct destination.
+    context.go(AppRoutes.login);
+  }
+
+  /// Deferred, non-blocking tasks: DB recovery/maintenance, reminder schedule
+  /// sync, remember-me handling and the due auto-backup.
+  Future<void> _runBackgroundTasks(AppUser? user) async {
+    try {
+      // Check DB integrity (auto-restore latest backup when corrupted) and run
+      // a maintenance pass.
+      await ref.read(recoveryManagerProvider).checkAndRecover(userId: user?.id);
       unawaited(ref.read(databaseOptimizerServiceProvider).runMaintenance());
 
       // Re-sync the hydration reminders with the signed-in user's schedule so
@@ -150,23 +167,17 @@ class _SplashScreenState extends ConsumerState<SplashScreen>
 
       // Best-effort: run an automatic Drive backup when it is due (silently
       // skipped when disabled, offline or not signed in).
-      unawaited(_runScheduledBackupIfDue());
+      await _runScheduledBackupIfDue();
     } catch (error, stackTrace) {
-      // A failing service must never leave the app stuck on the splash
-      // spinner; log it and let the router guard pick a destination.
-      debugPrint('Splash bootstrap failed: $error\n$stackTrace');
+      devLog('Background bootstrap task failed: $error', error: error, stackTrace: stackTrace);
     }
-
-    if (!mounted) return;
-    // The router redirect sends signed-in users to the correct destination.
-    context.go(AppRoutes.login);
   }
 
   Future<void> _safeGoogleSignInInit(GoogleSignInService service) async {
     try {
       await service.initialize();
     } catch (error, stackTrace) {
-      debugPrint('Google Sign-In initialization failed: $error\n$stackTrace');
+      devLog('Google Sign-In initialization failed: $error', error: error, stackTrace: stackTrace);
     }
   }
 
@@ -181,7 +192,7 @@ class _SplashScreenState extends ConsumerState<SplashScreen>
           .read(backupServiceProvider)
           .runAutoBackupIfDue(userId: user.id);
     } catch (error, stackTrace) {
-      debugPrint('Scheduled backup check failed: $error\n$stackTrace');
+      devLog('Scheduled backup check failed: $error', error: error, stackTrace: stackTrace);
     }
   }
 

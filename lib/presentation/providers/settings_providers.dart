@@ -2,11 +2,11 @@ import 'dart:convert';
 import 'dart:ui' show Locale;
 
 import 'package:crypto/crypto.dart';
-import 'package:flutter/foundation.dart' show debugPrint;
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:logging/logging.dart';
 
 import '../../core/constants/app_constants.dart';
+import '../../core/utils/release_logger.dart';
 import '../../data/services/security/encryption_service.dart';
 import '../../data/services/security/key_manager.dart';
 import '../../domain/entities/app_settings.dart';
@@ -236,7 +236,7 @@ class SettingsController extends AsyncNotifier<AppSettings?> {
   Future<void> setLogsEnabled(bool enabled) async {
     await _update((settings) => settings.copyWith(logsEnabled: enabled));
     Logger.root.level = enabled ? Level.ALL : Level.INFO;
-    debugPrint('[SETTINGS] Logs enabled: $enabled');
+    devLog('[SETTINGS] Logs enabled: $enabled');
   }
 
   /// Restores every setting to its default value for the signed-in user.

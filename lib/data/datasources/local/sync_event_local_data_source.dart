@@ -29,7 +29,27 @@ class SyncEventLocalDataSource extends BaseLocalDataSource {
     });
   }
 
-  Future<List<SyncEvent>> getPendingByUserId(String userId) {
+  Future<void> updateAll(List<SyncEvent> events) {
+    return guard('update_all', () async {
+      final Database db = await dbConnection;
+      final Batch batch = db.batch();
+      for (final SyncEvent event in events) {
+        batch.update(
+          SyncEventModel.table,
+          SyncEventModel.toMap(event),
+          where: 'id = ?',
+          whereArgs: <Object?>[event.id],
+        );
+      }
+      await batch.commit(noResult: true);
+    });
+  }
+
+  Future<List<SyncEvent>> getPendingByUserId(
+    String userId, {
+    int? limit,
+    int? offset,
+  }) {
     return guard('get_pending_by_user', () async {
       final Database db = await dbConnection;
       final List<Map<String, Object?>> rows = await db.query(
@@ -37,6 +57,8 @@ class SyncEventLocalDataSource extends BaseLocalDataSource {
         where: 'user_id = ? AND status = ?',
         whereArgs: <Object?>[userId, SyncStatus.pending.name],
         orderBy: 'created_at ASC',
+        limit: limit,
+        offset: offset,
       );
       return rows.map(SyncEventModel.fromMap).toList();
     });

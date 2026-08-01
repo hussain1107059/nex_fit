@@ -23,6 +23,14 @@ class AppShellScreen extends ConsumerStatefulWidget {
 }
 
 class _AppShellScreenState extends ConsumerState<AppShellScreen> {
+  static const List<Widget> _screens = <Widget>[
+    DashboardScreen(),
+    WorkoutScreen(),
+    WeightScreen(),
+    NutritionScreen(),
+    ProfileScreen(),
+  ];
+
   DateTime? _lastBackPress;
 
   void _handleBackPressed() {
@@ -41,14 +49,6 @@ class _AppShellScreenState extends ConsumerState<AppShellScreen> {
     ref.watch(connectivityProvider);
     final int currentIndex = ref.watch(shellTabIndexProvider);
     final AppLocalizations l10n = context.l10n;
-
-    final List<Widget> screens = <Widget>[
-      const DashboardScreen(),
-      const WorkoutScreen(),
-      const WeightScreen(),
-      const NutritionScreen(),
-      const ProfileScreen(),
-    ];
 
     final List<AppBottomNavigationItem> destinations =
         <AppBottomNavigationItem>[
@@ -86,7 +86,19 @@ class _AppShellScreenState extends ConsumerState<AppShellScreen> {
         _handleBackPressed();
       },
       child: Scaffold(
-        body: IndexedStack(index: currentIndex, children: screens),
+        body: RepaintBoundary(
+          child: IndexedStack(
+            index: currentIndex,
+            children: List<Widget>.generate(_screens.length, (int index) {
+              // Pause tickers (e.g. the water glass wave) on inactive tabs so
+              // background animations don't burn battery or GPU while hidden.
+              return TickerMode(
+                enabled: index == currentIndex,
+                child: _screens[index],
+              );
+            }),
+          ),
+        ),
         bottomNavigationBar: AppBottomNavigationBar(
           currentIndex: currentIndex,
           destinations: destinations,

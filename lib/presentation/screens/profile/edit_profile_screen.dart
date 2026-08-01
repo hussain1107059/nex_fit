@@ -7,6 +7,7 @@ import 'package:image_picker/image_picker.dart';
 import '../../../core/extensions/context_extensions.dart';
 import '../../../core/theme/app_radius.dart';
 import '../../../core/theme/app_spacing.dart';
+import '../../../core/utils/release_logger.dart';
 import '../../../core/utils/validators.dart';
 import '../../../core/widgets/buttons/app_button.dart';
 import '../../../core/widgets/feedback/app_snackbar.dart';
@@ -144,7 +145,7 @@ class _EditProfileScreenState extends ConsumerState<EditProfileScreen> {
           break;
       }
     } catch (error, stackTrace) {
-      debugPrint('Profile photo change failed: $error\n$stackTrace');
+      devLog('Profile photo change failed: $error', error: error, stackTrace: stackTrace);
       if (mounted) AppSnackbar.error(context, l10n.profilePhotoError);
     }
   }
@@ -187,7 +188,7 @@ class _EditProfileScreenState extends ConsumerState<EditProfileScreen> {
       AppSnackbar.success(context, l10n.editProfileSaved);
       context.pop();
     } catch (error, stackTrace) {
-      debugPrint('Profile save failed: $error\n$stackTrace');
+      devLog('Profile save failed: $error', error: error, stackTrace: stackTrace);
       if (mounted) AppSnackbar.error(context, l10n.commonError);
     } finally {
       if (mounted) setState(() => _saving = false);

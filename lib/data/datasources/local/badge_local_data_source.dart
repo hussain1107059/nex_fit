@@ -19,6 +19,33 @@ class BadgeLocalDataSource extends BaseLocalDataSource {
     });
   }
 
+  Future<void> insertAll(List<Badge> badges) {
+    return guard('insert_all', () async {
+      final Database db = await dbConnection;
+      final Batch batch = db.batch();
+      for (final Badge badge in badges) {
+        batch.insert(BadgeModel.table, BadgeModel.toMap(badge));
+      }
+      await batch.commit(noResult: true);
+    });
+  }
+
+  Future<void> updateAll(List<Badge> badges) {
+    return guard('update_all', () async {
+      final Database db = await dbConnection;
+      final Batch batch = db.batch();
+      for (final Badge badge in badges) {
+        batch.update(
+          BadgeModel.table,
+          BadgeModel.toMap(badge),
+          where: 'id = ?',
+          whereArgs: <Object?>[badge.id],
+        );
+      }
+      await batch.commit(noResult: true);
+    });
+  }
+
   Future<void> update(Badge badge) {
     return guard('update', () async {
       final Database db = await dbConnection;

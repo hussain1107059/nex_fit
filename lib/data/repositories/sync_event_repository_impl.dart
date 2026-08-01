@@ -16,8 +16,14 @@ class SyncEventRepositoryImpl implements SyncEventRepository {
   Future<void> update(SyncEvent event) => _dataSource.update(event);
 
   @override
-  Future<List<SyncEvent>> getPendingByUserId(String userId) =>
-      _dataSource.getPendingByUserId(userId);
+  Future<void> updateAll(List<SyncEvent> events) => _dataSource.updateAll(events);
+
+  @override
+  Future<List<SyncEvent>> getPendingByUserId(
+    String userId, {
+    int? limit,
+    int? offset,
+  }) => _dataSource.getPendingByUserId(userId, limit: limit, offset: offset);
 
   @override
   Future<SyncEvent?> findDuplicate(

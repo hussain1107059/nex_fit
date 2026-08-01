@@ -13,6 +13,10 @@ class AchievementRepositoryImpl implements AchievementRepository {
       _dataSource.insert(achievement);
 
   @override
+  Future<void> insertAll(List<Achievement> achievements) =>
+      _dataSource.insertAll(achievements);
+
+  @override
   Future<void> update(Achievement achievement) => _dataSource.update(achievement);
 
   @override

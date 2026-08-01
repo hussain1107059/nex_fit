@@ -68,12 +68,22 @@ class ProfileAvatar extends StatelessWidget {
   }
 
   Widget _resolveImage(BuildContext context) {
+    // Resolve at the rendered size so large source images are downscaled in
+    // the cache instead of being decoded and kept at full resolution.
+    final double dpr = MediaQuery.devicePixelRatioOf(context);
+    final int cacheSide = (radius * 2 * dpr).round();
+
     final String? path = photoPath;
     if (path != null && path.isNotEmpty) {
       if (kIsWeb) {
         final Uint8List? bytes = ProfilePhotoService.webBytesFor(path);
         if (bytes != null) {
-          return Image.memory(bytes, fit: BoxFit.cover);
+          return Image.memory(
+            bytes,
+            fit: BoxFit.cover,
+            cacheWidth: cacheSide,
+            cacheHeight: cacheSide,
+          );
         }
       } else {
         final File file = File(path);
@@ -81,6 +91,8 @@ class ProfileAvatar extends StatelessWidget {
           return Image.file(
             file,
             fit: BoxFit.cover,
+            cacheWidth: cacheSide,
+            cacheHeight: cacheSide,
             errorBuilder: (_, _, _) => _fallback(context),
           );
         }
@@ -92,6 +104,8 @@ class ProfileAvatar extends StatelessWidget {
       return Image.network(
         url,
         fit: BoxFit.cover,
+        cacheWidth: cacheSide,
+        cacheHeight: cacheSide,
         errorBuilder: (_, _, _) => _fallback(context),
       );
     }

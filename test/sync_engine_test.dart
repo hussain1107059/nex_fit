@@ -25,12 +25,34 @@ class _MemorySyncEventRepository implements SyncEventRepository {
   }
 
   @override
-  Future<List<SyncEvent>> getPendingByUserId(String userId) async => events
-      .where(
-        (SyncEvent e) =>
-            e.userId == userId && e.status == SyncStatus.pending,
-      )
-      .toList();
+  Future<void> updateAll(List<SyncEvent> updated) async {
+    for (final SyncEvent event in updated) {
+      final int index = events.indexWhere((SyncEvent e) => e.id == event.id);
+      if (index >= 0) events[index] = event;
+    }
+  }
+
+  @override
+  Future<List<SyncEvent>> getPendingByUserId(
+    String userId, {
+    int? limit,
+    int? offset,
+  }) async {
+    List<SyncEvent> pending = events
+        .where(
+          (SyncEvent e) =>
+              e.userId == userId && e.status == SyncStatus.pending,
+        )
+        .toList();
+    if (offset != null && offset > 0) {
+      if (offset >= pending.length) return <SyncEvent>[];
+      pending = pending.sublist(offset);
+    }
+    if (limit != null && pending.length > limit) {
+      pending = pending.sublist(0, limit);
+    }
+    return pending;
+  }
 
   @override
   Future<SyncEvent?> findDuplicate(

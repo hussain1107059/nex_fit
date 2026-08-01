@@ -58,6 +58,23 @@ class MealItemLocalDataSource extends BaseLocalDataSource {
     });
   }
 
+  /// Fetches the items of many meals in a single query (avoids an N+1 when
+  /// loading a whole template collection).
+  Future<List<MealItem>> getByMeals(List<int> mealIds) {
+    return guard('get_by_meals', () async {
+      if (mealIds.isEmpty) return const <MealItem>[];
+      final Database db = await dbConnection;
+      final String placeholders = List.filled(mealIds.length, '?').join(', ');
+      final List<Map<String, Object?>> rows = await db.query(
+        MealItemModel.table,
+        where: 'meal_id IN ($placeholders)',
+        whereArgs: mealIds,
+        orderBy: 'sort_order ASC',
+      );
+      return rows.map(MealItemModel.fromMap).toList();
+    });
+  }
+
   Future<void> deleteByMeal(int mealId) {
     return guard('delete_by_meal', () async {
       final Database db = await dbConnection;

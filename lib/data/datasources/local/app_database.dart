@@ -44,6 +44,7 @@ class AppDatabase {
     DatabaseMigration(version: 11, apply: _migrationV11SettingsModule),
     DatabaseMigration(version: 12, apply: _migrationV12BackupModule),
     DatabaseMigration(version: 13, apply: _migrationV13SecuritySyncModule),
+    DatabaseMigration(version: 14, apply: _migrationV14IndexOptimization),
   ];
 
   Future<Database> get database async {
@@ -80,6 +81,31 @@ class AppDatabase {
 
   Future<void> _onConfigure(Database db) async {
     await db.execute('PRAGMA foreign_keys = ON');
+
+    if (kIsWeb) return;
+    // Performance PRAGMAs (native only; the web engine manages its own
+    // storage):
+    //  * WAL allows readers to proceed while a writer is active and is faster
+    //    for the small, frequent writes this app performs.
+    //  * synchronous = NORMAL keeps durability in exchange for much faster
+    //    commits (safe with WAL).
+    //  * temp_store = MEMORY keeps temp tables (ORDER BY / GROUP BY) in RAM.
+    //  * A larger page cache and mmap reduce filesystem reads.
+    try {
+      await db.execute('PRAGMA journal_mode = WAL');
+    } catch (_) {}
+    try {
+      await db.execute('PRAGMA synchronous = NORMAL');
+    } catch (_) {}
+    try {
+      await db.execute('PRAGMA temp_store = MEMORY');
+    } catch (_) {}
+    try {
+      await db.execute('PRAGMA cache_size = -8000');
+    } catch (_) {}
+    try {
+      await db.execute('PRAGMA mmap_size = 268435456');
+    } catch (_) {}
   }
 
   Future<void> _onCreate(Database db, int version) async {
@@ -150,11 +176,18 @@ class AppDatabase {
   /// backup restore to replace the file while the connection is closed.
   Future<String> get databaseFileRawPath async => _databasePath;
 
-  /// Runs a lightweight `PRAGMA optimize` so SQLite can tune its statistics.
-  /// `VACUUM` is skipped on web where it is not supported.
+  /// Runs a lightweight maintenance pass: `PRAGMA optimize` (SQLite tunes its
+  /// statistics), `ANALYZE` (refreshes query-planner stats for the indexes)
+  /// and, on native builds only, `VACUUM` to reclaim space.
   Future<void> optimize() async {
     final Database db = await database;
     await db.execute('PRAGMA optimize');
+    try {
+      await db.execute('ANALYZE');
+    } catch (_) {
+      // Some engines only persist ANALYZE stats inside a transaction; the
+      // PRAGMA optimize above already ran.
+    }
     if (!kIsWeb) {
       try {
         await db.execute('VACUUM');
@@ -162,6 +195,9 @@ class AppDatabase {
         // VACUUM inside a transaction or on some embedded builds can fail;
         // PRAGMA optimize already ran.
       }
+      try {
+        await db.execute('PRAGMA wal_checkpoint(TRUNCATE)');
+      } catch (_) {}
     }
   }
 
@@ -1507,5 +1543,55 @@ class AppDatabase {
       'DEFAULT 1',
     );
     await db.execute('ALTER TABLE app_settings ADD COLUMN last_sync_at INTEGER');
+  }
+
+  /// v14: index optimization.
+  ///
+  /// Adds composite `(user_id, <timestamp>)` indexes so date-range and
+  /// per-user filter queries (history, statistics, dashboards, the sync queue)
+  /// can be served directly from an index instead of scanning the table. Also
+  /// covers the FK lookup columns used by joins. All created with
+  /// `IF NOT EXISTS` so the migration is safe on fresh installs and upgrades.
+  static Future<void> _migrationV14IndexOptimization(
+    DatabaseExecutor executor,
+    int version,
+  ) async {
+    final DatabaseExecutor db = executor;
+
+    const Map<String, String> indexes = <String, String>{
+      'idx_workout_history_user_started': 'workout_history(user_id, started_at)',
+      'idx_exercise_history_workout_completed':
+          'exercise_history(workout_history_id, completed_at)',
+      'idx_food_log_user_logged': 'food_log(user_id, logged_at)',
+      'idx_food_log_user_meal_type': 'food_log(user_id, meal_type_id)',
+      'idx_water_log_user_logged': 'water_log(user_id, logged_at)',
+      'idx_weight_log_user_logged': 'weight_log(user_id, logged_at)',
+      'idx_bmi_log_user_logged': 'bmi_log(user_id, logged_at)',
+      'idx_body_measurement_user_measured':
+          'body_measurement(user_id, measured_at)',
+      'idx_calorie_log_user_logged': 'calorie_log(user_id, logged_at)',
+      'idx_sleep_log_user_date': 'sleep_log(user_id, sleep_date)',
+      'idx_step_log_user_date': 'step_log(user_id, step_date)',
+      'idx_daily_progress_user_date': 'daily_progress(user_id, progress_date)',
+      'idx_reminder_user_enabled': 'reminder(user_id, is_enabled)',
+      'idx_reminder_history_user_scheduled':
+          'reminder_history(user_id, scheduled_for)',
+      'idx_xp_history_user_created': 'xp_history(user_id, created_at)',
+      'idx_sync_event_user_status_created':
+          'sync_event(user_id, status, created_at)',
+      'idx_sessions_user_active': 'sessions(user_id, is_active)',
+      'idx_error_logs_user_created': 'error_logs(user_id, created_at)',
+      'idx_meal_user_category': 'meal(user_id, category_id)',
+      'idx_meal_item_meal_food': 'meal_item(meal_id, food_item_id)',
+      'idx_food_favorite_user_food': 'food_favorite(user_id, food_item_id)',
+      'idx_exercise_favorite_user_exercise':
+          'exercise_favorite(user_id, exercise_id)',
+    };
+
+    for (final MapEntry<String, String> entry in indexes.entries) {
+      await db.execute(
+        'CREATE INDEX IF NOT EXISTS ${entry.key} ON ${entry.value}',
+      );
+    }
   }
 }

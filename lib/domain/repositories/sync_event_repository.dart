@@ -7,7 +7,15 @@ abstract interface class SyncEventRepository {
 
   Future<void> update(SyncEvent event);
 
-  Future<List<SyncEvent>> getPendingByUserId(String userId);
+  /// Batches a set of event updates (e.g. acknowledging a queue run) into a
+  /// single transaction.
+  Future<void> updateAll(List<SyncEvent> events);
+
+  Future<List<SyncEvent>> getPendingByUserId(
+    String userId, {
+    int? limit,
+    int? offset,
+  });
 
   Future<SyncEvent?> findDuplicate(
     String userId,

@@ -1,10 +1,10 @@
 import 'dart:async';
 
-import 'package:flutter/foundation.dart' show debugPrint;
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../core/errors/failure.dart';
 import '../../core/errors/failure_mapper.dart';
+import '../../core/utils/release_logger.dart';
 import '../../core/utils/result.dart';
 import '../../data/services/sync/sync_event_recorder.dart';
 import '../../domain/entities/app_user.dart';
@@ -114,16 +114,16 @@ class AuthController extends Notifier<AuthState> {  StreamSubscription<AppUser?>
     bool rememberMe = true,
   }) async {
     if (state.isBusy) return _busyResult<AppUser>();
-    debugPrint('[AUTH] signInWithEmail: checking network...');
+    devLog('[AUTH] signInWithEmail: checking network...');
     if (!await _hasNetwork()) return _offlineResult<AppUser>();
-    debugPrint('[AUTH] signInWithEmail: network OK, setting loading');
+    devLog('[AUTH] signInWithEmail: network OK, setting loading');
     state = state.copyWith(status: AuthActionStatus.loading, failure: null);
 
-    debugPrint('[AUTH] signInWithEmail: calling usecase...');
+    devLog('[AUTH] signInWithEmail: calling usecase...');
     final Result<AppUser> result = await ref
         .read(signInWithEmailUsecaseProvider)
         .call(email: email, password: password);
-    debugPrint(
+    devLog(
       '[AUTH] signInWithEmail: usecase returned isSuccess=${result.isSuccess} failure=${result.failureOrNull?.code}',
     );
     await _finishAction(result);

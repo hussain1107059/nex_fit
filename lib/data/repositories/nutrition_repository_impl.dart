@@ -243,8 +243,14 @@ class NutritionRepositoryImpl implements NutritionRepository {
     };
 
     final List<MealTemplateDetail> templates = <MealTemplateDetail>[];
+    final List<int> mealIds = meals.map((Meal meal) => meal.id!).toList();
+    final List<MealItem> allItems = await mealItemRepository.getByMeals(mealIds);
+    final Map<int, List<MealItem>> itemsByMeal = <int, List<MealItem>>{};
+    for (final MealItem item in allItems) {
+      itemsByMeal.putIfAbsent(item.mealId, () => <MealItem>[]).add(item);
+    }
     for (final Meal meal in meals) {
-      final List<MealItem> items = await mealItemRepository.getByMeal(meal.id!);
+      final List<MealItem> items = itemsByMeal[meal.id] ?? const <MealItem>[];
       templates.add(
         MealTemplateDetail(
           meal: meal,
@@ -371,18 +377,38 @@ class NutritionRepositoryImpl implements NutritionRepository {
 
     final (DateTime dayStart, DateTime dayEnd) = _dayBounds(start);
     final int dayCount = end.difference(start).inDays + 1;
-    final List<NutritionDaySummary> days = <NutritionDaySummary>[];
 
+    // Fetch the entire requested range in two bounded queries instead of one
+    // query pair per day (avoids an N+1 for long history windows).
+    final List<FoodLog> allLogs = await foodLogRepository.getByDateRange(
+      userId,
+      dayStart,
+      _dayBounds(dayEnd.add(const Duration(days: 1))).$2,
+    );
+    final List<WaterLog> allWaterLogs = await waterLogRepository.getByDateRange(
+      userId,
+      dayStart,
+      _dayBounds(dayEnd.add(const Duration(days: 1))).$2,
+    );
+
+    final Map<DateTime, List<FoodLog>> logsByDay = <DateTime, List<FoodLog>>{};
+    for (final FoodLog log in allLogs) {
+      final DateTime day = _normalize(log.loggedAt);
+      logsByDay.putIfAbsent(day, () => <FoodLog>[]).add(log);
+    }
+    final Map<DateTime, List<WaterLog>> waterByDay =
+        <DateTime, List<WaterLog>>{};
+    for (final WaterLog log in allWaterLogs) {
+      final DateTime day = _normalize(log.loggedAt);
+      waterByDay.putIfAbsent(day, () => <WaterLog>[]).add(log);
+    }
+
+    final List<NutritionDaySummary> days = <NutritionDaySummary>[];
     for (int offset = 0; offset < dayCount; offset++) {
       final DateTime day = dayStart.add(Duration(days: offset));
       if (day.isAfter(dayEnd)) break;
 
-      final (DateTime from, DateTime to) = _dayBounds(day);
-      final List<FoodLog> logs = await foodLogRepository.getByDateRange(
-        userId,
-        from,
-        to,
-      );
+      final List<FoodLog> logs = logsByDay[day] ?? const <FoodLog>[];
       double calories = 0;
       double protein = 0;
       double carbs = 0;
@@ -398,19 +424,12 @@ class NutritionRepositoryImpl implements NutritionRepository {
         sugar += log.sugar;
       }
 
-      final List<WaterLog> waterLogs = await waterLogRepository.getByDateRange(
-        userId,
-        from,
-        to,
-      );
-      final int waterMl = waterLogs.fold(
-        0,
-        (int sum, WaterLog log) => sum + log.amountMl,
-      );
+      final int waterMl = (waterByDay[day] ?? const <WaterLog>[])
+          .fold(0, (int sum, WaterLog log) => sum + log.amountMl);
 
       days.add(
         NutritionDaySummary(
-          date: from,
+          date: day,
           calories: calories,
           protein: protein,
           carbs: carbs,

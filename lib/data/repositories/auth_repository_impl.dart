@@ -1,9 +1,9 @@
 import 'dart:async';
 
 import 'package:firebase_auth/firebase_auth.dart' as fb;
-import 'package:flutter/foundation.dart' show debugPrint;
 
 import '../../core/errors/app_exception.dart';
+import '../../core/utils/release_logger.dart';
 import '../models/app_user_model.dart';
 import '../services/auth/auth_service.dart';
 import '../../domain/entities/app_user.dart';
@@ -48,18 +48,18 @@ class AuthRepositoryImpl implements AuthRepository {
     required String email,
     required String password,
   }) async {
-    debugPrint('[AUTH-REPO] signInWithEmail: start offline=$_isOffline');
+    devLog('[AUTH-REPO] signInWithEmail: start offline=$_isOffline');
     try {
       final fb.User? user = await _authService.signInWithEmail(
         email: email,
         password: password,
       );
-      debugPrint('[AUTH-REPO] signInWithEmail: firebase signIn done');
+      devLog('[AUTH-REPO] signInWithEmail: firebase signIn done');
       final AppUser appUser = AppUserModel.fromFirebase(user);
       await _persistProfile(appUser);
       return appUser;
     } on AuthException catch (error) {
-      debugPrint('[AUTH-REPO] signInWithEmail: AuthException code=${error.code}');
+      devLog('[AUTH-REPO] signInWithEmail: AuthException code=${error.code}');
       if (error.code == 'firebase_unavailable' &&
           email.trim().toLowerCase() == _devTestEmail &&
           password == _devTestPassword) {
@@ -67,7 +67,7 @@ class AuthRepositoryImpl implements AuthRepository {
       }
       throw _toDomainError(error);
     } catch (error) {
-      debugPrint('[AUTH-REPO] signInWithEmail: error=$error');
+      devLog('[AUTH-REPO] signInWithEmail: error=$error');
       throw _toDomainError(error);
     }
   }
@@ -153,7 +153,7 @@ class AuthRepositoryImpl implements AuthRepository {
   /// Signs in with the hardcoded dev account when Firebase is unavailable so
   /// the full app flow can be exercised offline.
   Future<AppUser> _signInDev(String email) async {
-    debugPrint('[AUTH-REPO] dev sign-in: creating user');
+    devLog('[AUTH-REPO] dev sign-in: creating user');
     final AppUser user = AppUser(
       id: 'dev-user',
       email: email,
@@ -165,9 +165,9 @@ class AuthRepositoryImpl implements AuthRepository {
     );
     _devUser = user;
     await _persistProfile(user);
-    debugPrint('[AUTH-REPO] dev sign-in: profile persisted');
+    devLog('[AUTH-REPO] dev sign-in: profile persisted');
     _devController.add(user);
-    debugPrint('[AUTH-REPO] dev sign-in: emitted to stream');
+    devLog('[AUTH-REPO] dev sign-in: emitted to stream');
     return user;
   }
 

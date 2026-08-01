@@ -304,6 +304,17 @@ class WorkoutSessionRepositoryImpl implements WorkoutSessionRepository {
     final DateTime now = DateTime.now();
     final List<Badge> newlyEarned = <Badge>[];
 
+    // Load every badge for the user once and index by type, turning the
+    // previous N+1 (one SELECT + one write per definition) into a single read
+    // plus two batched writes.
+    final Map<String, Badge> byType = <String, Badge>{
+      for (final Badge badge in await badgeRepository.getByUserId(userId))
+        badge.badgeType: badge,
+    };
+
+    final List<Badge> toInsert = <Badge>[];
+    final List<Badge> toUpdate = <Badge>[];
+
     for (final _BadgeDefinition definition in _badgeDefinitions) {
       final double progress = switch (definition.metric) {
         _BadgeMetric.workouts => totalCompleted.toDouble(),
@@ -312,10 +323,7 @@ class WorkoutSessionRepositoryImpl implements WorkoutSessionRepository {
       };
       final double clamped = progress.clamp(0.0, definition.target);
       final bool earned = clamped >= definition.target;
-      final Badge? existing = await badgeRepository.getByUserAndType(
-        userId,
-        definition.type,
-      );
+      final Badge? existing = byType[definition.type];
 
       final Badge badge = Badge(
         id: existing?.id,
@@ -333,14 +341,21 @@ class WorkoutSessionRepositoryImpl implements WorkoutSessionRepository {
       );
 
       if (existing == null) {
-        await badgeRepository.insert(badge);
+        toInsert.add(badge);
       } else {
-        await badgeRepository.update(badge);
+        toUpdate.add(badge);
       }
 
       if (earned && (existing == null || !existing.isEarned)) {
         newlyEarned.add(badge.copyWith(id: null));
       }
+    }
+
+    if (toInsert.isNotEmpty) {
+      await badgeRepository.insertAll(toInsert);
+    }
+    if (toUpdate.isNotEmpty) {
+      await badgeRepository.updateAll(toUpdate);
     }
 
     return newlyEarned;
@@ -441,10 +456,13 @@ class WorkoutSessionRepositoryImpl implements WorkoutSessionRepository {
     ];
 
     final List<Achievement> unlocked = <Achievement>[];
-    for (final Achievement achievement in candidates) {
-      if (owned.contains(achievement.achievementType)) continue;
-      await achievementRepository.insert(achievement);
-      unlocked.add(achievement);
+    final List<Achievement> toInsert = <Achievement>[
+      for (final Achievement achievement in candidates)
+        if (!owned.contains(achievement.achievementType)) achievement,
+    ];
+    if (toInsert.isNotEmpty) {
+      await achievementRepository.insertAll(toInsert);
+      unlocked.addAll(toInsert);
     }
     return unlocked;
   }

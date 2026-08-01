@@ -4,7 +4,13 @@ import '../entities/badge.dart';
 abstract interface class BadgeRepository {
   Future<int> insert(Badge badge);
 
+  /// Batches a set of new badges in a single transaction.
+  Future<void> insertAll(List<Badge> badges);
+
   Future<void> update(Badge badge);
+
+  /// Batches a set of existing badges in a single transaction.
+  Future<void> updateAll(List<Badge> badges);
 
   Future<Badge?> getById(int id);
 

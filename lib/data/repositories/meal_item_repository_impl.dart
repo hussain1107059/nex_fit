@@ -22,6 +22,10 @@ class MealItemRepositoryImpl implements MealItemRepository {
       _dataSource.getByMeal(mealId);
 
   @override
+  Future<List<MealItem>> getByMeals(List<int> mealIds) =>
+      _dataSource.getByMeals(mealIds);
+
+  @override
   Future<void> deleteByMeal(int mealId) => _dataSource.deleteByMeal(mealId);
 
   @override

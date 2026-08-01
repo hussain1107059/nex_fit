@@ -10,6 +10,8 @@ abstract interface class MealItemRepository {
 
   Future<List<MealItem>> getByMeal(int mealId);
 
+  Future<List<MealItem>> getByMeals(List<int> mealIds);
+
   Future<void> deleteByMeal(int mealId);
 
   Future<void> delete(int id);

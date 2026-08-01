@@ -19,6 +19,20 @@ class AchievementLocalDataSource extends BaseLocalDataSource {
     });
   }
 
+  Future<void> insertAll(List<Achievement> achievements) {
+    return guard('insert_all', () async {
+      final Database db = await dbConnection;
+      final Batch batch = db.batch();
+      for (final Achievement achievement in achievements) {
+        batch.insert(
+          AchievementModel.table,
+          AchievementModel.toMap(achievement),
+        );
+      }
+      await batch.commit(noResult: true);
+    });
+  }
+
   Future<void> update(Achievement achievement) {
     return guard('update', () async {
       final Database db = await dbConnection;
