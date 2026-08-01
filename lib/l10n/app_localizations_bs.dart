@@ -2120,4 +2120,267 @@ class AppLocalizationsBs extends AppLocalizations {
 
   @override
   String get bodyMeasurementTitle => 'শারীরিক মাপ';
+
+  @override
+  String get progressTitle => 'অগ্রগতি ও বিশ্লেষণ';
+
+  @override
+  String get progressFilterToday => 'আজ';
+
+  @override
+  String get progressFilterLast7Days => '৭ দিন';
+
+  @override
+  String get progressFilterLast30Days => '৩০ দিন';
+
+  @override
+  String get progressFilterLast90Days => '৯০ দিন';
+
+  @override
+  String get progressFilterThisYear => 'এই বছর';
+
+  @override
+  String get progressFilterCustom => 'কাস্টম';
+
+  @override
+  String get progressSelectRange => 'তারিখের পরিসর বাছুন';
+
+  @override
+  String get progressScore => 'স্কোর';
+
+  @override
+  String get progressCompletion => 'সম্পন্ন';
+
+  @override
+  String get progressGoalNotSet => 'লক্ষ্য নির্ধারিত নেই';
+
+  @override
+  String get progressDaysLeft => 'দিন বাকি:';
+
+  @override
+  String get progressGoalWeight => 'ওজন';
+
+  @override
+  String get progressGoalWorkout => 'ওয়ার্কআউট';
+
+  @override
+  String get progressGoalCalories => 'ক্যালরি';
+
+  @override
+  String get progressGoalWater => 'পানি';
+
+  @override
+  String get progressGoalSteps => 'পদক্ষেপ';
+
+  @override
+  String get progressGoalSleep => 'ঘুম';
+
+  @override
+  String get progressRecordLongestWorkout => 'সবচেয়ে দীর্ঘ ওয়ার্কআউট';
+
+  @override
+  String get progressRecordHighestCalories => 'সর্বোচ্চ ক্যালরি পোড়ানো';
+
+  @override
+  String get progressRecordFastestWorkout => 'দ্রুততম ওয়ার্কআউট';
+
+  @override
+  String get progressRecordLongestStreak => 'সবচেয়ে দীর্ঘ ধারা';
+
+  @override
+  String get progressRecordBestWeek => 'সেরা সপ্তাহ';
+
+  @override
+  String get progressRecordBestMonth => 'সেরা মাস';
+
+  @override
+  String get progressRecordMostActiveDay => 'সবচেয়ে সক্রিয় দিন';
+
+  @override
+  String get progressOnDate => 'তারিখ:';
+
+  @override
+  String get progressWeekOf => 'সপ্তাহ:';
+
+  @override
+  String get progressUnitKcal => 'কিলোক্যালরি';
+
+  @override
+  String get progressUnitKg => 'কেজি';
+
+  @override
+  String get progressUnitMl => 'মিলি';
+
+  @override
+  String get progressUnitMin => 'মিনিট';
+
+  @override
+  String get progressUnitDays => 'দিন';
+
+  @override
+  String get progressUnitSteps => 'ধাপ';
+
+  @override
+  String get progressUnitWorkouts => 'ওয়ার্কআউট';
+
+  @override
+  String get progressUnitHours => 'ঘণ্টা';
+
+  @override
+  String get progressSummaryWorkouts => 'ওয়ার্কআউট';
+
+  @override
+  String get progressSummaryCaloriesBurned => 'ক্যালরি পোড়ানো';
+
+  @override
+  String get progressSummaryActiveDays => 'সক্রিয় দিন';
+
+  @override
+  String get progressSummaryAvgSteps => 'গড় পদক্ষেপ';
+
+  @override
+  String get progressSummaryAvgWater => 'গড় পানি';
+
+  @override
+  String get progressSummaryAvgSleep => 'গড় ঘুম';
+
+  @override
+  String get progressSummaryCaloriesConsumed => 'ক্যালরি গ্রহণ';
+
+  @override
+  String get progressSummaryWeightChange => 'ওজন পরিবর্তন';
+
+  @override
+  String get progressChartCalories => 'ক্যালরি পোড়ানো';
+
+  @override
+  String get progressChartWater => 'পানি (মিলি)';
+
+  @override
+  String get progressChartSteps => 'পদক্ষেপ';
+
+  @override
+  String get progressChartSleep => 'ঘুম (ঘণ্টা)';
+
+  @override
+  String get progressChartWeight => 'ওজন (কেজি)';
+
+  @override
+  String get progressChartWorkoutMinutes => 'ওয়ার্কআউট সময় (মিনিট)';
+
+  @override
+  String get progressChartBmi => 'বিএমআই';
+
+  @override
+  String get progressChartWorkoutCount => 'ওয়ার্কআউট সংখ্যা';
+
+  @override
+  String get progressGoals => 'লক্ষ্যসমূহ';
+
+  @override
+  String get progressRecords => 'ব্যক্তিগত রেকর্ড';
+
+  @override
+  String get progressScoreTitle => 'ফিটনেস স্কোর';
+
+  @override
+  String get progressFullReport => 'সম্পূর্ণ রিপোর্ট';
+
+  @override
+  String get progressExport => 'রিপোর্ট এক্সপোর্ট';
+
+  @override
+  String get progressExportTitle => 'রিপোর্ট এক্সপোর্ট করুন';
+
+  @override
+  String get progressExportSubtitle => 'আপনার রিপোর্ট সংরক্ষণ ও শেয়ার করুন';
+
+  @override
+  String get progressExportCsv => 'CSV ফাইল';
+
+  @override
+  String get progressExportPdf => 'PDF ফাইল';
+
+  @override
+  String get progressExportExcel => 'Excel ফাইল';
+
+  @override
+  String get progressExporting => 'রিপোর্ট তৈরি হচ্ছে...';
+
+  @override
+  String get progressExported => 'রিপোর্ট তৈরি হয়েছে';
+
+  @override
+  String get progressExportFailed => 'রিপোর্ট তৈরি করা যায়নি';
+
+  @override
+  String get progressEmptyTitle => 'কোনো তথ্য নেই';
+
+  @override
+  String get progressEmptySubtitle =>
+      'এই সময়ে ট্র্যাক করার কোনো তথ্য নেই। শুরু করতে ওয়ার্কআউট, পানি বা ওজন লগ করুন।';
+
+  @override
+  String get progressMetricWorkout => 'ওয়ার্কআউট';
+
+  @override
+  String get progressMetricConsistency => 'ধারাবাহিকতা';
+
+  @override
+  String get progressMetricActivity => 'সক্রিয়তা';
+
+  @override
+  String get progressMetricHydration => 'পানি গ্রহণ';
+
+  @override
+  String get progressMetricSleep => 'ঘুম';
+
+  @override
+  String get progressMetricNutrition => 'পুষ্টি';
+
+  @override
+  String get progressScoreExcellent => 'চমৎকার';
+
+  @override
+  String get progressScoreGood => 'ভালো';
+
+  @override
+  String get progressScoreFair => 'মোটামুটি';
+
+  @override
+  String get progressScoreNeedsWork => 'উন্নতি প্রয়োজন';
+
+  @override
+  String get progressScoreGettingStarted => 'সূচনা পর্যায়';
+
+  @override
+  String get progressAvgPerDay => 'গড়/দিন';
+
+  @override
+  String get progressTotal => 'মোট';
+
+  @override
+  String get progressReportTitle => 'অগ্রগতি রিপোর্ট';
+
+  @override
+  String get progressRecordsTitle => 'ব্যক্তিগত রেকর্ড';
+
+  @override
+  String get progressGoalsTitle => 'লক্ষ্য অগ্রগতি';
+
+  @override
+  String get progressScoreBreakdown => 'স্কোর বিশ্লেষণ';
+
+  @override
+  String get progressPeriodLabel => 'সময়কাল';
+
+  @override
+  String get progressNoRecords => 'এখনও কোনো রেকর্ড নেই';
+
+  @override
+  String get progressNoRecordsSubtitle =>
+      'ট্র্যাকিং শুরু করলে আপনার ব্যক্তিগত রেকর্ড এখানে দেখা যাবে।';
+
+  @override
+  String get progressCalorieBalance => 'ক্যালরি ভারসাম্য';
 }

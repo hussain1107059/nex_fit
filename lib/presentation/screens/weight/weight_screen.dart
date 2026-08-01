@@ -102,6 +102,11 @@ class _WeightContent extends ConsumerWidget {
               icon: const Icon(Icons.straighten_rounded),
               tooltip: l10n.bodyMeasurementTitle,
             ),
+            IconButton(
+              onPressed: () => context.push(AppRoutes.progressDashboard),
+              icon: const Icon(Icons.insights_rounded),
+              tooltip: l10n.progressTitle,
+            ),
             const SizedBox(width: AppSpacing.xs),
           ],
         ),

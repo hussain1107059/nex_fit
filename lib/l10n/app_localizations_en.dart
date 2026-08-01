@@ -2114,4 +2114,267 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get bodyMeasurementTitle => 'Body Measurements';
+
+  @override
+  String get progressTitle => 'Progress & Analytics';
+
+  @override
+  String get progressFilterToday => 'Today';
+
+  @override
+  String get progressFilterLast7Days => '7 days';
+
+  @override
+  String get progressFilterLast30Days => '30 days';
+
+  @override
+  String get progressFilterLast90Days => '90 days';
+
+  @override
+  String get progressFilterThisYear => 'This year';
+
+  @override
+  String get progressFilterCustom => 'Custom';
+
+  @override
+  String get progressSelectRange => 'Pick date range';
+
+  @override
+  String get progressScore => 'Score';
+
+  @override
+  String get progressCompletion => 'Complete';
+
+  @override
+  String get progressGoalNotSet => 'Goal not set';
+
+  @override
+  String get progressDaysLeft => 'Days left:';
+
+  @override
+  String get progressGoalWeight => 'Weight';
+
+  @override
+  String get progressGoalWorkout => 'Workouts';
+
+  @override
+  String get progressGoalCalories => 'Calories';
+
+  @override
+  String get progressGoalWater => 'Water';
+
+  @override
+  String get progressGoalSteps => 'Steps';
+
+  @override
+  String get progressGoalSleep => 'Sleep';
+
+  @override
+  String get progressRecordLongestWorkout => 'Longest workout';
+
+  @override
+  String get progressRecordHighestCalories => 'Highest calories burned';
+
+  @override
+  String get progressRecordFastestWorkout => 'Fastest workout';
+
+  @override
+  String get progressRecordLongestStreak => 'Longest streak';
+
+  @override
+  String get progressRecordBestWeek => 'Best week';
+
+  @override
+  String get progressRecordBestMonth => 'Best month';
+
+  @override
+  String get progressRecordMostActiveDay => 'Most active day';
+
+  @override
+  String get progressOnDate => 'On';
+
+  @override
+  String get progressWeekOf => 'Week of';
+
+  @override
+  String get progressUnitKcal => 'kcal';
+
+  @override
+  String get progressUnitKg => 'kg';
+
+  @override
+  String get progressUnitMl => 'ml';
+
+  @override
+  String get progressUnitMin => 'min';
+
+  @override
+  String get progressUnitDays => 'days';
+
+  @override
+  String get progressUnitSteps => 'steps';
+
+  @override
+  String get progressUnitWorkouts => 'workouts';
+
+  @override
+  String get progressUnitHours => 'hrs';
+
+  @override
+  String get progressSummaryWorkouts => 'Workouts';
+
+  @override
+  String get progressSummaryCaloriesBurned => 'Calories burned';
+
+  @override
+  String get progressSummaryActiveDays => 'Active days';
+
+  @override
+  String get progressSummaryAvgSteps => 'Avg steps';
+
+  @override
+  String get progressSummaryAvgWater => 'Avg water';
+
+  @override
+  String get progressSummaryAvgSleep => 'Avg sleep';
+
+  @override
+  String get progressSummaryCaloriesConsumed => 'Calories eaten';
+
+  @override
+  String get progressSummaryWeightChange => 'Weight change';
+
+  @override
+  String get progressChartCalories => 'Calories burned';
+
+  @override
+  String get progressChartWater => 'Water (ml)';
+
+  @override
+  String get progressChartSteps => 'Steps';
+
+  @override
+  String get progressChartSleep => 'Sleep (hrs)';
+
+  @override
+  String get progressChartWeight => 'Weight (kg)';
+
+  @override
+  String get progressChartWorkoutMinutes => 'Workout time (min)';
+
+  @override
+  String get progressChartBmi => 'BMI';
+
+  @override
+  String get progressChartWorkoutCount => 'Workouts';
+
+  @override
+  String get progressGoals => 'Goals';
+
+  @override
+  String get progressRecords => 'Personal records';
+
+  @override
+  String get progressScoreTitle => 'Fitness Score';
+
+  @override
+  String get progressFullReport => 'Full report';
+
+  @override
+  String get progressExport => 'Export report';
+
+  @override
+  String get progressExportTitle => 'Export report';
+
+  @override
+  String get progressExportSubtitle => 'Save and share your report';
+
+  @override
+  String get progressExportCsv => 'CSV file';
+
+  @override
+  String get progressExportPdf => 'PDF file';
+
+  @override
+  String get progressExportExcel => 'Excel file';
+
+  @override
+  String get progressExporting => 'Generating report...';
+
+  @override
+  String get progressExported => 'Report generated';
+
+  @override
+  String get progressExportFailed => 'Could not generate report';
+
+  @override
+  String get progressEmptyTitle => 'No data yet';
+
+  @override
+  String get progressEmptySubtitle =>
+      'No tracking data in this period. Log a workout, water or weight to get started.';
+
+  @override
+  String get progressMetricWorkout => 'Workout';
+
+  @override
+  String get progressMetricConsistency => 'Consistency';
+
+  @override
+  String get progressMetricActivity => 'Activity';
+
+  @override
+  String get progressMetricHydration => 'Hydration';
+
+  @override
+  String get progressMetricSleep => 'Sleep';
+
+  @override
+  String get progressMetricNutrition => 'Nutrition';
+
+  @override
+  String get progressScoreExcellent => 'Excellent';
+
+  @override
+  String get progressScoreGood => 'Good';
+
+  @override
+  String get progressScoreFair => 'Fair';
+
+  @override
+  String get progressScoreNeedsWork => 'Needs work';
+
+  @override
+  String get progressScoreGettingStarted => 'Getting started';
+
+  @override
+  String get progressAvgPerDay => 'Avg/day';
+
+  @override
+  String get progressTotal => 'Total';
+
+  @override
+  String get progressReportTitle => 'Progress report';
+
+  @override
+  String get progressRecordsTitle => 'Personal records';
+
+  @override
+  String get progressGoalsTitle => 'Goal progress';
+
+  @override
+  String get progressScoreBreakdown => 'Score breakdown';
+
+  @override
+  String get progressPeriodLabel => 'Period';
+
+  @override
+  String get progressNoRecords => 'No records yet';
+
+  @override
+  String get progressNoRecordsSubtitle =>
+      'Your personal records will appear here once you start tracking.';
+
+  @override
+  String get progressCalorieBalance => 'Calorie balance';
 }

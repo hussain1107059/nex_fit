@@ -36,6 +36,7 @@ import '../data/repositories/app_settings_repository_impl.dart';
 import '../data/repositories/dashboard_repository_impl.dart';
 import '../data/repositories/global_search_repository_impl.dart';
 import '../data/repositories/profile_repository_impl.dart';
+import '../data/repositories/progress_analytics_repository_impl.dart';
 import '../data/repositories/achievement_repository_impl.dart';
 import '../data/repositories/backup_history_repository_impl.dart';
 import '../data/repositories/badge_repository_impl.dart';
@@ -75,6 +76,7 @@ import '../data/services/auth/google_sign_in_service.dart';
 import '../data/services/backup/google_drive_backup_service.dart';
 import '../data/services/firebase_service.dart';
 import '../data/services/notifications/local_notification_service.dart';
+import '../data/services/report/report_exporter.dart';
 import '../data/services/storage/profile_photo_service.dart';
 import '../data/services/storage/secure_storage_service.dart';
 import '../data/services/food_seeder.dart';
@@ -103,6 +105,7 @@ import '../domain/repositories/meal_category_repository.dart';
 import '../domain/repositories/meal_item_repository.dart';
 import '../domain/repositories/meal_repository.dart';
 import '../domain/repositories/profile_repository.dart';
+import '../domain/repositories/progress_analytics_repository.dart';
 import '../domain/repositories/reminder_repository.dart';
 import '../domain/repositories/sleep_log_repository.dart';
 import '../domain/repositories/step_log_repository.dart';
@@ -174,6 +177,10 @@ final appDatabaseProvider = Provider<AppDatabase>(
 
 final localNotificationServiceProvider = Provider<LocalNotificationService>(
   (ref) => LocalNotificationService.instance,
+);
+
+final reportExporterProvider = Provider<ReportExporter>(
+  (ref) => ReportExporter(),
 );
 
 final userLocalDataSourceProvider = Provider<UserLocalDataSource>(
@@ -559,6 +566,24 @@ final profileRepositoryProvider = Provider<ProfileRepository>(
     stepLogRepository: ref.watch(stepLogRepositoryProvider),
   ),
 );
+
+final progressAnalyticsRepositoryProvider =
+    Provider<ProgressAnalyticsRepository>(
+      (ref) => ProgressAnalyticsRepositoryImpl(
+        workoutHistoryRepository: ref.watch(workoutHistoryRepositoryProvider),
+        waterLogRepository: ref.watch(waterLogRepositoryProvider),
+        foodLogRepository: ref.watch(foodLogRepositoryProvider),
+        weightLogRepository: ref.watch(weightLogRepositoryProvider),
+        bmiLogRepository: ref.watch(bmiLogRepositoryProvider),
+        sleepLogRepository: ref.watch(sleepLogRepositoryProvider),
+        stepLogRepository: ref.watch(stepLogRepositoryProvider),
+        streakRepository: ref.watch(streakRepositoryProvider),
+        fitnessGoalRepository: ref.watch(fitnessGoalRepositoryProvider),
+        userFitnessProfileRepository: ref.watch(
+          userFitnessProfileRepositoryProvider,
+        ),
+      ),
+    );
 
 final authRepositoryProvider = Provider<AuthRepository>(
   (ref) => AuthRepositoryImpl(

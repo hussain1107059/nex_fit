@@ -4195,6 +4195,528 @@ abstract class AppLocalizations {
   /// In bs, this message translates to:
   /// **'শারীরিক মাপ'**
   String get bodyMeasurementTitle;
+
+  /// No description provided for @progressTitle.
+  ///
+  /// In bs, this message translates to:
+  /// **'অগ্রগতি ও বিশ্লেষণ'**
+  String get progressTitle;
+
+  /// No description provided for @progressFilterToday.
+  ///
+  /// In bs, this message translates to:
+  /// **'আজ'**
+  String get progressFilterToday;
+
+  /// No description provided for @progressFilterLast7Days.
+  ///
+  /// In bs, this message translates to:
+  /// **'৭ দিন'**
+  String get progressFilterLast7Days;
+
+  /// No description provided for @progressFilterLast30Days.
+  ///
+  /// In bs, this message translates to:
+  /// **'৩০ দিন'**
+  String get progressFilterLast30Days;
+
+  /// No description provided for @progressFilterLast90Days.
+  ///
+  /// In bs, this message translates to:
+  /// **'৯০ দিন'**
+  String get progressFilterLast90Days;
+
+  /// No description provided for @progressFilterThisYear.
+  ///
+  /// In bs, this message translates to:
+  /// **'এই বছর'**
+  String get progressFilterThisYear;
+
+  /// No description provided for @progressFilterCustom.
+  ///
+  /// In bs, this message translates to:
+  /// **'কাস্টম'**
+  String get progressFilterCustom;
+
+  /// No description provided for @progressSelectRange.
+  ///
+  /// In bs, this message translates to:
+  /// **'তারিখের পরিসর বাছুন'**
+  String get progressSelectRange;
+
+  /// No description provided for @progressScore.
+  ///
+  /// In bs, this message translates to:
+  /// **'স্কোর'**
+  String get progressScore;
+
+  /// No description provided for @progressCompletion.
+  ///
+  /// In bs, this message translates to:
+  /// **'সম্পন্ন'**
+  String get progressCompletion;
+
+  /// No description provided for @progressGoalNotSet.
+  ///
+  /// In bs, this message translates to:
+  /// **'লক্ষ্য নির্ধারিত নেই'**
+  String get progressGoalNotSet;
+
+  /// No description provided for @progressDaysLeft.
+  ///
+  /// In bs, this message translates to:
+  /// **'দিন বাকি:'**
+  String get progressDaysLeft;
+
+  /// No description provided for @progressGoalWeight.
+  ///
+  /// In bs, this message translates to:
+  /// **'ওজন'**
+  String get progressGoalWeight;
+
+  /// No description provided for @progressGoalWorkout.
+  ///
+  /// In bs, this message translates to:
+  /// **'ওয়ার্কআউট'**
+  String get progressGoalWorkout;
+
+  /// No description provided for @progressGoalCalories.
+  ///
+  /// In bs, this message translates to:
+  /// **'ক্যালরি'**
+  String get progressGoalCalories;
+
+  /// No description provided for @progressGoalWater.
+  ///
+  /// In bs, this message translates to:
+  /// **'পানি'**
+  String get progressGoalWater;
+
+  /// No description provided for @progressGoalSteps.
+  ///
+  /// In bs, this message translates to:
+  /// **'পদক্ষেপ'**
+  String get progressGoalSteps;
+
+  /// No description provided for @progressGoalSleep.
+  ///
+  /// In bs, this message translates to:
+  /// **'ঘুম'**
+  String get progressGoalSleep;
+
+  /// No description provided for @progressRecordLongestWorkout.
+  ///
+  /// In bs, this message translates to:
+  /// **'সবচেয়ে দীর্ঘ ওয়ার্কআউট'**
+  String get progressRecordLongestWorkout;
+
+  /// No description provided for @progressRecordHighestCalories.
+  ///
+  /// In bs, this message translates to:
+  /// **'সর্বোচ্চ ক্যালরি পোড়ানো'**
+  String get progressRecordHighestCalories;
+
+  /// No description provided for @progressRecordFastestWorkout.
+  ///
+  /// In bs, this message translates to:
+  /// **'দ্রুততম ওয়ার্কআউট'**
+  String get progressRecordFastestWorkout;
+
+  /// No description provided for @progressRecordLongestStreak.
+  ///
+  /// In bs, this message translates to:
+  /// **'সবচেয়ে দীর্ঘ ধারা'**
+  String get progressRecordLongestStreak;
+
+  /// No description provided for @progressRecordBestWeek.
+  ///
+  /// In bs, this message translates to:
+  /// **'সেরা সপ্তাহ'**
+  String get progressRecordBestWeek;
+
+  /// No description provided for @progressRecordBestMonth.
+  ///
+  /// In bs, this message translates to:
+  /// **'সেরা মাস'**
+  String get progressRecordBestMonth;
+
+  /// No description provided for @progressRecordMostActiveDay.
+  ///
+  /// In bs, this message translates to:
+  /// **'সবচেয়ে সক্রিয় দিন'**
+  String get progressRecordMostActiveDay;
+
+  /// No description provided for @progressOnDate.
+  ///
+  /// In bs, this message translates to:
+  /// **'তারিখ:'**
+  String get progressOnDate;
+
+  /// No description provided for @progressWeekOf.
+  ///
+  /// In bs, this message translates to:
+  /// **'সপ্তাহ:'**
+  String get progressWeekOf;
+
+  /// No description provided for @progressUnitKcal.
+  ///
+  /// In bs, this message translates to:
+  /// **'কিলোক্যালরি'**
+  String get progressUnitKcal;
+
+  /// No description provided for @progressUnitKg.
+  ///
+  /// In bs, this message translates to:
+  /// **'কেজি'**
+  String get progressUnitKg;
+
+  /// No description provided for @progressUnitMl.
+  ///
+  /// In bs, this message translates to:
+  /// **'মিলি'**
+  String get progressUnitMl;
+
+  /// No description provided for @progressUnitMin.
+  ///
+  /// In bs, this message translates to:
+  /// **'মিনিট'**
+  String get progressUnitMin;
+
+  /// No description provided for @progressUnitDays.
+  ///
+  /// In bs, this message translates to:
+  /// **'দিন'**
+  String get progressUnitDays;
+
+  /// No description provided for @progressUnitSteps.
+  ///
+  /// In bs, this message translates to:
+  /// **'ধাপ'**
+  String get progressUnitSteps;
+
+  /// No description provided for @progressUnitWorkouts.
+  ///
+  /// In bs, this message translates to:
+  /// **'ওয়ার্কআউট'**
+  String get progressUnitWorkouts;
+
+  /// No description provided for @progressUnitHours.
+  ///
+  /// In bs, this message translates to:
+  /// **'ঘণ্টা'**
+  String get progressUnitHours;
+
+  /// No description provided for @progressSummaryWorkouts.
+  ///
+  /// In bs, this message translates to:
+  /// **'ওয়ার্কআউট'**
+  String get progressSummaryWorkouts;
+
+  /// No description provided for @progressSummaryCaloriesBurned.
+  ///
+  /// In bs, this message translates to:
+  /// **'ক্যালরি পোড়ানো'**
+  String get progressSummaryCaloriesBurned;
+
+  /// No description provided for @progressSummaryActiveDays.
+  ///
+  /// In bs, this message translates to:
+  /// **'সক্রিয় দিন'**
+  String get progressSummaryActiveDays;
+
+  /// No description provided for @progressSummaryAvgSteps.
+  ///
+  /// In bs, this message translates to:
+  /// **'গড় পদক্ষেপ'**
+  String get progressSummaryAvgSteps;
+
+  /// No description provided for @progressSummaryAvgWater.
+  ///
+  /// In bs, this message translates to:
+  /// **'গড় পানি'**
+  String get progressSummaryAvgWater;
+
+  /// No description provided for @progressSummaryAvgSleep.
+  ///
+  /// In bs, this message translates to:
+  /// **'গড় ঘুম'**
+  String get progressSummaryAvgSleep;
+
+  /// No description provided for @progressSummaryCaloriesConsumed.
+  ///
+  /// In bs, this message translates to:
+  /// **'ক্যালরি গ্রহণ'**
+  String get progressSummaryCaloriesConsumed;
+
+  /// No description provided for @progressSummaryWeightChange.
+  ///
+  /// In bs, this message translates to:
+  /// **'ওজন পরিবর্তন'**
+  String get progressSummaryWeightChange;
+
+  /// No description provided for @progressChartCalories.
+  ///
+  /// In bs, this message translates to:
+  /// **'ক্যালরি পোড়ানো'**
+  String get progressChartCalories;
+
+  /// No description provided for @progressChartWater.
+  ///
+  /// In bs, this message translates to:
+  /// **'পানি (মিলি)'**
+  String get progressChartWater;
+
+  /// No description provided for @progressChartSteps.
+  ///
+  /// In bs, this message translates to:
+  /// **'পদক্ষেপ'**
+  String get progressChartSteps;
+
+  /// No description provided for @progressChartSleep.
+  ///
+  /// In bs, this message translates to:
+  /// **'ঘুম (ঘণ্টা)'**
+  String get progressChartSleep;
+
+  /// No description provided for @progressChartWeight.
+  ///
+  /// In bs, this message translates to:
+  /// **'ওজন (কেজি)'**
+  String get progressChartWeight;
+
+  /// No description provided for @progressChartWorkoutMinutes.
+  ///
+  /// In bs, this message translates to:
+  /// **'ওয়ার্কআউট সময় (মিনিট)'**
+  String get progressChartWorkoutMinutes;
+
+  /// No description provided for @progressChartBmi.
+  ///
+  /// In bs, this message translates to:
+  /// **'বিএমআই'**
+  String get progressChartBmi;
+
+  /// No description provided for @progressChartWorkoutCount.
+  ///
+  /// In bs, this message translates to:
+  /// **'ওয়ার্কআউট সংখ্যা'**
+  String get progressChartWorkoutCount;
+
+  /// No description provided for @progressGoals.
+  ///
+  /// In bs, this message translates to:
+  /// **'লক্ষ্যসমূহ'**
+  String get progressGoals;
+
+  /// No description provided for @progressRecords.
+  ///
+  /// In bs, this message translates to:
+  /// **'ব্যক্তিগত রেকর্ড'**
+  String get progressRecords;
+
+  /// No description provided for @progressScoreTitle.
+  ///
+  /// In bs, this message translates to:
+  /// **'ফিটনেস স্কোর'**
+  String get progressScoreTitle;
+
+  /// No description provided for @progressFullReport.
+  ///
+  /// In bs, this message translates to:
+  /// **'সম্পূর্ণ রিপোর্ট'**
+  String get progressFullReport;
+
+  /// No description provided for @progressExport.
+  ///
+  /// In bs, this message translates to:
+  /// **'রিপোর্ট এক্সপোর্ট'**
+  String get progressExport;
+
+  /// No description provided for @progressExportTitle.
+  ///
+  /// In bs, this message translates to:
+  /// **'রিপোর্ট এক্সপোর্ট করুন'**
+  String get progressExportTitle;
+
+  /// No description provided for @progressExportSubtitle.
+  ///
+  /// In bs, this message translates to:
+  /// **'আপনার রিপোর্ট সংরক্ষণ ও শেয়ার করুন'**
+  String get progressExportSubtitle;
+
+  /// No description provided for @progressExportCsv.
+  ///
+  /// In bs, this message translates to:
+  /// **'CSV ফাইল'**
+  String get progressExportCsv;
+
+  /// No description provided for @progressExportPdf.
+  ///
+  /// In bs, this message translates to:
+  /// **'PDF ফাইল'**
+  String get progressExportPdf;
+
+  /// No description provided for @progressExportExcel.
+  ///
+  /// In bs, this message translates to:
+  /// **'Excel ফাইল'**
+  String get progressExportExcel;
+
+  /// No description provided for @progressExporting.
+  ///
+  /// In bs, this message translates to:
+  /// **'রিপোর্ট তৈরি হচ্ছে...'**
+  String get progressExporting;
+
+  /// No description provided for @progressExported.
+  ///
+  /// In bs, this message translates to:
+  /// **'রিপোর্ট তৈরি হয়েছে'**
+  String get progressExported;
+
+  /// No description provided for @progressExportFailed.
+  ///
+  /// In bs, this message translates to:
+  /// **'রিপোর্ট তৈরি করা যায়নি'**
+  String get progressExportFailed;
+
+  /// No description provided for @progressEmptyTitle.
+  ///
+  /// In bs, this message translates to:
+  /// **'কোনো তথ্য নেই'**
+  String get progressEmptyTitle;
+
+  /// No description provided for @progressEmptySubtitle.
+  ///
+  /// In bs, this message translates to:
+  /// **'এই সময়ে ট্র্যাক করার কোনো তথ্য নেই। শুরু করতে ওয়ার্কআউট, পানি বা ওজন লগ করুন।'**
+  String get progressEmptySubtitle;
+
+  /// No description provided for @progressMetricWorkout.
+  ///
+  /// In bs, this message translates to:
+  /// **'ওয়ার্কআউট'**
+  String get progressMetricWorkout;
+
+  /// No description provided for @progressMetricConsistency.
+  ///
+  /// In bs, this message translates to:
+  /// **'ধারাবাহিকতা'**
+  String get progressMetricConsistency;
+
+  /// No description provided for @progressMetricActivity.
+  ///
+  /// In bs, this message translates to:
+  /// **'সক্রিয়তা'**
+  String get progressMetricActivity;
+
+  /// No description provided for @progressMetricHydration.
+  ///
+  /// In bs, this message translates to:
+  /// **'পানি গ্রহণ'**
+  String get progressMetricHydration;
+
+  /// No description provided for @progressMetricSleep.
+  ///
+  /// In bs, this message translates to:
+  /// **'ঘুম'**
+  String get progressMetricSleep;
+
+  /// No description provided for @progressMetricNutrition.
+  ///
+  /// In bs, this message translates to:
+  /// **'পুষ্টি'**
+  String get progressMetricNutrition;
+
+  /// No description provided for @progressScoreExcellent.
+  ///
+  /// In bs, this message translates to:
+  /// **'চমৎকার'**
+  String get progressScoreExcellent;
+
+  /// No description provided for @progressScoreGood.
+  ///
+  /// In bs, this message translates to:
+  /// **'ভালো'**
+  String get progressScoreGood;
+
+  /// No description provided for @progressScoreFair.
+  ///
+  /// In bs, this message translates to:
+  /// **'মোটামুটি'**
+  String get progressScoreFair;
+
+  /// No description provided for @progressScoreNeedsWork.
+  ///
+  /// In bs, this message translates to:
+  /// **'উন্নতি প্রয়োজন'**
+  String get progressScoreNeedsWork;
+
+  /// No description provided for @progressScoreGettingStarted.
+  ///
+  /// In bs, this message translates to:
+  /// **'সূচনা পর্যায়'**
+  String get progressScoreGettingStarted;
+
+  /// No description provided for @progressAvgPerDay.
+  ///
+  /// In bs, this message translates to:
+  /// **'গড়/দিন'**
+  String get progressAvgPerDay;
+
+  /// No description provided for @progressTotal.
+  ///
+  /// In bs, this message translates to:
+  /// **'মোট'**
+  String get progressTotal;
+
+  /// No description provided for @progressReportTitle.
+  ///
+  /// In bs, this message translates to:
+  /// **'অগ্রগতি রিপোর্ট'**
+  String get progressReportTitle;
+
+  /// No description provided for @progressRecordsTitle.
+  ///
+  /// In bs, this message translates to:
+  /// **'ব্যক্তিগত রেকর্ড'**
+  String get progressRecordsTitle;
+
+  /// No description provided for @progressGoalsTitle.
+  ///
+  /// In bs, this message translates to:
+  /// **'লক্ষ্য অগ্রগতি'**
+  String get progressGoalsTitle;
+
+  /// No description provided for @progressScoreBreakdown.
+  ///
+  /// In bs, this message translates to:
+  /// **'স্কোর বিশ্লেষণ'**
+  String get progressScoreBreakdown;
+
+  /// No description provided for @progressPeriodLabel.
+  ///
+  /// In bs, this message translates to:
+  /// **'সময়কাল'**
+  String get progressPeriodLabel;
+
+  /// No description provided for @progressNoRecords.
+  ///
+  /// In bs, this message translates to:
+  /// **'এখনও কোনো রেকর্ড নেই'**
+  String get progressNoRecords;
+
+  /// No description provided for @progressNoRecordsSubtitle.
+  ///
+  /// In bs, this message translates to:
+  /// **'ট্র্যাকিং শুরু করলে আপনার ব্যক্তিগত রেকর্ড এখানে দেখা যাবে।'**
+  String get progressNoRecordsSubtitle;
+
+  /// No description provided for @progressCalorieBalance.
+  ///
+  /// In bs, this message translates to:
+  /// **'ক্যালরি ভারসাম্য'**
+  String get progressCalorieBalance;
 }
 
 class _AppLocalizationsDelegate

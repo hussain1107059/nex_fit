@@ -19,6 +19,11 @@ import '../screens/nutrition/macro_tracker_screen.dart';
 import '../screens/nutrition/meal_planner_screen.dart';
 import '../screens/nutrition/nutrition_history_screen.dart';
 import '../screens/profile/edit_profile_screen.dart';
+import '../screens/progress/fitness_score_screen.dart';
+import '../screens/progress/goal_progress_screen.dart';
+import '../screens/progress/personal_records_screen.dart';
+import '../screens/progress/progress_dashboard_screen.dart';
+import '../screens/progress/progress_report_screen.dart';
 import '../screens/shell/app_shell_screen.dart';
 import '../screens/splash/splash_screen.dart';
 import '../screens/water/water_history_screen.dart';
@@ -61,6 +66,11 @@ abstract final class AppRoutes {
   static const String weightHistory = '/weight/history';
   static const String weightStatistics = '/weight/statistics';
   static const String bodyMeasurement = '/weight/measurements';
+  static const String progressDashboard = '/progress/dashboard';
+  static const String progressReport = '/progress/report';
+  static const String progressRecords = '/progress/records';
+  static const String progressGoals = '/progress/goals';
+  static const String progressScore = '/progress/score';
 
   /// The landing route for a freshly signed-in user.
   static String destinationFor(AppUser user) {
@@ -271,6 +281,36 @@ final appRouterProvider = Provider<GoRouter>((ref) {
         name: 'body-measurement',
         builder: (BuildContext context, GoRouterState state) =>
             const BodyMeasurementScreen(),
+      ),
+      GoRoute(
+        path: AppRoutes.progressDashboard,
+        name: 'progress-dashboard',
+        builder: (BuildContext context, GoRouterState state) =>
+            const ProgressDashboardScreen(),
+      ),
+      GoRoute(
+        path: AppRoutes.progressReport,
+        name: 'progress-report',
+        builder: (BuildContext context, GoRouterState state) =>
+            const ProgressReportScreen(),
+      ),
+      GoRoute(
+        path: AppRoutes.progressRecords,
+        name: 'progress-records',
+        builder: (BuildContext context, GoRouterState state) =>
+            const PersonalRecordsScreen(),
+      ),
+      GoRoute(
+        path: AppRoutes.progressGoals,
+        name: 'progress-goals',
+        builder: (BuildContext context, GoRouterState state) =>
+            const GoalProgressScreen(),
+      ),
+      GoRoute(
+        path: AppRoutes.progressScore,
+        name: 'progress-score',
+        builder: (BuildContext context, GoRouterState state) =>
+            const FitnessScoreScreen(),
       ),
     ],
     errorBuilder: (BuildContext context, GoRouterState state) {
