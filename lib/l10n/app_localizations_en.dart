@@ -2623,4 +2623,463 @@ class AppLocalizationsEn extends AppLocalizations {
   String remindersCompletedCount(Object count) {
     return '$count completed';
   }
+
+  @override
+  String get settingsTitle => 'Settings';
+
+  @override
+  String get settingsGeneral => 'General';
+
+  @override
+  String get settingsAllSettings => 'All Settings';
+
+  @override
+  String get settingsEditProfile => 'Edit Profile';
+
+  @override
+  String get settingsUnits => 'Units';
+
+  @override
+  String get settingsUnitsMetric => 'Metric';
+
+  @override
+  String get settingsUnitsImperial => 'Imperial';
+
+  @override
+  String get settingsWeekStart => 'Week starts on';
+
+  @override
+  String get settingsWeekStartsSunday => 'Sunday';
+
+  @override
+  String get settingsWeekStartsMonday => 'Monday';
+
+  @override
+  String get settingsAppearance => 'Appearance';
+
+  @override
+  String get settingsTheme => 'Theme';
+
+  @override
+  String get settingsThemeSystem => 'System default';
+
+  @override
+  String get settingsThemeLight => 'Light';
+
+  @override
+  String get settingsThemeDark => 'Dark';
+
+  @override
+  String get settingsThemeAmoled => 'AMOLED black';
+
+  @override
+  String get settingsThemeAmoledSubtitle =>
+      'Deep black background, great for AMOLED screens';
+
+  @override
+  String get settingsDynamicColor => 'Dynamic color';
+
+  @override
+  String get settingsDynamicColorSubtitle =>
+      'Use the system\'s Material You colors';
+
+  @override
+  String get settingsFontSize => 'Font size';
+
+  @override
+  String get settingsFontSizeSmall => 'Small';
+
+  @override
+  String get settingsFontSizeMedium => 'Medium';
+
+  @override
+  String get settingsFontSizeLarge => 'Large';
+
+  @override
+  String get settingsFontSizeExtraLarge => 'Extra large';
+
+  @override
+  String get settingsLanguageSubtitle =>
+      'Choose the app language. Changes apply instantly.';
+
+  @override
+  String get settingsNotificationsMasterSubtitle =>
+      'Turn all notifications on or off';
+
+  @override
+  String get settingsNotificationPreferences => 'Notification preferences';
+
+  @override
+  String get settingsNotificationBehaviour => 'Behavior';
+
+  @override
+  String get settingsNotificationSound => 'Sound';
+
+  @override
+  String get settingsNotificationVibration => 'Vibration';
+
+  @override
+  String get settingsReminderCategories => 'Reminder categories';
+
+  @override
+  String get settingsReminderCategoriesSubtitle =>
+      'These preferences are used as defaults when creating new reminders.';
+
+  @override
+  String get settingsReminderWorkout => 'Workout reminders';
+
+  @override
+  String get settingsReminderMeal => 'Meal reminders';
+
+  @override
+  String get settingsReminderWater => 'Water reminders';
+
+  @override
+  String get settingsReminderWeight => 'Weight reminders';
+
+  @override
+  String get settingsReminderSleep => 'Sleep reminders';
+
+  @override
+  String get settingsReminderChallenge => 'Challenge reminders';
+
+  @override
+  String get settingsReminderAchievement => 'Achievement reminders';
+
+  @override
+  String get settingsWorkout => 'Workout';
+
+  @override
+  String get settingsWorkoutSubtitle => 'Default workout player behavior';
+
+  @override
+  String get settingsWorkoutTiming => 'Timing';
+
+  @override
+  String get settingsDefaultRestTime => 'Default rest time';
+
+  @override
+  String settingsRestSeconds(Object seconds) {
+    return '$seconds seconds';
+  }
+
+  @override
+  String get settingsWorkoutBehaviour => 'Behavior';
+
+  @override
+  String get settingsAutoStartTimer => 'Auto-start timer';
+
+  @override
+  String get settingsCountdownVoice => 'Countdown voice';
+
+  @override
+  String get settingsExerciseAnimation => 'Exercise animation';
+
+  @override
+  String get settingsAutoNextExercise => 'Auto-next exercise';
+
+  @override
+  String get settingsNutritionGoals => 'Daily goals';
+
+  @override
+  String get settingsNutrition => 'Nutrition';
+
+  @override
+  String get settingsNutritionSubtitle =>
+      'Set your daily calorie and macro targets.';
+
+  @override
+  String get settingsDailyCalories => 'Daily calories';
+
+  @override
+  String get settingsProtein => 'Protein';
+
+  @override
+  String get settingsCarbs => 'Carbs';
+
+  @override
+  String get settingsFat => 'Fat';
+
+  @override
+  String get settingsWater => 'Daily water';
+
+  @override
+  String get settingsGramUnit => 'g';
+
+  @override
+  String settingsMl(Object ml) {
+    return '$ml ml';
+  }
+
+  @override
+  String get settingsGoalHint => 'Enter a goal';
+
+  @override
+  String get settingsPrivacySensitive => 'Sensitive content';
+
+  @override
+  String get settingsHideRecentApps => 'Hide from recent apps';
+
+  @override
+  String get settingsHideRecentAppsSubtitle =>
+      'Hide the app preview in the app switcher';
+
+  @override
+  String get settingsDangerZone => 'Danger zone';
+
+  @override
+  String get settingsDeleteLocalData => 'Delete local data';
+
+  @override
+  String get settingsDeleteLocalDataSubtitle =>
+      'Erase all local records on this device';
+
+  @override
+  String get settingsDeleteLocalDataConfirm =>
+      'All your local data will be permanently deleted. This cannot be undone.';
+
+  @override
+  String get settingsDeleteLocalDataAction => 'Delete';
+
+  @override
+  String get settingsDeleteLocalDataDone => 'Local data deleted';
+
+  @override
+  String get settingsPrivacy => 'Privacy';
+
+  @override
+  String get settingsSecurity => 'Security';
+
+  @override
+  String get settingsSecuritySubtitle => 'App lock, PIN and biometrics';
+
+  @override
+  String get settingsStorage => 'Storage';
+
+  @override
+  String get settingsBackup => 'Backup';
+
+  @override
+  String get settingsSupport => 'Support';
+
+  @override
+  String get settingsDeveloper => 'Developer options';
+
+  @override
+  String get settingsDeveloperSubtitle => 'Debug and testing tools';
+
+  @override
+  String get settingsAppLock => 'App lock';
+
+  @override
+  String get settingsAppLockSubtitle => 'Require a PIN to open the app';
+
+  @override
+  String get settingsChangePin => 'Change PIN';
+
+  @override
+  String get settingsBiometric => 'Biometrics';
+
+  @override
+  String get settingsBiometricUnlock => 'Biometric unlock';
+
+  @override
+  String get settingsBiometricSubtitle =>
+      'Use fingerprint/face instead of the PIN';
+
+  @override
+  String get settingsAutoLock => 'Auto-lock';
+
+  @override
+  String get settingsAutoLockImmediately => 'Immediately';
+
+  @override
+  String get settingsAutoLockMinutes1 => 'After 1 minute';
+
+  @override
+  String get settingsAutoLockMinutes5 => 'After 5 minutes';
+
+  @override
+  String get settingsAutoLockMinutes15 => 'After 15 minutes';
+
+  @override
+  String get settingsAutoLockMinutes30 => 'After 30 minutes';
+
+  @override
+  String get settingsPinLock => 'PIN';
+
+  @override
+  String get settingsPinCurrent => 'Enter current PIN';
+
+  @override
+  String get settingsPinCurrentSubtitle =>
+      'Verify your current PIN to continue';
+
+  @override
+  String get settingsPinSetupTitle => 'Set a new PIN';
+
+  @override
+  String get settingsPinSetupSubtitle => 'Choose a 4-digit PIN';
+
+  @override
+  String get settingsPinConfirm => 'Confirm your PIN';
+
+  @override
+  String get settingsPinConfirmSubtitle => 'Enter the PIN again to confirm';
+
+  @override
+  String get settingsPinIncorrect => 'Incorrect PIN';
+
+  @override
+  String get settingsPinMismatch => 'PINs do not match, try again';
+
+  @override
+  String get settingsLockTitle => 'NexFit is locked';
+
+  @override
+  String get settingsLockSubtitle => 'Enter your PIN to continue';
+
+  @override
+  String get settingsStorageUsage => 'Usage';
+
+  @override
+  String get settingsDatabaseSize => 'Database size';
+
+  @override
+  String get settingsImageCacheSize => 'Image cache size';
+
+  @override
+  String get settingsCalculating => 'Calculating...';
+
+  @override
+  String get settingsStorageActions => 'Maintenance';
+
+  @override
+  String get settingsClearImageCache => 'Clear image cache';
+
+  @override
+  String get settingsOptimizeDatabase => 'Optimize database';
+
+  @override
+  String get settingsOptimizeDatabaseSubtitle =>
+      'Reclaims unused space and improves performance';
+
+  @override
+  String get settingsOptimizeDatabaseConfirm => 'Run a database optimization?';
+
+  @override
+  String get settingsOptimizeDatabaseAction => 'Optimize';
+
+  @override
+  String get settingsOptimizeDatabaseDone => 'Database optimized';
+
+  @override
+  String get settingsCacheCleared => 'Cache cleared';
+
+  @override
+  String get settingsAutoBackup => 'Automatic backup';
+
+  @override
+  String get settingsAutoBackupSubtitle =>
+      'Create local backups as your data changes';
+
+  @override
+  String get settingsDataSync => 'Data sync';
+
+  @override
+  String get settingsDataSyncSubtitle => 'Sync data across devices';
+
+  @override
+  String get settingsBackupNow => 'Back up now';
+
+  @override
+  String get settingsBackupFailed => 'Backup failed';
+
+  @override
+  String get settingsBackupSuccess => 'Backup complete';
+
+  @override
+  String get settingsBackupSuccessMessage =>
+      'A copy of your data was saved to the app\'s documents folder.';
+
+  @override
+  String get settingsHelpCenter => 'Help center';
+
+  @override
+  String get settingsContactSupport => 'Contact support';
+
+  @override
+  String get settingsContactSubject => 'NexFit support needed';
+
+  @override
+  String get settingsReportProblem => 'Report a problem';
+
+  @override
+  String get settingsReportSubject => 'NexFit problem report';
+
+  @override
+  String get settingsLegal => 'Legal';
+
+  @override
+  String get settingsPrivacyPolicy => 'Privacy policy';
+
+  @override
+  String get settingsTerms => 'Terms of service';
+
+  @override
+  String get settingsLinkFailed => 'Could not open the link';
+
+  @override
+  String get settingsAccount => 'Account';
+
+  @override
+  String get settingsDeleteAccount => 'Delete account';
+
+  @override
+  String get settingsDeleteAccountSubtitle =>
+      'Permanently delete your account and all data';
+
+  @override
+  String get settingsDeleteAccountConfirm =>
+      'Are you sure? This permanently deletes your account and all data.';
+
+  @override
+  String get settingsDeleteAccountAction => 'Delete account';
+
+  @override
+  String get settingsDeleteAccountFailed => 'Could not delete your account';
+
+  @override
+  String get settingsDeveloperLogging => 'Logging';
+
+  @override
+  String get settingsDebugLogging => 'Debug logging';
+
+  @override
+  String get settingsDebugLoggingSubtitle => 'Record detailed logs';
+
+  @override
+  String get settingsDeveloperInfo => 'Info';
+
+  @override
+  String get settingsDbVersion => 'Database version';
+
+  @override
+  String get settingsDeveloperReset => 'Reset';
+
+  @override
+  String get settingsResetAll => 'Reset all settings';
+
+  @override
+  String get settingsResetAllSubtitle => 'Restore default values';
+
+  @override
+  String get settingsResetAllConfirm =>
+      'All settings will be restored to their default values. Continue?';
+
+  @override
+  String get settingsResetAllAction => 'Reset';
+
+  @override
+  String get settingsResetAllDone => 'All settings reset';
 }

@@ -218,6 +218,28 @@ class AuthController extends Notifier<AuthState> {  StreamSubscription<AppUser?>
     return result;
   }
 
+  Future<Result<void>> deleteAccount() async {
+    if (state.isBusy) return _busyResult<void>();
+    if (!await _hasNetwork()) return _offlineResult<void>();
+    state = state.copyWith(status: AuthActionStatus.loading, failure: null);
+
+    final Result<void> result =
+        await ref.read(deleteAccountUsecaseProvider).call();
+    if (result.isSuccess) {
+      state = state.copyWith(
+        status: AuthActionStatus.success,
+        user: AppUser.signedOut,
+        failure: null,
+      );
+    } else {
+      state = state.copyWith(
+        status: AuthActionStatus.error,
+        failure: result.failureOrNull,
+      );
+    }
+    return result;
+  }
+
   Future<void> _finishAction(Result<Object?> result) async {
     state = state.copyWith(
       status: result.isSuccess

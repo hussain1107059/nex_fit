@@ -105,4 +105,7 @@ class ProfilePhotoService {
 
   /// Bytes backing a web-cached profile photo, or null.
   static Uint8List? webBytesFor(String photoPath) => _webCache[photoPath];
+
+  /// Clears the in-memory photo cache (used by the storage settings screen).
+  static void clearWebCache() => _webCache.clear();
 }

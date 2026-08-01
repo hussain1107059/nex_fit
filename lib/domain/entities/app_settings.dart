@@ -2,7 +2,10 @@ import 'package:equatable/equatable.dart';
 
 import 'common_enums.dart';
 
-/// Per-user application preferences and daily targets.
+/// Per-user application preferences, targets and security settings.
+///
+/// Stored as a single row inside the `app_settings` table so every value
+/// persists offline and is restored after an app restart.
 class AppSettings extends Equatable {
   const AppSettings({
     this.id,
@@ -18,6 +21,35 @@ class AppSettings extends Equatable {
     this.dataSyncEnabled = true,
     this.backupEnabled = true,
     this.lastBackupAt,
+    this.themeMode = AppThemeMode.system,
+    this.dynamicColor = false,
+    this.fontScale = FontScale.medium,
+    this.weekStart = WeekStart.sunday,
+    this.notificationSound = true,
+    this.notificationVibration = true,
+    this.workoutReminderEnabled = true,
+    this.mealReminderEnabled = true,
+    this.waterReminderEnabled = true,
+    this.weightReminderEnabled = true,
+    this.sleepReminderEnabled = true,
+    this.challengeReminderEnabled = true,
+    this.achievementReminderEnabled = true,
+    this.defaultRestTimeSeconds = 60,
+    this.autoStartTimer = false,
+    this.countdownVoice = true,
+    this.exerciseAnimation = true,
+    this.autoNextExercise = true,
+    this.proteinGoal,
+    this.carbsGoal,
+    this.fatGoal,
+    this.appLockEnabled = false,
+    this.pinHash,
+    this.biometricEnabled = false,
+    this.autoLock = AutoLockDelay.minutes1,
+    this.sessionTimeoutMinutes = 30,
+    this.hideRecentApps = false,
+    this.logsEnabled = false,
+    this.lastActiveAt,
     required this.updatedAt,
   });
 
@@ -34,6 +66,53 @@ class AppSettings extends Equatable {
   final bool dataSyncEnabled;
   final bool backupEnabled;
   final DateTime? lastBackupAt;
+
+  // Appearance
+  final AppThemeMode themeMode;
+  final bool dynamicColor;
+  final FontScale fontScale;
+
+  // General
+  final WeekStart weekStart;
+
+  // Notification module preferences
+  final bool notificationSound;
+  final bool notificationVibration;
+  final bool workoutReminderEnabled;
+  final bool mealReminderEnabled;
+  final bool waterReminderEnabled;
+  final bool weightReminderEnabled;
+  final bool sleepReminderEnabled;
+  final bool challengeReminderEnabled;
+  final bool achievementReminderEnabled;
+
+  // Workout module preferences
+  final int defaultRestTimeSeconds;
+  final bool autoStartTimer;
+  final bool countdownVoice;
+  final bool exerciseAnimation;
+  final bool autoNextExercise;
+
+  // Nutrition goals (calories/water reuse the existing daily targets)
+  final double? proteinGoal;
+  final double? carbsGoal;
+  final double? fatGoal;
+
+  // Security
+  final bool appLockEnabled;
+  final String? pinHash;
+  final bool biometricEnabled;
+  final AutoLockDelay autoLock;
+  final int sessionTimeoutMinutes;
+  final bool hideRecentApps;
+
+  // Developer
+  final bool logsEnabled;
+
+  /// Timestamp of the last time the app was actively unlocked; used by the
+  /// auto-lock gate to decide whether a PIN prompt must be shown again.
+  final DateTime? lastActiveAt;
+
   final DateTime updatedAt;
 
   AppSettings copyWith({
@@ -50,6 +129,35 @@ class AppSettings extends Equatable {
     bool? dataSyncEnabled,
     bool? backupEnabled,
     DateTime? lastBackupAt,
+    AppThemeMode? themeMode,
+    bool? dynamicColor,
+    FontScale? fontScale,
+    WeekStart? weekStart,
+    bool? notificationSound,
+    bool? notificationVibration,
+    bool? workoutReminderEnabled,
+    bool? mealReminderEnabled,
+    bool? waterReminderEnabled,
+    bool? weightReminderEnabled,
+    bool? sleepReminderEnabled,
+    bool? challengeReminderEnabled,
+    bool? achievementReminderEnabled,
+    int? defaultRestTimeSeconds,
+    bool? autoStartTimer,
+    bool? countdownVoice,
+    bool? exerciseAnimation,
+    bool? autoNextExercise,
+    double? proteinGoal,
+    double? carbsGoal,
+    double? fatGoal,
+    bool? appLockEnabled,
+    String? pinHash,
+    bool? biometricEnabled,
+    AutoLockDelay? autoLock,
+    int? sessionTimeoutMinutes,
+    bool? hideRecentApps,
+    bool? logsEnabled,
+    DateTime? lastActiveAt,
     DateTime? updatedAt,
   }) {
     return AppSettings(
@@ -66,6 +174,39 @@ class AppSettings extends Equatable {
       dataSyncEnabled: dataSyncEnabled ?? this.dataSyncEnabled,
       backupEnabled: backupEnabled ?? this.backupEnabled,
       lastBackupAt: lastBackupAt ?? this.lastBackupAt,
+      themeMode: themeMode ?? this.themeMode,
+      dynamicColor: dynamicColor ?? this.dynamicColor,
+      fontScale: fontScale ?? this.fontScale,
+      weekStart: weekStart ?? this.weekStart,
+      notificationSound: notificationSound ?? this.notificationSound,
+      notificationVibration:
+          notificationVibration ?? this.notificationVibration,
+      workoutReminderEnabled:
+          workoutReminderEnabled ?? this.workoutReminderEnabled,
+      mealReminderEnabled: mealReminderEnabled ?? this.mealReminderEnabled,
+      waterReminderEnabled: waterReminderEnabled ?? this.waterReminderEnabled,
+      weightReminderEnabled: weightReminderEnabled ?? this.weightReminderEnabled,
+      sleepReminderEnabled: sleepReminderEnabled ?? this.sleepReminderEnabled,
+      challengeReminderEnabled:
+          challengeReminderEnabled ?? this.challengeReminderEnabled,
+      achievementReminderEnabled:
+          achievementReminderEnabled ?? this.achievementReminderEnabled,
+      defaultRestTimeSeconds: defaultRestTimeSeconds ?? this.defaultRestTimeSeconds,
+      autoStartTimer: autoStartTimer ?? this.autoStartTimer,
+      countdownVoice: countdownVoice ?? this.countdownVoice,
+      exerciseAnimation: exerciseAnimation ?? this.exerciseAnimation,
+      autoNextExercise: autoNextExercise ?? this.autoNextExercise,
+      proteinGoal: proteinGoal ?? this.proteinGoal,
+      carbsGoal: carbsGoal ?? this.carbsGoal,
+      fatGoal: fatGoal ?? this.fatGoal,
+      appLockEnabled: appLockEnabled ?? this.appLockEnabled,
+      pinHash: pinHash ?? this.pinHash,
+      biometricEnabled: biometricEnabled ?? this.biometricEnabled,
+      autoLock: autoLock ?? this.autoLock,
+      sessionTimeoutMinutes: sessionTimeoutMinutes ?? this.sessionTimeoutMinutes,
+      hideRecentApps: hideRecentApps ?? this.hideRecentApps,
+      logsEnabled: logsEnabled ?? this.logsEnabled,
+      lastActiveAt: lastActiveAt ?? this.lastActiveAt,
       updatedAt: updatedAt ?? this.updatedAt,
     );
   }
@@ -85,6 +226,35 @@ class AppSettings extends Equatable {
         dataSyncEnabled,
         backupEnabled,
         lastBackupAt,
+        themeMode,
+        dynamicColor,
+        fontScale,
+        weekStart,
+        notificationSound,
+        notificationVibration,
+        workoutReminderEnabled,
+        mealReminderEnabled,
+        waterReminderEnabled,
+        weightReminderEnabled,
+        sleepReminderEnabled,
+        challengeReminderEnabled,
+        achievementReminderEnabled,
+        defaultRestTimeSeconds,
+        autoStartTimer,
+        countdownVoice,
+        exerciseAnimation,
+        autoNextExercise,
+        proteinGoal,
+        carbsGoal,
+        fatGoal,
+        appLockEnabled,
+        pinHash,
+        biometricEnabled,
+        autoLock,
+        sessionTimeoutMinutes,
+        hideRecentApps,
+        logsEnabled,
+        lastActiveAt,
         updatedAt,
       ];
 }

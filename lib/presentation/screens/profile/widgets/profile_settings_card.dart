@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
 
 import '../../../../core/constants/app_constants.dart';
 import '../../../../core/extensions/context_extensions.dart';
@@ -13,6 +14,7 @@ import '../../../../injection/dependency_injection.dart';
 import '../../../providers/auth_controller.dart';
 import '../../../providers/locale_provider.dart';
 import '../../../providers/profile_providers.dart';
+import '../../../router/app_router.dart';
 import 'profile_section_card.dart';
 
 /// Settings shortcuts: dark mode, language, notifications, backup & restore,
@@ -33,6 +35,12 @@ class ProfileSettingsCard extends ConsumerWidget {
       padding: const EdgeInsets.symmetric(vertical: AppSpacing.xs),
       child: Column(
         children: [
+          _SettingsTile(
+            icon: Icons.settings_rounded,
+            title: context.l10n.settingsAllSettings,
+            onTap: () => context.push(AppRoutes.settings),
+          ),
+          const Divider(height: 1, indent: AppSpacing.xxl),
           _SwitchTile(
             icon: Icons.dark_mode_rounded,
             title: context.l10n.settingsDarkMode,

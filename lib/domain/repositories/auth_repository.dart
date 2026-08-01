@@ -34,4 +34,7 @@ abstract interface class AuthRepository {
   Future<void> resetPassword(String email);
 
   Future<void> signOut();
+
+  /// Permanently deletes the signed-in authentication account.
+  Future<void> deleteAccount();
 }

@@ -2629,4 +2629,464 @@ class AppLocalizationsBs extends AppLocalizations {
   String remindersCompletedCount(Object count) {
     return '$count টি সম্পন্ন';
   }
+
+  @override
+  String get settingsTitle => 'সেটিংস';
+
+  @override
+  String get settingsGeneral => 'সাধারণ';
+
+  @override
+  String get settingsAllSettings => 'সব সেটিংস';
+
+  @override
+  String get settingsEditProfile => 'প্রোফাইল সম্পাদনা';
+
+  @override
+  String get settingsUnits => 'একক';
+
+  @override
+  String get settingsUnitsMetric => 'মেট্রিক';
+
+  @override
+  String get settingsUnitsImperial => 'ইম্পেরিয়াল';
+
+  @override
+  String get settingsWeekStart => 'সপ্তাহ শুরু';
+
+  @override
+  String get settingsWeekStartsSunday => 'রবিবার';
+
+  @override
+  String get settingsWeekStartsMonday => 'সোমবার';
+
+  @override
+  String get settingsAppearance => 'চেহারা';
+
+  @override
+  String get settingsTheme => 'থিম';
+
+  @override
+  String get settingsThemeSystem => 'সিস্টেম ডিফল্ট';
+
+  @override
+  String get settingsThemeLight => 'লাইট';
+
+  @override
+  String get settingsThemeDark => 'ডার্ক';
+
+  @override
+  String get settingsThemeAmoled => 'AMOLED কালো';
+
+  @override
+  String get settingsThemeAmoledSubtitle =>
+      'গভীর কালো পটভূমি, AMOLED স্ক্রিনের জন্য';
+
+  @override
+  String get settingsDynamicColor => 'ডাইনামিক কালার';
+
+  @override
+  String get settingsDynamicColorSubtitle =>
+      'সিস্টেমের Material You রঙ ব্যবহার করুন';
+
+  @override
+  String get settingsFontSize => 'ফন্টের আকার';
+
+  @override
+  String get settingsFontSizeSmall => 'ছোট';
+
+  @override
+  String get settingsFontSizeMedium => 'মাঝারি';
+
+  @override
+  String get settingsFontSizeLarge => 'বড়';
+
+  @override
+  String get settingsFontSizeExtraLarge => 'অতি বড়';
+
+  @override
+  String get settingsLanguageSubtitle =>
+      'অ্যাপের ভাষা বেছে নিন। পরিবর্তন সাথে সাথেই কার্যকর হবে।';
+
+  @override
+  String get settingsNotificationsMasterSubtitle =>
+      'সব বিজ্ঞপ্তি চালু বা বন্ধ করুন';
+
+  @override
+  String get settingsNotificationPreferences => 'বিজ্ঞপ্তির পছন্দসমূহ';
+
+  @override
+  String get settingsNotificationBehaviour => 'আচরণ';
+
+  @override
+  String get settingsNotificationSound => 'শব্দ';
+
+  @override
+  String get settingsNotificationVibration => 'কম্পন';
+
+  @override
+  String get settingsReminderCategories => 'রিমাইন্ডার বিভাগ';
+
+  @override
+  String get settingsReminderCategoriesSubtitle =>
+      'নতুন রিমাইন্ডার তৈরি করার সময় এই পছন্দগুলো ডিফল্ট হিসেবে ব্যবহার হবে।';
+
+  @override
+  String get settingsReminderWorkout => 'ওয়ার্কআউট রিমাইন্ডার';
+
+  @override
+  String get settingsReminderMeal => 'খাবার রিমাইন্ডার';
+
+  @override
+  String get settingsReminderWater => 'পানি রিমাইন্ডার';
+
+  @override
+  String get settingsReminderWeight => 'ওজন রিমাইন্ডার';
+
+  @override
+  String get settingsReminderSleep => 'ঘুম রিমাইন্ডার';
+
+  @override
+  String get settingsReminderChallenge => 'চ্যালেঞ্জ রিমাইন্ডার';
+
+  @override
+  String get settingsReminderAchievement => 'অর্জন রিমাইন্ডার';
+
+  @override
+  String get settingsWorkout => 'ওয়ার্কআউট';
+
+  @override
+  String get settingsWorkoutSubtitle => 'ওয়ার্কআউট প্লেয়ারের ডিফল্ট আচরণ';
+
+  @override
+  String get settingsWorkoutTiming => 'সময়';
+
+  @override
+  String get settingsDefaultRestTime => 'ডিফল্ট বিশ্রামের সময়';
+
+  @override
+  String settingsRestSeconds(Object seconds) {
+    return '$seconds সেকেন্ড';
+  }
+
+  @override
+  String get settingsWorkoutBehaviour => 'আচরণ';
+
+  @override
+  String get settingsAutoStartTimer => 'টাইমার স্বয়ংক্রিয় শুরু';
+
+  @override
+  String get settingsCountdownVoice => 'কাউন্টডাউন ভয়েস';
+
+  @override
+  String get settingsExerciseAnimation => 'ব্যায়াম অ্যানিমেশন';
+
+  @override
+  String get settingsAutoNextExercise => 'পরবর্তী ব্যায়াম স্বয়ংক্রিয়';
+
+  @override
+  String get settingsNutritionGoals => 'দৈনিক লক্ষ্য';
+
+  @override
+  String get settingsNutrition => 'পুষ্টি';
+
+  @override
+  String get settingsNutritionSubtitle =>
+      'আপনার দৈনিক ক্যালোরি ও ম্যাক্রো লক্ষ্য নির্ধারণ করুন।';
+
+  @override
+  String get settingsDailyCalories => 'দৈনিক ক্যালোরি';
+
+  @override
+  String get settingsProtein => 'প্রোটিন';
+
+  @override
+  String get settingsCarbs => 'কার্বোহাইড্রেট';
+
+  @override
+  String get settingsFat => 'চর্বি';
+
+  @override
+  String get settingsWater => 'দৈনিক পানি';
+
+  @override
+  String get settingsGramUnit => 'g';
+
+  @override
+  String settingsMl(Object ml) {
+    return '$ml ml';
+  }
+
+  @override
+  String get settingsGoalHint => 'লক্ষ্য লিখুন';
+
+  @override
+  String get settingsPrivacySensitive => 'সংবেদনশীল সামগ্রী';
+
+  @override
+  String get settingsHideRecentApps => 'রিসেন্ট অ্যাপ থেকে লুকান';
+
+  @override
+  String get settingsHideRecentAppsSubtitle =>
+      'অ্যাপ সুইচারে প্রিভিউ লুকিয়ে রাখুন';
+
+  @override
+  String get settingsDangerZone => 'বিপজ্জনক অঞ্চল';
+
+  @override
+  String get settingsDeleteLocalData => 'স্থানীয় ডেটা মুছুন';
+
+  @override
+  String get settingsDeleteLocalDataSubtitle =>
+      'এই ডিভাইসের সব স্থানীয় রেকর্ড মুছে ফেলুন';
+
+  @override
+  String get settingsDeleteLocalDataConfirm =>
+      'আপনার সব স্থানীয় ডেটা স্থায়ীভাবে মুছে যাবে। এটি পুনরুদ্ধার করা যাবে না।';
+
+  @override
+  String get settingsDeleteLocalDataAction => 'মুছে ফেলুন';
+
+  @override
+  String get settingsDeleteLocalDataDone => 'স্থানীয় ডেটা মুছে ফেলা হয়েছে';
+
+  @override
+  String get settingsPrivacy => 'গোপনীয়তা';
+
+  @override
+  String get settingsSecurity => 'নিরাপত্তা';
+
+  @override
+  String get settingsSecuritySubtitle => 'অ্যাপ লক, PIN ও বায়োমেট্রিক';
+
+  @override
+  String get settingsStorage => 'স্টোরেজ';
+
+  @override
+  String get settingsBackup => 'ব্যাকআপ';
+
+  @override
+  String get settingsSupport => 'সাপোর্ট';
+
+  @override
+  String get settingsDeveloper => 'ডেভেলপার অপশন';
+
+  @override
+  String get settingsDeveloperSubtitle => 'ডিবাগ ও পরীক্ষার সরঞ্জাম';
+
+  @override
+  String get settingsAppLock => 'অ্যাপ লক';
+
+  @override
+  String get settingsAppLockSubtitle => 'অ্যাপ খুলতে PIN প্রয়োজন';
+
+  @override
+  String get settingsChangePin => 'PIN পরিবর্তন করুন';
+
+  @override
+  String get settingsBiometric => 'বায়োমেট্রিক';
+
+  @override
+  String get settingsBiometricUnlock => 'বায়োমেট্রিক আনলক';
+
+  @override
+  String get settingsBiometricSubtitle =>
+      'PIN-এর পরিবর্তে ফিঙ্গারপ্রিন্ট/ফেস ব্যবহার করুন';
+
+  @override
+  String get settingsAutoLock => 'স্বয়ংক্রিয় লক';
+
+  @override
+  String get settingsAutoLockImmediately => 'অবিলম্বে';
+
+  @override
+  String get settingsAutoLockMinutes1 => '১ মিনিট পরে';
+
+  @override
+  String get settingsAutoLockMinutes5 => '৫ মিনিট পরে';
+
+  @override
+  String get settingsAutoLockMinutes15 => '১৫ মিনিট পরে';
+
+  @override
+  String get settingsAutoLockMinutes30 => '৩০ মিনিট পরে';
+
+  @override
+  String get settingsPinLock => 'PIN';
+
+  @override
+  String get settingsPinCurrent => 'বর্তমান PIN লিখুন';
+
+  @override
+  String get settingsPinCurrentSubtitle =>
+      'চালিয়ে যেতে আপনার বর্তমান PIN যাচাই করুন';
+
+  @override
+  String get settingsPinSetupTitle => 'নতুন PIN সেট করুন';
+
+  @override
+  String get settingsPinSetupSubtitle => '৪ ডিজিটের একটি PIN বেছে নিন';
+
+  @override
+  String get settingsPinConfirm => 'PIN নিশ্চিত করুন';
+
+  @override
+  String get settingsPinConfirmSubtitle => 'নিশ্চিত করতে আবার PIN লিখুন';
+
+  @override
+  String get settingsPinIncorrect => 'PIN ভুল হয়েছে';
+
+  @override
+  String get settingsPinMismatch => 'PIN মিলছে না, আবার চেষ্টা করুন';
+
+  @override
+  String get settingsLockTitle => 'NexFit লক করা আছে';
+
+  @override
+  String get settingsLockSubtitle => 'চালিয়ে যেতে আপনার PIN লিখুন';
+
+  @override
+  String get settingsStorageUsage => 'ব্যবহার';
+
+  @override
+  String get settingsDatabaseSize => 'ডেটাবেসের আকার';
+
+  @override
+  String get settingsImageCacheSize => 'ইমেজ ক্যাশের আকার';
+
+  @override
+  String get settingsCalculating => 'গণনা হচ্ছে...';
+
+  @override
+  String get settingsStorageActions => 'রক্ষণাবেক্ষণ';
+
+  @override
+  String get settingsClearImageCache => 'ইমেজ ক্যাশ মুছুন';
+
+  @override
+  String get settingsOptimizeDatabase => 'ডেটাবেস অপ্টিমাইজ করুন';
+
+  @override
+  String get settingsOptimizeDatabaseSubtitle =>
+      'ফাঁকা জায়গা পুনরুদ্ধার করে কর্মক্ষমতা উন্নত করে';
+
+  @override
+  String get settingsOptimizeDatabaseConfirm =>
+      'ডেটাবেস অপ্টিমাইজেশন চালাতে চান?';
+
+  @override
+  String get settingsOptimizeDatabaseAction => 'অপ্টিমাইজ করুন';
+
+  @override
+  String get settingsOptimizeDatabaseDone => 'ডেটাবেস অপ্টিমাইজ করা হয়েছে';
+
+  @override
+  String get settingsCacheCleared => 'ক্যাশ মুছে ফেলা হয়েছে';
+
+  @override
+  String get settingsAutoBackup => 'স্বয়ংক্রিয় ব্যাকআপ';
+
+  @override
+  String get settingsAutoBackupSubtitle =>
+      'পরিবর্তন হলে স্থানীয় ব্যাকআপ তৈরি হবে';
+
+  @override
+  String get settingsDataSync => 'ডেটা সিঙ্ক';
+
+  @override
+  String get settingsDataSyncSubtitle => 'ডিভাইস জুড়ে ডেটা সিঙ্ক করুন';
+
+  @override
+  String get settingsBackupNow => 'এখনই ব্যাকআপ নিন';
+
+  @override
+  String get settingsBackupFailed => 'ব্যাকআপ ব্যর্থ হয়েছে';
+
+  @override
+  String get settingsBackupSuccess => 'ব্যাকআপ সম্পন্ন';
+
+  @override
+  String get settingsBackupSuccessMessage =>
+      'আপনার ডেটার একটি অনুলিপি অ্যাপের ডকুমেন্ট ফোল্ডারে সংরক্ষিত হয়েছে।';
+
+  @override
+  String get settingsHelpCenter => 'সাহায্য কেন্দ্র';
+
+  @override
+  String get settingsContactSupport => 'সাপোর্টে যোগাযোগ করুন';
+
+  @override
+  String get settingsContactSubject => 'NexFit সাপোর্ট প্রয়োজন';
+
+  @override
+  String get settingsReportProblem => 'সমস্যা জানান';
+
+  @override
+  String get settingsReportSubject => 'NexFit-এ সমস্যার রিপোর্ট';
+
+  @override
+  String get settingsLegal => 'আইনি';
+
+  @override
+  String get settingsPrivacyPolicy => 'প্রাইভেসি পলিসি';
+
+  @override
+  String get settingsTerms => 'শর্তাবলী';
+
+  @override
+  String get settingsLinkFailed => 'লিংক খোলা যায়নি';
+
+  @override
+  String get settingsAccount => 'অ্যাকাউন্ট';
+
+  @override
+  String get settingsDeleteAccount => 'অ্যাকাউন্ট মুছে ফেলুন';
+
+  @override
+  String get settingsDeleteAccountSubtitle =>
+      'অ্যাকাউন্ট ও সব ডেটা স্থায়ীভাবে মুছে ফেলুন';
+
+  @override
+  String get settingsDeleteAccountConfirm =>
+      'আপনি কি নিশ্চিত? এটি আপনার অ্যাকাউন্ট ও সব ডেটা স্থায়ীভাবে মুছে ফেলবে।';
+
+  @override
+  String get settingsDeleteAccountAction => 'অ্যাকাউন্ট মুছুন';
+
+  @override
+  String get settingsDeleteAccountFailed => 'অ্যাকাউন্ট মুছতে ব্যর্থ হয়েছে';
+
+  @override
+  String get settingsDeveloperLogging => 'লগিং';
+
+  @override
+  String get settingsDebugLogging => 'ডিবাগ লগিং';
+
+  @override
+  String get settingsDebugLoggingSubtitle => 'বিস্তারিত লগ রেকর্ড করুন';
+
+  @override
+  String get settingsDeveloperInfo => 'তথ্য';
+
+  @override
+  String get settingsDbVersion => 'ডেটাবেস সংস্করণ';
+
+  @override
+  String get settingsDeveloperReset => 'রিসেট';
+
+  @override
+  String get settingsResetAll => 'সব সেটিংস রিসেট করুন';
+
+  @override
+  String get settingsResetAllSubtitle => 'ডিফল্ট মানে ফিরে যান';
+
+  @override
+  String get settingsResetAllConfirm =>
+      'সব সেটিংস ডিফল্ট মানে ফিরে যাবে। নিশ্চিত?';
+
+  @override
+  String get settingsResetAllAction => 'রিসেট করুন';
+
+  @override
+  String get settingsResetAllDone => 'সব সেটিংস রিসেট হয়েছে';
 }

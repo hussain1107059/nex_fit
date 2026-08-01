@@ -13,6 +13,15 @@ class AppTheme {
 
   static ThemeData get dark => _build(AppColors.dark);
 
+  /// True-black theme for OLED screens.
+  static ThemeData get amoled => _build(AppColors.amoled);
+
+  /// Builds a complete theme from an arbitrary [ColorScheme] (used by the
+  /// Material You dynamic-colour mode on Android 12+).
+  static ThemeData fromColorScheme(ColorScheme scheme) {
+    return _build(AppColors.fromScheme(scheme));
+  }
+
   static ThemeData _build(AppColors colors) {
     final ColorScheme scheme = colors.scheme;
     final TextTheme textTheme = AppTypography.build(scheme);

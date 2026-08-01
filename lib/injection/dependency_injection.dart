@@ -90,8 +90,10 @@ import '../data/services/backup/google_drive_backup_service.dart';
 import '../data/services/firebase_service.dart';
 import '../data/services/notifications/local_notification_service.dart';
 import '../data/services/report/report_exporter.dart';
+import '../data/services/security/app_security_service.dart';
 import '../data/services/storage/profile_photo_service.dart';
 import '../data/services/storage/secure_storage_service.dart';
+import '../data/services/storage/settings_storage_service.dart';
 import '../data/services/food_seeder.dart';
 import '../data/services/workout_seeder.dart';
 import '../domain/repositories/app_preferences_repository.dart';
@@ -142,6 +144,7 @@ import '../domain/repositories/workout_library_repository.dart';
 import '../domain/repositories/workout_repository.dart';
 import '../domain/repositories/workout_session_repository.dart';
 import '../domain/usecases/auth/reload_user_usecase.dart';
+import '../domain/usecases/auth/delete_account_usecase.dart';
 import '../domain/usecases/auth/reset_password_usecase.dart';
 import '../domain/usecases/auth/send_email_verification_usecase.dart';
 import '../domain/usecases/auth/sign_in_with_email_usecase.dart';
@@ -202,6 +205,14 @@ final localNotificationServiceProvider = Provider<LocalNotificationService>(
 
 final reportExporterProvider = Provider<ReportExporter>(
   (ref) => ReportExporter(),
+);
+
+final settingsStorageServiceProvider = Provider<SettingsStorageService>(
+  (ref) => SettingsStorageService(database: ref.watch(appDatabaseProvider)),
+);
+
+final appSecurityServiceProvider = Provider<AppSecurityService>(
+  (ref) => AppSecurityService(),
 );
 
 final userLocalDataSourceProvider = Provider<UserLocalDataSource>(
@@ -725,4 +736,8 @@ final reloadUserUsecaseProvider = Provider<ReloadUserUsecase>(
 
 final resetPasswordUsecaseProvider = Provider<ResetPasswordUsecase>(
   (ref) => ResetPasswordUsecase(ref.watch(authRepositoryProvider)),
+);
+
+final deleteAccountUsecaseProvider = Provider<DeleteAccountUsecase>(
+  (ref) => DeleteAccountUsecase(ref.watch(authRepositoryProvider)),
 );

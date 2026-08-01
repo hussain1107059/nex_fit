@@ -143,6 +143,13 @@ class AuthRepositoryImpl implements AuthRepository {
     await _authService.signOut();
   }
 
+  @override
+  Future<void> deleteAccount() async {
+    _devUser = null;
+    _devController.add(AppUser.signedOut);
+    await _authService.deleteAccount();
+  }
+
   /// Signs in with the hardcoded dev account when Firebase is unavailable so
   /// the full app flow can be exercised offline.
   Future<AppUser> _signInDev(String email) async {

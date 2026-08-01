@@ -38,6 +38,18 @@ dependencies:
   # Secure token storage
   flutter_secure_storage: ^10.3.1
 
+  # Biometric app lock & device unlock
+  local_auth: ^2.3.0
+
+  # Open external links (support, rate app)
+  url_launcher: ^6.3.1
+
+  # Material 3 dynamic color (Android 12+)
+  dynamic_color: ^1.7.0
+
+  # SHA-256 hashing for the app-lock PIN
+  crypto: ^3.0.6
+
   # Connectivity (offline detection)
   connectivity_plus: ^7.3.1
 

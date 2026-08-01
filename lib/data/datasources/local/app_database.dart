@@ -41,6 +41,7 @@ class AppDatabase {
     DatabaseMigration(version: 8, apply: _migrationV8WeightModule),
     DatabaseMigration(version: 9, apply: _migrationV9ReminderModule),
     DatabaseMigration(version: 10, apply: _migrationV10GamificationModule),
+    DatabaseMigration(version: 11, apply: _migrationV11SettingsModule),
   ];
 
   Future<Database> get database async {
@@ -135,6 +136,27 @@ class AppDatabase {
   ) async {
     final Database db = await database;
     return db.transaction(action);
+  }
+
+  /// Absolute path of the SQLite file (used for size/export operations).
+  Future<String> get databaseFilePath async {
+    final Database db = await database;
+    return db.path;
+  }
+
+  /// Runs a lightweight `PRAGMA optimize` so SQLite can tune its statistics.
+  /// `VACUUM` is skipped on web where it is not supported.
+  Future<void> optimize() async {
+    final Database db = await database;
+    await db.execute('PRAGMA optimize');
+    if (!kIsWeb) {
+      try {
+        await db.execute('VACUUM');
+      } catch (_) {
+        // VACUUM inside a transaction or on some embedded builds can fail;
+        // PRAGMA optimize already ran.
+      }
+    }
   }
 
   Future<void> close() async {
@@ -1213,5 +1235,133 @@ class AppDatabase {
       CREATE UNIQUE INDEX IF NOT EXISTS idx_xp_history_user_source_reason
       ON xp_history (user_id, source, reason)
     ''');
+  }
+
+  /// v11: expands `app_settings` with the complete Settings Module payload
+  /// (appearance, language, notifications, workout, nutrition, security and
+  /// developer preferences). Every column is nullable or defaulted so the
+  /// upgrade is safe for existing rows.
+  static Future<void> _migrationV11SettingsModule(
+    DatabaseExecutor executor,
+    int version,
+  ) async {
+    final DatabaseExecutor db = executor;
+
+    // Appearance
+    await db.execute(
+      'ALTER TABLE app_settings ADD COLUMN theme_mode TEXT NOT NULL '
+      "DEFAULT 'system'",
+    );
+    await db.execute(
+      'ALTER TABLE app_settings ADD COLUMN dynamic_color INTEGER NOT NULL '
+      'DEFAULT 0',
+    );
+    await db.execute(
+      'ALTER TABLE app_settings ADD COLUMN font_scale TEXT NOT NULL '
+      "DEFAULT 'medium'",
+    );
+
+    // General
+    await db.execute(
+      'ALTER TABLE app_settings ADD COLUMN week_start TEXT NOT NULL '
+      "DEFAULT 'sunday'",
+    );
+
+    // Notification module preferences
+    await db.execute(
+      'ALTER TABLE app_settings ADD COLUMN notification_sound INTEGER NOT NULL '
+      'DEFAULT 1',
+    );
+    await db.execute(
+      'ALTER TABLE app_settings ADD COLUMN notification_vibration INTEGER NOT '
+      'NULL DEFAULT 1',
+    );
+    await db.execute(
+      'ALTER TABLE app_settings ADD COLUMN workout_reminder_enabled INTEGER NOT '
+      'NULL DEFAULT 1',
+    );
+    await db.execute(
+      'ALTER TABLE app_settings ADD COLUMN meal_reminder_enabled INTEGER NOT '
+      'NULL DEFAULT 1',
+    );
+    await db.execute(
+      'ALTER TABLE app_settings ADD COLUMN water_reminder_enabled INTEGER NOT '
+      'NULL DEFAULT 1',
+    );
+    await db.execute(
+      'ALTER TABLE app_settings ADD COLUMN weight_reminder_enabled INTEGER NOT '
+      'NULL DEFAULT 1',
+    );
+    await db.execute(
+      'ALTER TABLE app_settings ADD COLUMN sleep_reminder_enabled INTEGER NOT '
+      'NULL DEFAULT 1',
+    );
+    await db.execute(
+      'ALTER TABLE app_settings ADD COLUMN challenge_reminder_enabled INTEGER '
+      'NOT NULL DEFAULT 1',
+    );
+    await db.execute(
+      'ALTER TABLE app_settings ADD COLUMN achievement_reminder_enabled INTEGER '
+      'NOT NULL DEFAULT 1',
+    );
+
+    // Workout module preferences
+    await db.execute(
+      'ALTER TABLE app_settings ADD COLUMN default_rest_time_seconds INTEGER '
+      'NOT NULL DEFAULT 60',
+    );
+    await db.execute(
+      'ALTER TABLE app_settings ADD COLUMN auto_start_timer INTEGER NOT NULL '
+      'DEFAULT 0',
+    );
+    await db.execute(
+      'ALTER TABLE app_settings ADD COLUMN countdown_voice INTEGER NOT NULL '
+      'DEFAULT 1',
+    );
+    await db.execute(
+      'ALTER TABLE app_settings ADD COLUMN exercise_animation INTEGER NOT NULL '
+      'DEFAULT 1',
+    );
+    await db.execute(
+      'ALTER TABLE app_settings ADD COLUMN auto_next_exercise INTEGER NOT NULL '
+      'DEFAULT 1',
+    );
+
+    // Nutrition goals
+    await db.execute(
+      'ALTER TABLE app_settings ADD COLUMN protein_goal REAL',
+    );
+    await db.execute('ALTER TABLE app_settings ADD COLUMN carbs_goal REAL');
+    await db.execute('ALTER TABLE app_settings ADD COLUMN fat_goal REAL');
+
+    // Security
+    await db.execute(
+      'ALTER TABLE app_settings ADD COLUMN app_lock_enabled INTEGER NOT NULL '
+      'DEFAULT 0',
+    );
+    await db.execute('ALTER TABLE app_settings ADD COLUMN pin_hash TEXT');
+    await db.execute(
+      'ALTER TABLE app_settings ADD COLUMN biometric_enabled INTEGER NOT NULL '
+      'DEFAULT 0',
+    );
+    await db.execute(
+      'ALTER TABLE app_settings ADD COLUMN auto_lock TEXT NOT NULL '
+      "DEFAULT 'minutes1'",
+    );
+    await db.execute(
+      'ALTER TABLE app_settings ADD COLUMN session_timeout_minutes INTEGER NOT '
+      'NULL DEFAULT 30',
+    );
+    await db.execute(
+      'ALTER TABLE app_settings ADD COLUMN hide_recent_apps INTEGER NOT NULL '
+      'DEFAULT 0',
+    );
+    await db.execute(
+      'ALTER TABLE app_settings ADD COLUMN logs_enabled INTEGER NOT NULL '
+      'DEFAULT 0',
+    );
+    await db.execute(
+      'ALTER TABLE app_settings ADD COLUMN last_active_at INTEGER',
+    );
   }
 }

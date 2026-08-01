@@ -30,6 +30,20 @@ import '../screens/reminder/reminder_history_screen.dart';
 import '../screens/reminder/reminder_list_screen.dart';
 import '../screens/reminder/reminder_settings_screen.dart';
 import '../screens/reminder/reminder_statistics_screen.dart';
+import '../screens/settings/about_settings_screen.dart';
+import '../screens/settings/appearance_settings_screen.dart';
+import '../screens/settings/backup_settings_screen.dart';
+import '../screens/settings/developer_settings_screen.dart';
+import '../screens/settings/language_settings_screen.dart';
+import '../screens/settings/notification_settings_screen.dart';
+import '../screens/settings/nutrition_settings_screen.dart';
+import '../screens/settings/pin_setup_screen.dart';
+import '../screens/settings/privacy_settings_screen.dart';
+import '../screens/settings/security_settings_screen.dart';
+import '../screens/settings/settings_screen.dart';
+import '../screens/settings/storage_settings_screen.dart';
+import '../screens/settings/support_settings_screen.dart';
+import '../screens/settings/workout_settings_screen.dart';
 import '../screens/shell/app_shell_screen.dart';
 import '../screens/splash/splash_screen.dart';
 import '../screens/water/water_history_screen.dart';
@@ -82,6 +96,20 @@ abstract final class AppRoutes {
   static const String reminderHistory = '/reminders/history';
   static const String reminderStatistics = '/reminders/statistics';
   static const String reminderSettings = '/reminders/settings';
+  static const String settings = '/settings';
+  static const String settingsAppearance = '/settings/appearance';
+  static const String settingsLanguage = '/settings/language';
+  static const String settingsNotifications = '/settings/notifications';
+  static const String settingsWorkout = '/settings/workout';
+  static const String settingsNutrition = '/settings/nutrition';
+  static const String settingsPrivacy = '/settings/privacy';
+  static const String settingsSecurity = '/settings/security';
+  static const String settingsStorage = '/settings/storage';
+  static const String settingsBackup = '/settings/backup';
+  static const String settingsSupport = '/settings/support';
+  static const String settingsAbout = '/settings/about';
+  static const String settingsDeveloper = '/settings/developer';
+  static const String settingsPinSetup = '/settings/pin-setup';
 
   /// The landing route for a freshly signed-in user.
   static String destinationFor(AppUser user) {
@@ -354,6 +382,92 @@ final appRouterProvider = Provider<GoRouter>((ref) {
         name: 'reminder-settings',
         builder: (BuildContext context, GoRouterState state) =>
             const ReminderSettingsScreen(),
+      ),
+      GoRoute(
+        path: AppRoutes.settings,
+        name: 'settings',
+        builder: (BuildContext context, GoRouterState state) =>
+            const SettingsScreen(),
+      ),
+      GoRoute(
+        path: AppRoutes.settingsAppearance,
+        name: 'settings-appearance',
+        builder: (BuildContext context, GoRouterState state) =>
+            const AppearanceSettingsScreen(),
+      ),
+      GoRoute(
+        path: AppRoutes.settingsLanguage,
+        name: 'settings-language',
+        builder: (BuildContext context, GoRouterState state) =>
+            const LanguageSettingsScreen(),
+      ),
+      GoRoute(
+        path: AppRoutes.settingsNotifications,
+        name: 'settings-notifications',
+        builder: (BuildContext context, GoRouterState state) =>
+            const NotificationSettingsScreen(),
+      ),
+      GoRoute(
+        path: AppRoutes.settingsWorkout,
+        name: 'settings-workout',
+        builder: (BuildContext context, GoRouterState state) =>
+            const WorkoutSettingsScreen(),
+      ),
+      GoRoute(
+        path: AppRoutes.settingsNutrition,
+        name: 'settings-nutrition',
+        builder: (BuildContext context, GoRouterState state) =>
+            const NutritionSettingsScreen(),
+      ),
+      GoRoute(
+        path: AppRoutes.settingsPrivacy,
+        name: 'settings-privacy',
+        builder: (BuildContext context, GoRouterState state) =>
+            const PrivacySettingsScreen(),
+      ),
+      GoRoute(
+        path: AppRoutes.settingsSecurity,
+        name: 'settings-security',
+        builder: (BuildContext context, GoRouterState state) =>
+            const SecuritySettingsScreen(),
+      ),
+      GoRoute(
+        path: AppRoutes.settingsStorage,
+        name: 'settings-storage',
+        builder: (BuildContext context, GoRouterState state) =>
+            const StorageSettingsScreen(),
+      ),
+      GoRoute(
+        path: AppRoutes.settingsBackup,
+        name: 'settings-backup',
+        builder: (BuildContext context, GoRouterState state) =>
+            const BackupSettingsScreen(),
+      ),
+      GoRoute(
+        path: AppRoutes.settingsSupport,
+        name: 'settings-support',
+        builder: (BuildContext context, GoRouterState state) =>
+            const SupportSettingsScreen(),
+      ),
+      GoRoute(
+        path: AppRoutes.settingsAbout,
+        name: 'settings-about',
+        builder: (BuildContext context, GoRouterState state) =>
+            const AboutSettingsScreen(),
+      ),
+      GoRoute(
+        path: AppRoutes.settingsDeveloper,
+        name: 'settings-developer',
+        builder: (BuildContext context, GoRouterState state) =>
+            const DeveloperSettingsScreen(),
+      ),
+      GoRoute(
+        path: AppRoutes.settingsPinSetup,
+        name: 'settings-pin-setup',
+        builder: (BuildContext context, GoRouterState state) =>
+            PinSetupScreen(
+              requireCurrent: state.extra as bool? ?? false,
+            ),
       ),
     ],
     errorBuilder: (BuildContext context, GoRouterState state) {

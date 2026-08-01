@@ -171,6 +171,20 @@ class AuthService {
     ]);
   }
 
+  /// Permanently deletes the current Firebase account.
+  Future<void> deleteAccount() async {
+    _ensureReady();
+    final fb.User? user = _auth.currentUser;
+    if (user == null) {
+      throw const AuthException('authUserNotFound', code: 'no_user');
+    }
+    try {
+      await user.delete();
+    } on fb.FirebaseAuthException catch (error) {
+      throw AuthException(_mapAuthError(error), code: error.code);
+    }
+  }
+
   String _mapAuthError(fb.FirebaseAuthException error) {
     return switch (error.code) {
       'invalid-email' => 'authEmailInvalid',

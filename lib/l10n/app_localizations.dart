@@ -5179,6 +5179,882 @@ abstract class AppLocalizations {
   /// In bs, this message translates to:
   /// **'{count} টি সম্পন্ন'**
   String remindersCompletedCount(Object count);
+
+  /// No description provided for @settingsTitle.
+  ///
+  /// In bs, this message translates to:
+  /// **'সেটিংস'**
+  String get settingsTitle;
+
+  /// No description provided for @settingsGeneral.
+  ///
+  /// In bs, this message translates to:
+  /// **'সাধারণ'**
+  String get settingsGeneral;
+
+  /// No description provided for @settingsAllSettings.
+  ///
+  /// In bs, this message translates to:
+  /// **'সব সেটিংস'**
+  String get settingsAllSettings;
+
+  /// No description provided for @settingsEditProfile.
+  ///
+  /// In bs, this message translates to:
+  /// **'প্রোফাইল সম্পাদনা'**
+  String get settingsEditProfile;
+
+  /// No description provided for @settingsUnits.
+  ///
+  /// In bs, this message translates to:
+  /// **'একক'**
+  String get settingsUnits;
+
+  /// No description provided for @settingsUnitsMetric.
+  ///
+  /// In bs, this message translates to:
+  /// **'মেট্রিক'**
+  String get settingsUnitsMetric;
+
+  /// No description provided for @settingsUnitsImperial.
+  ///
+  /// In bs, this message translates to:
+  /// **'ইম্পেরিয়াল'**
+  String get settingsUnitsImperial;
+
+  /// No description provided for @settingsWeekStart.
+  ///
+  /// In bs, this message translates to:
+  /// **'সপ্তাহ শুরু'**
+  String get settingsWeekStart;
+
+  /// No description provided for @settingsWeekStartsSunday.
+  ///
+  /// In bs, this message translates to:
+  /// **'রবিবার'**
+  String get settingsWeekStartsSunday;
+
+  /// No description provided for @settingsWeekStartsMonday.
+  ///
+  /// In bs, this message translates to:
+  /// **'সোমবার'**
+  String get settingsWeekStartsMonday;
+
+  /// No description provided for @settingsAppearance.
+  ///
+  /// In bs, this message translates to:
+  /// **'চেহারা'**
+  String get settingsAppearance;
+
+  /// No description provided for @settingsTheme.
+  ///
+  /// In bs, this message translates to:
+  /// **'থিম'**
+  String get settingsTheme;
+
+  /// No description provided for @settingsThemeSystem.
+  ///
+  /// In bs, this message translates to:
+  /// **'সিস্টেম ডিফল্ট'**
+  String get settingsThemeSystem;
+
+  /// No description provided for @settingsThemeLight.
+  ///
+  /// In bs, this message translates to:
+  /// **'লাইট'**
+  String get settingsThemeLight;
+
+  /// No description provided for @settingsThemeDark.
+  ///
+  /// In bs, this message translates to:
+  /// **'ডার্ক'**
+  String get settingsThemeDark;
+
+  /// No description provided for @settingsThemeAmoled.
+  ///
+  /// In bs, this message translates to:
+  /// **'AMOLED কালো'**
+  String get settingsThemeAmoled;
+
+  /// No description provided for @settingsThemeAmoledSubtitle.
+  ///
+  /// In bs, this message translates to:
+  /// **'গভীর কালো পটভূমি, AMOLED স্ক্রিনের জন্য'**
+  String get settingsThemeAmoledSubtitle;
+
+  /// No description provided for @settingsDynamicColor.
+  ///
+  /// In bs, this message translates to:
+  /// **'ডাইনামিক কালার'**
+  String get settingsDynamicColor;
+
+  /// No description provided for @settingsDynamicColorSubtitle.
+  ///
+  /// In bs, this message translates to:
+  /// **'সিস্টেমের Material You রঙ ব্যবহার করুন'**
+  String get settingsDynamicColorSubtitle;
+
+  /// No description provided for @settingsFontSize.
+  ///
+  /// In bs, this message translates to:
+  /// **'ফন্টের আকার'**
+  String get settingsFontSize;
+
+  /// No description provided for @settingsFontSizeSmall.
+  ///
+  /// In bs, this message translates to:
+  /// **'ছোট'**
+  String get settingsFontSizeSmall;
+
+  /// No description provided for @settingsFontSizeMedium.
+  ///
+  /// In bs, this message translates to:
+  /// **'মাঝারি'**
+  String get settingsFontSizeMedium;
+
+  /// No description provided for @settingsFontSizeLarge.
+  ///
+  /// In bs, this message translates to:
+  /// **'বড়'**
+  String get settingsFontSizeLarge;
+
+  /// No description provided for @settingsFontSizeExtraLarge.
+  ///
+  /// In bs, this message translates to:
+  /// **'অতি বড়'**
+  String get settingsFontSizeExtraLarge;
+
+  /// No description provided for @settingsLanguageSubtitle.
+  ///
+  /// In bs, this message translates to:
+  /// **'অ্যাপের ভাষা বেছে নিন। পরিবর্তন সাথে সাথেই কার্যকর হবে।'**
+  String get settingsLanguageSubtitle;
+
+  /// No description provided for @settingsNotificationsMasterSubtitle.
+  ///
+  /// In bs, this message translates to:
+  /// **'সব বিজ্ঞপ্তি চালু বা বন্ধ করুন'**
+  String get settingsNotificationsMasterSubtitle;
+
+  /// No description provided for @settingsNotificationPreferences.
+  ///
+  /// In bs, this message translates to:
+  /// **'বিজ্ঞপ্তির পছন্দসমূহ'**
+  String get settingsNotificationPreferences;
+
+  /// No description provided for @settingsNotificationBehaviour.
+  ///
+  /// In bs, this message translates to:
+  /// **'আচরণ'**
+  String get settingsNotificationBehaviour;
+
+  /// No description provided for @settingsNotificationSound.
+  ///
+  /// In bs, this message translates to:
+  /// **'শব্দ'**
+  String get settingsNotificationSound;
+
+  /// No description provided for @settingsNotificationVibration.
+  ///
+  /// In bs, this message translates to:
+  /// **'কম্পন'**
+  String get settingsNotificationVibration;
+
+  /// No description provided for @settingsReminderCategories.
+  ///
+  /// In bs, this message translates to:
+  /// **'রিমাইন্ডার বিভাগ'**
+  String get settingsReminderCategories;
+
+  /// No description provided for @settingsReminderCategoriesSubtitle.
+  ///
+  /// In bs, this message translates to:
+  /// **'নতুন রিমাইন্ডার তৈরি করার সময় এই পছন্দগুলো ডিফল্ট হিসেবে ব্যবহার হবে।'**
+  String get settingsReminderCategoriesSubtitle;
+
+  /// No description provided for @settingsReminderWorkout.
+  ///
+  /// In bs, this message translates to:
+  /// **'ওয়ার্কআউট রিমাইন্ডার'**
+  String get settingsReminderWorkout;
+
+  /// No description provided for @settingsReminderMeal.
+  ///
+  /// In bs, this message translates to:
+  /// **'খাবার রিমাইন্ডার'**
+  String get settingsReminderMeal;
+
+  /// No description provided for @settingsReminderWater.
+  ///
+  /// In bs, this message translates to:
+  /// **'পানি রিমাইন্ডার'**
+  String get settingsReminderWater;
+
+  /// No description provided for @settingsReminderWeight.
+  ///
+  /// In bs, this message translates to:
+  /// **'ওজন রিমাইন্ডার'**
+  String get settingsReminderWeight;
+
+  /// No description provided for @settingsReminderSleep.
+  ///
+  /// In bs, this message translates to:
+  /// **'ঘুম রিমাইন্ডার'**
+  String get settingsReminderSleep;
+
+  /// No description provided for @settingsReminderChallenge.
+  ///
+  /// In bs, this message translates to:
+  /// **'চ্যালেঞ্জ রিমাইন্ডার'**
+  String get settingsReminderChallenge;
+
+  /// No description provided for @settingsReminderAchievement.
+  ///
+  /// In bs, this message translates to:
+  /// **'অর্জন রিমাইন্ডার'**
+  String get settingsReminderAchievement;
+
+  /// No description provided for @settingsWorkout.
+  ///
+  /// In bs, this message translates to:
+  /// **'ওয়ার্কআউট'**
+  String get settingsWorkout;
+
+  /// No description provided for @settingsWorkoutSubtitle.
+  ///
+  /// In bs, this message translates to:
+  /// **'ওয়ার্কআউট প্লেয়ারের ডিফল্ট আচরণ'**
+  String get settingsWorkoutSubtitle;
+
+  /// No description provided for @settingsWorkoutTiming.
+  ///
+  /// In bs, this message translates to:
+  /// **'সময়'**
+  String get settingsWorkoutTiming;
+
+  /// No description provided for @settingsDefaultRestTime.
+  ///
+  /// In bs, this message translates to:
+  /// **'ডিফল্ট বিশ্রামের সময়'**
+  String get settingsDefaultRestTime;
+
+  /// No description provided for @settingsRestSeconds.
+  ///
+  /// In bs, this message translates to:
+  /// **'{seconds} সেকেন্ড'**
+  String settingsRestSeconds(Object seconds);
+
+  /// No description provided for @settingsWorkoutBehaviour.
+  ///
+  /// In bs, this message translates to:
+  /// **'আচরণ'**
+  String get settingsWorkoutBehaviour;
+
+  /// No description provided for @settingsAutoStartTimer.
+  ///
+  /// In bs, this message translates to:
+  /// **'টাইমার স্বয়ংক্রিয় শুরু'**
+  String get settingsAutoStartTimer;
+
+  /// No description provided for @settingsCountdownVoice.
+  ///
+  /// In bs, this message translates to:
+  /// **'কাউন্টডাউন ভয়েস'**
+  String get settingsCountdownVoice;
+
+  /// No description provided for @settingsExerciseAnimation.
+  ///
+  /// In bs, this message translates to:
+  /// **'ব্যায়াম অ্যানিমেশন'**
+  String get settingsExerciseAnimation;
+
+  /// No description provided for @settingsAutoNextExercise.
+  ///
+  /// In bs, this message translates to:
+  /// **'পরবর্তী ব্যায়াম স্বয়ংক্রিয়'**
+  String get settingsAutoNextExercise;
+
+  /// No description provided for @settingsNutritionGoals.
+  ///
+  /// In bs, this message translates to:
+  /// **'দৈনিক লক্ষ্য'**
+  String get settingsNutritionGoals;
+
+  /// No description provided for @settingsNutrition.
+  ///
+  /// In bs, this message translates to:
+  /// **'পুষ্টি'**
+  String get settingsNutrition;
+
+  /// No description provided for @settingsNutritionSubtitle.
+  ///
+  /// In bs, this message translates to:
+  /// **'আপনার দৈনিক ক্যালোরি ও ম্যাক্রো লক্ষ্য নির্ধারণ করুন।'**
+  String get settingsNutritionSubtitle;
+
+  /// No description provided for @settingsDailyCalories.
+  ///
+  /// In bs, this message translates to:
+  /// **'দৈনিক ক্যালোরি'**
+  String get settingsDailyCalories;
+
+  /// No description provided for @settingsProtein.
+  ///
+  /// In bs, this message translates to:
+  /// **'প্রোটিন'**
+  String get settingsProtein;
+
+  /// No description provided for @settingsCarbs.
+  ///
+  /// In bs, this message translates to:
+  /// **'কার্বোহাইড্রেট'**
+  String get settingsCarbs;
+
+  /// No description provided for @settingsFat.
+  ///
+  /// In bs, this message translates to:
+  /// **'চর্বি'**
+  String get settingsFat;
+
+  /// No description provided for @settingsWater.
+  ///
+  /// In bs, this message translates to:
+  /// **'দৈনিক পানি'**
+  String get settingsWater;
+
+  /// No description provided for @settingsGramUnit.
+  ///
+  /// In bs, this message translates to:
+  /// **'g'**
+  String get settingsGramUnit;
+
+  /// No description provided for @settingsMl.
+  ///
+  /// In bs, this message translates to:
+  /// **'{ml} ml'**
+  String settingsMl(Object ml);
+
+  /// No description provided for @settingsGoalHint.
+  ///
+  /// In bs, this message translates to:
+  /// **'লক্ষ্য লিখুন'**
+  String get settingsGoalHint;
+
+  /// No description provided for @settingsPrivacySensitive.
+  ///
+  /// In bs, this message translates to:
+  /// **'সংবেদনশীল সামগ্রী'**
+  String get settingsPrivacySensitive;
+
+  /// No description provided for @settingsHideRecentApps.
+  ///
+  /// In bs, this message translates to:
+  /// **'রিসেন্ট অ্যাপ থেকে লুকান'**
+  String get settingsHideRecentApps;
+
+  /// No description provided for @settingsHideRecentAppsSubtitle.
+  ///
+  /// In bs, this message translates to:
+  /// **'অ্যাপ সুইচারে প্রিভিউ লুকিয়ে রাখুন'**
+  String get settingsHideRecentAppsSubtitle;
+
+  /// No description provided for @settingsDangerZone.
+  ///
+  /// In bs, this message translates to:
+  /// **'বিপজ্জনক অঞ্চল'**
+  String get settingsDangerZone;
+
+  /// No description provided for @settingsDeleteLocalData.
+  ///
+  /// In bs, this message translates to:
+  /// **'স্থানীয় ডেটা মুছুন'**
+  String get settingsDeleteLocalData;
+
+  /// No description provided for @settingsDeleteLocalDataSubtitle.
+  ///
+  /// In bs, this message translates to:
+  /// **'এই ডিভাইসের সব স্থানীয় রেকর্ড মুছে ফেলুন'**
+  String get settingsDeleteLocalDataSubtitle;
+
+  /// No description provided for @settingsDeleteLocalDataConfirm.
+  ///
+  /// In bs, this message translates to:
+  /// **'আপনার সব স্থানীয় ডেটা স্থায়ীভাবে মুছে যাবে। এটি পুনরুদ্ধার করা যাবে না।'**
+  String get settingsDeleteLocalDataConfirm;
+
+  /// No description provided for @settingsDeleteLocalDataAction.
+  ///
+  /// In bs, this message translates to:
+  /// **'মুছে ফেলুন'**
+  String get settingsDeleteLocalDataAction;
+
+  /// No description provided for @settingsDeleteLocalDataDone.
+  ///
+  /// In bs, this message translates to:
+  /// **'স্থানীয় ডেটা মুছে ফেলা হয়েছে'**
+  String get settingsDeleteLocalDataDone;
+
+  /// No description provided for @settingsPrivacy.
+  ///
+  /// In bs, this message translates to:
+  /// **'গোপনীয়তা'**
+  String get settingsPrivacy;
+
+  /// No description provided for @settingsSecurity.
+  ///
+  /// In bs, this message translates to:
+  /// **'নিরাপত্তা'**
+  String get settingsSecurity;
+
+  /// No description provided for @settingsSecuritySubtitle.
+  ///
+  /// In bs, this message translates to:
+  /// **'অ্যাপ লক, PIN ও বায়োমেট্রিক'**
+  String get settingsSecuritySubtitle;
+
+  /// No description provided for @settingsStorage.
+  ///
+  /// In bs, this message translates to:
+  /// **'স্টোরেজ'**
+  String get settingsStorage;
+
+  /// No description provided for @settingsBackup.
+  ///
+  /// In bs, this message translates to:
+  /// **'ব্যাকআপ'**
+  String get settingsBackup;
+
+  /// No description provided for @settingsSupport.
+  ///
+  /// In bs, this message translates to:
+  /// **'সাপোর্ট'**
+  String get settingsSupport;
+
+  /// No description provided for @settingsDeveloper.
+  ///
+  /// In bs, this message translates to:
+  /// **'ডেভেলপার অপশন'**
+  String get settingsDeveloper;
+
+  /// No description provided for @settingsDeveloperSubtitle.
+  ///
+  /// In bs, this message translates to:
+  /// **'ডিবাগ ও পরীক্ষার সরঞ্জাম'**
+  String get settingsDeveloperSubtitle;
+
+  /// No description provided for @settingsAppLock.
+  ///
+  /// In bs, this message translates to:
+  /// **'অ্যাপ লক'**
+  String get settingsAppLock;
+
+  /// No description provided for @settingsAppLockSubtitle.
+  ///
+  /// In bs, this message translates to:
+  /// **'অ্যাপ খুলতে PIN প্রয়োজন'**
+  String get settingsAppLockSubtitle;
+
+  /// No description provided for @settingsChangePin.
+  ///
+  /// In bs, this message translates to:
+  /// **'PIN পরিবর্তন করুন'**
+  String get settingsChangePin;
+
+  /// No description provided for @settingsBiometric.
+  ///
+  /// In bs, this message translates to:
+  /// **'বায়োমেট্রিক'**
+  String get settingsBiometric;
+
+  /// No description provided for @settingsBiometricUnlock.
+  ///
+  /// In bs, this message translates to:
+  /// **'বায়োমেট্রিক আনলক'**
+  String get settingsBiometricUnlock;
+
+  /// No description provided for @settingsBiometricSubtitle.
+  ///
+  /// In bs, this message translates to:
+  /// **'PIN-এর পরিবর্তে ফিঙ্গারপ্রিন্ট/ফেস ব্যবহার করুন'**
+  String get settingsBiometricSubtitle;
+
+  /// No description provided for @settingsAutoLock.
+  ///
+  /// In bs, this message translates to:
+  /// **'স্বয়ংক্রিয় লক'**
+  String get settingsAutoLock;
+
+  /// No description provided for @settingsAutoLockImmediately.
+  ///
+  /// In bs, this message translates to:
+  /// **'অবিলম্বে'**
+  String get settingsAutoLockImmediately;
+
+  /// No description provided for @settingsAutoLockMinutes1.
+  ///
+  /// In bs, this message translates to:
+  /// **'১ মিনিট পরে'**
+  String get settingsAutoLockMinutes1;
+
+  /// No description provided for @settingsAutoLockMinutes5.
+  ///
+  /// In bs, this message translates to:
+  /// **'৫ মিনিট পরে'**
+  String get settingsAutoLockMinutes5;
+
+  /// No description provided for @settingsAutoLockMinutes15.
+  ///
+  /// In bs, this message translates to:
+  /// **'১৫ মিনিট পরে'**
+  String get settingsAutoLockMinutes15;
+
+  /// No description provided for @settingsAutoLockMinutes30.
+  ///
+  /// In bs, this message translates to:
+  /// **'৩০ মিনিট পরে'**
+  String get settingsAutoLockMinutes30;
+
+  /// No description provided for @settingsPinLock.
+  ///
+  /// In bs, this message translates to:
+  /// **'PIN'**
+  String get settingsPinLock;
+
+  /// No description provided for @settingsPinCurrent.
+  ///
+  /// In bs, this message translates to:
+  /// **'বর্তমান PIN লিখুন'**
+  String get settingsPinCurrent;
+
+  /// No description provided for @settingsPinCurrentSubtitle.
+  ///
+  /// In bs, this message translates to:
+  /// **'চালিয়ে যেতে আপনার বর্তমান PIN যাচাই করুন'**
+  String get settingsPinCurrentSubtitle;
+
+  /// No description provided for @settingsPinSetupTitle.
+  ///
+  /// In bs, this message translates to:
+  /// **'নতুন PIN সেট করুন'**
+  String get settingsPinSetupTitle;
+
+  /// No description provided for @settingsPinSetupSubtitle.
+  ///
+  /// In bs, this message translates to:
+  /// **'৪ ডিজিটের একটি PIN বেছে নিন'**
+  String get settingsPinSetupSubtitle;
+
+  /// No description provided for @settingsPinConfirm.
+  ///
+  /// In bs, this message translates to:
+  /// **'PIN নিশ্চিত করুন'**
+  String get settingsPinConfirm;
+
+  /// No description provided for @settingsPinConfirmSubtitle.
+  ///
+  /// In bs, this message translates to:
+  /// **'নিশ্চিত করতে আবার PIN লিখুন'**
+  String get settingsPinConfirmSubtitle;
+
+  /// No description provided for @settingsPinIncorrect.
+  ///
+  /// In bs, this message translates to:
+  /// **'PIN ভুল হয়েছে'**
+  String get settingsPinIncorrect;
+
+  /// No description provided for @settingsPinMismatch.
+  ///
+  /// In bs, this message translates to:
+  /// **'PIN মিলছে না, আবার চেষ্টা করুন'**
+  String get settingsPinMismatch;
+
+  /// No description provided for @settingsLockTitle.
+  ///
+  /// In bs, this message translates to:
+  /// **'NexFit লক করা আছে'**
+  String get settingsLockTitle;
+
+  /// No description provided for @settingsLockSubtitle.
+  ///
+  /// In bs, this message translates to:
+  /// **'চালিয়ে যেতে আপনার PIN লিখুন'**
+  String get settingsLockSubtitle;
+
+  /// No description provided for @settingsStorageUsage.
+  ///
+  /// In bs, this message translates to:
+  /// **'ব্যবহার'**
+  String get settingsStorageUsage;
+
+  /// No description provided for @settingsDatabaseSize.
+  ///
+  /// In bs, this message translates to:
+  /// **'ডেটাবেসের আকার'**
+  String get settingsDatabaseSize;
+
+  /// No description provided for @settingsImageCacheSize.
+  ///
+  /// In bs, this message translates to:
+  /// **'ইমেজ ক্যাশের আকার'**
+  String get settingsImageCacheSize;
+
+  /// No description provided for @settingsCalculating.
+  ///
+  /// In bs, this message translates to:
+  /// **'গণনা হচ্ছে...'**
+  String get settingsCalculating;
+
+  /// No description provided for @settingsStorageActions.
+  ///
+  /// In bs, this message translates to:
+  /// **'রক্ষণাবেক্ষণ'**
+  String get settingsStorageActions;
+
+  /// No description provided for @settingsClearImageCache.
+  ///
+  /// In bs, this message translates to:
+  /// **'ইমেজ ক্যাশ মুছুন'**
+  String get settingsClearImageCache;
+
+  /// No description provided for @settingsOptimizeDatabase.
+  ///
+  /// In bs, this message translates to:
+  /// **'ডেটাবেস অপ্টিমাইজ করুন'**
+  String get settingsOptimizeDatabase;
+
+  /// No description provided for @settingsOptimizeDatabaseSubtitle.
+  ///
+  /// In bs, this message translates to:
+  /// **'ফাঁকা জায়গা পুনরুদ্ধার করে কর্মক্ষমতা উন্নত করে'**
+  String get settingsOptimizeDatabaseSubtitle;
+
+  /// No description provided for @settingsOptimizeDatabaseConfirm.
+  ///
+  /// In bs, this message translates to:
+  /// **'ডেটাবেস অপ্টিমাইজেশন চালাতে চান?'**
+  String get settingsOptimizeDatabaseConfirm;
+
+  /// No description provided for @settingsOptimizeDatabaseAction.
+  ///
+  /// In bs, this message translates to:
+  /// **'অপ্টিমাইজ করুন'**
+  String get settingsOptimizeDatabaseAction;
+
+  /// No description provided for @settingsOptimizeDatabaseDone.
+  ///
+  /// In bs, this message translates to:
+  /// **'ডেটাবেস অপ্টিমাইজ করা হয়েছে'**
+  String get settingsOptimizeDatabaseDone;
+
+  /// No description provided for @settingsCacheCleared.
+  ///
+  /// In bs, this message translates to:
+  /// **'ক্যাশ মুছে ফেলা হয়েছে'**
+  String get settingsCacheCleared;
+
+  /// No description provided for @settingsAutoBackup.
+  ///
+  /// In bs, this message translates to:
+  /// **'স্বয়ংক্রিয় ব্যাকআপ'**
+  String get settingsAutoBackup;
+
+  /// No description provided for @settingsAutoBackupSubtitle.
+  ///
+  /// In bs, this message translates to:
+  /// **'পরিবর্তন হলে স্থানীয় ব্যাকআপ তৈরি হবে'**
+  String get settingsAutoBackupSubtitle;
+
+  /// No description provided for @settingsDataSync.
+  ///
+  /// In bs, this message translates to:
+  /// **'ডেটা সিঙ্ক'**
+  String get settingsDataSync;
+
+  /// No description provided for @settingsDataSyncSubtitle.
+  ///
+  /// In bs, this message translates to:
+  /// **'ডিভাইস জুড়ে ডেটা সিঙ্ক করুন'**
+  String get settingsDataSyncSubtitle;
+
+  /// No description provided for @settingsBackupNow.
+  ///
+  /// In bs, this message translates to:
+  /// **'এখনই ব্যাকআপ নিন'**
+  String get settingsBackupNow;
+
+  /// No description provided for @settingsBackupFailed.
+  ///
+  /// In bs, this message translates to:
+  /// **'ব্যাকআপ ব্যর্থ হয়েছে'**
+  String get settingsBackupFailed;
+
+  /// No description provided for @settingsBackupSuccess.
+  ///
+  /// In bs, this message translates to:
+  /// **'ব্যাকআপ সম্পন্ন'**
+  String get settingsBackupSuccess;
+
+  /// No description provided for @settingsBackupSuccessMessage.
+  ///
+  /// In bs, this message translates to:
+  /// **'আপনার ডেটার একটি অনুলিপি অ্যাপের ডকুমেন্ট ফোল্ডারে সংরক্ষিত হয়েছে।'**
+  String get settingsBackupSuccessMessage;
+
+  /// No description provided for @settingsHelpCenter.
+  ///
+  /// In bs, this message translates to:
+  /// **'সাহায্য কেন্দ্র'**
+  String get settingsHelpCenter;
+
+  /// No description provided for @settingsContactSupport.
+  ///
+  /// In bs, this message translates to:
+  /// **'সাপোর্টে যোগাযোগ করুন'**
+  String get settingsContactSupport;
+
+  /// No description provided for @settingsContactSubject.
+  ///
+  /// In bs, this message translates to:
+  /// **'NexFit সাপোর্ট প্রয়োজন'**
+  String get settingsContactSubject;
+
+  /// No description provided for @settingsReportProblem.
+  ///
+  /// In bs, this message translates to:
+  /// **'সমস্যা জানান'**
+  String get settingsReportProblem;
+
+  /// No description provided for @settingsReportSubject.
+  ///
+  /// In bs, this message translates to:
+  /// **'NexFit-এ সমস্যার রিপোর্ট'**
+  String get settingsReportSubject;
+
+  /// No description provided for @settingsLegal.
+  ///
+  /// In bs, this message translates to:
+  /// **'আইনি'**
+  String get settingsLegal;
+
+  /// No description provided for @settingsPrivacyPolicy.
+  ///
+  /// In bs, this message translates to:
+  /// **'প্রাইভেসি পলিসি'**
+  String get settingsPrivacyPolicy;
+
+  /// No description provided for @settingsTerms.
+  ///
+  /// In bs, this message translates to:
+  /// **'শর্তাবলী'**
+  String get settingsTerms;
+
+  /// No description provided for @settingsLinkFailed.
+  ///
+  /// In bs, this message translates to:
+  /// **'লিংক খোলা যায়নি'**
+  String get settingsLinkFailed;
+
+  /// No description provided for @settingsAccount.
+  ///
+  /// In bs, this message translates to:
+  /// **'অ্যাকাউন্ট'**
+  String get settingsAccount;
+
+  /// No description provided for @settingsDeleteAccount.
+  ///
+  /// In bs, this message translates to:
+  /// **'অ্যাকাউন্ট মুছে ফেলুন'**
+  String get settingsDeleteAccount;
+
+  /// No description provided for @settingsDeleteAccountSubtitle.
+  ///
+  /// In bs, this message translates to:
+  /// **'অ্যাকাউন্ট ও সব ডেটা স্থায়ীভাবে মুছে ফেলুন'**
+  String get settingsDeleteAccountSubtitle;
+
+  /// No description provided for @settingsDeleteAccountConfirm.
+  ///
+  /// In bs, this message translates to:
+  /// **'আপনি কি নিশ্চিত? এটি আপনার অ্যাকাউন্ট ও সব ডেটা স্থায়ীভাবে মুছে ফেলবে।'**
+  String get settingsDeleteAccountConfirm;
+
+  /// No description provided for @settingsDeleteAccountAction.
+  ///
+  /// In bs, this message translates to:
+  /// **'অ্যাকাউন্ট মুছুন'**
+  String get settingsDeleteAccountAction;
+
+  /// No description provided for @settingsDeleteAccountFailed.
+  ///
+  /// In bs, this message translates to:
+  /// **'অ্যাকাউন্ট মুছতে ব্যর্থ হয়েছে'**
+  String get settingsDeleteAccountFailed;
+
+  /// No description provided for @settingsDeveloperLogging.
+  ///
+  /// In bs, this message translates to:
+  /// **'লগিং'**
+  String get settingsDeveloperLogging;
+
+  /// No description provided for @settingsDebugLogging.
+  ///
+  /// In bs, this message translates to:
+  /// **'ডিবাগ লগিং'**
+  String get settingsDebugLogging;
+
+  /// No description provided for @settingsDebugLoggingSubtitle.
+  ///
+  /// In bs, this message translates to:
+  /// **'বিস্তারিত লগ রেকর্ড করুন'**
+  String get settingsDebugLoggingSubtitle;
+
+  /// No description provided for @settingsDeveloperInfo.
+  ///
+  /// In bs, this message translates to:
+  /// **'তথ্য'**
+  String get settingsDeveloperInfo;
+
+  /// No description provided for @settingsDbVersion.
+  ///
+  /// In bs, this message translates to:
+  /// **'ডেটাবেস সংস্করণ'**
+  String get settingsDbVersion;
+
+  /// No description provided for @settingsDeveloperReset.
+  ///
+  /// In bs, this message translates to:
+  /// **'রিসেট'**
+  String get settingsDeveloperReset;
+
+  /// No description provided for @settingsResetAll.
+  ///
+  /// In bs, this message translates to:
+  /// **'সব সেটিংস রিসেট করুন'**
+  String get settingsResetAll;
+
+  /// No description provided for @settingsResetAllSubtitle.
+  ///
+  /// In bs, this message translates to:
+  /// **'ডিফল্ট মানে ফিরে যান'**
+  String get settingsResetAllSubtitle;
+
+  /// No description provided for @settingsResetAllConfirm.
+  ///
+  /// In bs, this message translates to:
+  /// **'সব সেটিংস ডিফল্ট মানে ফিরে যাবে। নিশ্চিত?'**
+  String get settingsResetAllConfirm;
+
+  /// No description provided for @settingsResetAllAction.
+  ///
+  /// In bs, this message translates to:
+  /// **'রিসেট করুন'**
+  String get settingsResetAllAction;
+
+  /// No description provided for @settingsResetAllDone.
+  ///
+  /// In bs, this message translates to:
+  /// **'সব সেটিংস রিসেট হয়েছে'**
+  String get settingsResetAllDone;
 }
 
 class _AppLocalizationsDelegate

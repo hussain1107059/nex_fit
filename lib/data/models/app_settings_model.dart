@@ -24,6 +24,51 @@ class AppSettingsModel {
       'data_sync_enabled': ModelCodec.boolToInt(settings.dataSyncEnabled),
       'backup_enabled': ModelCodec.boolToInt(settings.backupEnabled),
       'last_backup_at': ModelCodec.epochMs(settings.lastBackupAt),
+      'theme_mode': settings.themeMode.name,
+      'dynamic_color': ModelCodec.boolToInt(settings.dynamicColor),
+      'font_scale': settings.fontScale.name,
+      'week_start': settings.weekStart.name,
+      'notification_sound': ModelCodec.boolToInt(settings.notificationSound),
+      'notification_vibration': ModelCodec.boolToInt(
+        settings.notificationVibration,
+      ),
+      'workout_reminder_enabled': ModelCodec.boolToInt(
+        settings.workoutReminderEnabled,
+      ),
+      'meal_reminder_enabled': ModelCodec.boolToInt(
+        settings.mealReminderEnabled,
+      ),
+      'water_reminder_enabled': ModelCodec.boolToInt(
+        settings.waterReminderEnabled,
+      ),
+      'weight_reminder_enabled': ModelCodec.boolToInt(
+        settings.weightReminderEnabled,
+      ),
+      'sleep_reminder_enabled': ModelCodec.boolToInt(
+        settings.sleepReminderEnabled,
+      ),
+      'challenge_reminder_enabled': ModelCodec.boolToInt(
+        settings.challengeReminderEnabled,
+      ),
+      'achievement_reminder_enabled': ModelCodec.boolToInt(
+        settings.achievementReminderEnabled,
+      ),
+      'default_rest_time_seconds': settings.defaultRestTimeSeconds,
+      'auto_start_timer': ModelCodec.boolToInt(settings.autoStartTimer),
+      'countdown_voice': ModelCodec.boolToInt(settings.countdownVoice),
+      'exercise_animation': ModelCodec.boolToInt(settings.exerciseAnimation),
+      'auto_next_exercise': ModelCodec.boolToInt(settings.autoNextExercise),
+      'protein_goal': settings.proteinGoal,
+      'carbs_goal': settings.carbsGoal,
+      'fat_goal': settings.fatGoal,
+      'app_lock_enabled': ModelCodec.boolToInt(settings.appLockEnabled),
+      'pin_hash': settings.pinHash,
+      'biometric_enabled': ModelCodec.boolToInt(settings.biometricEnabled),
+      'auto_lock': settings.autoLock.name,
+      'session_timeout_minutes': settings.sessionTimeoutMinutes,
+      'hide_recent_apps': ModelCodec.boolToInt(settings.hideRecentApps),
+      'logs_enabled': ModelCodec.boolToInt(settings.logsEnabled),
+      'last_active_at': ModelCodec.epochMs(settings.lastActiveAt),
       'updated_at': ModelCodec.epochMs(settings.updatedAt),
     };
   }
@@ -43,6 +88,47 @@ class AppSettingsModel {
       dataSyncEnabled: ModelCodec.intToBool(row['data_sync_enabled']),
       backupEnabled: ModelCodec.intToBool(row['backup_enabled']),
       lastBackupAt: ModelCodec.fromEpochMs(row['last_backup_at'] as int?),
+      themeMode: AppThemeMode.fromName(row['theme_mode'] as String?),
+      dynamicColor: ModelCodec.intToBool(row['dynamic_color']),
+      fontScale: FontScale.fromName(row['font_scale'] as String?),
+      weekStart: WeekStart.fromName(row['week_start'] as String?),
+      notificationSound: ModelCodec.intToBool(row['notification_sound']),
+      notificationVibration: ModelCodec.intToBool(
+        row['notification_vibration'],
+      ),
+      workoutReminderEnabled: ModelCodec.intToBool(
+        row['workout_reminder_enabled'],
+      ),
+      mealReminderEnabled: ModelCodec.intToBool(row['meal_reminder_enabled']),
+      waterReminderEnabled: ModelCodec.intToBool(
+        row['water_reminder_enabled'],
+      ),
+      weightReminderEnabled: ModelCodec.intToBool(
+        row['weight_reminder_enabled'],
+      ),
+      sleepReminderEnabled: ModelCodec.intToBool(row['sleep_reminder_enabled']),
+      challengeReminderEnabled: ModelCodec.intToBool(
+        row['challenge_reminder_enabled'],
+      ),
+      achievementReminderEnabled: ModelCodec.intToBool(
+        row['achievement_reminder_enabled'],
+      ),
+      defaultRestTimeSeconds: row['default_rest_time_seconds'] as int? ?? 60,
+      autoStartTimer: ModelCodec.intToBool(row['auto_start_timer']),
+      countdownVoice: ModelCodec.intToBool(row['countdown_voice']),
+      exerciseAnimation: ModelCodec.intToBool(row['exercise_animation']),
+      autoNextExercise: ModelCodec.intToBool(row['auto_next_exercise']),
+      proteinGoal: ModelCodec.toDouble(row['protein_goal']),
+      carbsGoal: ModelCodec.toDouble(row['carbs_goal']),
+      fatGoal: ModelCodec.toDouble(row['fat_goal']),
+      appLockEnabled: ModelCodec.intToBool(row['app_lock_enabled']),
+      pinHash: row['pin_hash'] as String?,
+      biometricEnabled: ModelCodec.intToBool(row['biometric_enabled']),
+      autoLock: AutoLockDelay.fromName(row['auto_lock'] as String?),
+      sessionTimeoutMinutes: row['session_timeout_minutes'] as int? ?? 30,
+      hideRecentApps: ModelCodec.intToBool(row['hide_recent_apps']),
+      logsEnabled: ModelCodec.intToBool(row['logs_enabled']),
+      lastActiveAt: ModelCodec.fromEpochMs(row['last_active_at'] as int?),
       updatedAt:
           ModelCodec.fromEpochMs(row['updated_at'] as int?) ?? DateTime.now(),
     );

@@ -194,3 +194,77 @@ enum Units {
     );
   }
 }
+
+/// The theme the user selected in Appearance settings.
+enum AppThemeMode {
+  system,
+  light,
+  dark,
+  amoled;
+
+  static AppThemeMode fromName(String? value) {
+    return AppThemeMode.values.firstWhere(
+      (mode) => mode.name == value,
+      orElse: () => AppThemeMode.system,
+    );
+  }
+}
+
+/// Global text scaling for the whole app.
+enum FontScale {
+  small,
+  medium,
+  large,
+  extraLarge;
+
+  static FontScale fromName(String? value) {
+    return FontScale.values.firstWhere(
+      (scale) => scale.name == value,
+      orElse: () => FontScale.medium,
+    );
+  }
+
+  double get scale => switch (this) {
+    FontScale.small => 0.9,
+    FontScale.medium => 1.0,
+    FontScale.large => 1.15,
+    FontScale.extraLarge => 1.3,
+  };
+}
+
+/// The day the weekly calendar starts on.
+enum WeekStart {
+  sunday,
+  monday;
+
+  static WeekStart fromName(String? value) {
+    return WeekStart.values.firstWhere(
+      (start) => start.name == value,
+      orElse: () => WeekStart.sunday,
+    );
+  }
+}
+
+/// Auto-lock delay options for the app lock.
+enum AutoLockDelay {
+  immediately,
+  minutes1,
+  minutes5,
+  minutes15,
+  minutes30;
+
+  static AutoLockDelay fromName(String? value) {
+    return AutoLockDelay.values.firstWhere(
+      (delay) => delay.name == value,
+      orElse: () => AutoLockDelay.minutes1,
+    );
+  }
+
+  Duration get duration => switch (this) {
+    AutoLockDelay.immediately => Duration.zero,
+    AutoLockDelay.minutes1 => const Duration(minutes: 1),
+    AutoLockDelay.minutes5 => const Duration(minutes: 5),
+    AutoLockDelay.minutes15 => const Duration(minutes: 15),
+    AutoLockDelay.minutes30 => const Duration(minutes: 30),
+  };
+}

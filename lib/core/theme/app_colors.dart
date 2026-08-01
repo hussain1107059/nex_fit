@@ -31,6 +31,25 @@ class AppColors {
   Color get surfaceVariant => scheme.surfaceContainerHighest;
   Color get onSurface => scheme.onSurface;
 
+  /// Builds an [AppColors] from an arbitrary [ColorScheme], used when the
+  /// user enables Material You dynamic colour on Android 12+.
+  factory AppColors.fromScheme(ColorScheme scheme) {
+    final bool dark = scheme.brightness == Brightness.dark;
+    return AppColors._(
+      scheme: scheme,
+      success: dark ? const Color(0xFF34D399) : const Color(0xFF22C55E),
+      warning: dark ? const Color(0xFFFBBF24) : const Color(0xFFF59E0B),
+      info: dark ? const Color(0xFF60A5FA) : const Color(0xFF3B82F6),
+      danger: scheme.error,
+      brandGradient: dark
+          ? [scheme.primary, scheme.tertiary, scheme.secondary]
+          : [scheme.primary, scheme.secondary, scheme.tertiary],
+      glassColor: dark
+          ? const Color(0x990F171F)
+          : const Color(0xE6FFFFFF),
+    );
+  }
+
   static const AppColors light = AppColors._(
     scheme: ColorScheme(
       brightness: Brightness.light,
@@ -111,5 +130,48 @@ class AppColors {
     danger: Color(0xFFF87171),
     brandGradient: [Color(0xFF34D399), Color(0xFF6EE7B7), Color(0xFFFF9A62)],
     glassColor: Color(0x990F171F),
+  );
+
+  /// True-black palette for AMOLED displays. Surfaces are pure black so pixels
+  /// turn off entirely, saving battery and maximising contrast.
+  static const AppColors amoled = AppColors._(
+    scheme: ColorScheme(
+      brightness: Brightness.dark,
+      primary: Color(0xFF34D399),
+      onPrimary: Color(0xFF04271C),
+      primaryContainer: Color(0xFF0B5C42),
+      onPrimaryContainer: Color(0xFFB6F3D8),
+      secondary: Color(0xFFFF9A62),
+      onSecondary: Color(0xFF3A1503),
+      secondaryContainer: Color(0xFF5C2A0E),
+      onSecondaryContainer: Color(0xFFFFDCC9),
+      tertiary: Color(0xFFA78BFA),
+      onTertiary: Color(0xFF2A1B5E),
+      tertiaryContainer: Color(0xFF453385),
+      onTertiaryContainer: Color(0xFFE0DBFF),
+      error: Color(0xFFFF6B70),
+      onError: Color(0xFF450A0E),
+      errorContainer: Color(0xFF6E1A1E),
+      onErrorContainer: Color(0xFFFFD9DA),
+      surfaceContainerLowest: Color(0xFF000000),
+      surface: Color(0xFF000000),
+      onSurface: Color(0xFFE7ECF1),
+      surfaceContainerHighest: Color(0xFF0E110E),
+      onSurfaceVariant: Color(0xFFA7B2BE),
+      outline: Color(0xFF46505C),
+      outlineVariant: Color(0xFF232A23),
+      shadow: Color(0xFF000000),
+      scrim: Color(0xFF000000),
+      inverseSurface: Color(0xFFE7ECF1),
+      onInverseSurface: Color(0xFF0B0B0B),
+      inversePrimary: Color(0xFF0E9F6E),
+      surfaceTint: Color(0xFF34D399),
+    ),
+    success: Color(0xFF34D399),
+    warning: Color(0xFFFBBF24),
+    info: Color(0xFF60A5FA),
+    danger: Color(0xFFF87171),
+    brandGradient: [Color(0xFF34D399), Color(0xFF6EE7B7), Color(0xFFFF9A62)],
+    glassColor: Color(0x99000000),
   );
 }
