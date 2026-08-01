@@ -26,17 +26,6 @@ class Validators {
     return null;
   }
 
-  static String? validatePassword(String? value, {
-    String? requiredError,
-    String? tooShortError,
-    int minLength = 6,
-  }) {
-    final String text = value ?? '';
-    if (text.isEmpty) return requiredError ?? 'This field is required';
-    if (text.length < minLength) return tooShortError ?? 'Password must be at least 6 characters';
-    return null;
-  }
-
   static String? validateConfirmPassword(String? value, String? password, {
     String? requiredError,
     String? mismatchError,
@@ -67,14 +56,6 @@ class Validators {
     if (!(hasUpper && hasLower && hasDigit && hasSpecial)) {
       return weakError ?? 'Use a stronger password';
     }
-    return null;
-  }
-
-  static String? validateNumeric(String? value, {String? requiredError, String? invalidError}) {
-    final String text = (value ?? '').trim();
-    if (text.isEmpty) return requiredError ?? 'This field is required';
-    final double? parsed = double.tryParse(text);
-    if (parsed == null) return invalidError ?? 'Value is invalid';
     return null;
   }
 }

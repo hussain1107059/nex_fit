@@ -1,3 +1,4 @@
+import '../../core/utils/date_helpers.dart';
 import '../../domain/entities/bmi_log.dart';
 import '../../domain/entities/common_enums.dart';
 import '../../domain/entities/fitness_goal.dart';
@@ -277,7 +278,7 @@ class ProgressAnalyticsRepositoryImpl implements ProgressAnalyticsRepository {
     final Map<DateTime, double> monthCalories = <DateTime, double>{};
     for (final WorkoutHistory w in workouts) {
       final double calories = w.caloriesBurn ?? 0;
-      final DateTime week = _weekStart(w.startedAt);
+      final DateTime week = weekStart(w.startedAt);
       weekCalories.update(
         week,
         (double value) => value + calories,
@@ -989,12 +990,6 @@ class ProgressAnalyticsRepositoryImpl implements ProgressAnalyticsRepository {
     if (score >= 40) return 'fair';
     if (score >= 20) return 'needsWork';
     return 'gettingStarted';
-  }
-
-  DateTime _weekStart(DateTime date) {
-    final DateTime day = DateTime(date.year, date.month, date.day);
-    final int offset = day.weekday - DateTime.monday;
-    return day.subtract(Duration(days: offset));
   }
 
   bool _inRange(DateTime value, DateTime start, DateTime end) {

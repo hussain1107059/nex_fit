@@ -1,4 +1,5 @@
 import '../../core/errors/app_exception.dart';
+import '../../core/utils/date_helpers.dart';
 import '../../domain/entities/daily_hydration.dart';
 import '../../domain/entities/reminder.dart';
 import '../../domain/entities/user_profile.dart';
@@ -30,7 +31,7 @@ class HydrationRepositoryImpl implements HydrationRepository {
 
   @override
   Future<DailyHydration> loadDaily(String userId, DateTime date) async {
-    final DateTime day = _dayStart(date);
+    final DateTime day = dayStart(date);
     final DateTime next = day.add(const Duration(days: 1));
     final List<WaterLog> logs = await _waterLogRepository.getByDateRange(
       userId,
@@ -80,7 +81,7 @@ class HydrationRepositoryImpl implements HydrationRepository {
 
     final Map<DateTime, int> byDay = <DateTime, int>{};
     for (final WaterLog log in logs) {
-      final DateTime day = _dayStart(log.loggedAt);
+      final DateTime day = dayStart(log.loggedAt);
       byDay[day] = (byDay[day] ?? 0) + log.amountMl;
     }
 
@@ -109,8 +110,8 @@ class HydrationRepositoryImpl implements HydrationRepository {
       averageDailyMl: averageDailyMl,
       bestDay: bestDay,
       bestDayMl: bestDayMl,
-      currentStreak: _currentStreak(goalMetDays, DateTime.now()),
-      longestStreak: _longestStreak(goalMetDays),
+      currentStreak: currentStreak(goalMetDays.toSet(), DateTime.now()),
+      longestStreak: longestStreak(goalMetDays),
       totalMl: totalMl,
       totalEntries: logs.length,
       trackedDays: trackedDays,
@@ -149,7 +150,7 @@ class HydrationRepositoryImpl implements HydrationRepository {
       amountMl: amountMl,
       loggedAt: when,
       createdAt: DateTime.now(),
-      note: _cleanNote(note),
+      note: cleanNote(note),
     );
     return _waterLogRepository.insert(log);
   }
@@ -158,7 +159,7 @@ class HydrationRepositoryImpl implements HydrationRepository {
   Future<void> updateEntry(WaterLog log) async {
     _validateAmount(log.amountMl);
     await _waterLogRepository.update(
-      log.copyWith(note: _cleanNote(log.note)),
+      log.copyWith(note: cleanNote(log.note)),
     );
   }
 
@@ -209,14 +210,14 @@ class HydrationRepositoryImpl implements HydrationRepository {
   }
 
   List<DateTime> _periodBounds(WaterHistoryPeriod period, DateTime now) {
-    final DateTime today = _dayStart(now);
+    final DateTime today = dayStart(now);
     return switch (period) {
       WaterHistoryPeriod.daily => <DateTime>[
         today.subtract(const Duration(days: 13)),
         today,
       ],
       WaterHistoryPeriod.weekly => <DateTime>[
-        _weekStart(today).subtract(const Duration(days: 7 * 7)),
+        weekStart(today).subtract(const Duration(days: 7 * 7)),
         today,
       ],
       WaterHistoryPeriod.monthly => <DateTime>[
@@ -259,8 +260,8 @@ class HydrationRepositoryImpl implements HydrationRepository {
 
   DateTime _bucketStart(WaterHistoryPeriod period, DateTime date) {
     return switch (period) {
-      WaterHistoryPeriod.daily => _dayStart(date),
-      WaterHistoryPeriod.weekly => _weekStart(date),
+      WaterHistoryPeriod.daily => dayStart(date),
+      WaterHistoryPeriod.weekly => weekStart(date),
       WaterHistoryPeriod.monthly => DateTime(date.year, date.month, 1),
       WaterHistoryPeriod.yearly => DateTime(date.year, 1, 1),
     };
@@ -283,50 +284,10 @@ class HydrationRepositoryImpl implements HydrationRepository {
     };
   }
 
-  DateTime _weekStart(DateTime date) {
-    final DateTime day = _dayStart(date);
-    return day.subtract(Duration(days: day.weekday - 1));
-  }
-
-  DateTime _dayStart(DateTime date) => DateTime(date.year, date.month, date.day);
-
-  int _currentStreak(List<DateTime> goalMetDays, DateTime now) {
-    final Set<DateTime> set = goalMetDays.toSet();
-    DateTime cursor = _dayStart(now);
-    if (!set.contains(cursor)) cursor = cursor.subtract(const Duration(days: 1));
-    int streak = 0;
-    while (set.contains(cursor)) {
-      streak++;
-      cursor = cursor.subtract(const Duration(days: 1));
-    }
-    return streak;
-  }
-
-  int _longestStreak(List<DateTime> goalMetDays) {
-    if (goalMetDays.isEmpty) return 0;
-    int longest = 1;
-    int run = 1;
-    for (int i = 1; i < goalMetDays.length; i++) {
-      if (goalMetDays[i].difference(goalMetDays[i - 1]).inDays == 1) {
-        run++;
-      } else {
-        run = 1;
-      }
-      if (run > longest) longest = run;
-    }
-    return longest;
-  }
-
   void _validateAmount(int amountMl) {
     if (amountMl <= 0) throw const AppException('errorWaterNegative');
     if (amountMl > _maxSingleEntryMl) {
       throw const AppException('errorWaterUnrealistic');
     }
-  }
-
-  String? _cleanNote(String? note) {
-    if (note == null) return null;
-    final String trimmed = note.trim();
-    return trimmed.isEmpty ? null : trimmed;
   }
 }

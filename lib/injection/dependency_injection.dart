@@ -10,7 +10,6 @@ import '../data/datasources/local/badge_local_data_source.dart';
 import '../data/datasources/local/challenge_local_data_source.dart';
 import '../data/datasources/local/bmi_log_local_data_source.dart';
 import '../data/datasources/local/body_measurement_local_data_source.dart';
-import '../data/datasources/local/calorie_log_local_data_source.dart';
 import '../data/datasources/local/daily_progress_local_data_source.dart';
 import '../data/datasources/local/error_log_local_data_source.dart';
 import '../data/datasources/local/exercise_history_local_data_source.dart';
@@ -22,7 +21,6 @@ import '../data/datasources/local/level_local_data_source.dart';
 import '../data/datasources/local/meal_category_local_data_source.dart';
 import '../data/datasources/local/meal_item_local_data_source.dart';
 import '../data/datasources/local/meal_local_data_source.dart';
-import '../data/datasources/local/milestone_local_data_source.dart';
 import '../data/datasources/local/reminder_history_local_data_source.dart';
 import '../data/datasources/local/reminder_local_data_source.dart';
 import '../data/datasources/local/reward_local_data_source.dart';
@@ -52,7 +50,6 @@ import '../data/repositories/backup_history_repository_impl.dart';
 import '../data/repositories/badge_repository_impl.dart';
 import '../data/repositories/bmi_log_repository_impl.dart';
 import '../data/repositories/body_measurement_repository_impl.dart';
-import '../data/repositories/calorie_log_repository_impl.dart';
 import '../data/repositories/daily_progress_repository_impl.dart';
 import '../data/repositories/error_log_repository_impl.dart';
 import '../data/repositories/exercise_history_repository_impl.dart';
@@ -65,7 +62,6 @@ import '../data/repositories/level_repository_impl.dart';
 import '../data/repositories/meal_category_repository_impl.dart';
 import '../data/repositories/meal_item_repository_impl.dart';
 import '../data/repositories/meal_repository_impl.dart';
-import '../data/repositories/milestone_repository_impl.dart';
 import '../data/repositories/reminder_history_repository_impl.dart';
 import '../data/repositories/reminder_repository_impl.dart';
 import '../data/repositories/reward_repository_impl.dart';
@@ -101,7 +97,6 @@ import '../data/services/notifications/local_notification_service.dart';
 import '../data/services/report/report_exporter.dart';
 import '../data/services/security/app_error_logger.dart';
 import '../data/services/security/app_security_service.dart';
-import '../data/services/security/encryption_service.dart';
 import '../data/services/security/key_manager.dart';
 import '../data/services/security/recovery_manager.dart';
 import '../data/services/security/session_manager.dart';
@@ -125,7 +120,6 @@ import '../domain/repositories/backup_repository.dart';
 import '../domain/repositories/badge_repository.dart';
 import '../domain/repositories/bmi_log_repository.dart';
 import '../domain/repositories/body_measurement_repository.dart';
-import '../domain/repositories/calorie_log_repository.dart';
 import '../domain/repositories/daily_progress_repository.dart';
 import '../domain/repositories/exercise_history_repository.dart';
 import '../domain/repositories/exercise_repository.dart';
@@ -137,7 +131,6 @@ import '../domain/repositories/level_repository.dart';
 import '../domain/repositories/meal_category_repository.dart';
 import '../domain/repositories/meal_item_repository.dart';
 import '../domain/repositories/meal_repository.dart';
-import '../domain/repositories/milestone_repository.dart';
 import '../domain/repositories/profile_repository.dart';
 import '../domain/repositories/progress_analytics_repository.dart';
 import '../domain/repositories/reminder_history_repository.dart';
@@ -170,8 +163,6 @@ import '../domain/usecases/auth/sign_in_with_email_usecase.dart';
 import '../domain/usecases/auth/sign_in_with_google_usecase.dart';
 import '../domain/usecases/auth/sign_out_usecase.dart';
 import '../domain/usecases/auth/sign_up_with_email_usecase.dart';
-import '../domain/usecases/auth/watch_auth_state_usecase.dart';
-import '../domain/services/gamification_service.dart';
 
 /// Composition root.
 ///
@@ -324,10 +315,6 @@ final bodyMeasurementLocalDataSourceProvider =
       ),
     );
 
-final calorieLogLocalDataSourceProvider = Provider<CalorieLogLocalDataSource>(
-  (ref) => CalorieLogLocalDataSource(database: ref.watch(appDatabaseProvider)),
-);
-
 final sleepLogLocalDataSourceProvider = Provider<SleepLogLocalDataSource>(
   (ref) => SleepLogLocalDataSource(database: ref.watch(appDatabaseProvider)),
 );
@@ -358,10 +345,6 @@ final levelLocalDataSourceProvider = Provider<LevelLocalDataSource>(
 
 final challengeLocalDataSourceProvider = Provider<ChallengeLocalDataSource>(
   (ref) => ChallengeLocalDataSource(database: ref.watch(appDatabaseProvider)),
-);
-
-final milestoneLocalDataSourceProvider = Provider<MilestoneLocalDataSource>(
-  (ref) => MilestoneLocalDataSource(database: ref.watch(appDatabaseProvider)),
 );
 
 final rewardLocalDataSourceProvider = Provider<RewardLocalDataSource>(
@@ -514,10 +497,6 @@ final weightRepositoryProvider = Provider<WeightRepository>(
   ),
 );
 
-final calorieLogRepositoryProvider = Provider<CalorieLogRepository>(
-  (ref) => CalorieLogRepositoryImpl(ref.watch(calorieLogLocalDataSourceProvider)),
-);
-
 final sleepLogRepositoryProvider = Provider<SleepLogRepository>(
   (ref) => SleepLogRepositoryImpl(ref.watch(sleepLogLocalDataSourceProvider)),
 );
@@ -575,10 +554,6 @@ final challengeRepositoryProvider = Provider<ChallengeRepository>(
   (ref) => ChallengeRepositoryImpl(ref.watch(challengeLocalDataSourceProvider)),
 );
 
-final milestoneRepositoryProvider = Provider<MilestoneRepository>(
-  (ref) => MilestoneRepositoryImpl(ref.watch(milestoneLocalDataSourceProvider)),
-);
-
 final rewardRepositoryProvider = Provider<RewardRepository>(
   (ref) => RewardRepositoryImpl(ref.watch(rewardLocalDataSourceProvider)),
 );
@@ -609,17 +584,6 @@ final appPreferencesRepositoryProvider =
     Provider<AppPreferencesRepository>(
   (ref) => AppPreferencesRepositoryImpl(
     preferences: ref.watch(sharedPreferencesProvider),
-  ),
-);
-
-final gamificationServiceProvider = Provider<GamificationService>(
-  (ref) => GamificationService(
-    xpHistoryRepository: ref.watch(xpHistoryRepositoryProvider),
-    levelRepository: ref.watch(levelRepositoryProvider),
-    badgeRepository: ref.watch(badgeRepositoryProvider),
-    achievementRepository: ref.watch(achievementRepositoryProvider),
-    challengeRepository: ref.watch(challengeRepositoryProvider),
-    rewardRepository: ref.watch(rewardRepositoryProvider),
   ),
 );
 
@@ -764,10 +728,6 @@ final signOutUsecaseProvider = Provider<SignOutUsecase>(
   (ref) => SignOutUsecase(ref.watch(authRepositoryProvider)),
 );
 
-final watchAuthStateUsecaseProvider = Provider<WatchAuthStateUsecase>(
-  (ref) => WatchAuthStateUsecase(ref.watch(authRepositoryProvider)),
-);
-
 final sendEmailVerificationUsecaseProvider =
     Provider<SendEmailVerificationUsecase>(
       (ref) => SendEmailVerificationUsecase(ref.watch(authRepositoryProvider)),
@@ -791,10 +751,6 @@ final deleteAccountUsecaseProvider = Provider<DeleteAccountUsecase>(
 
 final keyManagerProvider = Provider<KeyManager>(
   (ref) => KeyManager(storage: ref.watch(secureStorageServiceProvider)),
-);
-
-final encryptionServiceProvider = Provider<EncryptionService>(
-  (ref) => EncryptionService(),
 );
 
 final sessionLocalDataSourceProvider = Provider<SessionLocalDataSource>(

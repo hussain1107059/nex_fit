@@ -1,3 +1,4 @@
+import '../../core/utils/date_helpers.dart';
 import '../../domain/entities/daily_nutrition.dart';
 import '../../domain/entities/food_filter.dart';
 import '../../domain/entities/food_item.dart';
@@ -152,7 +153,7 @@ class NutritionRepositoryImpl implements NutritionRepository {
     double quantity = 1,
     DateTime? date,
   }) {
-    final DateTime target = _normalize(date ?? DateTime.now());
+    final DateTime target = dayStart(date ?? DateTime.now());
     final FoodLog log = _buildLog(
       userId,
       food,
@@ -187,7 +188,7 @@ class NutritionRepositoryImpl implements NutritionRepository {
     String userId,
     DateTime targetDate,
   ) async {
-    final DateTime target = _normalize(targetDate);
+    final DateTime target = dayStart(targetDate);
     final DateTime yesterday = target.subtract(const Duration(days: 1));
     final (DateTime start, DateTime end) = _dayBounds(yesterday);
     final List<FoodLog> yesterdayLogs = await foodLogRepository.getByDateRange(
@@ -345,7 +346,7 @@ class NutritionRepositoryImpl implements NutritionRepository {
         if (food.id != null) food.id!: food,
     };
 
-    final DateTime target = _normalize(date);
+    final DateTime target = dayStart(date);
     final List<FoodLog> logs = <FoodLog>[];
     for (int index = 0; index < items.length; index++) {
       final MealItem item = items[index];
@@ -375,38 +376,38 @@ class NutritionRepositoryImpl implements NutritionRepository {
   ) async {
     await ensureSeeded();
 
-    final (DateTime dayStart, DateTime dayEnd) = _dayBounds(start);
+    final (DateTime rangeStart, DateTime rangeEnd) = _dayBounds(start);
     final int dayCount = end.difference(start).inDays + 1;
 
     // Fetch the entire requested range in two bounded queries instead of one
     // query pair per day (avoids an N+1 for long history windows).
     final List<FoodLog> allLogs = await foodLogRepository.getByDateRange(
       userId,
-      dayStart,
-      _dayBounds(dayEnd.add(const Duration(days: 1))).$2,
+      rangeStart,
+      _dayBounds(rangeEnd.add(const Duration(days: 1))).$2,
     );
     final List<WaterLog> allWaterLogs = await waterLogRepository.getByDateRange(
       userId,
-      dayStart,
-      _dayBounds(dayEnd.add(const Duration(days: 1))).$2,
+      rangeStart,
+      _dayBounds(rangeEnd.add(const Duration(days: 1))).$2,
     );
 
     final Map<DateTime, List<FoodLog>> logsByDay = <DateTime, List<FoodLog>>{};
     for (final FoodLog log in allLogs) {
-      final DateTime day = _normalize(log.loggedAt);
+      final DateTime day = dayStart(log.loggedAt);
       logsByDay.putIfAbsent(day, () => <FoodLog>[]).add(log);
     }
     final Map<DateTime, List<WaterLog>> waterByDay =
         <DateTime, List<WaterLog>>{};
     for (final WaterLog log in allWaterLogs) {
-      final DateTime day = _normalize(log.loggedAt);
+      final DateTime day = dayStart(log.loggedAt);
       waterByDay.putIfAbsent(day, () => <WaterLog>[]).add(log);
     }
 
     final List<NutritionDaySummary> days = <NutritionDaySummary>[];
     for (int offset = 0; offset < dayCount; offset++) {
-      final DateTime day = dayStart.add(Duration(days: offset));
-      if (day.isAfter(dayEnd)) break;
+      final DateTime day = rangeStart.add(Duration(days: offset));
+      if (day.isAfter(rangeEnd)) break;
 
       final List<FoodLog> logs = logsByDay[day] ?? const <FoodLog>[];
       double calories = 0;
@@ -442,7 +443,7 @@ class NutritionRepositoryImpl implements NutritionRepository {
       );
     }
 
-    return NutritionHistory(start: dayStart, end: dayEnd, days: days);
+    return NutritionHistory(start: rangeStart, end: rangeEnd, days: days);
   }
 
   FoodLog _buildLog(
@@ -481,12 +482,9 @@ class NutritionRepositoryImpl implements NutritionRepository {
 
   /// Midnight → midnight for a day, using the local timezone.
   (DateTime, DateTime) _dayBounds(DateTime date) {
-    final DateTime start = _normalize(date);
+    final DateTime start = dayStart(date);
     return (start, start.add(const Duration(days: 1)));
   }
-
-  DateTime _normalize(DateTime date) =>
-      DateTime(date.year, date.month, date.day);
 
   /// Keeps the time-of-day of [source] but moves it to [target]'s calendar day.
   DateTime _shiftToDay(DateTime source, DateTime target) =>

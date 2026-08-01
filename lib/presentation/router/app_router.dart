@@ -216,6 +216,8 @@ final appRouterProvider = Provider<GoRouter>((ref) {
       GoRoute(
         path: AppRoutes.workoutPlayer,
         name: 'workout-player',
+        redirect: (BuildContext context, GoRouterState state) =>
+            state.extra is WorkoutPlayerArgs ? null : AppRoutes.workoutList,
         builder: (BuildContext context, GoRouterState state) {
           final WorkoutPlayerArgs args = state.extra as WorkoutPlayerArgs;
           return WorkoutPlayerScreen(args: args);
@@ -238,6 +240,8 @@ final appRouterProvider = Provider<GoRouter>((ref) {
       GoRoute(
         path: AppRoutes.exercisePlayer,
         name: 'exercise-player',
+        redirect: (BuildContext context, GoRouterState state) =>
+            state.extra is ExercisePlayerArgs ? null : AppRoutes.exerciseList,
         builder: (BuildContext context, GoRouterState state) {
           final ExercisePlayerArgs args = state.extra as ExercisePlayerArgs;
           return ExercisePlayerScreen(args: args);

@@ -1,4 +1,5 @@
 import '../../core/errors/app_exception.dart';
+import '../../core/utils/date_helpers.dart';
 import '../../core/utils/health_calculator.dart';
 import '../../domain/entities/bmi_log.dart';
 import '../../domain/entities/user_profile.dart';
@@ -15,14 +16,11 @@ import '../../domain/repositories/weight_repository.dart';
 /// SQLite backed implementation of [WeightRepository].
 class WeightRepositoryImpl implements WeightRepository {
   WeightRepositoryImpl({
-    required WeightLogRepository weightLogRepository,
-    required BmiLogRepository bmiLogRepository,
-    required BodyMeasurementRepository bodyMeasurementRepository,
-    required UserFitnessProfileRepository userProfileRepository,
-  })  : _weightLogRepository = weightLogRepository,
-        _bmiLogRepository = bmiLogRepository,
-        _bodyMeasurementRepository = bodyMeasurementRepository,
-        _userProfileRepository = userProfileRepository;
+    required this._weightLogRepository,
+    required this._bmiLogRepository,
+    required this._bodyMeasurementRepository,
+    required this._userProfileRepository,
+  });
 
   static const double _maxWeightKg = 500;
   static const double _minGoalKg = 20;
@@ -91,7 +89,7 @@ class WeightRepositoryImpl implements WeightRepository {
       if (weight < min) min = weight;
       if (weight > max) max = weight;
       sum += weight;
-      days.add(_dayStart(log.loggedAt));
+      days.add(dayStart(log.loggedAt));
     }
 
     final List<DateTime> sortedDays = days.toList()..sort();
@@ -107,8 +105,8 @@ class WeightRepositoryImpl implements WeightRepository {
       totalChangeKg: current - start,
       daysTracked: days.length,
       totalEntries: logs.length,
-      currentStreak: _currentStreak(sortedDays, DateTime.now()),
-      longestStreak: _longestStreak(sortedDays),
+      currentStreak: currentStreak(sortedDays.toSet(), DateTime.now()),
+      longestStreak: longestStreak(sortedDays),
       firstDate: logs.first.loggedAt,
       lastDate: logs.last.loggedAt,
     );
@@ -146,7 +144,7 @@ class WeightRepositoryImpl implements WeightRepository {
       weightKg: weightKg,
       loggedAt: when,
       createdAt: DateTime.now(),
-      note: _cleanNote(note),
+      note: cleanNote(note),
     );
     final int id = await _weightLogRepository.insert(log);
 
@@ -179,7 +177,7 @@ class WeightRepositoryImpl implements WeightRepository {
   Future<void> updateWeight(WeightLog log) async {
     _validateWeight(log.weightKg);
     await _weightLogRepository.update(
-      log.copyWith(note: _cleanNote(log.note)),
+      log.copyWith(note: cleanNote(log.note)),
     );
   }
 
@@ -187,14 +185,14 @@ class WeightRepositoryImpl implements WeightRepository {
   Future<void> deleteWeight(int id) => _weightLogRepository.delete(id);
 
   List<DateTime> _periodBounds(WeightHistoryPeriod period, DateTime now) {
-    final DateTime today = _dayStart(now);
+    final DateTime today = dayStart(now);
     return switch (period) {
       WeightHistoryPeriod.daily => <DateTime>[
         today.subtract(const Duration(days: 13)),
         today,
       ],
       WeightHistoryPeriod.weekly => <DateTime>[
-        _weekStart(today).subtract(const Duration(days: 7 * 7)),
+        weekStart(today).subtract(const Duration(days: 7 * 7)),
         today,
       ],
       WeightHistoryPeriod.monthly => <DateTime>[
@@ -255,8 +253,8 @@ class WeightRepositoryImpl implements WeightRepository {
 
   DateTime _bucketStart(WeightHistoryPeriod period, DateTime date) {
     return switch (period) {
-      WeightHistoryPeriod.daily => _dayStart(date),
-      WeightHistoryPeriod.weekly => _weekStart(date),
+      WeightHistoryPeriod.daily => dayStart(date),
+      WeightHistoryPeriod.weekly => weekStart(date),
       WeightHistoryPeriod.monthly => DateTime(date.year, date.month, 1),
       WeightHistoryPeriod.yearly => DateTime(date.year, 1, 1),
     };
@@ -279,51 +277,10 @@ class WeightRepositoryImpl implements WeightRepository {
     };
   }
 
-  DateTime _weekStart(DateTime date) {
-    final DateTime day = _dayStart(date);
-    return day.subtract(Duration(days: day.weekday - 1));
-  }
-
-  DateTime _dayStart(DateTime date) => DateTime(date.year, date.month, date.day);
-
-  int _currentStreak(List<DateTime> days, DateTime now) {
-    if (days.isEmpty) return 0;
-    final Set<DateTime> set = days.toSet();
-    DateTime cursor = _dayStart(now);
-    if (!set.contains(cursor)) cursor = cursor.subtract(const Duration(days: 1));
-    int streak = 0;
-    while (set.contains(cursor)) {
-      streak++;
-      cursor = cursor.subtract(const Duration(days: 1));
-    }
-    return streak;
-  }
-
-  int _longestStreak(List<DateTime> days) {
-    if (days.isEmpty) return 0;
-    int longest = 1;
-    int run = 1;
-    for (int i = 1; i < days.length; i++) {
-      if (days[i].difference(days[i - 1]).inDays == 1) {
-        run++;
-      } else {
-        run = 1;
-      }
-      if (run > longest) longest = run;
-    }
-    return longest;
-  }
-
   void _validateWeight(double weightKg) {
     if (weightKg <= 0) throw const AppException('errorWeightNegative');
     if (weightKg > _maxWeightKg) {
       throw const AppException('errorWeightUnrealistic');
     }
-  }
-
-  String? _cleanNote(String? note) {
-    if (note == null) return null;
-    final String trimmed = note.trim();
-    return trimmed.isEmpty ? null : trimmed;
   }
 }
