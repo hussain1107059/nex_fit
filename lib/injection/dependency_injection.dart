@@ -7,6 +7,7 @@ import '../data/datasources/local/app_settings_local_data_source.dart';
 import '../data/datasources/local/achievement_local_data_source.dart';
 import '../data/datasources/local/backup_history_local_data_source.dart';
 import '../data/datasources/local/badge_local_data_source.dart';
+import '../data/datasources/local/challenge_local_data_source.dart';
 import '../data/datasources/local/bmi_log_local_data_source.dart';
 import '../data/datasources/local/body_measurement_local_data_source.dart';
 import '../data/datasources/local/calorie_log_local_data_source.dart';
@@ -16,17 +17,21 @@ import '../data/datasources/local/exercise_local_data_source.dart';
 import '../data/datasources/local/fitness_goal_local_data_source.dart';
 import '../data/datasources/local/food_item_local_data_source.dart';
 import '../data/datasources/local/food_log_local_data_source.dart';
+import '../data/datasources/local/level_local_data_source.dart';
 import '../data/datasources/local/meal_category_local_data_source.dart';
 import '../data/datasources/local/meal_item_local_data_source.dart';
 import '../data/datasources/local/meal_local_data_source.dart';
+import '../data/datasources/local/milestone_local_data_source.dart';
 import '../data/datasources/local/reminder_history_local_data_source.dart';
 import '../data/datasources/local/reminder_local_data_source.dart';
+import '../data/datasources/local/reward_local_data_source.dart';
 import '../data/datasources/local/sleep_log_local_data_source.dart';
 import '../data/datasources/local/step_log_local_data_source.dart';
 import '../data/datasources/local/streak_local_data_source.dart';
 import '../data/datasources/local/user_local_data_source.dart';
 import '../data/datasources/local/user_profile_local_data_source.dart';
 import '../data/datasources/local/water_log_local_data_source.dart';
+import '../data/datasources/local/xp_history_local_data_source.dart';
 import '../data/datasources/local/weight_log_local_data_source.dart';
 import '../data/datasources/local/workout_category_local_data_source.dart';
 import '../data/datasources/local/workout_exercise_local_data_source.dart';
@@ -34,6 +39,7 @@ import '../data/datasources/local/workout_history_local_data_source.dart';
 import '../data/datasources/local/workout_local_data_source.dart';
 import '../data/repositories/app_preferences_repository_impl.dart';
 import '../data/repositories/app_settings_repository_impl.dart';
+import '../data/repositories/challenge_repository_impl.dart';
 import '../data/repositories/dashboard_repository_impl.dart';
 import '../data/repositories/global_search_repository_impl.dart';
 import '../data/repositories/profile_repository_impl.dart';
@@ -51,16 +57,20 @@ import '../data/repositories/fitness_goal_repository_impl.dart';
 import '../data/repositories/food_item_repository_impl.dart';
 import '../data/repositories/food_log_repository_impl.dart';
 import '../data/repositories/hydration_repository_impl.dart';
+import '../data/repositories/level_repository_impl.dart';
 import '../data/repositories/meal_category_repository_impl.dart';
 import '../data/repositories/meal_item_repository_impl.dart';
 import '../data/repositories/meal_repository_impl.dart';
+import '../data/repositories/milestone_repository_impl.dart';
 import '../data/repositories/reminder_history_repository_impl.dart';
 import '../data/repositories/reminder_repository_impl.dart';
+import '../data/repositories/reward_repository_impl.dart';
 import '../data/repositories/sleep_log_repository_impl.dart';
 import '../data/repositories/smart_reminder_repository_impl.dart';
 import '../data/repositories/step_log_repository_impl.dart';
 import '../data/repositories/streak_repository_impl.dart';
 import '../data/repositories/user_fitness_profile_repository_impl.dart';
+import '../data/repositories/xp_history_repository_impl.dart';
 import '../data/repositories/user_profile_repository_impl.dart';
 import '../data/repositories/water_log_repository_impl.dart';
 import '../data/repositories/weight_log_repository_impl.dart';
@@ -88,6 +98,7 @@ import '../domain/repositories/app_preferences_repository.dart';
 import '../domain/repositories/app_settings_repository.dart';
 import '../domain/repositories/achievement_repository.dart';
 import '../domain/repositories/auth_repository.dart';
+import '../domain/repositories/challenge_repository.dart';
 import '../domain/repositories/dashboard_repository.dart';
 import '../domain/repositories/global_search_repository.dart';
 import '../domain/repositories/backup_history_repository.dart';
@@ -104,18 +115,22 @@ import '../domain/repositories/fitness_goal_repository.dart';
 import '../domain/repositories/food_item_repository.dart';
 import '../domain/repositories/food_log_repository.dart';
 import '../domain/repositories/hydration_repository.dart';
+import '../domain/repositories/level_repository.dart';
 import '../domain/repositories/meal_category_repository.dart';
 import '../domain/repositories/meal_item_repository.dart';
 import '../domain/repositories/meal_repository.dart';
+import '../domain/repositories/milestone_repository.dart';
 import '../domain/repositories/profile_repository.dart';
 import '../domain/repositories/progress_analytics_repository.dart';
 import '../domain/repositories/reminder_history_repository.dart';
 import '../domain/repositories/reminder_repository.dart';
+import '../domain/repositories/reward_repository.dart';
 import '../domain/repositories/sleep_log_repository.dart';
 import '../domain/repositories/smart_reminder_repository.dart';
 import '../domain/repositories/step_log_repository.dart';
 import '../domain/repositories/streak_repository.dart';
 import '../domain/repositories/user_fitness_profile_repository.dart';
+import '../domain/repositories/xp_history_repository.dart';
 import '../domain/repositories/user_profile_repository.dart';
 import '../domain/repositories/water_log_repository.dart';
 import '../domain/repositories/weight_log_repository.dart';
@@ -134,6 +149,7 @@ import '../domain/usecases/auth/sign_in_with_google_usecase.dart';
 import '../domain/usecases/auth/sign_out_usecase.dart';
 import '../domain/usecases/auth/sign_up_with_email_usecase.dart';
 import '../domain/usecases/auth/watch_auth_state_usecase.dart';
+import '../domain/services/gamification_service.dart';
 
 /// Composition root.
 ///
@@ -300,6 +316,26 @@ final achievementLocalDataSourceProvider = Provider<AchievementLocalDataSource>(
 
 final badgeLocalDataSourceProvider = Provider<BadgeLocalDataSource>(
   (ref) => BadgeLocalDataSource(database: ref.watch(appDatabaseProvider)),
+);
+
+final xpHistoryLocalDataSourceProvider = Provider<XpHistoryLocalDataSource>(
+  (ref) => XpHistoryLocalDataSource(database: ref.watch(appDatabaseProvider)),
+);
+
+final levelLocalDataSourceProvider = Provider<LevelLocalDataSource>(
+  (ref) => LevelLocalDataSource(database: ref.watch(appDatabaseProvider)),
+);
+
+final challengeLocalDataSourceProvider = Provider<ChallengeLocalDataSource>(
+  (ref) => ChallengeLocalDataSource(database: ref.watch(appDatabaseProvider)),
+);
+
+final milestoneLocalDataSourceProvider = Provider<MilestoneLocalDataSource>(
+  (ref) => MilestoneLocalDataSource(database: ref.watch(appDatabaseProvider)),
+);
+
+final rewardLocalDataSourceProvider = Provider<RewardLocalDataSource>(
+  (ref) => RewardLocalDataSource(database: ref.watch(appDatabaseProvider)),
 );
 
 final streakLocalDataSourceProvider = Provider<StreakLocalDataSource>(
@@ -497,6 +533,26 @@ final badgeRepositoryProvider = Provider<BadgeRepository>(
   (ref) => BadgeRepositoryImpl(ref.watch(badgeLocalDataSourceProvider)),
 );
 
+final xpHistoryRepositoryProvider = Provider<XpHistoryRepository>(
+  (ref) => XpHistoryRepositoryImpl(ref.watch(xpHistoryLocalDataSourceProvider)),
+);
+
+final levelRepositoryProvider = Provider<LevelRepository>(
+  (ref) => LevelRepositoryImpl(ref.watch(levelLocalDataSourceProvider)),
+);
+
+final challengeRepositoryProvider = Provider<ChallengeRepository>(
+  (ref) => ChallengeRepositoryImpl(ref.watch(challengeLocalDataSourceProvider)),
+);
+
+final milestoneRepositoryProvider = Provider<MilestoneRepository>(
+  (ref) => MilestoneRepositoryImpl(ref.watch(milestoneLocalDataSourceProvider)),
+);
+
+final rewardRepositoryProvider = Provider<RewardRepository>(
+  (ref) => RewardRepositoryImpl(ref.watch(rewardLocalDataSourceProvider)),
+);
+
 final streakRepositoryProvider = Provider<StreakRepository>(
   (ref) => StreakRepositoryImpl(ref.watch(streakLocalDataSourceProvider)),
 );
@@ -523,6 +579,17 @@ final appPreferencesRepositoryProvider =
     Provider<AppPreferencesRepository>(
   (ref) => AppPreferencesRepositoryImpl(
     preferences: ref.watch(sharedPreferencesProvider),
+  ),
+);
+
+final gamificationServiceProvider = Provider<GamificationService>(
+  (ref) => GamificationService(
+    xpHistoryRepository: ref.watch(xpHistoryRepositoryProvider),
+    levelRepository: ref.watch(levelRepositoryProvider),
+    badgeRepository: ref.watch(badgeRepositoryProvider),
+    achievementRepository: ref.watch(achievementRepositoryProvider),
+    challengeRepository: ref.watch(challengeRepositoryProvider),
+    rewardRepository: ref.watch(rewardRepositoryProvider),
   ),
 );
 
