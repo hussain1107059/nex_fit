@@ -86,6 +86,9 @@ import '../data/repositories/auth_repository_impl.dart';
 import '../data/repositories/backup_repository_impl.dart';
 import '../data/services/auth/auth_service.dart';
 import '../data/services/auth/google_sign_in_service.dart';
+import '../data/services/backup/backup_encryption_service.dart';
+import '../data/services/backup/backup_packaging_service.dart';
+import '../data/services/backup/backup_service.dart';
 import '../data/services/backup/google_drive_backup_service.dart';
 import '../data/services/firebase_service.dart';
 import '../data/services/notifications/local_notification_service.dart';
@@ -701,7 +704,31 @@ final authRepositoryProvider = Provider<AuthRepository>(
 final backupRepositoryProvider = Provider<BackupRepository>(
   (ref) => BackupRepositoryImpl(
     backupService: ref.watch(googleDriveBackupServiceProvider),
-    preferences: ref.watch(appPreferencesRepositoryProvider),
+  ),
+);
+
+final backupEncryptionServiceProvider = Provider<BackupEncryptionService>(
+  (ref) => BackupEncryptionService(
+    storage: ref.watch(secureStorageServiceProvider),
+  ),
+);
+
+final backupPackagingServiceProvider = Provider<BackupPackagingService>(
+  (ref) => BackupPackagingService(
+    encryption: ref.watch(backupEncryptionServiceProvider),
+  ),
+);
+
+final backupServiceProvider = Provider<BackupService>(
+  (ref) => BackupService(
+    repository: ref.watch(backupRepositoryProvider),
+    historyRepository: ref.watch(backupHistoryRepositoryProvider),
+    settingsRepository: ref.watch(appSettingsRepositoryProvider),
+    database: ref.watch(appDatabaseProvider),
+    storageService: ref.watch(settingsStorageServiceProvider),
+    encryption: ref.watch(backupEncryptionServiceProvider),
+    packaging: ref.watch(backupPackagingServiceProvider),
+    networkInfo: ref.watch(networkInfoProvider),
   ),
 );
 

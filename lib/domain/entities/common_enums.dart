@@ -182,6 +182,41 @@ enum BackupType {
   }
 }
 
+/// How often automatic backups are taken.
+enum BackupSchedule {
+  manual,
+  daily,
+  weekly,
+  monthly;
+
+  static BackupSchedule fromName(String? value) {
+    return BackupSchedule.values.firstWhere(
+      (schedule) => schedule.name == value,
+      orElse: () => BackupSchedule.manual,
+    );
+  }
+
+  /// The minimum interval between two automatic backups.
+  Duration? get interval => switch (this) {
+    BackupSchedule.manual => null,
+    BackupSchedule.daily => const Duration(days: 1),
+    BackupSchedule.weekly => const Duration(days: 7),
+    BackupSchedule.monthly => const Duration(days: 30),
+  };
+}
+
+/// The risk level of restoring a given remote backup over the current data.
+enum BackupRestoreRisk {
+  none,
+  losesRecentData,
+  fromOlderVersion,
+  fromNewerVersion;
+
+  /// True when the restore would downgrade to a newer app version and must be
+  /// blocked entirely.
+  bool get isBlocked => this == BackupRestoreRisk.fromNewerVersion;
+}
+
 /// Measurement units for preferences.
 enum Units {
   metric,

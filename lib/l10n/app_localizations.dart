@@ -6055,6 +6055,306 @@ abstract class AppLocalizations {
   /// In bs, this message translates to:
   /// **'সব সেটিংস রিসেট হয়েছে'**
   String get settingsResetAllDone;
+
+  /// No description provided for @settingsGoogleDrive.
+  ///
+  /// In bs, this message translates to:
+  /// **'Google ড্রাইভ'**
+  String get settingsGoogleDrive;
+
+  /// No description provided for @settingsDriveConnected.
+  ///
+  /// In bs, this message translates to:
+  /// **'সংযুক্ত'**
+  String get settingsDriveConnected;
+
+  /// No description provided for @settingsDriveDisconnected.
+  ///
+  /// In bs, this message translates to:
+  /// **'সংযোগ নেই'**
+  String get settingsDriveDisconnected;
+
+  /// No description provided for @settingsConnectDrive.
+  ///
+  /// In bs, this message translates to:
+  /// **'Google ড্রাইভ সংযোগ করুন'**
+  String get settingsConnectDrive;
+
+  /// No description provided for @settingsConnectingDrive.
+  ///
+  /// In bs, this message translates to:
+  /// **'সংযোগ হচ্ছে...'**
+  String get settingsConnectingDrive;
+
+  /// No description provided for @settingsBackupSchedule.
+  ///
+  /// In bs, this message translates to:
+  /// **'ব্যাকআপ সময়সূচি'**
+  String get settingsBackupSchedule;
+
+  /// No description provided for @settingsScheduleManual.
+  ///
+  /// In bs, this message translates to:
+  /// **'ম্যানুয়াল'**
+  String get settingsScheduleManual;
+
+  /// No description provided for @settingsScheduleDaily.
+  ///
+  /// In bs, this message translates to:
+  /// **'প্রতিদিন'**
+  String get settingsScheduleDaily;
+
+  /// No description provided for @settingsScheduleWeekly.
+  ///
+  /// In bs, this message translates to:
+  /// **'সাপ্তাহিক'**
+  String get settingsScheduleWeekly;
+
+  /// No description provided for @settingsScheduleMonthly.
+  ///
+  /// In bs, this message translates to:
+  /// **'মাসিক'**
+  String get settingsScheduleMonthly;
+
+  /// No description provided for @settingsBackupRetention.
+  ///
+  /// In bs, this message translates to:
+  /// **'ব্যাকআপ সংরক্ষণ'**
+  String get settingsBackupRetention;
+
+  /// No description provided for @settingsBackupRetentionSubtitle.
+  ///
+  /// In bs, this message translates to:
+  /// **'সর্বোচ্চ কয়টি ব্যাকআপ রাখা হবে'**
+  String get settingsBackupRetentionSubtitle;
+
+  /// No description provided for @settingsBackupOnWifiOnly.
+  ///
+  /// In bs, this message translates to:
+  /// **'শুধু Wi-Fi-এ'**
+  String get settingsBackupOnWifiOnly;
+
+  /// No description provided for @settingsBackupOnWifiOnlySubtitle.
+  ///
+  /// In bs, this message translates to:
+  /// **'স্বয়ংক্রিয় ব্যাকআপ কেবল Wi-Fi সংযোগে নিন'**
+  String get settingsBackupOnWifiOnlySubtitle;
+
+  /// No description provided for @settingsBackupWhileCharging.
+  ///
+  /// In bs, this message translates to:
+  /// **'চার্জের সময়'**
+  String get settingsBackupWhileCharging;
+
+  /// No description provided for @settingsBackupWhileChargingSubtitle.
+  ///
+  /// In bs, this message translates to:
+  /// **'স্বয়ংক্রিয় ব্যাকআপ কেবল চার্জ চলাকালীন নিন'**
+  String get settingsBackupWhileChargingSubtitle;
+
+  /// No description provided for @settingsRemoteBackups.
+  ///
+  /// In bs, this message translates to:
+  /// **'ক্লাউড ব্যাকআপ'**
+  String get settingsRemoteBackups;
+
+  /// No description provided for @settingsNoRemoteBackups.
+  ///
+  /// In bs, this message translates to:
+  /// **'এখনো কোনো ক্লাউড ব্যাকআপ নেই'**
+  String get settingsNoRemoteBackups;
+
+  /// No description provided for @settingsRestore.
+  ///
+  /// In bs, this message translates to:
+  /// **'পুনরুদ্ধার'**
+  String get settingsRestore;
+
+  /// No description provided for @settingsRestoreBackup.
+  ///
+  /// In bs, this message translates to:
+  /// **'ব্যাকআপ পুনরুদ্ধার করুন'**
+  String get settingsRestoreBackup;
+
+  /// No description provided for @settingsRestoreConfirm.
+  ///
+  /// In bs, this message translates to:
+  /// **'এই ব্যাকআপ থেকে ডেটা পুনরুদ্ধার করবেন? বর্তমান ডেটা প্রতিস্থাপিত হবে।'**
+  String get settingsRestoreConfirm;
+
+  /// No description provided for @settingsRestoreWarningNewer.
+  ///
+  /// In bs, this message translates to:
+  /// **'সতর্কতা: ব্যাকআপের পরে আপনার ডেটা পরিবর্তিত হয়েছে। পুনরুদ্ধার করলে সাম্প্রতিক পরিবর্তনগুলো হারাবে।'**
+  String get settingsRestoreWarningNewer;
+
+  /// No description provided for @settingsRestoreWarningOlder.
+  ///
+  /// In bs, this message translates to:
+  /// **'এই ব্যাকআপটি অ্যাপের পুরোনো সংস্করণ থেকে তৈরি। পুনরুদ্ধারের পরে ডেটা আপগ্রেড হবে।'**
+  String get settingsRestoreWarningOlder;
+
+  /// No description provided for @settingsRestoreBlockedNewer.
+  ///
+  /// In bs, this message translates to:
+  /// **'এই ব্যাকআপটি অ্যাপের নতুন সংস্করণ থেকে তৈরি, তাই এটি পুনরুদ্ধার করা যাবে না।'**
+  String get settingsRestoreBlockedNewer;
+
+  /// No description provided for @settingsRestoreSuccess.
+  ///
+  /// In bs, this message translates to:
+  /// **'ডেটা পুনরুদ্ধার সম্পন্ন'**
+  String get settingsRestoreSuccess;
+
+  /// No description provided for @settingsRestoreFailed.
+  ///
+  /// In bs, this message translates to:
+  /// **'পুনরুদ্ধার ব্যর্থ হয়েছে'**
+  String get settingsRestoreFailed;
+
+  /// No description provided for @settingsDeleteBackup.
+  ///
+  /// In bs, this message translates to:
+  /// **'ব্যাকআপ মুছুন'**
+  String get settingsDeleteBackup;
+
+  /// No description provided for @settingsDeleteBackupConfirm.
+  ///
+  /// In bs, this message translates to:
+  /// **'এই ব্যাকআপটি মুছে ফেলবেন?'**
+  String get settingsDeleteBackupConfirm;
+
+  /// No description provided for @settingsBackupDeleteSuccess.
+  ///
+  /// In bs, this message translates to:
+  /// **'ব্যাকআপ মুছে ফেলা হয়েছে'**
+  String get settingsBackupDeleteSuccess;
+
+  /// No description provided for @settingsSignOutDrive.
+  ///
+  /// In bs, this message translates to:
+  /// **'ড্রাইভ থেকে সাইন আউট'**
+  String get settingsSignOutDrive;
+
+  /// No description provided for @settingsSignOutDriveSubtitle.
+  ///
+  /// In bs, this message translates to:
+  /// **'সংরক্ষিত ব্যাকআপ মুছে ফেলা হবে না'**
+  String get settingsSignOutDriveSubtitle;
+
+  /// No description provided for @settingsBackupProgressUploading.
+  ///
+  /// In bs, this message translates to:
+  /// **'ব্যাকআপ আপলোড হচ্ছে...'**
+  String get settingsBackupProgressUploading;
+
+  /// No description provided for @settingsBackupProgressRestoring.
+  ///
+  /// In bs, this message translates to:
+  /// **'ডেটা পুনরুদ্ধার হচ্ছে...'**
+  String get settingsBackupProgressRestoring;
+
+  /// No description provided for @settingsBackupAuto.
+  ///
+  /// In bs, this message translates to:
+  /// **'স্বয়ংক্রিয়'**
+  String get settingsBackupAuto;
+
+  /// No description provided for @settingsBackupManual.
+  ///
+  /// In bs, this message translates to:
+  /// **'ম্যানুয়াল'**
+  String get settingsBackupManual;
+
+  /// No description provided for @settingsBackupEncrypted.
+  ///
+  /// In bs, this message translates to:
+  /// **'এনক্রিপ্ট করা'**
+  String get settingsBackupEncrypted;
+
+  /// No description provided for @settingsBackupSize.
+  ///
+  /// In bs, this message translates to:
+  /// **'আকার'**
+  String get settingsBackupSize;
+
+  /// No description provided for @settingsBackupDevice.
+  ///
+  /// In bs, this message translates to:
+  /// **'ডিভাইস'**
+  String get settingsBackupDevice;
+
+  /// No description provided for @settingsBackupStatusSuccess.
+  ///
+  /// In bs, this message translates to:
+  /// **'সফল'**
+  String get settingsBackupStatusSuccess;
+
+  /// No description provided for @settingsBackupStatusFailed.
+  ///
+  /// In bs, this message translates to:
+  /// **'ব্যর্থ'**
+  String get settingsBackupStatusFailed;
+
+  /// No description provided for @settingsBackupStatusInProgress.
+  ///
+  /// In bs, this message translates to:
+  /// **'চলমান'**
+  String get settingsBackupStatusInProgress;
+
+  /// No description provided for @backupNoInternet.
+  ///
+  /// In bs, this message translates to:
+  /// **'ইন্টারনেট সংযোগ নেই'**
+  String get backupNoInternet;
+
+  /// No description provided for @backupSnapshotFailed.
+  ///
+  /// In bs, this message translates to:
+  /// **'ডেটাবেস স্ন্যাপশট তৈরি করা যায়নি'**
+  String get backupSnapshotFailed;
+
+  /// No description provided for @backupFromNewerVersion.
+  ///
+  /// In bs, this message translates to:
+  /// **'ব্যাকআপটি অ্যাপের নতুন সংস্করণ থেকে তৈরি'**
+  String get backupFromNewerVersion;
+
+  /// No description provided for @backupNoUser.
+  ///
+  /// In bs, this message translates to:
+  /// **'ব্যাকআপের জন্য সাইন ইন প্রয়োজন'**
+  String get backupNoUser;
+
+  /// No description provided for @backupNotNexFit.
+  ///
+  /// In bs, this message translates to:
+  /// **'ফাইলটি বৈধ NexFit ব্যাকআপ নয়'**
+  String get backupNotNexFit;
+
+  /// No description provided for @backupVersionUnsupported.
+  ///
+  /// In bs, this message translates to:
+  /// **'ব্যাকআপ ফরম্যাট সমর্থিত নয়'**
+  String get backupVersionUnsupported;
+
+  /// No description provided for @backupNotSupportedOnWeb.
+  ///
+  /// In bs, this message translates to:
+  /// **'ওয়েবে পুনরুদ্ধার সমর্থিত নয়'**
+  String get backupNotSupportedOnWeb;
+
+  /// No description provided for @backupDecryptFailed.
+  ///
+  /// In bs, this message translates to:
+  /// **'ব্যাকআপ ডিক্রিপ্ট করা যায়নি'**
+  String get backupDecryptFailed;
+
+  /// No description provided for @backupInvalidKey.
+  ///
+  /// In bs, this message translates to:
+  /// **'ব্যাকআপ কী বৈধ নয়'**
+  String get backupInvalidKey;
 }
 
 class _AppLocalizationsDelegate

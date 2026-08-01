@@ -16,6 +16,8 @@ class GoogleSignInService {
 
   static const List<String> _driveScopes = <String>[
     'https://www.googleapis.com/auth/drive.file',
+    // Grants access to the private AppData folder used for backups.
+    'https://www.googleapis.com/auth/drive.appdata',
   ];
 
   static bool _initialized = false;

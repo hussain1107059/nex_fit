@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_svg/flutter_svg.dart';
@@ -15,6 +17,7 @@ import '../../../domain/repositories/app_preferences_repository.dart';
 import '../../../domain/repositories/auth_repository.dart';
 import '../../../injection/dependency_injection.dart';
 import '../../providers/auth_controller.dart';
+import '../../providers/auth_provider.dart';
 import '../../providers/reminder_providers.dart';
 import '../../providers/water_providers.dart';
 import '../../router/app_router.dart';
@@ -86,6 +89,10 @@ class _SplashScreenState extends ConsumerState<SplashScreen>
           await ref.read(authControllerProvider.notifier).signOut();
         }
       }
+
+      // Best-effort: run an automatic Drive backup when it is due (silently
+      // skipped when disabled, offline or not signed in).
+      unawaited(_runScheduledBackupIfDue());
     } catch (error, stackTrace) {
       // A failing service must never leave the app stuck on the splash
       // spinner; log it and let the router guard pick a destination.
@@ -102,6 +109,21 @@ class _SplashScreenState extends ConsumerState<SplashScreen>
       await service.initialize();
     } catch (error, stackTrace) {
       debugPrint('Google Sign-In initialization failed: $error\n$stackTrace');
+    }
+  }
+
+  Future<void> _runScheduledBackupIfDue() async {
+    final user = ref.read(currentUserProvider);
+    if (user == null || !user.isSignedIn) return;
+    try {
+      final GoogleSignInService signIn =
+          ref.read(googleSignInServiceProvider);
+      await signIn.attemptSilentSignIn();
+      await ref
+          .read(backupServiceProvider)
+          .runAutoBackupIfDue(userId: user.id);
+    } catch (error, stackTrace) {
+      debugPrint('Scheduled backup check failed: $error\n$stackTrace');
     }
   }
 

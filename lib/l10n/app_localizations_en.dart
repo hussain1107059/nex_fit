@@ -3082,4 +3082,163 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get settingsResetAllDone => 'All settings reset';
+
+  @override
+  String get settingsGoogleDrive => 'Google Drive';
+
+  @override
+  String get settingsDriveConnected => 'Connected';
+
+  @override
+  String get settingsDriveDisconnected => 'Not connected';
+
+  @override
+  String get settingsConnectDrive => 'Connect Google Drive';
+
+  @override
+  String get settingsConnectingDrive => 'Connecting...';
+
+  @override
+  String get settingsBackupSchedule => 'Backup schedule';
+
+  @override
+  String get settingsScheduleManual => 'Manual';
+
+  @override
+  String get settingsScheduleDaily => 'Daily';
+
+  @override
+  String get settingsScheduleWeekly => 'Weekly';
+
+  @override
+  String get settingsScheduleMonthly => 'Monthly';
+
+  @override
+  String get settingsBackupRetention => 'Backup retention';
+
+  @override
+  String get settingsBackupRetentionSubtitle =>
+      'Maximum number of backups to keep';
+
+  @override
+  String get settingsBackupOnWifiOnly => 'Wi-Fi only';
+
+  @override
+  String get settingsBackupOnWifiOnlySubtitle =>
+      'Take automatic backups only on Wi-Fi';
+
+  @override
+  String get settingsBackupWhileCharging => 'While charging';
+
+  @override
+  String get settingsBackupWhileChargingSubtitle =>
+      'Take automatic backups only while charging';
+
+  @override
+  String get settingsRemoteBackups => 'Cloud backups';
+
+  @override
+  String get settingsNoRemoteBackups => 'No cloud backups yet';
+
+  @override
+  String get settingsRestore => 'Restore';
+
+  @override
+  String get settingsRestoreBackup => 'Restore backup';
+
+  @override
+  String get settingsRestoreConfirm =>
+      'Restore data from this backup? Your current data will be replaced.';
+
+  @override
+  String get settingsRestoreWarningNewer =>
+      'Warning: your data has changed since this backup. Restoring will lose recent changes.';
+
+  @override
+  String get settingsRestoreWarningOlder =>
+      'This backup was created by an older app version. Your data will be upgraded after restoring.';
+
+  @override
+  String get settingsRestoreBlockedNewer =>
+      'This backup was created by a newer app version and cannot be restored.';
+
+  @override
+  String get settingsRestoreSuccess => 'Data restored';
+
+  @override
+  String get settingsRestoreFailed => 'Restore failed';
+
+  @override
+  String get settingsDeleteBackup => 'Delete backup';
+
+  @override
+  String get settingsDeleteBackupConfirm => 'Delete this backup?';
+
+  @override
+  String get settingsBackupDeleteSuccess => 'Backup deleted';
+
+  @override
+  String get settingsSignOutDrive => 'Sign out of Drive';
+
+  @override
+  String get settingsSignOutDriveSubtitle =>
+      'Saved backups will not be deleted';
+
+  @override
+  String get settingsBackupProgressUploading => 'Uploading backup...';
+
+  @override
+  String get settingsBackupProgressRestoring => 'Restoring data...';
+
+  @override
+  String get settingsBackupAuto => 'Automatic';
+
+  @override
+  String get settingsBackupManual => 'Manual';
+
+  @override
+  String get settingsBackupEncrypted => 'Encrypted';
+
+  @override
+  String get settingsBackupSize => 'Size';
+
+  @override
+  String get settingsBackupDevice => 'Device';
+
+  @override
+  String get settingsBackupStatusSuccess => 'Successful';
+
+  @override
+  String get settingsBackupStatusFailed => 'Failed';
+
+  @override
+  String get settingsBackupStatusInProgress => 'In progress';
+
+  @override
+  String get backupNoInternet => 'No internet connection';
+
+  @override
+  String get backupSnapshotFailed => 'Could not create a database snapshot';
+
+  @override
+  String get backupFromNewerVersion =>
+      'This backup was created by a newer app version';
+
+  @override
+  String get backupNoUser => 'Sign in is required to back up';
+
+  @override
+  String get backupNotNexFit => 'The file is not a valid NexFit backup';
+
+  @override
+  String get backupVersionUnsupported => 'Backup format not supported';
+
+  @override
+  String get backupNotSupportedOnWeb => 'Restore is not supported on web';
+
+  @override
+  String get backupDecryptFailed => 'Could not decrypt the backup';
+
+  @override
+  String get backupInvalidKey => 'Backup key is invalid';
 }

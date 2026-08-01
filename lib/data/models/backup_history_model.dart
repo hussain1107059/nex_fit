@@ -19,6 +19,11 @@ class BackupHistoryModel {
       'status': history.status.name,
       'error_message': history.errorMessage,
       'duration_ms': history.durationMs,
+      'app_version': history.appVersion,
+      'database_version': history.databaseVersion,
+      'device_name': history.deviceName,
+      'checksum': history.checksum,
+      'encrypted': ModelCodec.boolToInt(history.encrypted),
       'created_at': ModelCodec.epochMs(history.createdAt),
     };
   }
@@ -34,6 +39,11 @@ class BackupHistoryModel {
       status: BackupStatus.fromName(row['status'] as String?),
       errorMessage: row['error_message'] as String?,
       durationMs: row['duration_ms'] as int?,
+      appVersion: row['app_version'] as String?,
+      databaseVersion: row['database_version'] as int?,
+      deviceName: row['device_name'] as String?,
+      checksum: row['checksum'] as String?,
+      encrypted: ModelCodec.intToBool(row['encrypted']),
       createdAt:
           ModelCodec.fromEpochMs(row['created_at'] as int?) ?? DateTime.now(),
     );

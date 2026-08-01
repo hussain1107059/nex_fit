@@ -21,6 +21,10 @@ class AppSettings extends Equatable {
     this.dataSyncEnabled = true,
     this.backupEnabled = true,
     this.lastBackupAt,
+    this.backupSchedule = BackupSchedule.manual,
+    this.backupRetentionCount = 5,
+    this.backupOnWifiOnly = false,
+    this.backupWhileCharging = false,
     this.themeMode = AppThemeMode.system,
     this.dynamicColor = false,
     this.fontScale = FontScale.medium,
@@ -66,6 +70,12 @@ class AppSettings extends Equatable {
   final bool dataSyncEnabled;
   final bool backupEnabled;
   final DateTime? lastBackupAt;
+
+  // Backup & restore
+  final BackupSchedule backupSchedule;
+  final int backupRetentionCount;
+  final bool backupOnWifiOnly;
+  final bool backupWhileCharging;
 
   // Appearance
   final AppThemeMode themeMode;
@@ -129,6 +139,10 @@ class AppSettings extends Equatable {
     bool? dataSyncEnabled,
     bool? backupEnabled,
     DateTime? lastBackupAt,
+    BackupSchedule? backupSchedule,
+    int? backupRetentionCount,
+    bool? backupOnWifiOnly,
+    bool? backupWhileCharging,
     AppThemeMode? themeMode,
     bool? dynamicColor,
     FontScale? fontScale,
@@ -174,6 +188,11 @@ class AppSettings extends Equatable {
       dataSyncEnabled: dataSyncEnabled ?? this.dataSyncEnabled,
       backupEnabled: backupEnabled ?? this.backupEnabled,
       lastBackupAt: lastBackupAt ?? this.lastBackupAt,
+      backupSchedule: backupSchedule ?? this.backupSchedule,
+      backupRetentionCount:
+          backupRetentionCount ?? this.backupRetentionCount,
+      backupOnWifiOnly: backupOnWifiOnly ?? this.backupOnWifiOnly,
+      backupWhileCharging: backupWhileCharging ?? this.backupWhileCharging,
       themeMode: themeMode ?? this.themeMode,
       dynamicColor: dynamicColor ?? this.dynamicColor,
       fontScale: fontScale ?? this.fontScale,
@@ -226,6 +245,10 @@ class AppSettings extends Equatable {
         dataSyncEnabled,
         backupEnabled,
         lastBackupAt,
+        backupSchedule,
+        backupRetentionCount,
+        backupOnWifiOnly,
+        backupWhileCharging,
         themeMode,
         dynamicColor,
         fontScale,

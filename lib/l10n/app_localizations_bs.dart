@@ -3089,4 +3089,163 @@ class AppLocalizationsBs extends AppLocalizations {
 
   @override
   String get settingsResetAllDone => 'সব সেটিংস রিসেট হয়েছে';
+
+  @override
+  String get settingsGoogleDrive => 'Google ড্রাইভ';
+
+  @override
+  String get settingsDriveConnected => 'সংযুক্ত';
+
+  @override
+  String get settingsDriveDisconnected => 'সংযোগ নেই';
+
+  @override
+  String get settingsConnectDrive => 'Google ড্রাইভ সংযোগ করুন';
+
+  @override
+  String get settingsConnectingDrive => 'সংযোগ হচ্ছে...';
+
+  @override
+  String get settingsBackupSchedule => 'ব্যাকআপ সময়সূচি';
+
+  @override
+  String get settingsScheduleManual => 'ম্যানুয়াল';
+
+  @override
+  String get settingsScheduleDaily => 'প্রতিদিন';
+
+  @override
+  String get settingsScheduleWeekly => 'সাপ্তাহিক';
+
+  @override
+  String get settingsScheduleMonthly => 'মাসিক';
+
+  @override
+  String get settingsBackupRetention => 'ব্যাকআপ সংরক্ষণ';
+
+  @override
+  String get settingsBackupRetentionSubtitle =>
+      'সর্বোচ্চ কয়টি ব্যাকআপ রাখা হবে';
+
+  @override
+  String get settingsBackupOnWifiOnly => 'শুধু Wi-Fi-এ';
+
+  @override
+  String get settingsBackupOnWifiOnlySubtitle =>
+      'স্বয়ংক্রিয় ব্যাকআপ কেবল Wi-Fi সংযোগে নিন';
+
+  @override
+  String get settingsBackupWhileCharging => 'চার্জের সময়';
+
+  @override
+  String get settingsBackupWhileChargingSubtitle =>
+      'স্বয়ংক্রিয় ব্যাকআপ কেবল চার্জ চলাকালীন নিন';
+
+  @override
+  String get settingsRemoteBackups => 'ক্লাউড ব্যাকআপ';
+
+  @override
+  String get settingsNoRemoteBackups => 'এখনো কোনো ক্লাউড ব্যাকআপ নেই';
+
+  @override
+  String get settingsRestore => 'পুনরুদ্ধার';
+
+  @override
+  String get settingsRestoreBackup => 'ব্যাকআপ পুনরুদ্ধার করুন';
+
+  @override
+  String get settingsRestoreConfirm =>
+      'এই ব্যাকআপ থেকে ডেটা পুনরুদ্ধার করবেন? বর্তমান ডেটা প্রতিস্থাপিত হবে।';
+
+  @override
+  String get settingsRestoreWarningNewer =>
+      'সতর্কতা: ব্যাকআপের পরে আপনার ডেটা পরিবর্তিত হয়েছে। পুনরুদ্ধার করলে সাম্প্রতিক পরিবর্তনগুলো হারাবে।';
+
+  @override
+  String get settingsRestoreWarningOlder =>
+      'এই ব্যাকআপটি অ্যাপের পুরোনো সংস্করণ থেকে তৈরি। পুনরুদ্ধারের পরে ডেটা আপগ্রেড হবে।';
+
+  @override
+  String get settingsRestoreBlockedNewer =>
+      'এই ব্যাকআপটি অ্যাপের নতুন সংস্করণ থেকে তৈরি, তাই এটি পুনরুদ্ধার করা যাবে না।';
+
+  @override
+  String get settingsRestoreSuccess => 'ডেটা পুনরুদ্ধার সম্পন্ন';
+
+  @override
+  String get settingsRestoreFailed => 'পুনরুদ্ধার ব্যর্থ হয়েছে';
+
+  @override
+  String get settingsDeleteBackup => 'ব্যাকআপ মুছুন';
+
+  @override
+  String get settingsDeleteBackupConfirm => 'এই ব্যাকআপটি মুছে ফেলবেন?';
+
+  @override
+  String get settingsBackupDeleteSuccess => 'ব্যাকআপ মুছে ফেলা হয়েছে';
+
+  @override
+  String get settingsSignOutDrive => 'ড্রাইভ থেকে সাইন আউট';
+
+  @override
+  String get settingsSignOutDriveSubtitle =>
+      'সংরক্ষিত ব্যাকআপ মুছে ফেলা হবে না';
+
+  @override
+  String get settingsBackupProgressUploading => 'ব্যাকআপ আপলোড হচ্ছে...';
+
+  @override
+  String get settingsBackupProgressRestoring => 'ডেটা পুনরুদ্ধার হচ্ছে...';
+
+  @override
+  String get settingsBackupAuto => 'স্বয়ংক্রিয়';
+
+  @override
+  String get settingsBackupManual => 'ম্যানুয়াল';
+
+  @override
+  String get settingsBackupEncrypted => 'এনক্রিপ্ট করা';
+
+  @override
+  String get settingsBackupSize => 'আকার';
+
+  @override
+  String get settingsBackupDevice => 'ডিভাইস';
+
+  @override
+  String get settingsBackupStatusSuccess => 'সফল';
+
+  @override
+  String get settingsBackupStatusFailed => 'ব্যর্থ';
+
+  @override
+  String get settingsBackupStatusInProgress => 'চলমান';
+
+  @override
+  String get backupNoInternet => 'ইন্টারনেট সংযোগ নেই';
+
+  @override
+  String get backupSnapshotFailed => 'ডেটাবেস স্ন্যাপশট তৈরি করা যায়নি';
+
+  @override
+  String get backupFromNewerVersion =>
+      'ব্যাকআপটি অ্যাপের নতুন সংস্করণ থেকে তৈরি';
+
+  @override
+  String get backupNoUser => 'ব্যাকআপের জন্য সাইন ইন প্রয়োজন';
+
+  @override
+  String get backupNotNexFit => 'ফাইলটি বৈধ NexFit ব্যাকআপ নয়';
+
+  @override
+  String get backupVersionUnsupported => 'ব্যাকআপ ফরম্যাট সমর্থিত নয়';
+
+  @override
+  String get backupNotSupportedOnWeb => 'ওয়েবে পুনরুদ্ধার সমর্থিত নয়';
+
+  @override
+  String get backupDecryptFailed => 'ব্যাকআপ ডিক্রিপ্ট করা যায়নি';
+
+  @override
+  String get backupInvalidKey => 'ব্যাকআপ কী বৈধ নয়';
 }

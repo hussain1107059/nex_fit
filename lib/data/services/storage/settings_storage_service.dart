@@ -1,9 +1,11 @@
 import 'dart:io';
+import 'dart:typed_data';
 
 import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:logging/logging.dart';
 import 'package:path/path.dart' as path;
 import 'package:path_provider/path_provider.dart';
+import 'package:sqflite/sqflite.dart' show Database;
 
 import '../../datasources/local/app_database.dart';
 import 'profile_photo_service.dart';
@@ -108,6 +110,37 @@ class SettingsStorageService {
       _logger.warning('Could not export database: $error\n$stackTrace');
       return null;
     }
+  }
+
+  /// Produces a consistent snapshot of the current SQLite database as bytes.
+  /// Uses `VACUUM INTO` when available and falls back to a plain file copy.
+  /// Returns null on web or when the snapshot could not be created.
+  Future<Uint8List?> createSnapshotBytes() async {
+    if (kIsWeb) return null;
+    final String dbPath = await database.databaseFileRawPath;
+    final Directory documents = await getApplicationDocumentsDirectory();
+    final String tmpPath = path.join(
+      documents.path,
+      'nexfit_snapshot_${DateTime.now().millisecondsSinceEpoch}.db',
+    );
+    try {
+      final Database db = await database.database;
+      try {
+        await db.execute("VACUUM INTO '$tmpPath'");
+      } catch (_) {
+        final File source = File(dbPath);
+        if (await source.exists()) await source.copy(tmpPath);
+      }
+      final File tmp = File(tmpPath);
+      if (await tmp.exists()) {
+        final Uint8List bytes = await tmp.readAsBytes();
+        await tmp.delete();
+        return bytes;
+      }
+    } catch (error, stackTrace) {
+      _logger.warning('Could not snapshot database: $error\n$stackTrace');
+    }
+    return null;
   }
 
   /// Deletes every cached photo through the photo service (keeps the web

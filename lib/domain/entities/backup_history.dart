@@ -14,6 +14,11 @@ class BackupHistory extends Equatable {
     required this.status,
     this.errorMessage,
     this.durationMs,
+    this.appVersion,
+    this.databaseVersion,
+    this.deviceName,
+    this.checksum,
+    this.encrypted = true,
     required this.createdAt,
   });
 
@@ -26,6 +31,11 @@ class BackupHistory extends Equatable {
   final BackupStatus status;
   final String? errorMessage;
   final int? durationMs;
+  final String? appVersion;
+  final int? databaseVersion;
+  final String? deviceName;
+  final String? checksum;
+  final bool encrypted;
   final DateTime createdAt;
 
   BackupHistory copyWith({
@@ -38,6 +48,11 @@ class BackupHistory extends Equatable {
     BackupStatus? status,
     String? errorMessage,
     int? durationMs,
+    String? appVersion,
+    int? databaseVersion,
+    String? deviceName,
+    String? checksum,
+    bool? encrypted,
     DateTime? createdAt,
   }) {
     return BackupHistory(
@@ -50,6 +65,11 @@ class BackupHistory extends Equatable {
       status: status ?? this.status,
       errorMessage: errorMessage ?? this.errorMessage,
       durationMs: durationMs ?? this.durationMs,
+      appVersion: appVersion ?? this.appVersion,
+      databaseVersion: databaseVersion ?? this.databaseVersion,
+      deviceName: deviceName ?? this.deviceName,
+      checksum: checksum ?? this.checksum,
+      encrypted: encrypted ?? this.encrypted,
       createdAt: createdAt ?? this.createdAt,
     );
   }
@@ -65,6 +85,11 @@ class BackupHistory extends Equatable {
         status,
         errorMessage,
         durationMs,
+        appVersion,
+        databaseVersion,
+        deviceName,
+        checksum,
+        encrypted,
         createdAt,
       ];
 }

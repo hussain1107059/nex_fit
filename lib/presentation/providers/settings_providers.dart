@@ -6,6 +6,7 @@ import 'package:flutter/foundation.dart' show debugPrint;
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:logging/logging.dart';
 
+import '../../core/constants/app_constants.dart';
 import '../../domain/entities/app_settings.dart';
 import '../../domain/entities/app_user.dart';
 import '../../domain/entities/common_enums.dart';
@@ -193,6 +194,23 @@ class SettingsController extends AsyncNotifier<AppSettings?> {
 
   Future<void> setBackupEnabled(bool enabled) =>
       _update((settings) => settings.copyWith(backupEnabled: enabled));
+
+  Future<void> setBackupSchedule(BackupSchedule schedule) =>
+      _update((settings) => settings.copyWith(backupSchedule: schedule));
+
+  Future<void> setBackupRetention(int count) => _update(
+        (settings) => settings.copyWith(
+          backupRetentionCount: count
+              .clamp(1, AppConstants.backupMaxRetention)
+              .toInt(),
+        ),
+      );
+
+  Future<void> setBackupOnWifiOnly(bool enabled) =>
+      _update((settings) => settings.copyWith(backupOnWifiOnly: enabled));
+
+  Future<void> setBackupWhileCharging(bool enabled) =>
+      _update((settings) => settings.copyWith(backupWhileCharging: enabled));
 
   Future<void> setLastBackupAt(DateTime at) =>
       _update((settings) => settings.copyWith(lastBackupAt: at));

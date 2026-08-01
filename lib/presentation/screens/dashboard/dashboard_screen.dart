@@ -9,6 +9,7 @@ import '../../../domain/entities/dashboard_data.dart';
 import '../../providers/auth_provider.dart';
 import '../../providers/dashboard_providers.dart';
 import 'widgets/achievements_section.dart';
+import 'widgets/backup_card.dart';
 import 'widgets/dashboard_header.dart';
 import 'widgets/dashboard_skeleton.dart';
 import 'widgets/dashboard_summary_card.dart';
@@ -109,6 +110,8 @@ class _DashboardContent extends StatelessWidget {
                 ],
                 const SizedBox(height: AppSpacing.md),
                 DashboardSummaryCard(summary: data.summary),
+                const SizedBox(height: AppSpacing.lg),
+                const BackupCard(),
                 const SizedBox(height: AppSpacing.lg),
                 const GamificationOverviewCard(),
                 if (!data.summary.hasWeight) ...[

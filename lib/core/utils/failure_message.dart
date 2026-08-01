@@ -37,6 +37,16 @@ String localizeFailureMessage(AppLocalizations l10n, String message) {
     'backupDriveDisconnected' => l10n.backupDriveDisconnected,
     'backupNotFound' => l10n.backupNotFound,
     'backupCorrupted' => l10n.backupCorrupted,
+    'backupNoInternet' => l10n.backupNoInternet,
+    'backupSnapshotFailed' => l10n.backupSnapshotFailed,
+    'backupFromNewerVersion' => l10n.backupFromNewerVersion,
+    'backupNoUser' => l10n.backupNoUser,
+    'backupNotNexFit' => l10n.backupNotNexFit,
+    'backupVersionUnsupported' => l10n.backupVersionUnsupported,
+    'backupNotSupportedOnWeb' => l10n.backupNotSupportedOnWeb,
+    'backupDecryptFailed' => l10n.backupDecryptFailed,
+    'backupInvalidKey' => l10n.backupInvalidKey,
+    'errorNoInternet' => l10n.errorNoInternet,
     _ => l10n.errorUnknown,
   };
 }

@@ -1,4 +1,3 @@
-import 'dart:convert';
 import 'dart:typed_data';
 
 import 'package:_discoveryapis_commons/_discoveryapis_commons.dart';
@@ -9,7 +8,7 @@ import 'package:logging/logging.dart';
 import '../../../core/errors/app_exception.dart';
 import '../auth/google_sign_in_service.dart';
 
-/// Metadata for a single backup file stored on Google Drive.
+/// Metadata for a single backup file stored in the Drive AppData folder.
 class BackupFileInfo {
   const BackupFileInfo({
     required this.id,
@@ -32,15 +31,18 @@ class _DriveSession {
   final http.Client client;
 }
 
-/// Uploads and restores app backups through the Google Drive API.
+/// Uploads and restores app backups through the private Google Drive AppData
+/// folder (`spaces: 'appData'`, `parents: ['appDataFolder']`). Files stored
+/// here are invisible to the user's normal Drive and cannot be listed by other
+/// apps.
 class GoogleDriveBackupService {
   GoogleDriveBackupService({
     required this.signInService,
     Logger? logger,
   }) : _logger = logger ?? Logger('GoogleDriveBackupService');
 
-  static const String folderName = 'NexFitBackups';
   static const String filePrefix = 'nexfit_backup';
+  static const int listPageSize = 100;
 
   final GoogleSignInService signInService;
   final Logger _logger;
@@ -64,41 +66,18 @@ class GoogleDriveBackupService {
     return _DriveSession(drive.DriveApi(client), client);
   }
 
-  Future<drive.File> _ensureBackupFolder(drive.DriveApi api) async {
-    final drive.FileList result = await api.files.list(
-      q: "name = '$folderName' and mimeType = "
-          "'application/vnd.google-apps.folder' and trashed = false",
-      spaces: 'drive',
-      pageSize: 1,
-    );
-
-    if (result.files != null && result.files!.isNotEmpty) {
-      return result.files!.first;
-    }
-
-    return api.files.create(
-      drive.File(
-        name: folderName,
-        mimeType: 'application/vnd.google-apps.folder',
-      ),
-    );
-  }
-
-  /// Uploads [content] as a backup file and returns the uploaded file id.
-  Future<String> uploadBackup({
-    required String content,
+  /// Uploads [bytes] into the AppData folder and returns the created file.
+  Future<BackupFileInfo> uploadBytes({
+    required Uint8List bytes,
     required String fileName,
   }) async {
     final _DriveSession session = await _openSession();
     try {
-      final drive.File folder = await _ensureBackupFolder(session.api);
-      final Uint8List bytes = Uint8List.fromList(utf8.encode(content));
-
       final drive.File uploaded = await session.api.files.create(
         drive.File(
           name: fileName,
-          parents: [folder.id!],
-          mimeType: 'application/json',
+          parents: const ['appDataFolder'],
+          mimeType: 'application/octet-stream',
         ),
         uploadMedia: drive.Media(
           Stream.value(bytes),
@@ -106,7 +85,12 @@ class GoogleDriveBackupService {
         ),
       );
       _logger.info('Backup uploaded: ${uploaded.id}');
-      return uploaded.id!;
+      return BackupFileInfo(
+        id: uploaded.id!,
+        name: uploaded.name ?? fileName,
+        createdAt: uploaded.createdTime?.toLocal() ?? DateTime.now(),
+        sizeBytes: bytes.length,
+      );
     } on ApiRequestError catch (error) {
       throw BackupException(
         _mapDriveError(_statusOf(error)),
@@ -117,15 +101,15 @@ class GoogleDriveBackupService {
     }
   }
 
-  /// Lists backups newest first.
+  /// Lists backups stored in the AppData folder, newest first.
   Future<List<BackupFileInfo>> listBackups() async {
     final _DriveSession session = await _openSession();
     try {
       final drive.FileList result = await session.api.files.list(
         q: "name contains '$filePrefix' and trashed = false",
-        spaces: 'drive',
+        spaces: 'appData',
         orderBy: 'createdTime desc',
-        pageSize: 10,
+        pageSize: listPageSize,
         $fields: 'files(id,name,createdTime,size)',
       );
 
@@ -150,17 +134,13 @@ class GoogleDriveBackupService {
     }
   }
 
-  /// Downloads the most recent backup. Returns null when none exist.
-  Future<String?> downloadLatestBackup() async {
+  /// Downloads a single backup file by id.
+  Future<Uint8List> downloadBytes(String fileId) async {
     final _DriveSession session = await _openSession();
     try {
-      final List<BackupFileInfo> backups = await listBackups();
-      if (backups.isEmpty) return null;
-
       final http.Response response = await session.client.get(
         Uri.parse(
-          'https://www.googleapis.com/drive/v3/files/'
-          '${backups.first.id}?alt=media',
+          'https://www.googleapis.com/drive/v3/files/$fileId?alt=media',
         ),
       );
       if (response.statusCode != 200) {
@@ -169,7 +149,7 @@ class GoogleDriveBackupService {
           code: 'drive_download_failed',
         );
       }
-      return utf8.decode(response.bodyBytes);
+      return response.bodyBytes;
     } on ApiRequestError catch (error) {
       throw BackupException(
         _mapDriveError(_statusOf(error)),

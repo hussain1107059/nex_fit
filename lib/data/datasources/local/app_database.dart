@@ -42,6 +42,7 @@ class AppDatabase {
     DatabaseMigration(version: 9, apply: _migrationV9ReminderModule),
     DatabaseMigration(version: 10, apply: _migrationV10GamificationModule),
     DatabaseMigration(version: 11, apply: _migrationV11SettingsModule),
+    DatabaseMigration(version: 12, apply: _migrationV12BackupModule),
   ];
 
   Future<Database> get database async {
@@ -143,6 +144,10 @@ class AppDatabase {
     final Database db = await database;
     return db.path;
   }
+
+  /// Absolute path of the SQLite file without opening the database. Used by
+  /// backup restore to replace the file while the connection is closed.
+  Future<String> get databaseFileRawPath async => _databasePath;
 
   /// Runs a lightweight `PRAGMA optimize` so SQLite can tune its statistics.
   /// `VACUUM` is skipped on web where it is not supported.
@@ -1362,6 +1367,48 @@ class AppDatabase {
     );
     await db.execute(
       'ALTER TABLE app_settings ADD COLUMN last_active_at INTEGER',
+    );
+  }
+
+  /// Backup & restore preferences plus richer metadata for the `backup_history`
+  /// table (app/database versions, device name, checksum, encrypted flag).
+  static Future<void> _migrationV12BackupModule(
+    DatabaseExecutor executor,
+    int version,
+  ) async {
+    final DatabaseExecutor db = executor;
+
+    await db.execute(
+      'ALTER TABLE app_settings ADD COLUMN backup_schedule TEXT NOT NULL '
+      "DEFAULT 'manual'",
+    );
+    await db.execute(
+      'ALTER TABLE app_settings ADD COLUMN backup_retention_count INTEGER NOT '
+      'NULL DEFAULT 5',
+    );
+    await db.execute(
+      'ALTER TABLE app_settings ADD COLUMN backup_on_wifi_only INTEGER NOT NULL '
+      'DEFAULT 0',
+    );
+    await db.execute(
+      'ALTER TABLE app_settings ADD COLUMN backup_while_charging INTEGER NOT '
+      'NULL DEFAULT 0',
+    );
+
+    await db.execute(
+      'ALTER TABLE backup_history ADD COLUMN app_version TEXT',
+    );
+    await db.execute(
+      'ALTER TABLE backup_history ADD COLUMN database_version INTEGER',
+    );
+    await db.execute(
+      'ALTER TABLE backup_history ADD COLUMN device_name TEXT',
+    );
+    await db.execute(
+      'ALTER TABLE backup_history ADD COLUMN checksum TEXT',
+    );
+    await db.execute(
+      'ALTER TABLE backup_history ADD COLUMN encrypted INTEGER NOT NULL DEFAULT 1',
     );
   }
 }
