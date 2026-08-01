@@ -4,11 +4,15 @@ import 'package:go_router/go_router.dart';
 
 import '../../domain/entities/app_user.dart';
 import '../providers/auth_controller.dart';
+import '../providers/exercise_providers.dart';
 import '../providers/workout_providers.dart';
 import '../screens/auth/email_verification_screen.dart';
 import '../screens/auth/forgot_password_screen.dart';
 import '../screens/auth/login_screen.dart';
 import '../screens/auth/register_screen.dart';
+import '../screens/exercise/exercise_detail_screen.dart';
+import '../screens/exercise/exercise_library_screen.dart';
+import '../screens/exercise/exercise_player_screen.dart';
 import '../screens/profile/edit_profile_screen.dart';
 import '../screens/shell/app_shell_screen.dart';
 import '../screens/splash/splash_screen.dart';
@@ -30,6 +34,9 @@ abstract final class AppRoutes {
   static const String workoutList = '/workout/list';
   static const String workoutHistory = '/workout/history';
   static const String workoutPlayer = '/workout/player';
+  static const String exerciseList = '/exercise/list';
+  static const String exerciseDetail = '/exercise/detail/:exerciseId';
+  static const String exercisePlayer = '/exercise/player';
 
   /// The landing route for a freshly signed-in user.
   static String destinationFor(AppUser user) {
@@ -39,6 +46,10 @@ abstract final class AppRoutes {
   /// Resolved detail route for [workoutId].
   static String workoutDetailPath(int workoutId) =>
       '/workout/detail/$workoutId';
+
+  /// Resolved detail route for [exerciseId].
+  static String exerciseDetailPath(int exerciseId) =>
+      '/exercise/detail/$exerciseId';
 }
 
 /// Central [GoRouter] configuration.
@@ -132,6 +143,28 @@ final appRouterProvider = Provider<GoRouter>((ref) {
         builder: (BuildContext context, GoRouterState state) {
           final WorkoutPlayerArgs args = state.extra as WorkoutPlayerArgs;
           return WorkoutPlayerScreen(args: args);
+        },
+      ),
+      GoRoute(
+        path: AppRoutes.exerciseList,
+        name: 'exercise-list',
+        builder: (BuildContext context, GoRouterState state) =>
+            const ExerciseLibraryScreen(),
+      ),
+      GoRoute(
+        path: AppRoutes.exerciseDetail,
+        name: 'exercise-detail',
+        builder: (BuildContext context, GoRouterState state) =>
+            ExerciseDetailScreen(
+              exerciseId: int.parse(state.pathParameters['exerciseId']!),
+            ),
+      ),
+      GoRoute(
+        path: AppRoutes.exercisePlayer,
+        name: 'exercise-player',
+        builder: (BuildContext context, GoRouterState state) {
+          final ExercisePlayerArgs args = state.extra as ExercisePlayerArgs;
+          return ExercisePlayerScreen(args: args);
         },
       ),
     ],

@@ -94,6 +94,11 @@ class _WorkoutContent extends StatelessWidget {
           ),
           actions: [
             IconButton(
+              onPressed: () => context.push(AppRoutes.exerciseList),
+              icon: const Icon(Icons.fitness_center_rounded),
+              tooltip: context.l10n.exerciseLibrary,
+            ),
+            IconButton(
               onPressed: () => context.push(AppRoutes.workoutHistory),
               icon: const Icon(Icons.history_rounded),
               tooltip: l10n.workoutHistory,

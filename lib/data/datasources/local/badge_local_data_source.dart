@@ -58,6 +58,20 @@ class BadgeLocalDataSource extends BaseLocalDataSource {
     });
   }
 
+  Future<Badge?> getByUserAndType(String userId, String badgeType) {
+    return guard('get_by_user_and_type', () async {
+      final Database db = await dbConnection;
+      final List<Map<String, Object?>> rows = await db.query(
+        BadgeModel.table,
+        where: 'user_id = ? AND badge_type = ?',
+        whereArgs: <Object?>[userId, badgeType],
+        limit: 1,
+      );
+      if (rows.isEmpty) return null;
+      return BadgeModel.fromMap(rows.first);
+    });
+  }
+
   Future<void> delete(int id) {
     return guard('delete', () async {
       final Database db = await dbConnection;

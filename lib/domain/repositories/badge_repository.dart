@@ -10,5 +10,7 @@ abstract interface class BadgeRepository {
 
   Future<List<Badge>> getByUserId(String userId);
 
+  Future<Badge?> getByUserAndType(String userId, String badgeType);
+
   Future<void> delete(int id);
 }

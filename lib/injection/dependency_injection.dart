@@ -485,6 +485,8 @@ final workoutSessionRepositoryProvider = Provider<WorkoutSessionRepository>(
     dailyProgressRepository: ref.watch(dailyProgressRepositoryProvider),
     streakRepository: ref.watch(streakRepositoryProvider),
     achievementRepository: ref.watch(achievementRepositoryProvider),
+    badgeRepository: ref.watch(badgeRepositoryProvider),
+    workoutRepository: ref.watch(workoutRepositoryProvider),
   ),
 );
 

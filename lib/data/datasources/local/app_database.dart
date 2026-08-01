@@ -35,6 +35,7 @@ class AppDatabase {
     DatabaseMigration(version: 2, apply: _migrationV2CreateDomainSchema),
     DatabaseMigration(version: 3, apply: _migrationV3AddProfileFields),
     DatabaseMigration(version: 4, apply: _migrationV4WorkoutModule),
+    DatabaseMigration(version: 5, apply: _migrationV5ExerciseLibrary),
   ];
 
   Future<Database> get database async {
@@ -846,6 +847,55 @@ class AppDatabase {
       UPDATE workout_category SET
         icon = 'advanced', color = 4287323382
       WHERE slug = 'advanced'
+    ''');
+  }
+
+  /// v5: the complete exercise library module.
+  ///
+  /// Enriches the global `exercise` catalog with the full coaching payload
+  /// (scientific name, category, target/secondary muscles, suggested program,
+  /// tips, common mistakes and safety instructions) and adds the per-user
+  /// `exercise_favorite` join table so favourite flags live with each account
+  /// instead of mutating the shared catalog. All new columns are nullable or
+  /// defaulted so the upgrade is safe for existing rows; the seeder back-fills
+  /// the rich fields on the next launch.
+  static Future<void> _migrationV5ExerciseLibrary(
+    DatabaseExecutor executor,
+    int version,
+  ) async {
+    final DatabaseExecutor db = executor;
+
+    await db.execute('ALTER TABLE exercise ADD COLUMN scientific_name TEXT');
+    await db.execute('ALTER TABLE exercise ADD COLUMN gif_path TEXT');
+    await db.execute('ALTER TABLE exercise ADD COLUMN category TEXT');
+    await db.execute('ALTER TABLE exercise ADD COLUMN target_muscle TEXT');
+    await db.execute('ALTER TABLE exercise ADD COLUMN secondary_muscle TEXT');
+    await db.execute('ALTER TABLE exercise ADD COLUMN estimated_calories REAL');
+    await db.execute(
+      'ALTER TABLE exercise ADD COLUMN duration_seconds INTEGER NOT NULL DEFAULT 30',
+    );
+    await db.execute(
+      'ALTER TABLE exercise ADD COLUMN sets INTEGER NOT NULL DEFAULT 3',
+    );
+    await db.execute(
+      'ALTER TABLE exercise ADD COLUMN reps INTEGER NOT NULL DEFAULT 12',
+    );
+    await db.execute(
+      'ALTER TABLE exercise ADD COLUMN rest_seconds INTEGER NOT NULL DEFAULT 30',
+    );
+    await db.execute('ALTER TABLE exercise ADD COLUMN tips TEXT');
+    await db.execute('ALTER TABLE exercise ADD COLUMN common_mistakes TEXT');
+    await db.execute('ALTER TABLE exercise ADD COLUMN safety_instructions TEXT');
+
+    await db.execute('''
+      CREATE TABLE exercise_favorite (
+        user_id TEXT NOT NULL,
+        exercise_id INTEGER NOT NULL,
+        created_at INTEGER NOT NULL,
+        PRIMARY KEY (user_id, exercise_id),
+        FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE,
+        FOREIGN KEY (exercise_id) REFERENCES exercise(id) ON DELETE CASCADE
+      )
     ''');
   }
 }

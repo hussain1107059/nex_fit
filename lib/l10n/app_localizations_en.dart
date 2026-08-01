@@ -1168,4 +1168,124 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get workoutClearFilters => 'Clear filters';
+
+  @override
+  String get exerciseLibrary => 'Exercise Library';
+
+  @override
+  String get exerciseLibrarySubtitle => 'Browse exercises by muscle group';
+
+  @override
+  String get exerciseSearchHint => 'Search exercises...';
+
+  @override
+  String get exerciseSearchTitle => 'Search exercises';
+
+  @override
+  String get exerciseSearchEmptyTitle => 'Search the exercise library';
+
+  @override
+  String get exerciseSearchEmptySubtitle =>
+      'Type a keyword or filter by category, level or equipment.';
+
+  @override
+  String get exerciseAll => 'All';
+
+  @override
+  String get exerciseFavorites => 'Favourites';
+
+  @override
+  String get exerciseFavoritesOnly => 'Favourites only';
+
+  @override
+  String get exerciseNoFavorites => 'No favourites yet';
+
+  @override
+  String get exerciseNoFavoritesSubtitle =>
+      'Tap the heart on any exercise to save it here.';
+
+  @override
+  String get exerciseNoResults => 'No exercises found';
+
+  @override
+  String get exerciseNoResultsSubtitle => 'Try a different search or filter.';
+
+  @override
+  String get exerciseTargetMuscle => 'Target muscle';
+
+  @override
+  String get exerciseSecondaryMuscle => 'Secondary muscles';
+
+  @override
+  String get exerciseHowTo => 'How to do it';
+
+  @override
+  String get exerciseTips => 'Tips';
+
+  @override
+  String get exerciseCommonMistakes => 'Common mistakes';
+
+  @override
+  String get exerciseSafety => 'Safety notes';
+
+  @override
+  String get exerciseAbout => 'About this exercise';
+
+  @override
+  String get exerciseStart => 'Start exercise';
+
+  @override
+  String get exerciseSets => 'sets';
+
+  @override
+  String get exerciseReps => 'reps';
+
+  @override
+  String get exerciseRest => 'rest';
+
+  @override
+  String exerciseSetOf(Object current, Object total) {
+    return 'Set $current of $total';
+  }
+
+  @override
+  String get exerciseNextUp => 'Next up';
+
+  @override
+  String get exerciseCompleteTitle => 'Exercise complete!';
+
+  @override
+  String get exerciseCompleteSubtitle => 'Great job! Keep pushing.';
+
+  @override
+  String get exerciseCaloriesEstimate => 'Calories';
+
+  @override
+  String get exerciseDuration => 'Duration';
+
+  @override
+  String get exerciseAllCategories => 'All categories';
+
+  @override
+  String get workoutSummary => 'Workout summary';
+
+  @override
+  String get workoutSummaryBadges => 'Badges earned';
+
+  @override
+  String get workoutSummaryStreak => 'Current streak';
+
+  @override
+  String get workoutSummaryCompletion => 'Completion';
+
+  @override
+  String get workoutSummaryMotivation => 'Every rep counts. Keep going!';
+
+  @override
+  String workoutSummaryExercisesDone(Object completed, Object total) {
+    return '$completed of $total exercises done';
+  }
+
+  @override
+  String get workoutSummaryDays => 'day(s)';
 }

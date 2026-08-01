@@ -1,15 +1,38 @@
 import '../../domain/entities/achievement.dart';
+import '../../domain/entities/badge.dart';
 import '../../domain/entities/common_enums.dart';
 import '../../domain/entities/daily_progress.dart';
 import '../../domain/entities/streak.dart';
+import '../../domain/entities/workout.dart';
 import '../../domain/entities/workout_completion.dart';
 import '../../domain/entities/workout_history.dart';
 import '../../domain/repositories/achievement_repository.dart';
+import '../../domain/repositories/badge_repository.dart';
 import '../../domain/repositories/daily_progress_repository.dart';
 import '../../domain/repositories/exercise_history_repository.dart';
 import '../../domain/repositories/streak_repository.dart';
 import '../../domain/repositories/workout_history_repository.dart';
+import '../../domain/repositories/workout_repository.dart';
 import '../../domain/repositories/workout_session_repository.dart';
+
+/// Metric a badge tracks.
+enum _BadgeMetric { workouts, calories, streak }
+
+class _BadgeDefinition {
+  const _BadgeDefinition({
+    required this.type,
+    required this.name,
+    required this.icon,
+    required this.target,
+    required this.metric,
+  });
+
+  final String type;
+  final String name;
+  final String icon;
+  final double target;
+  final _BadgeMetric metric;
+}
 
 /// SQLite backed session lifecycle: start + complete with all side-effects.
 class WorkoutSessionRepositoryImpl implements WorkoutSessionRepository {
@@ -19,13 +42,77 @@ class WorkoutSessionRepositoryImpl implements WorkoutSessionRepository {
     required this.dailyProgressRepository,
     required this.streakRepository,
     required this.achievementRepository,
+    required this.badgeRepository,
+    required this.workoutRepository,
   });
+
+  static const List<_BadgeDefinition> _badgeDefinitions =
+      <_BadgeDefinition>[
+        _BadgeDefinition(
+          type: 'first_workout',
+          name: 'First Step',
+          icon: 'direction_run',
+          target: 1,
+          metric: _BadgeMetric.workouts,
+        ),
+        _BadgeDefinition(
+          type: 'workouts_5',
+          name: 'Consistent',
+          icon: 'repeat',
+          target: 5,
+          metric: _BadgeMetric.workouts,
+        ),
+        _BadgeDefinition(
+          type: 'workouts_15',
+          name: 'Dedicated',
+          icon: 'stars',
+          target: 15,
+          metric: _BadgeMetric.workouts,
+        ),
+        _BadgeDefinition(
+          type: 'workouts_50',
+          name: 'Iron Warrior',
+          icon: 'military_tech',
+          target: 50,
+          metric: _BadgeMetric.workouts,
+        ),
+        _BadgeDefinition(
+          type: 'calories_1000',
+          name: 'Calorie Burner',
+          icon: 'local_fire_department',
+          target: 1000,
+          metric: _BadgeMetric.calories,
+        ),
+        _BadgeDefinition(
+          type: 'calories_5000',
+          name: 'Calorie Crusher',
+          icon: 'whatshot',
+          target: 5000,
+          metric: _BadgeMetric.calories,
+        ),
+        _BadgeDefinition(
+          type: 'streak_7',
+          name: 'Week Warrior',
+          icon: 'calendar_month',
+          target: 7,
+          metric: _BadgeMetric.streak,
+        ),
+        _BadgeDefinition(
+          type: 'streak_30',
+          name: 'Month Master',
+          icon: 'workspace_premium',
+          target: 30,
+          metric: _BadgeMetric.streak,
+        ),
+      ];
 
   final WorkoutHistoryRepository workoutHistoryRepository;
   final ExerciseHistoryRepository exerciseHistoryRepository;
   final DailyProgressRepository dailyProgressRepository;
   final StreakRepository streakRepository;
   final AchievementRepository achievementRepository;
+  final BadgeRepository badgeRepository;
+  final WorkoutRepository workoutRepository;
 
   @override
   Future<int> startSession({
@@ -85,6 +172,15 @@ class WorkoutSessionRepositoryImpl implements WorkoutSessionRepository {
       currentStreak: streak.currentStreak,
     );
 
+    final List<Badge> badges = await _updateBadges(
+      userId: history.userId,
+      totalCompleted: totalCompleted,
+      totalCalories: totalCalories,
+      currentStreak: streak.currentStreak,
+    );
+
+    final String? workoutName = await _workoutName(history.workoutId);
+
     return WorkoutCompletion(
       historyId: historyId,
       durationMinutes: durationMinutes,
@@ -92,8 +188,20 @@ class WorkoutSessionRepositoryImpl implements WorkoutSessionRepository {
       exercisesCompleted: exercisesCompleted,
       totalExercises: totalExercises,
       completedAt: now,
+      workoutName: workoutName,
+      completionPercent: totalExercises == 0
+          ? 0
+          : (exercisesCompleted / totalExercises) * 100,
+      currentStreak: streak.currentStreak,
       newAchievements: unlocked,
+      newBadges: badges,
     );
+  }
+
+  Future<String?> _workoutName(int? workoutId) async {
+    if (workoutId == null) return null;
+    final Workout? workout = await workoutRepository.getById(workoutId);
+    return workout?.name;
   }
 
   Future<int> _countExercises(int historyId) async {
@@ -185,6 +293,57 @@ class WorkoutSessionRepositoryImpl implements WorkoutSessionRepository {
     );
     await streakRepository.upsert(updated);
     return updated;
+  }
+
+  Future<List<Badge>> _updateBadges({
+    required String userId,
+    required int totalCompleted,
+    required double totalCalories,
+    required int currentStreak,
+  }) async {
+    final DateTime now = DateTime.now();
+    final List<Badge> newlyEarned = <Badge>[];
+
+    for (final _BadgeDefinition definition in _badgeDefinitions) {
+      final double progress = switch (definition.metric) {
+        _BadgeMetric.workouts => totalCompleted.toDouble(),
+        _BadgeMetric.calories => totalCalories,
+        _BadgeMetric.streak => currentStreak.toDouble(),
+      };
+      final double clamped = progress.clamp(0.0, definition.target);
+      final bool earned = clamped >= definition.target;
+      final Badge? existing = await badgeRepository.getByUserAndType(
+        userId,
+        definition.type,
+      );
+
+      final Badge badge = Badge(
+        id: existing?.id,
+        userId: userId,
+        badgeType: definition.type,
+        badgeName: definition.name,
+        icon: definition.icon,
+        level: 1,
+        progress: clamped,
+        target: definition.target,
+        isEarned: earned,
+        earnedAt: earned ? (existing?.earnedAt ?? now) : existing?.earnedAt,
+        createdAt: existing?.createdAt ?? now,
+        updatedAt: now,
+      );
+
+      if (existing == null) {
+        await badgeRepository.insert(badge);
+      } else {
+        await badgeRepository.update(badge);
+      }
+
+      if (earned && (existing == null || !existing.isEarned)) {
+        newlyEarned.add(badge.copyWith(id: null));
+      }
+    }
+
+    return newlyEarned;
   }
 
   Future<List<Achievement>> _unlockAchievements({

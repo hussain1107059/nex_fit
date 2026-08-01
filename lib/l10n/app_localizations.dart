@@ -2359,6 +2359,234 @@ abstract class AppLocalizations {
   /// In bs, this message translates to:
   /// **'ফিল্টার মুছুন'**
   String get workoutClearFilters;
+
+  /// No description provided for @exerciseLibrary.
+  ///
+  /// In bs, this message translates to:
+  /// **'ব্যায়াম লাইব্রেরি'**
+  String get exerciseLibrary;
+
+  /// No description provided for @exerciseLibrarySubtitle.
+  ///
+  /// In bs, this message translates to:
+  /// **'পেশি গ্রুপ অনুযায়ী ব্যায়াম দেখুন'**
+  String get exerciseLibrarySubtitle;
+
+  /// No description provided for @exerciseSearchHint.
+  ///
+  /// In bs, this message translates to:
+  /// **'ব্যায়াম খুঁজুন...'**
+  String get exerciseSearchHint;
+
+  /// No description provided for @exerciseSearchTitle.
+  ///
+  /// In bs, this message translates to:
+  /// **'ব্যায়াম খুঁজুন'**
+  String get exerciseSearchTitle;
+
+  /// No description provided for @exerciseSearchEmptyTitle.
+  ///
+  /// In bs, this message translates to:
+  /// **'ব্যায়াম লাইব্রেরি খুঁজুন'**
+  String get exerciseSearchEmptyTitle;
+
+  /// No description provided for @exerciseSearchEmptySubtitle.
+  ///
+  /// In bs, this message translates to:
+  /// **'কীওয়ার্ড লিখুন বা বিভাগ, স্তর ও সরঞ্জাম দিয়ে ফিল্টার করুন।'**
+  String get exerciseSearchEmptySubtitle;
+
+  /// No description provided for @exerciseAll.
+  ///
+  /// In bs, this message translates to:
+  /// **'সব'**
+  String get exerciseAll;
+
+  /// No description provided for @exerciseFavorites.
+  ///
+  /// In bs, this message translates to:
+  /// **'পছন্দের তালিকা'**
+  String get exerciseFavorites;
+
+  /// No description provided for @exerciseFavoritesOnly.
+  ///
+  /// In bs, this message translates to:
+  /// **'শুধু পছন্দের'**
+  String get exerciseFavoritesOnly;
+
+  /// No description provided for @exerciseNoFavorites.
+  ///
+  /// In bs, this message translates to:
+  /// **'এখনও কোনো পছন্দ নেই'**
+  String get exerciseNoFavorites;
+
+  /// No description provided for @exerciseNoFavoritesSubtitle.
+  ///
+  /// In bs, this message translates to:
+  /// **'যেকোনো ব্যায়ামের হার্ট আইকনে চাপ দিলে এটি এখানে দেখা যাবে।'**
+  String get exerciseNoFavoritesSubtitle;
+
+  /// No description provided for @exerciseNoResults.
+  ///
+  /// In bs, this message translates to:
+  /// **'কোনো ব্যায়াম পাওয়া যায়নি'**
+  String get exerciseNoResults;
+
+  /// No description provided for @exerciseNoResultsSubtitle.
+  ///
+  /// In bs, this message translates to:
+  /// **'অন্য কীওয়ার্ড বা ফিল্টার দিয়ে চেষ্টা করুন।'**
+  String get exerciseNoResultsSubtitle;
+
+  /// No description provided for @exerciseTargetMuscle.
+  ///
+  /// In bs, this message translates to:
+  /// **'প্রধান পেশি'**
+  String get exerciseTargetMuscle;
+
+  /// No description provided for @exerciseSecondaryMuscle.
+  ///
+  /// In bs, this message translates to:
+  /// **'সহায়ক পেশি'**
+  String get exerciseSecondaryMuscle;
+
+  /// No description provided for @exerciseHowTo.
+  ///
+  /// In bs, this message translates to:
+  /// **'যেভাবে করবেন'**
+  String get exerciseHowTo;
+
+  /// No description provided for @exerciseTips.
+  ///
+  /// In bs, this message translates to:
+  /// **'পরামর্শ'**
+  String get exerciseTips;
+
+  /// No description provided for @exerciseCommonMistakes.
+  ///
+  /// In bs, this message translates to:
+  /// **'সাধারণ ভুল'**
+  String get exerciseCommonMistakes;
+
+  /// No description provided for @exerciseSafety.
+  ///
+  /// In bs, this message translates to:
+  /// **'নিরাপত্তা নির্দেশনা'**
+  String get exerciseSafety;
+
+  /// No description provided for @exerciseAbout.
+  ///
+  /// In bs, this message translates to:
+  /// **'এই ব্যায়াম সম্পর্কে'**
+  String get exerciseAbout;
+
+  /// No description provided for @exerciseStart.
+  ///
+  /// In bs, this message translates to:
+  /// **'ব্যায়াম শুরু করুন'**
+  String get exerciseStart;
+
+  /// No description provided for @exerciseSets.
+  ///
+  /// In bs, this message translates to:
+  /// **'সেট'**
+  String get exerciseSets;
+
+  /// No description provided for @exerciseReps.
+  ///
+  /// In bs, this message translates to:
+  /// **'রিপ'**
+  String get exerciseReps;
+
+  /// No description provided for @exerciseRest.
+  ///
+  /// In bs, this message translates to:
+  /// **'বিশ্রাম'**
+  String get exerciseRest;
+
+  /// No description provided for @exerciseSetOf.
+  ///
+  /// In bs, this message translates to:
+  /// **'সেট {current} / {total}'**
+  String exerciseSetOf(Object current, Object total);
+
+  /// No description provided for @exerciseNextUp.
+  ///
+  /// In bs, this message translates to:
+  /// **'পরবর্তী'**
+  String get exerciseNextUp;
+
+  /// No description provided for @exerciseCompleteTitle.
+  ///
+  /// In bs, this message translates to:
+  /// **'ব্যায়াম সম্পন্ন!'**
+  String get exerciseCompleteTitle;
+
+  /// No description provided for @exerciseCompleteSubtitle.
+  ///
+  /// In bs, this message translates to:
+  /// **'দারুণ কাজ! চালিয়ে যান।'**
+  String get exerciseCompleteSubtitle;
+
+  /// No description provided for @exerciseCaloriesEstimate.
+  ///
+  /// In bs, this message translates to:
+  /// **'ক্যালোরি'**
+  String get exerciseCaloriesEstimate;
+
+  /// No description provided for @exerciseDuration.
+  ///
+  /// In bs, this message translates to:
+  /// **'সময়কাল'**
+  String get exerciseDuration;
+
+  /// No description provided for @exerciseAllCategories.
+  ///
+  /// In bs, this message translates to:
+  /// **'সব বিভাগ'**
+  String get exerciseAllCategories;
+
+  /// No description provided for @workoutSummary.
+  ///
+  /// In bs, this message translates to:
+  /// **'ওয়ার্কআউট সারাংশ'**
+  String get workoutSummary;
+
+  /// No description provided for @workoutSummaryBadges.
+  ///
+  /// In bs, this message translates to:
+  /// **'অর্জিত ব্যাজ'**
+  String get workoutSummaryBadges;
+
+  /// No description provided for @workoutSummaryStreak.
+  ///
+  /// In bs, this message translates to:
+  /// **'বর্তমান স্ট্রিক'**
+  String get workoutSummaryStreak;
+
+  /// No description provided for @workoutSummaryCompletion.
+  ///
+  /// In bs, this message translates to:
+  /// **'সম্পন্নের হার'**
+  String get workoutSummaryCompletion;
+
+  /// No description provided for @workoutSummaryMotivation.
+  ///
+  /// In bs, this message translates to:
+  /// **'প্রতিটি রিপ গণনা করে। চালিয়ে যান!'**
+  String get workoutSummaryMotivation;
+
+  /// No description provided for @workoutSummaryExercisesDone.
+  ///
+  /// In bs, this message translates to:
+  /// **'{completed} / {total} ব্যায়াম সম্পন্ন'**
+  String workoutSummaryExercisesDone(Object completed, Object total);
+
+  /// No description provided for @workoutSummaryDays.
+  ///
+  /// In bs, this message translates to:
+  /// **'দিন'**
+  String get workoutSummaryDays;
 }
 
 class _AppLocalizationsDelegate

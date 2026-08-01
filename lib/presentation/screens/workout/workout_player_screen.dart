@@ -1,6 +1,7 @@
 import 'dart:async';
 
-import 'package:flutter/material.dart' hide ErrorWidget;
+import 'package:flutter/material.dart' hide Badge;
+import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
@@ -12,6 +13,7 @@ import '../../../core/widgets/buttons/app_button.dart';
 import '../../../core/widgets/dialogs/app_dialog.dart';
 import '../../../core/widgets/layout/custom_app_bar.dart';
 import '../../../domain/entities/achievement.dart';
+import '../../../domain/entities/badge.dart';
 import '../../../domain/entities/workout_completion.dart';
 import '../../../domain/entities/workout_exercise_detail.dart';
 import '../../../l10n/app_localizations.dart';
@@ -48,9 +50,22 @@ class _WorkoutPlayerScreenState extends ConsumerState<WorkoutPlayerScreen> {
           _timer?.cancel();
           return;
         }
+        final WorkoutSessionPhase before = state.phase;
         ref.read(workoutPlayerControllerProvider.notifier).tick();
+        final WorkoutPlayerState? after = ref.read(
+          workoutPlayerControllerProvider,
+        );
+        if (after != null &&
+            after.phase == WorkoutSessionPhase.exercising &&
+            before == WorkoutSessionPhase.resting) {
+          _vibrate();
+        }
       });
     });
+  }
+
+  void _vibrate() {
+    HapticFeedback.mediumImpact();
   }
 
   @override
@@ -164,32 +179,21 @@ class _WorkoutPlayerScreenState extends ConsumerState<WorkoutPlayerScreen> {
             child: Center(
               child: exercise == null
                   ? Text(l10n.workoutFinish)
+                  : state.phase == WorkoutSessionPhase.resting
+                  ? _WorkoutRestScreen(
+                      currentIndex: state.currentIndex,
+                      totalExercises: state.totalExercises,
+                      nextExercise: exercise,
+                      remaining: state.currentRemainingSeconds,
+                      onSkip: () => ref
+                          .read(workoutPlayerControllerProvider.notifier)
+                          .skipExercise(),
+                    )
                   : Column(
                       mainAxisSize: MainAxisSize.min,
                       children: [
-                        if (state.phase == WorkoutSessionPhase.resting) ...[
-                          Container(
-                            padding: const EdgeInsets.symmetric(
-                              horizontal: AppSpacing.md,
-                              vertical: 6,
-                            ),
-                            decoration: BoxDecoration(
-                              borderRadius: AppRadius.pillRadius,
-                              color: context.colorScheme.tertiaryContainer,
-                            ),
-                            child: Text(
-                              l10n.workoutRestTitle,
-                              style: context.textTheme.labelMedium?.copyWith(
-                                color: context.colorScheme.onTertiaryContainer,
-                                fontWeight: FontWeight.w700,
-                              ),
-                            ),
-                          ),
-                          const SizedBox(height: AppSpacing.lg),
-                        ],
                         _CountdownRing(
                           seconds: state.currentRemainingSeconds,
-                          isResting: state.phase == WorkoutSessionPhase.resting,
                         ),
                         const SizedBox(height: AppSpacing.lg),
                         Text(
@@ -267,16 +271,13 @@ class _WorkoutPlayerScreenState extends ConsumerState<WorkoutPlayerScreen> {
 }
 
 class _CountdownRing extends StatelessWidget {
-  const _CountdownRing({required this.seconds, required this.isResting});
+  const _CountdownRing({required this.seconds});
 
   final int seconds;
-  final bool isResting;
 
   @override
   Widget build(BuildContext context) {
-    final Color color = isResting
-        ? context.colorScheme.tertiary
-        : context.colorScheme.primary;
+    final Color color = context.colorScheme.primary;
     final int displayed = seconds.clamp(0, 1 << 20);
 
     return Container(
@@ -304,6 +305,81 @@ class _CountdownRing extends StatelessWidget {
           ),
         ),
       ),
+    );
+  }
+}
+
+/// Full rest screen shown between exercises inside a workout.
+class _WorkoutRestScreen extends StatelessWidget {
+  const _WorkoutRestScreen({
+    required this.currentIndex,
+    required this.totalExercises,
+    required this.nextExercise,
+    required this.remaining,
+    required this.onSkip,
+  });
+
+  final int currentIndex;
+  final int totalExercises;
+  final WorkoutExerciseDetail nextExercise;
+  final int remaining;
+  final VoidCallback onSkip;
+
+  @override
+  Widget build(BuildContext context) {
+    final AppLocalizations l10n = context.l10n;
+
+    return Column(
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        Container(
+          padding: const EdgeInsets.symmetric(
+            horizontal: AppSpacing.md,
+            vertical: 6,
+          ),
+          decoration: BoxDecoration(
+            borderRadius: AppRadius.pillRadius,
+            color: context.colorScheme.tertiaryContainer,
+          ),
+          child: Text(
+            l10n.workoutRestTitle,
+            style: context.textTheme.labelMedium?.copyWith(
+              color: context.colorScheme.onTertiaryContainer,
+              fontWeight: FontWeight.w700,
+            ),
+          ),
+        ),
+        const SizedBox(height: AppSpacing.lg),
+        Text(
+          remaining.toString().toBanglaDigits(),
+          style: context.textTheme.displayLarge?.copyWith(
+            fontWeight: FontWeight.w800,
+            color: context.colorScheme.tertiary,
+            fontFeatures: const [FontFeature.tabularFigures()],
+          ),
+        ),
+        const SizedBox(height: AppSpacing.md),
+        Text(
+          '${l10n.exerciseNextUp} ${(currentIndex + 1).toString().toBanglaDigits()} / ${totalExercises.toString().toBanglaDigits()}',
+          style: context.textTheme.labelMedium?.copyWith(
+            color: context.colorScheme.onSurfaceVariant,
+          ),
+        ),
+        const SizedBox(height: AppSpacing.sm),
+        Text(
+          nextExercise.exercise.name,
+          textAlign: TextAlign.center,
+          style: context.textTheme.titleMedium?.copyWith(
+            fontWeight: FontWeight.w700,
+          ),
+        ),
+        const SizedBox(height: AppSpacing.lg),
+        TextButton.icon(
+          onPressed: onSkip,
+          icon: const Icon(Icons.fast_forward_rounded),
+          label: Text(l10n.workoutSkipRest),
+        ),
+      ],
     );
   }
 }
@@ -336,8 +412,19 @@ class WorkoutCompletionView extends ConsumerWidget {
                           color: context.colorScheme.primary,
                         ),
                         const SizedBox(height: AppSpacing.md),
+                        if (completion.workoutName != null) ...[
+                          Text(
+                            completion.workoutName!,
+                            textAlign: TextAlign.center,
+                            style: context.textTheme.titleMedium?.copyWith(
+                              color: context.colorScheme.primary,
+                              fontWeight: FontWeight.w700,
+                            ),
+                          ),
+                          const SizedBox(height: 4),
+                        ],
                         Text(
-                          l10n.workoutCompleteTitle,
+                          l10n.workoutSummary,
                           textAlign: TextAlign.center,
                           style: context.textTheme.headlineSmall?.copyWith(
                             fontWeight: FontWeight.w800,
@@ -345,7 +432,7 @@ class WorkoutCompletionView extends ConsumerWidget {
                         ),
                         const SizedBox(height: 6),
                         Text(
-                          l10n.workoutCompleteSubtitle,
+                          l10n.workoutSummaryMotivation,
                           textAlign: TextAlign.center,
                           style: context.textTheme.bodyMedium?.copyWith(
                             color: context.colorScheme.onSurfaceVariant,
@@ -369,14 +456,47 @@ class WorkoutCompletionView extends ConsumerWidget {
                               label: l10n.workoutCaloriesBurned,
                             ),
                             _CompletionStat(
+                              icon: Icons.check_circle_rounded,
+                              value:
+                                  '${completion.completionPercent.round().toString().toBanglaDigits()}%',
+                              label: l10n.workoutSummaryCompletion,
+                            ),
+                          ],
+                        ),
+                        const SizedBox(height: AppSpacing.md),
+                        Row(
+                          children: [
+                            _CompletionStat(
                               icon: Icons.repeat_rounded,
                               value:
                                   '${completion.exercisesCompleted.toString().toBanglaDigits()} / '
                                   '${completion.totalExercises.toString().toBanglaDigits()}',
                               label: l10n.workoutExercises,
                             ),
+                            _CompletionStat(
+                              icon: Icons.local_fire_department_rounded,
+                              value:
+                                  '${completion.currentStreak.toString().toBanglaDigits()} '
+                                  '${l10n.workoutSummaryDays}',
+                              label: l10n.workoutSummaryStreak,
+                            ),
+                            const _EmptyStat(),
                           ],
                         ),
+                        if (completion.newBadges.isNotEmpty) ...[
+                          const SizedBox(height: AppSpacing.lg),
+                          Text(
+                            l10n.workoutSummaryBadges,
+                            style: context.textTheme.titleMedium?.copyWith(
+                              fontWeight: FontWeight.w700,
+                            ),
+                          ),
+                          const SizedBox(height: AppSpacing.sm),
+                          for (final Badge badge in completion.newBadges) ...[
+                            _BadgeTile(badge: badge),
+                            AppSpacing.sm.heightSpace,
+                          ],
+                        ],
                         if (completion.newAchievements.isNotEmpty) ...[
                           const SizedBox(height: AppSpacing.lg),
                           Text(
@@ -463,6 +583,74 @@ class _CompletionStat extends StatelessWidget {
             textAlign: TextAlign.center,
             style: context.textTheme.labelSmall?.copyWith(
               color: context.colorScheme.onSurfaceVariant,
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+/// Placeholder used to balance a stats row without content.
+class _EmptyStat extends StatelessWidget {
+  const _EmptyStat();
+
+  @override
+  Widget build(BuildContext context) {
+    return const Expanded(child: SizedBox.shrink());
+  }
+}
+
+class _BadgeTile extends StatelessWidget {
+  const _BadgeTile({required this.badge});
+
+  final Badge badge;
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      padding: const EdgeInsets.all(AppSpacing.md),
+      decoration: BoxDecoration(
+        borderRadius: AppRadius.mdRadius,
+        color: context.colorScheme.tertiaryContainer.withValues(alpha: 0.6),
+      ),
+      child: Row(
+        children: [
+          Container(
+            width: 40,
+            height: 40,
+            decoration: BoxDecoration(
+              shape: BoxShape.circle,
+              color: context.colorScheme.tertiary.withValues(alpha: 0.18),
+            ),
+            child: Icon(
+              Icons.military_tech_rounded,
+              color: context.colorScheme.tertiary,
+            ),
+          ),
+          AppSpacing.md.widthSpace,
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  badge.badgeName,
+                  style: context.textTheme.titleSmall?.copyWith(
+                    fontWeight: FontWeight.w700,
+                  ),
+                ),
+                const SizedBox(height: 2),
+                ClipRRect(
+                  borderRadius: AppRadius.pillRadius,
+                  child: LinearProgressIndicator(
+                    value: badge.target > 0
+                        ? (badge.progress / badge.target).clamp(0.0, 1.0)
+                        : 0,
+                    minHeight: 6,
+                    backgroundColor: context.colorScheme.surfaceContainerHighest,
+                  ),
+                ),
+              ],
             ),
           ),
         ],

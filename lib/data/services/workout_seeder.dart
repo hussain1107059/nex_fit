@@ -32,36 +32,54 @@ class WorkoutSeeder {
   }
 
   Future<void> _seedExercises(Transaction txn) async {
-    final List<Map<String, Object?>> existing = await txn.query(
-      ExerciseModel.table,
-      columns: <String>['name'],
-      where: 'user_id IS NULL',
-      limit: 1,
-    );
-    if (existing.isNotEmpty) return;
-
     _logger.info('Seeding ${kSeedExercises.length} built-in exercises');
     final int now = DateTime.now().millisecondsSinceEpoch;
-    final Batch batch = txn.batch();
+    int updated = 0;
+    int inserted = 0;
     for (final SeedExercise exercise in kSeedExercises) {
-      batch.rawInsert(
-        'INSERT OR IGNORE INTO ${ExerciseModel.table} '
-        '(name, description, instructions, body_part, equipment, difficulty, '
-        'image, calories_per_minute, is_custom, created_at) '
-        'VALUES (?, ?, ?, ?, ?, ?, NULL, ?, 0, ?)',
-        <Object?>[
-          exercise.name,
-          exercise.description,
-          exercise.instructionsText,
-          exercise.bodyPart,
-          exercise.equipment,
-          exercise.difficulty.name,
-          exercise.caloriesPerMinute,
-          now,
-        ],
+      final Map<String, Object?> values = <String, Object?>{
+        'name': exercise.name,
+        'scientific_name': exercise.scientificName,
+        'description': exercise.description,
+        'instructions': exercise.instructionsText,
+        'body_part': exercise.bodyPart,
+        'secondary_muscle': exercise.secondaryMuscle,
+        'equipment': exercise.equipment,
+        'difficulty': exercise.difficulty.name,
+        'category': exercise.category.name,
+        'image': null,
+        'gif_path': exercise.gifPath,
+        'calories_per_minute': exercise.caloriesPerMinute,
+        'estimated_calories': exercise.estimatedCalories,
+        'duration_seconds': exercise.durationSeconds,
+        'sets': exercise.sets,
+        'reps': exercise.reps,
+        'rest_seconds': exercise.restSeconds,
+        'tips': ExerciseModel.encodeList(exercise.tips),
+        'common_mistakes': ExerciseModel.encodeList(exercise.commonMistakes),
+        'safety_instructions': ExerciseModel.encodeList(
+          exercise.safetyInstructions,
+        ),
+        'is_custom': 0,
+        'created_at': now,
+      };
+
+      // Backfill existing built-in rows in place (keeps ids and therefore the
+      // workout_exercise links valid) and insert any new catalog entries.
+      final int changed = await txn.update(
+        ExerciseModel.table,
+        values,
+        where: 'user_id IS NULL AND name = ?',
+        whereArgs: <Object?>[exercise.name],
       );
+      if (changed > 0) {
+        updated++;
+        continue;
+      }
+      await txn.insert(ExerciseModel.table, values);
+      inserted++;
     }
-    await batch.commit(noResult: true);
+    _logger.info('Built-in exercises seeded (updated: $updated, inserted: $inserted)');
   }
 
   Future<void> _seedWorkouts(Transaction txn, String userId) async {

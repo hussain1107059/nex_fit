@@ -22,5 +22,9 @@ class BadgeRepositoryImpl implements BadgeRepository {
       _dataSource.getByUserId(userId);
 
   @override
+  Future<Badge?> getByUserAndType(String userId, String badgeType) =>
+      _dataSource.getByUserAndType(userId, badgeType);
+
+  @override
   Future<void> delete(int id) => _dataSource.delete(id);
 }

@@ -1175,4 +1175,125 @@ class AppLocalizationsBs extends AppLocalizations {
 
   @override
   String get workoutClearFilters => 'ফিল্টার মুছুন';
+
+  @override
+  String get exerciseLibrary => 'ব্যায়াম লাইব্রেরি';
+
+  @override
+  String get exerciseLibrarySubtitle => 'পেশি গ্রুপ অনুযায়ী ব্যায়াম দেখুন';
+
+  @override
+  String get exerciseSearchHint => 'ব্যায়াম খুঁজুন...';
+
+  @override
+  String get exerciseSearchTitle => 'ব্যায়াম খুঁজুন';
+
+  @override
+  String get exerciseSearchEmptyTitle => 'ব্যায়াম লাইব্রেরি খুঁজুন';
+
+  @override
+  String get exerciseSearchEmptySubtitle =>
+      'কীওয়ার্ড লিখুন বা বিভাগ, স্তর ও সরঞ্জাম দিয়ে ফিল্টার করুন।';
+
+  @override
+  String get exerciseAll => 'সব';
+
+  @override
+  String get exerciseFavorites => 'পছন্দের তালিকা';
+
+  @override
+  String get exerciseFavoritesOnly => 'শুধু পছন্দের';
+
+  @override
+  String get exerciseNoFavorites => 'এখনও কোনো পছন্দ নেই';
+
+  @override
+  String get exerciseNoFavoritesSubtitle =>
+      'যেকোনো ব্যায়ামের হার্ট আইকনে চাপ দিলে এটি এখানে দেখা যাবে।';
+
+  @override
+  String get exerciseNoResults => 'কোনো ব্যায়াম পাওয়া যায়নি';
+
+  @override
+  String get exerciseNoResultsSubtitle =>
+      'অন্য কীওয়ার্ড বা ফিল্টার দিয়ে চেষ্টা করুন।';
+
+  @override
+  String get exerciseTargetMuscle => 'প্রধান পেশি';
+
+  @override
+  String get exerciseSecondaryMuscle => 'সহায়ক পেশি';
+
+  @override
+  String get exerciseHowTo => 'যেভাবে করবেন';
+
+  @override
+  String get exerciseTips => 'পরামর্শ';
+
+  @override
+  String get exerciseCommonMistakes => 'সাধারণ ভুল';
+
+  @override
+  String get exerciseSafety => 'নিরাপত্তা নির্দেশনা';
+
+  @override
+  String get exerciseAbout => 'এই ব্যায়াম সম্পর্কে';
+
+  @override
+  String get exerciseStart => 'ব্যায়াম শুরু করুন';
+
+  @override
+  String get exerciseSets => 'সেট';
+
+  @override
+  String get exerciseReps => 'রিপ';
+
+  @override
+  String get exerciseRest => 'বিশ্রাম';
+
+  @override
+  String exerciseSetOf(Object current, Object total) {
+    return 'সেট $current / $total';
+  }
+
+  @override
+  String get exerciseNextUp => 'পরবর্তী';
+
+  @override
+  String get exerciseCompleteTitle => 'ব্যায়াম সম্পন্ন!';
+
+  @override
+  String get exerciseCompleteSubtitle => 'দারুণ কাজ! চালিয়ে যান।';
+
+  @override
+  String get exerciseCaloriesEstimate => 'ক্যালোরি';
+
+  @override
+  String get exerciseDuration => 'সময়কাল';
+
+  @override
+  String get exerciseAllCategories => 'সব বিভাগ';
+
+  @override
+  String get workoutSummary => 'ওয়ার্কআউট সারাংশ';
+
+  @override
+  String get workoutSummaryBadges => 'অর্জিত ব্যাজ';
+
+  @override
+  String get workoutSummaryStreak => 'বর্তমান স্ট্রিক';
+
+  @override
+  String get workoutSummaryCompletion => 'সম্পন্নের হার';
+
+  @override
+  String get workoutSummaryMotivation => 'প্রতিটি রিপ গণনা করে। চালিয়ে যান!';
+
+  @override
+  String workoutSummaryExercisesDone(Object completed, Object total) {
+    return '$completed / $total ব্যায়াম সম্পন্ন';
+  }
+
+  @override
+  String get workoutSummaryDays => 'দিন';
 }
