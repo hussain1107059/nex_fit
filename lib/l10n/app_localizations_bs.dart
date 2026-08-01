@@ -2383,4 +2383,250 @@ class AppLocalizationsBs extends AppLocalizations {
 
   @override
   String get progressCalorieBalance => 'ক্যালরি ভারসাম্য';
+
+  @override
+  String get reminderTypeWorkout => 'ওয়ার্কআউট';
+
+  @override
+  String get reminderTypeWater => 'পানি';
+
+  @override
+  String get reminderTypeMeal => 'খাবার';
+
+  @override
+  String get reminderTypeWeight => 'ওজন';
+
+  @override
+  String get reminderTypeSleep => 'ঘুম';
+
+  @override
+  String get reminderTypeMedicine => 'ওষুধ';
+
+  @override
+  String get reminderTypeStep => 'পদক্ষেপ';
+
+  @override
+  String get reminderTypeCustom => 'কাস্টম';
+
+  @override
+  String get reminderScheduleOneTime => 'একবার';
+
+  @override
+  String get reminderScheduleDaily => 'দৈনিক';
+
+  @override
+  String get reminderScheduleWeekly => 'সাপ্তাহিক';
+
+  @override
+  String get reminderScheduleMonthly => 'মাসিক';
+
+  @override
+  String get reminderScheduleCustomDays => 'নির্দিষ্ট দিন';
+
+  @override
+  String get reminderEveryDay => 'প্রতিদিন';
+
+  @override
+  String get reminderEveryMonth => 'প্রতি মাসে';
+
+  @override
+  String reminderDayOfMonth(Object day) {
+    return 'মাসের $day তারিখ';
+  }
+
+  @override
+  String get remindersTitle => 'রিমাইন্ডার';
+
+  @override
+  String get remindersAdd => 'যোগ করুন';
+
+  @override
+  String get remindersEdit => 'রিমাইন্ডার সম্পাদনা';
+
+  @override
+  String get remindersCreate => 'রিমাইন্ডার তৈরি';
+
+  @override
+  String get remindersSettings => 'সেটিংস';
+
+  @override
+  String get remindersStatistics => 'পরিসংখ্যান';
+
+  @override
+  String get remindersHistory => 'ইতিহাস';
+
+  @override
+  String get remindersAll => 'সব';
+
+  @override
+  String get remindersTodayLabel => 'আজ';
+
+  @override
+  String get remindersUpcomingLabel => 'আসন্ন';
+
+  @override
+  String remindersCount(Object count) {
+    return '$count টি রিমাইন্ডার';
+  }
+
+  @override
+  String remindersToday(Object count) {
+    return 'আজ $count টি';
+  }
+
+  @override
+  String remindersUpcoming(Object count) {
+    return '$count টি আসন্ন';
+  }
+
+  @override
+  String get remindersSmartSuggestions => 'স্মার্ট পরামর্শ';
+
+  @override
+  String get remindersEmpty => 'কোনো রিমাইন্ডার নেই';
+
+  @override
+  String get remindersEmptySubtitle =>
+      'একটি রিমাইন্ডার তৈরি করুন, এটি এখানে দেখা যাবে।';
+
+  @override
+  String get remindersComplete => 'সম্পন্ন';
+
+  @override
+  String get remindersSkip => 'এড়িয়ে যান';
+
+  @override
+  String get remindersDuplicate => 'নকল করুন';
+
+  @override
+  String get remindersMarkedComplete => 'সম্পন্ন হিসেবে চিহ্নিত হয়েছে';
+
+  @override
+  String get remindersMarkedSkipped => 'এড়িয়ে যাওয়া হিসেবে চিহ্নিত হয়েছে';
+
+  @override
+  String get remindersDuplicated => 'রিমাইন্ডার নকল হয়েছে';
+
+  @override
+  String get remindersDeleted => 'রিমাইন্ডার মুছে ফেলা হয়েছে';
+
+  @override
+  String get remindersHistoryEmpty => 'এখনও কোনো ইতিহাস নেই';
+
+  @override
+  String get remindersHistoryEmptySubtitle =>
+      'আপনার রিমাইন্ডার ইতিহাস এখানে দেখা যাবে।';
+
+  @override
+  String get remindersCompleted => 'সম্পন্ন';
+
+  @override
+  String get remindersMissed => 'মিস হয়েছে';
+
+  @override
+  String get remindersSkipped => 'এড়িয়ে গেছে';
+
+  @override
+  String get remindersTitleField => 'শিরোনাম';
+
+  @override
+  String get remindersDescription => 'বিবরণ';
+
+  @override
+  String get remindersType => 'ধরন';
+
+  @override
+  String get remindersRepeat => 'পুনরাবৃত্তি';
+
+  @override
+  String get remindersTime => 'সময়';
+
+  @override
+  String get remindersDate => 'তারিখ';
+
+  @override
+  String get remindersDays => 'দিন';
+
+  @override
+  String get remindersDayOfMonthLabel => 'মাসের তারিখ';
+
+  @override
+  String get remindersNotification => 'বিজ্ঞপ্তি';
+
+  @override
+  String get remindersSound => 'শব্দ';
+
+  @override
+  String get remindersVibration => 'কম্পন';
+
+  @override
+  String get remindersSilent => 'নীরব';
+
+  @override
+  String get remindersActionButtons => 'অ্যাকশন বাটন';
+
+  @override
+  String get remindersActionButtonsSubtitle =>
+      'বিজ্ঞপ্তিতে সম্পন্ন ও এড়িয়ে যান বাটন দেখান।';
+
+  @override
+  String get remindersAddTime => 'সময় যোগ করুন';
+
+  @override
+  String get remindersMaxTimes => 'দিনে সর্বোচ্চ ৫টি সময় যোগ করতে পারবেন।';
+
+  @override
+  String get remindersErrorNoTime => 'কমপক্ষে একটি সময় নির্বাচন করুন।';
+
+  @override
+  String get remindersErrorNoDays => 'কমপক্ষে একটি দিন নির্বাচন করুন।';
+
+  @override
+  String get remindersErrorNoDate => 'একটি তারিখ নির্বাচন করুন।';
+
+  @override
+  String get remindersSaved => 'রিমাইন্ডার সংরক্ষিত হয়েছে';
+
+  @override
+  String get remindersSettingsSubtitle =>
+      'এই ডিভাইসে রিমাইন্ডার বিজ্ঞপ্তি কীভাবে আচরণ করবে তা নিয়ন্ত্রণ করুন।';
+
+  @override
+  String get remindersSoundSubtitle => 'রিমাইন্ডার আসলে শব্দ বাজবে।';
+
+  @override
+  String get remindersVibrationSubtitle => 'রিমাইন্ডার আসলে কম্পন হবে।';
+
+  @override
+  String get remindersSilentSubtitle =>
+      'সব রিমাইন্ডারের শব্দ ও কম্পন বন্ধ করুন।';
+
+  @override
+  String get remindersTimeFormat => 'সময়ের বিন্যাস';
+
+  @override
+  String get remindersTimeFormat12h => '১২ ঘণ্টা (AM/PM)';
+
+  @override
+  String get remindersTimeFormat24h => '২৪ ঘণ্টা';
+
+  @override
+  String get remindersCompletionRate => 'সম্পূর্ণতার হার';
+
+  @override
+  String get remindersMissedRate => 'মিসের হার';
+
+  @override
+  String get remindersTotal => 'মোট';
+
+  @override
+  String get remindersMostSuccessful => 'সবচেয়ে সফল রিমাইন্ডার';
+
+  @override
+  String get remindersNoData => 'এখনও কোনো তথ্য নেই';
+
+  @override
+  String remindersCompletedCount(Object count) {
+    return '$count টি সম্পন্ন';
+  }
 }

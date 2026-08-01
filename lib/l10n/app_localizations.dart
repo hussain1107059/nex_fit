@@ -4717,6 +4717,468 @@ abstract class AppLocalizations {
   /// In bs, this message translates to:
   /// **'ক্যালরি ভারসাম্য'**
   String get progressCalorieBalance;
+
+  /// No description provided for @reminderTypeWorkout.
+  ///
+  /// In bs, this message translates to:
+  /// **'ওয়ার্কআউট'**
+  String get reminderTypeWorkout;
+
+  /// No description provided for @reminderTypeWater.
+  ///
+  /// In bs, this message translates to:
+  /// **'পানি'**
+  String get reminderTypeWater;
+
+  /// No description provided for @reminderTypeMeal.
+  ///
+  /// In bs, this message translates to:
+  /// **'খাবার'**
+  String get reminderTypeMeal;
+
+  /// No description provided for @reminderTypeWeight.
+  ///
+  /// In bs, this message translates to:
+  /// **'ওজন'**
+  String get reminderTypeWeight;
+
+  /// No description provided for @reminderTypeSleep.
+  ///
+  /// In bs, this message translates to:
+  /// **'ঘুম'**
+  String get reminderTypeSleep;
+
+  /// No description provided for @reminderTypeMedicine.
+  ///
+  /// In bs, this message translates to:
+  /// **'ওষুধ'**
+  String get reminderTypeMedicine;
+
+  /// No description provided for @reminderTypeStep.
+  ///
+  /// In bs, this message translates to:
+  /// **'পদক্ষেপ'**
+  String get reminderTypeStep;
+
+  /// No description provided for @reminderTypeCustom.
+  ///
+  /// In bs, this message translates to:
+  /// **'কাস্টম'**
+  String get reminderTypeCustom;
+
+  /// No description provided for @reminderScheduleOneTime.
+  ///
+  /// In bs, this message translates to:
+  /// **'একবার'**
+  String get reminderScheduleOneTime;
+
+  /// No description provided for @reminderScheduleDaily.
+  ///
+  /// In bs, this message translates to:
+  /// **'দৈনিক'**
+  String get reminderScheduleDaily;
+
+  /// No description provided for @reminderScheduleWeekly.
+  ///
+  /// In bs, this message translates to:
+  /// **'সাপ্তাহিক'**
+  String get reminderScheduleWeekly;
+
+  /// No description provided for @reminderScheduleMonthly.
+  ///
+  /// In bs, this message translates to:
+  /// **'মাসিক'**
+  String get reminderScheduleMonthly;
+
+  /// No description provided for @reminderScheduleCustomDays.
+  ///
+  /// In bs, this message translates to:
+  /// **'নির্দিষ্ট দিন'**
+  String get reminderScheduleCustomDays;
+
+  /// No description provided for @reminderEveryDay.
+  ///
+  /// In bs, this message translates to:
+  /// **'প্রতিদিন'**
+  String get reminderEveryDay;
+
+  /// No description provided for @reminderEveryMonth.
+  ///
+  /// In bs, this message translates to:
+  /// **'প্রতি মাসে'**
+  String get reminderEveryMonth;
+
+  /// No description provided for @reminderDayOfMonth.
+  ///
+  /// In bs, this message translates to:
+  /// **'মাসের {day} তারিখ'**
+  String reminderDayOfMonth(Object day);
+
+  /// No description provided for @remindersTitle.
+  ///
+  /// In bs, this message translates to:
+  /// **'রিমাইন্ডার'**
+  String get remindersTitle;
+
+  /// No description provided for @remindersAdd.
+  ///
+  /// In bs, this message translates to:
+  /// **'যোগ করুন'**
+  String get remindersAdd;
+
+  /// No description provided for @remindersEdit.
+  ///
+  /// In bs, this message translates to:
+  /// **'রিমাইন্ডার সম্পাদনা'**
+  String get remindersEdit;
+
+  /// No description provided for @remindersCreate.
+  ///
+  /// In bs, this message translates to:
+  /// **'রিমাইন্ডার তৈরি'**
+  String get remindersCreate;
+
+  /// No description provided for @remindersSettings.
+  ///
+  /// In bs, this message translates to:
+  /// **'সেটিংস'**
+  String get remindersSettings;
+
+  /// No description provided for @remindersStatistics.
+  ///
+  /// In bs, this message translates to:
+  /// **'পরিসংখ্যান'**
+  String get remindersStatistics;
+
+  /// No description provided for @remindersHistory.
+  ///
+  /// In bs, this message translates to:
+  /// **'ইতিহাস'**
+  String get remindersHistory;
+
+  /// No description provided for @remindersAll.
+  ///
+  /// In bs, this message translates to:
+  /// **'সব'**
+  String get remindersAll;
+
+  /// No description provided for @remindersTodayLabel.
+  ///
+  /// In bs, this message translates to:
+  /// **'আজ'**
+  String get remindersTodayLabel;
+
+  /// No description provided for @remindersUpcomingLabel.
+  ///
+  /// In bs, this message translates to:
+  /// **'আসন্ন'**
+  String get remindersUpcomingLabel;
+
+  /// No description provided for @remindersCount.
+  ///
+  /// In bs, this message translates to:
+  /// **'{count} টি রিমাইন্ডার'**
+  String remindersCount(Object count);
+
+  /// No description provided for @remindersToday.
+  ///
+  /// In bs, this message translates to:
+  /// **'আজ {count} টি'**
+  String remindersToday(Object count);
+
+  /// No description provided for @remindersUpcoming.
+  ///
+  /// In bs, this message translates to:
+  /// **'{count} টি আসন্ন'**
+  String remindersUpcoming(Object count);
+
+  /// No description provided for @remindersSmartSuggestions.
+  ///
+  /// In bs, this message translates to:
+  /// **'স্মার্ট পরামর্শ'**
+  String get remindersSmartSuggestions;
+
+  /// No description provided for @remindersEmpty.
+  ///
+  /// In bs, this message translates to:
+  /// **'কোনো রিমাইন্ডার নেই'**
+  String get remindersEmpty;
+
+  /// No description provided for @remindersEmptySubtitle.
+  ///
+  /// In bs, this message translates to:
+  /// **'একটি রিমাইন্ডার তৈরি করুন, এটি এখানে দেখা যাবে।'**
+  String get remindersEmptySubtitle;
+
+  /// No description provided for @remindersComplete.
+  ///
+  /// In bs, this message translates to:
+  /// **'সম্পন্ন'**
+  String get remindersComplete;
+
+  /// No description provided for @remindersSkip.
+  ///
+  /// In bs, this message translates to:
+  /// **'এড়িয়ে যান'**
+  String get remindersSkip;
+
+  /// No description provided for @remindersDuplicate.
+  ///
+  /// In bs, this message translates to:
+  /// **'নকল করুন'**
+  String get remindersDuplicate;
+
+  /// No description provided for @remindersMarkedComplete.
+  ///
+  /// In bs, this message translates to:
+  /// **'সম্পন্ন হিসেবে চিহ্নিত হয়েছে'**
+  String get remindersMarkedComplete;
+
+  /// No description provided for @remindersMarkedSkipped.
+  ///
+  /// In bs, this message translates to:
+  /// **'এড়িয়ে যাওয়া হিসেবে চিহ্নিত হয়েছে'**
+  String get remindersMarkedSkipped;
+
+  /// No description provided for @remindersDuplicated.
+  ///
+  /// In bs, this message translates to:
+  /// **'রিমাইন্ডার নকল হয়েছে'**
+  String get remindersDuplicated;
+
+  /// No description provided for @remindersDeleted.
+  ///
+  /// In bs, this message translates to:
+  /// **'রিমাইন্ডার মুছে ফেলা হয়েছে'**
+  String get remindersDeleted;
+
+  /// No description provided for @remindersHistoryEmpty.
+  ///
+  /// In bs, this message translates to:
+  /// **'এখনও কোনো ইতিহাস নেই'**
+  String get remindersHistoryEmpty;
+
+  /// No description provided for @remindersHistoryEmptySubtitle.
+  ///
+  /// In bs, this message translates to:
+  /// **'আপনার রিমাইন্ডার ইতিহাস এখানে দেখা যাবে।'**
+  String get remindersHistoryEmptySubtitle;
+
+  /// No description provided for @remindersCompleted.
+  ///
+  /// In bs, this message translates to:
+  /// **'সম্পন্ন'**
+  String get remindersCompleted;
+
+  /// No description provided for @remindersMissed.
+  ///
+  /// In bs, this message translates to:
+  /// **'মিস হয়েছে'**
+  String get remindersMissed;
+
+  /// No description provided for @remindersSkipped.
+  ///
+  /// In bs, this message translates to:
+  /// **'এড়িয়ে গেছে'**
+  String get remindersSkipped;
+
+  /// No description provided for @remindersTitleField.
+  ///
+  /// In bs, this message translates to:
+  /// **'শিরোনাম'**
+  String get remindersTitleField;
+
+  /// No description provided for @remindersDescription.
+  ///
+  /// In bs, this message translates to:
+  /// **'বিবরণ'**
+  String get remindersDescription;
+
+  /// No description provided for @remindersType.
+  ///
+  /// In bs, this message translates to:
+  /// **'ধরন'**
+  String get remindersType;
+
+  /// No description provided for @remindersRepeat.
+  ///
+  /// In bs, this message translates to:
+  /// **'পুনরাবৃত্তি'**
+  String get remindersRepeat;
+
+  /// No description provided for @remindersTime.
+  ///
+  /// In bs, this message translates to:
+  /// **'সময়'**
+  String get remindersTime;
+
+  /// No description provided for @remindersDate.
+  ///
+  /// In bs, this message translates to:
+  /// **'তারিখ'**
+  String get remindersDate;
+
+  /// No description provided for @remindersDays.
+  ///
+  /// In bs, this message translates to:
+  /// **'দিন'**
+  String get remindersDays;
+
+  /// No description provided for @remindersDayOfMonthLabel.
+  ///
+  /// In bs, this message translates to:
+  /// **'মাসের তারিখ'**
+  String get remindersDayOfMonthLabel;
+
+  /// No description provided for @remindersNotification.
+  ///
+  /// In bs, this message translates to:
+  /// **'বিজ্ঞপ্তি'**
+  String get remindersNotification;
+
+  /// No description provided for @remindersSound.
+  ///
+  /// In bs, this message translates to:
+  /// **'শব্দ'**
+  String get remindersSound;
+
+  /// No description provided for @remindersVibration.
+  ///
+  /// In bs, this message translates to:
+  /// **'কম্পন'**
+  String get remindersVibration;
+
+  /// No description provided for @remindersSilent.
+  ///
+  /// In bs, this message translates to:
+  /// **'নীরব'**
+  String get remindersSilent;
+
+  /// No description provided for @remindersActionButtons.
+  ///
+  /// In bs, this message translates to:
+  /// **'অ্যাকশন বাটন'**
+  String get remindersActionButtons;
+
+  /// No description provided for @remindersActionButtonsSubtitle.
+  ///
+  /// In bs, this message translates to:
+  /// **'বিজ্ঞপ্তিতে সম্পন্ন ও এড়িয়ে যান বাটন দেখান।'**
+  String get remindersActionButtonsSubtitle;
+
+  /// No description provided for @remindersAddTime.
+  ///
+  /// In bs, this message translates to:
+  /// **'সময় যোগ করুন'**
+  String get remindersAddTime;
+
+  /// No description provided for @remindersMaxTimes.
+  ///
+  /// In bs, this message translates to:
+  /// **'দিনে সর্বোচ্চ ৫টি সময় যোগ করতে পারবেন।'**
+  String get remindersMaxTimes;
+
+  /// No description provided for @remindersErrorNoTime.
+  ///
+  /// In bs, this message translates to:
+  /// **'কমপক্ষে একটি সময় নির্বাচন করুন।'**
+  String get remindersErrorNoTime;
+
+  /// No description provided for @remindersErrorNoDays.
+  ///
+  /// In bs, this message translates to:
+  /// **'কমপক্ষে একটি দিন নির্বাচন করুন।'**
+  String get remindersErrorNoDays;
+
+  /// No description provided for @remindersErrorNoDate.
+  ///
+  /// In bs, this message translates to:
+  /// **'একটি তারিখ নির্বাচন করুন।'**
+  String get remindersErrorNoDate;
+
+  /// No description provided for @remindersSaved.
+  ///
+  /// In bs, this message translates to:
+  /// **'রিমাইন্ডার সংরক্ষিত হয়েছে'**
+  String get remindersSaved;
+
+  /// No description provided for @remindersSettingsSubtitle.
+  ///
+  /// In bs, this message translates to:
+  /// **'এই ডিভাইসে রিমাইন্ডার বিজ্ঞপ্তি কীভাবে আচরণ করবে তা নিয়ন্ত্রণ করুন।'**
+  String get remindersSettingsSubtitle;
+
+  /// No description provided for @remindersSoundSubtitle.
+  ///
+  /// In bs, this message translates to:
+  /// **'রিমাইন্ডার আসলে শব্দ বাজবে।'**
+  String get remindersSoundSubtitle;
+
+  /// No description provided for @remindersVibrationSubtitle.
+  ///
+  /// In bs, this message translates to:
+  /// **'রিমাইন্ডার আসলে কম্পন হবে।'**
+  String get remindersVibrationSubtitle;
+
+  /// No description provided for @remindersSilentSubtitle.
+  ///
+  /// In bs, this message translates to:
+  /// **'সব রিমাইন্ডারের শব্দ ও কম্পন বন্ধ করুন।'**
+  String get remindersSilentSubtitle;
+
+  /// No description provided for @remindersTimeFormat.
+  ///
+  /// In bs, this message translates to:
+  /// **'সময়ের বিন্যাস'**
+  String get remindersTimeFormat;
+
+  /// No description provided for @remindersTimeFormat12h.
+  ///
+  /// In bs, this message translates to:
+  /// **'১২ ঘণ্টা (AM/PM)'**
+  String get remindersTimeFormat12h;
+
+  /// No description provided for @remindersTimeFormat24h.
+  ///
+  /// In bs, this message translates to:
+  /// **'২৪ ঘণ্টা'**
+  String get remindersTimeFormat24h;
+
+  /// No description provided for @remindersCompletionRate.
+  ///
+  /// In bs, this message translates to:
+  /// **'সম্পূর্ণতার হার'**
+  String get remindersCompletionRate;
+
+  /// No description provided for @remindersMissedRate.
+  ///
+  /// In bs, this message translates to:
+  /// **'মিসের হার'**
+  String get remindersMissedRate;
+
+  /// No description provided for @remindersTotal.
+  ///
+  /// In bs, this message translates to:
+  /// **'মোট'**
+  String get remindersTotal;
+
+  /// No description provided for @remindersMostSuccessful.
+  ///
+  /// In bs, this message translates to:
+  /// **'সবচেয়ে সফল রিমাইন্ডার'**
+  String get remindersMostSuccessful;
+
+  /// No description provided for @remindersNoData.
+  ///
+  /// In bs, this message translates to:
+  /// **'এখনও কোনো তথ্য নেই'**
+  String get remindersNoData;
+
+  /// No description provided for @remindersCompletedCount.
+  ///
+  /// In bs, this message translates to:
+  /// **'{count} টি সম্পন্ন'**
+  String remindersCompletedCount(Object count);
 }
 
 class _AppLocalizationsDelegate

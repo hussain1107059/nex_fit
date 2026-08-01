@@ -13,4 +13,14 @@ abstract interface class ReminderRepository {
   Future<List<Reminder>> getEnabled(String userId);
 
   Future<void> delete(int id);
+
+  /// Creates a deep copy of [id] (new row, same schedule) and schedules its
+  /// notifications. Returns the new reminder id.
+  Future<int> duplicate(int id);
+
+  /// True when a reminder identical to [candidate] already exists.
+  Future<bool> hasDuplicate(Reminder candidate);
+
+  /// True when an enabled reminder exists whose [isDuplicateOf] matches.
+  Future<Reminder?> findDuplicate(Reminder candidate);
 }

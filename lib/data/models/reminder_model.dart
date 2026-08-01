@@ -1,9 +1,13 @@
+import 'dart:convert';
+
 import '../../domain/entities/common_enums.dart';
 import '../../domain/entities/reminder.dart';
 import 'model_codec.dart';
 
 /// Maps [Reminder] to and from rows in the `reminder` table.
-/// The [Reminder.daysOfWeek] list is persisted as a comma-separated string.
+///
+/// List columns ([Reminder.daysOfWeek], [Reminder.times]) are persisted as
+/// comma-separated / JSON strings so they survive round-trips unchanged.
 class ReminderModel {
   ReminderModel._();
 
@@ -20,6 +24,18 @@ class ReminderModel {
       'reminder_type': reminder.reminderType.name,
       'time': reminder.time,
       'days_of_week': reminder.daysOfWeek.join(_separator),
+      'schedule_type': reminder.scheduleType.name,
+      'times': jsonEncode(reminder.times),
+      'start_date': ModelCodec.epochMs(reminder.startDate),
+      'end_date': ModelCodec.epochMs(reminder.endDate),
+      'month_day': reminder.monthDay,
+      'icon': reminder.icon,
+      'color_value': reminder.colorValue,
+      'sound_enabled': ModelCodec.boolToInt(reminder.soundEnabled),
+      'vibration_enabled': ModelCodec.boolToInt(reminder.vibrationEnabled),
+      'silent_mode': ModelCodec.boolToInt(reminder.silentMode),
+      'show_action_buttons': ModelCodec.boolToInt(reminder.showActionButtons),
+      'related_screen': reminder.relatedScreen,
       'is_enabled': ModelCodec.boolToInt(reminder.isEnabled),
       'last_triggered_at': ModelCodec.epochMs(reminder.lastTriggeredAt),
       'created_at': ModelCodec.epochMs(reminder.createdAt),
@@ -43,6 +59,20 @@ class ReminderModel {
                 .map((day) => int.tryParse(day.trim()))
                 .whereType<int>()
                 .toList(),
+      scheduleType: ReminderScheduleType.fromName(
+        row['schedule_type'] as String?,
+      ),
+      times: _decodeTimes(row['times'] as String?),
+      startDate: ModelCodec.fromEpochMs(row['start_date'] as int?),
+      endDate: ModelCodec.fromEpochMs(row['end_date'] as int?),
+      monthDay: row['month_day'] as int?,
+      icon: row['icon'] as String?,
+      colorValue: row['color_value'] as int?,
+      soundEnabled: ModelCodec.intToBool(row['sound_enabled']),
+      vibrationEnabled: ModelCodec.intToBool(row['vibration_enabled']),
+      silentMode: ModelCodec.intToBool(row['silent_mode']),
+      showActionButtons: ModelCodec.intToBool(row['show_action_buttons']),
+      relatedScreen: row['related_screen'] as String?,
       isEnabled: ModelCodec.intToBool(row['is_enabled']),
       lastTriggeredAt: ModelCodec.fromEpochMs(row['last_triggered_at'] as int?),
       createdAt:
@@ -50,5 +80,15 @@ class ReminderModel {
       updatedAt:
           ModelCodec.fromEpochMs(row['updated_at'] as int?) ?? DateTime.now(),
     );
+  }
+
+  static List<String> _decodeTimes(String? encoded) {
+    if (encoded == null || encoded.isEmpty) return const <String>[];
+    try {
+      final List<dynamic> decoded = jsonDecode(encoded) as List<dynamic>;
+      return decoded.whereType<String>().toList();
+    } catch (_) {
+      return const <String>[];
+    }
   }
 }

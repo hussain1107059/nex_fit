@@ -86,6 +86,8 @@ class _ReminderTile extends StatelessWidget {
       ReminderType.step => (Icons.directions_walk_rounded, colors.success),
       ReminderType.meal => (Icons.restaurant_rounded, colors.warning),
       ReminderType.workout => (Icons.fitness_center_rounded, colors.primary),
+      ReminderType.weight => (Icons.monitor_weight_rounded, colors.tertiary),
+      ReminderType.medicine => (Icons.medication_rounded, colors.danger),
       ReminderType.sleep => (Icons.bedtime_rounded, colors.tertiary),
       ReminderType.custom => (
         Icons.notifications_active_rounded,

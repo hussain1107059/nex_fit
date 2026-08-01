@@ -19,6 +19,7 @@ import '../data/datasources/local/food_log_local_data_source.dart';
 import '../data/datasources/local/meal_category_local_data_source.dart';
 import '../data/datasources/local/meal_item_local_data_source.dart';
 import '../data/datasources/local/meal_local_data_source.dart';
+import '../data/datasources/local/reminder_history_local_data_source.dart';
 import '../data/datasources/local/reminder_local_data_source.dart';
 import '../data/datasources/local/sleep_log_local_data_source.dart';
 import '../data/datasources/local/step_log_local_data_source.dart';
@@ -53,8 +54,10 @@ import '../data/repositories/hydration_repository_impl.dart';
 import '../data/repositories/meal_category_repository_impl.dart';
 import '../data/repositories/meal_item_repository_impl.dart';
 import '../data/repositories/meal_repository_impl.dart';
+import '../data/repositories/reminder_history_repository_impl.dart';
 import '../data/repositories/reminder_repository_impl.dart';
 import '../data/repositories/sleep_log_repository_impl.dart';
+import '../data/repositories/smart_reminder_repository_impl.dart';
 import '../data/repositories/step_log_repository_impl.dart';
 import '../data/repositories/streak_repository_impl.dart';
 import '../data/repositories/user_fitness_profile_repository_impl.dart';
@@ -106,8 +109,10 @@ import '../domain/repositories/meal_item_repository.dart';
 import '../domain/repositories/meal_repository.dart';
 import '../domain/repositories/profile_repository.dart';
 import '../domain/repositories/progress_analytics_repository.dart';
+import '../domain/repositories/reminder_history_repository.dart';
 import '../domain/repositories/reminder_repository.dart';
 import '../domain/repositories/sleep_log_repository.dart';
+import '../domain/repositories/smart_reminder_repository.dart';
 import '../domain/repositories/step_log_repository.dart';
 import '../domain/repositories/streak_repository.dart';
 import '../domain/repositories/user_fitness_profile_repository.dart';
@@ -457,6 +462,29 @@ final stepLogRepositoryProvider = Provider<StepLogRepository>(
 
 final reminderRepositoryProvider = Provider<ReminderRepository>(
   (ref) => ReminderRepositoryImpl(ref.watch(reminderLocalDataSourceProvider)),
+);
+
+final reminderHistoryLocalDataSourceProvider =
+    Provider<ReminderHistoryLocalDataSource>(
+      (ref) => ReminderHistoryLocalDataSource(
+        database: ref.watch(appDatabaseProvider),
+      ),
+    );
+
+final reminderHistoryRepositoryProvider = Provider<ReminderHistoryRepository>(
+  (ref) => ReminderHistoryRepositoryImpl(
+    dataSource: ref.watch(reminderHistoryLocalDataSourceProvider),
+    reminderRepository: ref.watch(reminderRepositoryProvider),
+  ),
+);
+
+final smartReminderRepositoryProvider = Provider<SmartReminderRepository>(
+  (ref) => SmartReminderRepositoryImpl(
+    workoutHistoryRepository: ref.watch(workoutHistoryRepositoryProvider),
+    waterLogRepository: ref.watch(waterLogRepositoryProvider),
+    weightLogRepository: ref.watch(weightLogRepositoryProvider),
+    hydrationRepository: ref.watch(hydrationRepositoryProvider),
+  ),
 );
 
 final achievementRepositoryProvider = Provider<AchievementRepository>(

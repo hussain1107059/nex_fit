@@ -2377,4 +2377,250 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get progressCalorieBalance => 'Calorie balance';
+
+  @override
+  String get reminderTypeWorkout => 'Workout';
+
+  @override
+  String get reminderTypeWater => 'Water';
+
+  @override
+  String get reminderTypeMeal => 'Meal';
+
+  @override
+  String get reminderTypeWeight => 'Weight';
+
+  @override
+  String get reminderTypeSleep => 'Sleep';
+
+  @override
+  String get reminderTypeMedicine => 'Medicine';
+
+  @override
+  String get reminderTypeStep => 'Steps';
+
+  @override
+  String get reminderTypeCustom => 'Custom';
+
+  @override
+  String get reminderScheduleOneTime => 'One time';
+
+  @override
+  String get reminderScheduleDaily => 'Daily';
+
+  @override
+  String get reminderScheduleWeekly => 'Weekly';
+
+  @override
+  String get reminderScheduleMonthly => 'Monthly';
+
+  @override
+  String get reminderScheduleCustomDays => 'Custom days';
+
+  @override
+  String get reminderEveryDay => 'Every day';
+
+  @override
+  String get reminderEveryMonth => 'Every month';
+
+  @override
+  String reminderDayOfMonth(Object day) {
+    return 'Day $day of the month';
+  }
+
+  @override
+  String get remindersTitle => 'Reminders';
+
+  @override
+  String get remindersAdd => 'Add';
+
+  @override
+  String get remindersEdit => 'Edit reminder';
+
+  @override
+  String get remindersCreate => 'Create reminder';
+
+  @override
+  String get remindersSettings => 'Settings';
+
+  @override
+  String get remindersStatistics => 'Statistics';
+
+  @override
+  String get remindersHistory => 'History';
+
+  @override
+  String get remindersAll => 'All';
+
+  @override
+  String get remindersTodayLabel => 'Today';
+
+  @override
+  String get remindersUpcomingLabel => 'Upcoming';
+
+  @override
+  String remindersCount(Object count) {
+    return '$count reminders';
+  }
+
+  @override
+  String remindersToday(Object count) {
+    return '$count today';
+  }
+
+  @override
+  String remindersUpcoming(Object count) {
+    return '$count upcoming';
+  }
+
+  @override
+  String get remindersSmartSuggestions => 'Smart suggestions';
+
+  @override
+  String get remindersEmpty => 'No reminders';
+
+  @override
+  String get remindersEmptySubtitle =>
+      'Create a reminder and it will appear here.';
+
+  @override
+  String get remindersComplete => 'Complete';
+
+  @override
+  String get remindersSkip => 'Skip';
+
+  @override
+  String get remindersDuplicate => 'Duplicate';
+
+  @override
+  String get remindersMarkedComplete => 'Marked as complete';
+
+  @override
+  String get remindersMarkedSkipped => 'Marked as skipped';
+
+  @override
+  String get remindersDuplicated => 'Reminder duplicated';
+
+  @override
+  String get remindersDeleted => 'Reminder deleted';
+
+  @override
+  String get remindersHistoryEmpty => 'No history yet';
+
+  @override
+  String get remindersHistoryEmptySubtitle =>
+      'Your reminder history will appear here.';
+
+  @override
+  String get remindersCompleted => 'Completed';
+
+  @override
+  String get remindersMissed => 'Missed';
+
+  @override
+  String get remindersSkipped => 'Skipped';
+
+  @override
+  String get remindersTitleField => 'Title';
+
+  @override
+  String get remindersDescription => 'Description';
+
+  @override
+  String get remindersType => 'Type';
+
+  @override
+  String get remindersRepeat => 'Repeat';
+
+  @override
+  String get remindersTime => 'Time';
+
+  @override
+  String get remindersDate => 'Date';
+
+  @override
+  String get remindersDays => 'Days';
+
+  @override
+  String get remindersDayOfMonthLabel => 'Day of month';
+
+  @override
+  String get remindersNotification => 'Notification';
+
+  @override
+  String get remindersSound => 'Sound';
+
+  @override
+  String get remindersVibration => 'Vibration';
+
+  @override
+  String get remindersSilent => 'Silent';
+
+  @override
+  String get remindersActionButtons => 'Action buttons';
+
+  @override
+  String get remindersActionButtonsSubtitle =>
+      'Show Complete and Skip buttons on the notification.';
+
+  @override
+  String get remindersAddTime => 'Add time';
+
+  @override
+  String get remindersMaxTimes => 'You can add up to 5 times per day.';
+
+  @override
+  String get remindersErrorNoTime => 'Pick at least one time.';
+
+  @override
+  String get remindersErrorNoDays => 'Pick at least one day.';
+
+  @override
+  String get remindersErrorNoDate => 'Pick a date.';
+
+  @override
+  String get remindersSaved => 'Reminder saved';
+
+  @override
+  String get remindersSettingsSubtitle =>
+      'Control how reminder notifications behave on this device.';
+
+  @override
+  String get remindersSoundSubtitle => 'Play a sound when a reminder fires.';
+
+  @override
+  String get remindersVibrationSubtitle => 'Vibrate when a reminder fires.';
+
+  @override
+  String get remindersSilentSubtitle =>
+      'Mute sound and vibration for all reminders.';
+
+  @override
+  String get remindersTimeFormat => 'Time format';
+
+  @override
+  String get remindersTimeFormat12h => '12 hour (AM/PM)';
+
+  @override
+  String get remindersTimeFormat24h => '24 hour';
+
+  @override
+  String get remindersCompletionRate => 'Completion rate';
+
+  @override
+  String get remindersMissedRate => 'Missed rate';
+
+  @override
+  String get remindersTotal => 'Total';
+
+  @override
+  String get remindersMostSuccessful => 'Most successful reminder';
+
+  @override
+  String get remindersNoData => 'No data yet';
+
+  @override
+  String remindersCompletedCount(Object count) {
+    return '$count completed';
+  }
 }

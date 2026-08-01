@@ -79,17 +79,62 @@ enum GoalStatus {
 
 /// Type of a scheduled reminder.
 enum ReminderType {
-  water,
-  step,
-  meal,
   workout,
+  water,
+  meal,
+  weight,
   sleep,
+  medicine,
+  step,
   custom;
 
   static ReminderType fromName(String? value) {
     return ReminderType.values.firstWhere(
       (type) => type.name == value,
       orElse: () => ReminderType.custom,
+    );
+  }
+}
+
+/// How a reminder repeats.
+enum ReminderScheduleType {
+  oneTime,
+  daily,
+  weekly,
+  monthly,
+  customDays;
+
+  static ReminderScheduleType fromName(String? value) {
+    return ReminderScheduleType.values.firstWhere(
+      (type) => type.name == value,
+      orElse: () => ReminderScheduleType.daily,
+    );
+  }
+}
+
+/// Lifecycle state of a single reminder occurrence.
+enum ReminderHistoryStatus {
+  completed,
+  missed,
+  skipped;
+
+  static ReminderHistoryStatus fromName(String? value) {
+    return ReminderHistoryStatus.values.firstWhere(
+      (status) => status.name == value,
+      orElse: () => ReminderHistoryStatus.missed,
+    );
+  }
+}
+
+/// Display format used for reminder times in the UI.
+enum ReminderTimeFormat {
+  h12,
+  h24;
+
+  static ReminderTimeFormat fromName(String? value) {
+    return ReminderTimeFormat.values.firstWhere(
+      (format) => format.name == value,
+      orElse: () => ReminderTimeFormat.h12,
     );
   }
 }

@@ -39,6 +39,7 @@ class AppDatabase {
     DatabaseMigration(version: 6, apply: _migrationV6NutritionModule),
     DatabaseMigration(version: 7, apply: _migrationV7WaterModule),
     DatabaseMigration(version: 8, apply: _migrationV8WeightModule),
+    DatabaseMigration(version: 9, apply: _migrationV9ReminderModule),
   ];
 
   Future<Database> get database async {
@@ -1041,6 +1042,70 @@ class AppDatabase {
     );
     await db.execute(
       'ALTER TABLE body_measurement ADD COLUMN right_calf_cm REAL',
+    );
+  }
+
+  /// v9: the complete reminder & local notification module.
+  ///
+  /// Expands the v2 `reminder` table with the full scheduling/settings payload
+  /// (schedule type, multiple times per day, one-time / monthly dates, icon,
+  /// colour, sound / vibration / silent mode, action buttons and the related
+  /// screen opened on tap) and adds the per-account `reminder_history` table
+  /// used to record completed / missed / skipped occurrences for statistics.
+  ///
+  /// Every new column is nullable or defaulted so the upgrade is safe for
+  /// existing rows; existing daily reminders keep firing unchanged.
+  static Future<void> _migrationV9ReminderModule(
+    DatabaseExecutor executor,
+    int version,
+  ) async {
+    final DatabaseExecutor db = executor;
+
+    await db.execute(
+      'ALTER TABLE reminder ADD COLUMN schedule_type TEXT NOT NULL '
+      "DEFAULT 'daily'",
+    );
+    await db.execute('ALTER TABLE reminder ADD COLUMN times TEXT');
+    await db.execute('ALTER TABLE reminder ADD COLUMN start_date INTEGER');
+    await db.execute('ALTER TABLE reminder ADD COLUMN end_date INTEGER');
+    await db.execute('ALTER TABLE reminder ADD COLUMN month_day INTEGER');
+    await db.execute('ALTER TABLE reminder ADD COLUMN icon TEXT');
+    await db.execute('ALTER TABLE reminder ADD COLUMN color_value INTEGER');
+    await db.execute(
+      'ALTER TABLE reminder ADD COLUMN sound_enabled INTEGER NOT NULL DEFAULT 1',
+    );
+    await db.execute(
+      'ALTER TABLE reminder ADD COLUMN vibration_enabled INTEGER NOT NULL DEFAULT 1',
+    );
+    await db.execute(
+      'ALTER TABLE reminder ADD COLUMN silent_mode INTEGER NOT NULL DEFAULT 0',
+    );
+    await db.execute(
+      'ALTER TABLE reminder ADD COLUMN show_action_buttons INTEGER NOT NULL DEFAULT 1',
+    );
+    await db.execute('ALTER TABLE reminder ADD COLUMN related_screen TEXT');
+
+    await db.execute('''
+      CREATE TABLE reminder_history (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        user_id TEXT NOT NULL,
+        reminder_id INTEGER,
+        status TEXT NOT NULL DEFAULT 'missed',
+        scheduled_for INTEGER NOT NULL,
+        acted_at INTEGER,
+        created_at INTEGER NOT NULL,
+        FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE,
+        FOREIGN KEY (reminder_id) REFERENCES reminder(id) ON DELETE CASCADE
+      )
+    ''');
+
+    await db.execute(
+      'CREATE INDEX IF NOT EXISTS idx_reminder_history_user_id '
+      'ON reminder_history(user_id)',
+    );
+    await db.execute(
+      'CREATE INDEX IF NOT EXISTS idx_reminder_history_reminder_id '
+      'ON reminder_history(reminder_id)',
     );
   }
 }

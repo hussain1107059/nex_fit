@@ -5,7 +5,7 @@ class AppConstants {
   static const String appTagline = 'Start your fitness journey today';
 
   static const String databaseName = 'nexfit.db';
-  static const int databaseVersion = 8;
+  static const int databaseVersion = 9;
 
   static const Duration splashDuration = Duration(milliseconds: 1800);
   static const Duration debounceDuration = Duration(milliseconds: 400);

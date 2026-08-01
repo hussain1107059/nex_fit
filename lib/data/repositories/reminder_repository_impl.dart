@@ -27,4 +27,41 @@ class ReminderRepositoryImpl implements ReminderRepository {
 
   @override
   Future<void> delete(int id) => _dataSource.delete(id);
+
+  @override
+  Future<int> duplicate(int id) async {
+    final Reminder? source = await _dataSource.getById(id);
+    if (source == null) {
+      throw StateError('Cannot duplicate unknown reminder: $id');
+    }
+    final DateTime now = DateTime.now();
+    return _dataSource.insert(
+      source.copyWith(
+        id: null,
+        title: '${source.title} (copy)',
+        isEnabled: true,
+        lastTriggeredAt: null,
+        createdAt: now,
+        updatedAt: now,
+      ),
+    );
+  }
+
+  @override
+  Future<bool> hasDuplicate(Reminder candidate) async {
+    return await findDuplicate(candidate) != null;
+  }
+
+  @override
+  Future<Reminder?> findDuplicate(Reminder candidate) async {
+    final List<Reminder> existing = await _dataSource.getByUserId(
+      candidate.userId,
+    );
+    for (final Reminder other in existing) {
+      if (other.id != candidate.id && candidate.isDuplicateOf(other)) {
+        return other;
+      }
+    }
+    return null;
+  }
 }

@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
 import '../../domain/entities/app_user.dart';
+import '../../domain/entities/reminder.dart';
 import '../providers/auth_controller.dart';
 import '../providers/exercise_providers.dart';
 import '../providers/workout_providers.dart';
@@ -24,6 +25,11 @@ import '../screens/progress/goal_progress_screen.dart';
 import '../screens/progress/personal_records_screen.dart';
 import '../screens/progress/progress_dashboard_screen.dart';
 import '../screens/progress/progress_report_screen.dart';
+import '../screens/reminder/reminder_editor_screen.dart';
+import '../screens/reminder/reminder_history_screen.dart';
+import '../screens/reminder/reminder_list_screen.dart';
+import '../screens/reminder/reminder_settings_screen.dart';
+import '../screens/reminder/reminder_statistics_screen.dart';
 import '../screens/shell/app_shell_screen.dart';
 import '../screens/splash/splash_screen.dart';
 import '../screens/water/water_history_screen.dart';
@@ -71,6 +77,11 @@ abstract final class AppRoutes {
   static const String progressRecords = '/progress/records';
   static const String progressGoals = '/progress/goals';
   static const String progressScore = '/progress/score';
+  static const String reminders = '/reminders';
+  static const String reminderEditor = '/reminders/edit';
+  static const String reminderHistory = '/reminders/history';
+  static const String reminderStatistics = '/reminders/statistics';
+  static const String reminderSettings = '/reminders/settings';
 
   /// The landing route for a freshly signed-in user.
   static String destinationFor(AppUser user) {
@@ -311,6 +322,38 @@ final appRouterProvider = Provider<GoRouter>((ref) {
         name: 'progress-score',
         builder: (BuildContext context, GoRouterState state) =>
             const FitnessScoreScreen(),
+      ),
+      GoRoute(
+        path: AppRoutes.reminders,
+        name: 'reminders',
+        builder: (BuildContext context, GoRouterState state) =>
+            const ReminderListScreen(),
+      ),
+      GoRoute(
+        path: AppRoutes.reminderEditor,
+        name: 'reminder-editor',
+        builder: (BuildContext context, GoRouterState state) =>
+            ReminderEditorScreen(
+              existing: state.extra as Reminder?,
+            ),
+      ),
+      GoRoute(
+        path: AppRoutes.reminderHistory,
+        name: 'reminder-history',
+        builder: (BuildContext context, GoRouterState state) =>
+            const ReminderHistoryScreen(),
+      ),
+      GoRoute(
+        path: AppRoutes.reminderStatistics,
+        name: 'reminder-statistics',
+        builder: (BuildContext context, GoRouterState state) =>
+            const ReminderStatisticsScreen(),
+      ),
+      GoRoute(
+        path: AppRoutes.reminderSettings,
+        name: 'reminder-settings',
+        builder: (BuildContext context, GoRouterState state) =>
+            const ReminderSettingsScreen(),
       ),
     ],
     errorBuilder: (BuildContext context, GoRouterState state) {

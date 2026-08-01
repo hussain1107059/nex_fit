@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import '../../core/constants/storage_keys.dart';
+import '../../domain/entities/common_enums.dart';
 import '../../domain/repositories/app_preferences_repository.dart';
 
 /// SharedPreferences backed implementation of [AppPreferencesRepository].
@@ -74,5 +75,50 @@ class AppPreferencesRepositoryImpl implements AppPreferencesRepository {
   Future<void> setLastBackupTime(DateTime time) async {
     final SharedPreferences prefs = await _getPreferences();
     await prefs.setInt(StorageKeys.lastBackupAt, time.millisecondsSinceEpoch);
+  }
+
+  @override
+  bool getNotificationSound() {
+    return preferences?.getBool(StorageKeys.notificationSound) ?? true;
+  }
+
+  @override
+  Future<void> setNotificationSound(bool value) async {
+    final SharedPreferences prefs = await _getPreferences();
+    await prefs.setBool(StorageKeys.notificationSound, value);
+  }
+
+  @override
+  bool getVibration() {
+    return preferences?.getBool(StorageKeys.vibration) ?? true;
+  }
+
+  @override
+  Future<void> setVibration(bool value) async {
+    final SharedPreferences prefs = await _getPreferences();
+    await prefs.setBool(StorageKeys.vibration, value);
+  }
+
+  @override
+  bool getSilentMode() {
+    return preferences?.getBool(StorageKeys.silentMode) ?? false;
+  }
+
+  @override
+  Future<void> setSilentMode(bool value) async {
+    final SharedPreferences prefs = await _getPreferences();
+    await prefs.setBool(StorageKeys.silentMode, value);
+  }
+
+  @override
+  ReminderTimeFormat getReminderTimeFormat() {
+    final String? stored = preferences?.getString(StorageKeys.reminderTimeFormat);
+    return ReminderTimeFormat.fromName(stored);
+  }
+
+  @override
+  Future<void> setReminderTimeFormat(ReminderTimeFormat format) async {
+    final SharedPreferences prefs = await _getPreferences();
+    await prefs.setString(StorageKeys.reminderTimeFormat, format.name);
   }
 }

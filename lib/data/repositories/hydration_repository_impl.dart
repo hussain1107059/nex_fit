@@ -205,13 +205,7 @@ class HydrationRepositoryImpl implements HydrationRepository {
   Future<void> _schedule(Reminder reminder) async {
     await _notificationService.cancelReminder(reminder.id ?? 0);
     if (!reminder.isEnabled) return;
-    await _notificationService.scheduleDaily(
-      id: reminder.id ?? 0,
-      title: reminder.title,
-      body: reminder.body ?? '',
-      time: reminder.time,
-      daysOfWeek: reminder.daysOfWeek,
-    );
+    await _notificationService.scheduleReminder(reminder);
   }
 
   List<DateTime> _periodBounds(WaterHistoryPeriod period, DateTime now) {

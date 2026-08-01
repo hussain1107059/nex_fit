@@ -15,6 +15,7 @@ import '../../../domain/repositories/app_preferences_repository.dart';
 import '../../../domain/repositories/auth_repository.dart';
 import '../../../injection/dependency_injection.dart';
 import '../../providers/auth_controller.dart';
+import '../../providers/reminder_providers.dart';
 import '../../providers/water_providers.dart';
 import '../../router/app_router.dart';
 
@@ -67,6 +68,13 @@ class _SplashScreenState extends ConsumerState<SplashScreen>
       // Re-sync the hydration reminders with the signed-in user's schedule so
       // notifications survive reboots, app updates and account switches.
       await rescheduleHydrationReminders(ref);
+
+      // Bind notification tap/action callbacks, re-sync the full reminder
+      // module schedule (handles timezone changes) and record any occurrences
+      // that fired while the app was closed.
+      bindReminderNotificationHandler(ref);
+      await rescheduleReminders(ref);
+      await syncMissedReminders(ref);
 
       // Honor "remember me": when the user opted out, drop the persisted
       // session so the login screen is shown on the next launch.

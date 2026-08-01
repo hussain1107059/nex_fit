@@ -13,4 +13,9 @@ class StorageKeys {
   static const String googleAccessToken = 'google_access_token';
   static const String googleRefreshToken = 'google_refresh_token';
   static const String driveBackupEnabled = 'drive_backup_enabled';
+
+  static const String notificationSound = 'notification_sound';
+  static const String vibration = 'vibration';
+  static const String silentMode = 'silent_mode';
+  static const String reminderTimeFormat = 'reminder_time_format';
 }
