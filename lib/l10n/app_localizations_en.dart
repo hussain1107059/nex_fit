@@ -1595,4 +1595,239 @@ class AppLocalizationsEn extends AppLocalizations {
   String nutritionDeleteTemplateMessage(Object name) {
     return 'Delete \'$name\'? This can\'t be undone.';
   }
+
+  @override
+  String get waterTitle => 'Water';
+
+  @override
+  String get waterTracker => 'Water tracker';
+
+  @override
+  String get waterHistory => 'Water history';
+
+  @override
+  String get waterStatistics => 'Statistics';
+
+  @override
+  String get waterReminders => 'Reminders';
+
+  @override
+  String get waterHydration => 'Hydration';
+
+  @override
+  String get waterIntakeToday => 'Today\'s water';
+
+  @override
+  String get waterDailyGoal => 'Daily goal';
+
+  @override
+  String get waterRemaining => 'Remaining';
+
+  @override
+  String get waterGoalProgress => 'Goal progress';
+
+  @override
+  String get waterQuickAdd => 'Quick add';
+
+  @override
+  String get waterCustomAmount => 'Custom amount';
+
+  @override
+  String get waterNote => 'Note (optional)';
+
+  @override
+  String get waterLogSuccess => 'Water added';
+
+  @override
+  String get waterLogUpdated => 'Entry updated';
+
+  @override
+  String get waterLogDeleted => 'Entry deleted';
+
+  @override
+  String get waterEntries => 'Entries';
+
+  @override
+  String get waterNoEntries => 'No water logged today';
+
+  @override
+  String get waterNoEntriesSubtitle => 'Add water using the buttons below';
+
+  @override
+  String get waterSetGoal => 'Set goal';
+
+  @override
+  String get waterEditGoal => 'Edit goal';
+
+  @override
+  String get waterGoalSheetTitle => 'Daily water goal';
+
+  @override
+  String get waterGoalSuggested => 'Suggested goals';
+
+  @override
+  String get waterGoalSaved => 'Goal saved';
+
+  @override
+  String get waterStatusNeedsWater => 'Drink more water';
+
+  @override
+  String get waterStatusGettingThere => 'Getting there';
+
+  @override
+  String get waterStatusNearlyThere => 'Almost there';
+
+  @override
+  String get waterStatusGoalMet => 'Goal met';
+
+  @override
+  String get waterStatusExceeded => 'Goal exceeded';
+
+  @override
+  String get waterEditEntry => 'Edit entry';
+
+  @override
+  String get waterDeleteEntry => 'Delete this entry?';
+
+  @override
+  String get waterDeleteEntryMessage => 'This water entry will be deleted.';
+
+  @override
+  String get waterHistoryDaily => 'Daily';
+
+  @override
+  String get waterHistoryWeekly => 'Weekly';
+
+  @override
+  String get waterHistoryMonthly => 'Monthly';
+
+  @override
+  String get waterHistoryYearly => 'Yearly';
+
+  @override
+  String get waterHistoryTotal => 'Total';
+
+  @override
+  String get waterHistoryAverage => 'Average';
+
+  @override
+  String get waterHistoryBest => 'Best';
+
+  @override
+  String get waterHistoryLogged => 'Logged';
+
+  @override
+  String get waterNoHistory => 'No data yet';
+
+  @override
+  String get waterNoHistorySubtitle =>
+      'Your history will appear here once you start logging water.';
+
+  @override
+  String get waterStatAvgDaily => 'Avg daily intake';
+
+  @override
+  String get waterStatBestDay => 'Best day';
+
+  @override
+  String get waterStatCurrentStreak => 'Current streak';
+
+  @override
+  String get waterStatLongestStreak => 'Longest streak';
+
+  @override
+  String get waterStatTotalConsumed => 'Total consumed';
+
+  @override
+  String get waterStatTotalEntries => 'Total entries';
+
+  @override
+  String get waterStatTrackedDays => 'Tracked days';
+
+  @override
+  String waterStreakDays(Object count) {
+    return '$count days';
+  }
+
+  @override
+  String get waterReminderMorning => 'Morning reminder';
+
+  @override
+  String get waterReminderAfternoon => 'Afternoon reminder';
+
+  @override
+  String get waterReminderEvening => 'Evening reminder';
+
+  @override
+  String get waterReminderCustom => 'Custom reminder';
+
+  @override
+  String get waterReminderNotificationTitle => 'Time to hydrate';
+
+  @override
+  String get waterReminderNotificationBody => 'Drink a glass of water';
+
+  @override
+  String get waterReminderAddTitle => 'New reminder';
+
+  @override
+  String get waterReminderTime => 'Time';
+
+  @override
+  String get waterReminderDaily => 'Daily';
+
+  @override
+  String get waterReminderDisabled => 'Disabled';
+
+  @override
+  String get waterReminderNoReminders => 'No reminders yet';
+
+  @override
+  String get waterReminderNoRemindersSubtitle =>
+      'Add morning, afternoon and evening hydration reminders';
+
+  @override
+  String get waterReminderDeleted => 'Reminder deleted';
+
+  @override
+  String get waterReminderSaved => 'Reminder saved';
+
+  @override
+  String get waterReminderDays => 'Days of week';
+
+  @override
+  String get waterReminderDaysHint => 'Leave unselected to run every day';
+
+  @override
+  String get waterWeekdayMonday => 'Mon';
+
+  @override
+  String get waterWeekdayTuesday => 'Tue';
+
+  @override
+  String get waterWeekdayWednesday => 'Wed';
+
+  @override
+  String get waterWeekdayThursday => 'Thu';
+
+  @override
+  String get waterWeekdayFriday => 'Fri';
+
+  @override
+  String get waterWeekdaySaturday => 'Sat';
+
+  @override
+  String get waterWeekdaySunday => 'Sun';
+
+  @override
+  String get errorWaterNegative => 'Enter an amount greater than 0';
+
+  @override
+  String get errorWaterUnrealistic => 'That\'s too much for a single entry';
+
+  @override
+  String get errorWaterGoalTooLow => 'Goal must be at least 500 ml';
+
+  @override
+  String get errorWaterGoalTooHigh => 'Goal cannot exceed 10000 ml';
 }

@@ -21,6 +21,10 @@ import '../screens/nutrition/nutrition_history_screen.dart';
 import '../screens/profile/edit_profile_screen.dart';
 import '../screens/shell/app_shell_screen.dart';
 import '../screens/splash/splash_screen.dart';
+import '../screens/water/water_history_screen.dart';
+import '../screens/water/water_reminders_screen.dart';
+import '../screens/water/water_screen.dart';
+import '../screens/water/water_statistics_screen.dart';
 import '../screens/workout/workout_detail_screen.dart';
 import '../screens/workout/workout_history_screen.dart';
 import '../screens/workout/workout_list_screen.dart';
@@ -47,6 +51,10 @@ abstract final class AppRoutes {
   static const String macroTracker = '/nutrition/macro-tracker';
   static const String nutritionHistory = '/nutrition/history';
   static const String mealPlanner = '/nutrition/meal-planner';
+  static const String water = '/water';
+  static const String waterHistory = '/water/history';
+  static const String waterStatistics = '/water/statistics';
+  static const String waterReminders = '/water/reminders';
 
   /// The landing route for a freshly signed-in user.
   static String destinationFor(AppUser user) {
@@ -215,6 +223,30 @@ final appRouterProvider = Provider<GoRouter>((ref) {
         name: 'meal-planner',
         builder: (BuildContext context, GoRouterState state) =>
             const MealPlannerScreen(),
+      ),
+      GoRoute(
+        path: AppRoutes.water,
+        name: 'water',
+        builder: (BuildContext context, GoRouterState state) =>
+            const WaterScreen(),
+      ),
+      GoRoute(
+        path: AppRoutes.waterHistory,
+        name: 'water-history',
+        builder: (BuildContext context, GoRouterState state) =>
+            const WaterHistoryScreen(),
+      ),
+      GoRoute(
+        path: AppRoutes.waterStatistics,
+        name: 'water-statistics',
+        builder: (BuildContext context, GoRouterState state) =>
+            const WaterStatisticsScreen(),
+      ),
+      GoRoute(
+        path: AppRoutes.waterReminders,
+        name: 'water-reminders',
+        builder: (BuildContext context, GoRouterState state) =>
+            const WaterRemindersScreen(),
       ),
     ],
     errorBuilder: (BuildContext context, GoRouterState state) {

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
 
 import '../../../../core/extensions/context_extensions.dart';
 import '../../../../core/theme/app_colors.dart';
@@ -7,6 +8,7 @@ import '../../../../core/theme/app_radius.dart';
 import '../../../../core/theme/app_spacing.dart';
 import '../../../../core/widgets/feedback/app_snackbar.dart';
 import '../../../../domain/entities/dashboard_data.dart';
+import '../../../router/app_router.dart';
 import 'dashboard_dialogs.dart';
 import 'section_header.dart';
 
@@ -92,7 +94,7 @@ class QuickActionsSection extends ConsumerWidget {
         AppSnackbar.info(context, context.l10n.dashboardComingSoon);
         break;
       case 1:
-        DashboardDialogs.showLogWater(context, ref, userId);
+        context.push(AppRoutes.water);
         break;
       case 2:
         AppSnackbar.info(context, context.l10n.dashboardComingSoon);

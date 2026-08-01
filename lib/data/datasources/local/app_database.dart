@@ -37,6 +37,7 @@ class AppDatabase {
     DatabaseMigration(version: 4, apply: _migrationV4WorkoutModule),
     DatabaseMigration(version: 5, apply: _migrationV5ExerciseLibrary),
     DatabaseMigration(version: 6, apply: _migrationV6NutritionModule),
+    DatabaseMigration(version: 7, apply: _migrationV7WaterModule),
   ];
 
   Future<Database> get database async {
@@ -997,5 +998,19 @@ class AppDatabase {
     await db.execute('''
       UPDATE meal_category SET sort_order = 5 WHERE slug = 'dinner'
     ''');
+  }
+
+  /// v7: the water tracker & hydration module.
+  ///
+  /// The core `water_log`, `reminder` and `user_profile.target_water_ml`
+  /// tables already existed from v2; this migration only extends the water
+  /// log with an optional free-text note so custom entries can be annotated.
+  /// The column is nullable so the upgrade is safe for existing rows.
+  static Future<void> _migrationV7WaterModule(
+    DatabaseExecutor executor,
+    int version,
+  ) async {
+    final DatabaseExecutor db = executor;
+    await db.execute('ALTER TABLE water_log ADD COLUMN note TEXT');
   }
 }

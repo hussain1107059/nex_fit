@@ -1604,4 +1604,239 @@ class AppLocalizationsBs extends AppLocalizations {
   String nutritionDeleteTemplateMessage(Object name) {
     return '\'$name\' মুছে ফেলবেন? এটি ফেরানো যাবে না।';
   }
+
+  @override
+  String get waterTitle => 'পানি';
+
+  @override
+  String get waterTracker => 'ওয়াটার ট্র্যাকার';
+
+  @override
+  String get waterHistory => 'পানির ইতিহাস';
+
+  @override
+  String get waterStatistics => 'পরিসংখ্যান';
+
+  @override
+  String get waterReminders => 'রিমাইন্ডার';
+
+  @override
+  String get waterHydration => 'হাইড্রেশন';
+
+  @override
+  String get waterIntakeToday => 'আজকের পানি';
+
+  @override
+  String get waterDailyGoal => 'দৈনিক লক্ষ্য';
+
+  @override
+  String get waterRemaining => 'বাকি আছে';
+
+  @override
+  String get waterGoalProgress => 'লক্ষ্য অগ্রগতি';
+
+  @override
+  String get waterQuickAdd => 'দ্রুত যোগ করুন';
+
+  @override
+  String get waterCustomAmount => 'নিজস্ব পরিমাণ';
+
+  @override
+  String get waterNote => 'নোট (ঐচ্ছিক)';
+
+  @override
+  String get waterLogSuccess => 'পানি যোগ হয়েছে';
+
+  @override
+  String get waterLogUpdated => 'এন্ট্রি আপডেট হয়েছে';
+
+  @override
+  String get waterLogDeleted => 'এন্ট্রি মুছে ফেলা হয়েছে';
+
+  @override
+  String get waterEntries => 'এন্ট্রি';
+
+  @override
+  String get waterNoEntries => 'আজ কোনো পানি যোগ হয়নি';
+
+  @override
+  String get waterNoEntriesSubtitle => 'নিচের বোতাম থেকে পানি যোগ করুন';
+
+  @override
+  String get waterSetGoal => 'লক্ষ্য নির্ধারণ করুন';
+
+  @override
+  String get waterEditGoal => 'লক্ষ্য পরিবর্তন করুন';
+
+  @override
+  String get waterGoalSheetTitle => 'দৈনিক পানির লক্ষ্য';
+
+  @override
+  String get waterGoalSuggested => 'প্রস্তাবিত লক্ষ্য';
+
+  @override
+  String get waterGoalSaved => 'লক্ষ্য সংরক্ষিত হয়েছে';
+
+  @override
+  String get waterStatusNeedsWater => 'আরও পানি দরকার';
+
+  @override
+  String get waterStatusGettingThere => 'ভালো যাচ্ছে';
+
+  @override
+  String get waterStatusNearlyThere => 'প্রায় শেষ';
+
+  @override
+  String get waterStatusGoalMet => 'লক্ষ্য পূরণ হয়েছে';
+
+  @override
+  String get waterStatusExceeded => 'লক্ষ্য ছাড়িয়ে গেছে';
+
+  @override
+  String get waterEditEntry => 'এন্ট্রি সম্পাদনা';
+
+  @override
+  String get waterDeleteEntry => 'এন্ট্রি মুছবেন?';
+
+  @override
+  String get waterDeleteEntryMessage => 'এই পানির এন্ট্রি মুছে ফেলা হবে।';
+
+  @override
+  String get waterHistoryDaily => 'দৈনিক';
+
+  @override
+  String get waterHistoryWeekly => 'সাপ্তাহিক';
+
+  @override
+  String get waterHistoryMonthly => 'মাসিক';
+
+  @override
+  String get waterHistoryYearly => 'বার্ষিক';
+
+  @override
+  String get waterHistoryTotal => 'মোট';
+
+  @override
+  String get waterHistoryAverage => 'গড়';
+
+  @override
+  String get waterHistoryBest => 'সর্বোচ্চ';
+
+  @override
+  String get waterHistoryLogged => 'লগ হওয়া';
+
+  @override
+  String get waterNoHistory => 'কোনো তথ্য নেই';
+
+  @override
+  String get waterNoHistorySubtitle =>
+      'প্রতিদিন পানি যোগ করলে এখানে ইতিহাস দেখতে পাবেন';
+
+  @override
+  String get waterStatAvgDaily => 'গড় দৈনিক গ্রহণ';
+
+  @override
+  String get waterStatBestDay => 'সেরা দিন';
+
+  @override
+  String get waterStatCurrentStreak => 'বর্তমান ধারা';
+
+  @override
+  String get waterStatLongestStreak => 'সর্বোচ্চ ধারা';
+
+  @override
+  String get waterStatTotalConsumed => 'মোট পানি';
+
+  @override
+  String get waterStatTotalEntries => 'মোট এন্ট্রি';
+
+  @override
+  String get waterStatTrackedDays => 'ট্র্যাক করা দিন';
+
+  @override
+  String waterStreakDays(Object count) {
+    return '$count দিন';
+  }
+
+  @override
+  String get waterReminderMorning => 'সকালের রিমাইন্ডার';
+
+  @override
+  String get waterReminderAfternoon => 'দুপুরের রিমাইন্ডার';
+
+  @override
+  String get waterReminderEvening => 'সন্ধ্যার রিমাইন্ডার';
+
+  @override
+  String get waterReminderCustom => 'নিজস্ব রিমাইন্ডার';
+
+  @override
+  String get waterReminderNotificationTitle => 'পানি খাওয়ার সময়';
+
+  @override
+  String get waterReminderNotificationBody => 'এক গ্লাস পানি খান';
+
+  @override
+  String get waterReminderAddTitle => 'নতুন রিমাইন্ডার';
+
+  @override
+  String get waterReminderTime => 'সময়';
+
+  @override
+  String get waterReminderDaily => 'প্রতিদিন';
+
+  @override
+  String get waterReminderDisabled => 'নিষ্ক্রিয়';
+
+  @override
+  String get waterReminderNoReminders => 'কোনো রিমাইন্ডার নেই';
+
+  @override
+  String get waterReminderNoRemindersSubtitle =>
+      'সকাল, দুপুর ও সন্ধ্যায় পানি খাওয়ার রিমাইন্ডার যোগ করুন';
+
+  @override
+  String get waterReminderDeleted => 'রিমাইন্ডার মুছে ফেলা হয়েছে';
+
+  @override
+  String get waterReminderSaved => 'রিমাইন্ডার সংরক্ষিত হয়েছে';
+
+  @override
+  String get waterReminderDays => 'সপ্তাহের দিন';
+
+  @override
+  String get waterReminderDaysHint => 'কোনো দিন না বাছাই করলে প্রতিদিন চলবে';
+
+  @override
+  String get waterWeekdayMonday => 'সোম';
+
+  @override
+  String get waterWeekdayTuesday => 'মঙ্গল';
+
+  @override
+  String get waterWeekdayWednesday => 'বুধ';
+
+  @override
+  String get waterWeekdayThursday => 'বৃহস্পতি';
+
+  @override
+  String get waterWeekdayFriday => 'শুক্র';
+
+  @override
+  String get waterWeekdaySaturday => 'শনি';
+
+  @override
+  String get waterWeekdaySunday => 'রবি';
+
+  @override
+  String get errorWaterNegative => 'অনুগ্রহ করে ০-এর বেশি পরিমাণ দিন';
+
+  @override
+  String get errorWaterUnrealistic => 'একবারে এত বেশি পানি যোগ করা যাবে না';
+
+  @override
+  String get errorWaterGoalTooLow => 'লক্ষ্য কমপক্ষে ৫০০ মিলি হতে হবে';
+
+  @override
+  String get errorWaterGoalTooHigh => 'লক্ষ্য ১০০০০ মিলির বেশি হতে পারবে না';
 }

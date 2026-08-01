@@ -401,7 +401,7 @@ class _WaterCard extends StatelessWidget {
     final AppLocalizations l10n = context.l10n;
     final ThemeData theme = Theme.of(context);
     return AppCard(
-      onPressed: () => context.push(AppRoutes.nutritionHistory),
+      onPressed: () => context.push(AppRoutes.water),
       child: Row(
         children: [
           Container(

@@ -15,6 +15,7 @@ import '../../../domain/repositories/app_preferences_repository.dart';
 import '../../../domain/repositories/auth_repository.dart';
 import '../../../injection/dependency_injection.dart';
 import '../../providers/auth_controller.dart';
+import '../../providers/water_providers.dart';
 import '../../router/app_router.dart';
 
 /// Entry screen shown while the app bootstraps its services.
@@ -62,6 +63,10 @@ class _SplashScreenState extends ConsumerState<SplashScreen>
 
       // Pick up any persisted session now that Firebase is ready.
       await ref.read(authControllerProvider.notifier).syncSession();
+
+      // Re-sync the hydration reminders with the signed-in user's schedule so
+      // notifications survive reboots, app updates and account switches.
+      await rescheduleHydrationReminders(ref);
 
       // Honor "remember me": when the user opted out, drop the persisted
       // session so the login screen is shown on the next launch.

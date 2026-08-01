@@ -8,6 +8,7 @@ class WaterLog extends Equatable {
     required this.amountMl,
     required this.loggedAt,
     required this.createdAt,
+    this.note,
   });
 
   final int? id;
@@ -16,12 +17,16 @@ class WaterLog extends Equatable {
   final DateTime loggedAt;
   final DateTime createdAt;
 
+  /// Optional free-text note attached to a custom entry.
+  final String? note;
+
   WaterLog copyWith({
     int? id,
     String? userId,
     int? amountMl,
     DateTime? loggedAt,
     DateTime? createdAt,
+    String? note,
   }) {
     return WaterLog(
       id: id ?? this.id,
@@ -29,9 +34,10 @@ class WaterLog extends Equatable {
       amountMl: amountMl ?? this.amountMl,
       loggedAt: loggedAt ?? this.loggedAt,
       createdAt: createdAt ?? this.createdAt,
+      note: note ?? this.note,
     );
   }
 
   @override
-  List<Object?> get props => [id, userId, amountMl, loggedAt, createdAt];
+  List<Object?> get props => [id, userId, amountMl, loggedAt, createdAt, note];
 }

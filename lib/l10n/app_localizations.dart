@@ -3181,6 +3181,468 @@ abstract class AppLocalizations {
   /// In bs, this message translates to:
   /// **'\'{name}\' মুছে ফেলবেন? এটি ফেরানো যাবে না।'**
   String nutritionDeleteTemplateMessage(Object name);
+
+  /// No description provided for @waterTitle.
+  ///
+  /// In bs, this message translates to:
+  /// **'পানি'**
+  String get waterTitle;
+
+  /// No description provided for @waterTracker.
+  ///
+  /// In bs, this message translates to:
+  /// **'ওয়াটার ট্র্যাকার'**
+  String get waterTracker;
+
+  /// No description provided for @waterHistory.
+  ///
+  /// In bs, this message translates to:
+  /// **'পানির ইতিহাস'**
+  String get waterHistory;
+
+  /// No description provided for @waterStatistics.
+  ///
+  /// In bs, this message translates to:
+  /// **'পরিসংখ্যান'**
+  String get waterStatistics;
+
+  /// No description provided for @waterReminders.
+  ///
+  /// In bs, this message translates to:
+  /// **'রিমাইন্ডার'**
+  String get waterReminders;
+
+  /// No description provided for @waterHydration.
+  ///
+  /// In bs, this message translates to:
+  /// **'হাইড্রেশন'**
+  String get waterHydration;
+
+  /// No description provided for @waterIntakeToday.
+  ///
+  /// In bs, this message translates to:
+  /// **'আজকের পানি'**
+  String get waterIntakeToday;
+
+  /// No description provided for @waterDailyGoal.
+  ///
+  /// In bs, this message translates to:
+  /// **'দৈনিক লক্ষ্য'**
+  String get waterDailyGoal;
+
+  /// No description provided for @waterRemaining.
+  ///
+  /// In bs, this message translates to:
+  /// **'বাকি আছে'**
+  String get waterRemaining;
+
+  /// No description provided for @waterGoalProgress.
+  ///
+  /// In bs, this message translates to:
+  /// **'লক্ষ্য অগ্রগতি'**
+  String get waterGoalProgress;
+
+  /// No description provided for @waterQuickAdd.
+  ///
+  /// In bs, this message translates to:
+  /// **'দ্রুত যোগ করুন'**
+  String get waterQuickAdd;
+
+  /// No description provided for @waterCustomAmount.
+  ///
+  /// In bs, this message translates to:
+  /// **'নিজস্ব পরিমাণ'**
+  String get waterCustomAmount;
+
+  /// No description provided for @waterNote.
+  ///
+  /// In bs, this message translates to:
+  /// **'নোট (ঐচ্ছিক)'**
+  String get waterNote;
+
+  /// No description provided for @waterLogSuccess.
+  ///
+  /// In bs, this message translates to:
+  /// **'পানি যোগ হয়েছে'**
+  String get waterLogSuccess;
+
+  /// No description provided for @waterLogUpdated.
+  ///
+  /// In bs, this message translates to:
+  /// **'এন্ট্রি আপডেট হয়েছে'**
+  String get waterLogUpdated;
+
+  /// No description provided for @waterLogDeleted.
+  ///
+  /// In bs, this message translates to:
+  /// **'এন্ট্রি মুছে ফেলা হয়েছে'**
+  String get waterLogDeleted;
+
+  /// No description provided for @waterEntries.
+  ///
+  /// In bs, this message translates to:
+  /// **'এন্ট্রি'**
+  String get waterEntries;
+
+  /// No description provided for @waterNoEntries.
+  ///
+  /// In bs, this message translates to:
+  /// **'আজ কোনো পানি যোগ হয়নি'**
+  String get waterNoEntries;
+
+  /// No description provided for @waterNoEntriesSubtitle.
+  ///
+  /// In bs, this message translates to:
+  /// **'নিচের বোতাম থেকে পানি যোগ করুন'**
+  String get waterNoEntriesSubtitle;
+
+  /// No description provided for @waterSetGoal.
+  ///
+  /// In bs, this message translates to:
+  /// **'লক্ষ্য নির্ধারণ করুন'**
+  String get waterSetGoal;
+
+  /// No description provided for @waterEditGoal.
+  ///
+  /// In bs, this message translates to:
+  /// **'লক্ষ্য পরিবর্তন করুন'**
+  String get waterEditGoal;
+
+  /// No description provided for @waterGoalSheetTitle.
+  ///
+  /// In bs, this message translates to:
+  /// **'দৈনিক পানির লক্ষ্য'**
+  String get waterGoalSheetTitle;
+
+  /// No description provided for @waterGoalSuggested.
+  ///
+  /// In bs, this message translates to:
+  /// **'প্রস্তাবিত লক্ষ্য'**
+  String get waterGoalSuggested;
+
+  /// No description provided for @waterGoalSaved.
+  ///
+  /// In bs, this message translates to:
+  /// **'লক্ষ্য সংরক্ষিত হয়েছে'**
+  String get waterGoalSaved;
+
+  /// No description provided for @waterStatusNeedsWater.
+  ///
+  /// In bs, this message translates to:
+  /// **'আরও পানি দরকার'**
+  String get waterStatusNeedsWater;
+
+  /// No description provided for @waterStatusGettingThere.
+  ///
+  /// In bs, this message translates to:
+  /// **'ভালো যাচ্ছে'**
+  String get waterStatusGettingThere;
+
+  /// No description provided for @waterStatusNearlyThere.
+  ///
+  /// In bs, this message translates to:
+  /// **'প্রায় শেষ'**
+  String get waterStatusNearlyThere;
+
+  /// No description provided for @waterStatusGoalMet.
+  ///
+  /// In bs, this message translates to:
+  /// **'লক্ষ্য পূরণ হয়েছে'**
+  String get waterStatusGoalMet;
+
+  /// No description provided for @waterStatusExceeded.
+  ///
+  /// In bs, this message translates to:
+  /// **'লক্ষ্য ছাড়িয়ে গেছে'**
+  String get waterStatusExceeded;
+
+  /// No description provided for @waterEditEntry.
+  ///
+  /// In bs, this message translates to:
+  /// **'এন্ট্রি সম্পাদনা'**
+  String get waterEditEntry;
+
+  /// No description provided for @waterDeleteEntry.
+  ///
+  /// In bs, this message translates to:
+  /// **'এন্ট্রি মুছবেন?'**
+  String get waterDeleteEntry;
+
+  /// No description provided for @waterDeleteEntryMessage.
+  ///
+  /// In bs, this message translates to:
+  /// **'এই পানির এন্ট্রি মুছে ফেলা হবে।'**
+  String get waterDeleteEntryMessage;
+
+  /// No description provided for @waterHistoryDaily.
+  ///
+  /// In bs, this message translates to:
+  /// **'দৈনিক'**
+  String get waterHistoryDaily;
+
+  /// No description provided for @waterHistoryWeekly.
+  ///
+  /// In bs, this message translates to:
+  /// **'সাপ্তাহিক'**
+  String get waterHistoryWeekly;
+
+  /// No description provided for @waterHistoryMonthly.
+  ///
+  /// In bs, this message translates to:
+  /// **'মাসিক'**
+  String get waterHistoryMonthly;
+
+  /// No description provided for @waterHistoryYearly.
+  ///
+  /// In bs, this message translates to:
+  /// **'বার্ষিক'**
+  String get waterHistoryYearly;
+
+  /// No description provided for @waterHistoryTotal.
+  ///
+  /// In bs, this message translates to:
+  /// **'মোট'**
+  String get waterHistoryTotal;
+
+  /// No description provided for @waterHistoryAverage.
+  ///
+  /// In bs, this message translates to:
+  /// **'গড়'**
+  String get waterHistoryAverage;
+
+  /// No description provided for @waterHistoryBest.
+  ///
+  /// In bs, this message translates to:
+  /// **'সর্বোচ্চ'**
+  String get waterHistoryBest;
+
+  /// No description provided for @waterHistoryLogged.
+  ///
+  /// In bs, this message translates to:
+  /// **'লগ হওয়া'**
+  String get waterHistoryLogged;
+
+  /// No description provided for @waterNoHistory.
+  ///
+  /// In bs, this message translates to:
+  /// **'কোনো তথ্য নেই'**
+  String get waterNoHistory;
+
+  /// No description provided for @waterNoHistorySubtitle.
+  ///
+  /// In bs, this message translates to:
+  /// **'প্রতিদিন পানি যোগ করলে এখানে ইতিহাস দেখতে পাবেন'**
+  String get waterNoHistorySubtitle;
+
+  /// No description provided for @waterStatAvgDaily.
+  ///
+  /// In bs, this message translates to:
+  /// **'গড় দৈনিক গ্রহণ'**
+  String get waterStatAvgDaily;
+
+  /// No description provided for @waterStatBestDay.
+  ///
+  /// In bs, this message translates to:
+  /// **'সেরা দিন'**
+  String get waterStatBestDay;
+
+  /// No description provided for @waterStatCurrentStreak.
+  ///
+  /// In bs, this message translates to:
+  /// **'বর্তমান ধারা'**
+  String get waterStatCurrentStreak;
+
+  /// No description provided for @waterStatLongestStreak.
+  ///
+  /// In bs, this message translates to:
+  /// **'সর্বোচ্চ ধারা'**
+  String get waterStatLongestStreak;
+
+  /// No description provided for @waterStatTotalConsumed.
+  ///
+  /// In bs, this message translates to:
+  /// **'মোট পানি'**
+  String get waterStatTotalConsumed;
+
+  /// No description provided for @waterStatTotalEntries.
+  ///
+  /// In bs, this message translates to:
+  /// **'মোট এন্ট্রি'**
+  String get waterStatTotalEntries;
+
+  /// No description provided for @waterStatTrackedDays.
+  ///
+  /// In bs, this message translates to:
+  /// **'ট্র্যাক করা দিন'**
+  String get waterStatTrackedDays;
+
+  /// No description provided for @waterStreakDays.
+  ///
+  /// In bs, this message translates to:
+  /// **'{count} দিন'**
+  String waterStreakDays(Object count);
+
+  /// No description provided for @waterReminderMorning.
+  ///
+  /// In bs, this message translates to:
+  /// **'সকালের রিমাইন্ডার'**
+  String get waterReminderMorning;
+
+  /// No description provided for @waterReminderAfternoon.
+  ///
+  /// In bs, this message translates to:
+  /// **'দুপুরের রিমাইন্ডার'**
+  String get waterReminderAfternoon;
+
+  /// No description provided for @waterReminderEvening.
+  ///
+  /// In bs, this message translates to:
+  /// **'সন্ধ্যার রিমাইন্ডার'**
+  String get waterReminderEvening;
+
+  /// No description provided for @waterReminderCustom.
+  ///
+  /// In bs, this message translates to:
+  /// **'নিজস্ব রিমাইন্ডার'**
+  String get waterReminderCustom;
+
+  /// No description provided for @waterReminderNotificationTitle.
+  ///
+  /// In bs, this message translates to:
+  /// **'পানি খাওয়ার সময়'**
+  String get waterReminderNotificationTitle;
+
+  /// No description provided for @waterReminderNotificationBody.
+  ///
+  /// In bs, this message translates to:
+  /// **'এক গ্লাস পানি খান'**
+  String get waterReminderNotificationBody;
+
+  /// No description provided for @waterReminderAddTitle.
+  ///
+  /// In bs, this message translates to:
+  /// **'নতুন রিমাইন্ডার'**
+  String get waterReminderAddTitle;
+
+  /// No description provided for @waterReminderTime.
+  ///
+  /// In bs, this message translates to:
+  /// **'সময়'**
+  String get waterReminderTime;
+
+  /// No description provided for @waterReminderDaily.
+  ///
+  /// In bs, this message translates to:
+  /// **'প্রতিদিন'**
+  String get waterReminderDaily;
+
+  /// No description provided for @waterReminderDisabled.
+  ///
+  /// In bs, this message translates to:
+  /// **'নিষ্ক্রিয়'**
+  String get waterReminderDisabled;
+
+  /// No description provided for @waterReminderNoReminders.
+  ///
+  /// In bs, this message translates to:
+  /// **'কোনো রিমাইন্ডার নেই'**
+  String get waterReminderNoReminders;
+
+  /// No description provided for @waterReminderNoRemindersSubtitle.
+  ///
+  /// In bs, this message translates to:
+  /// **'সকাল, দুপুর ও সন্ধ্যায় পানি খাওয়ার রিমাইন্ডার যোগ করুন'**
+  String get waterReminderNoRemindersSubtitle;
+
+  /// No description provided for @waterReminderDeleted.
+  ///
+  /// In bs, this message translates to:
+  /// **'রিমাইন্ডার মুছে ফেলা হয়েছে'**
+  String get waterReminderDeleted;
+
+  /// No description provided for @waterReminderSaved.
+  ///
+  /// In bs, this message translates to:
+  /// **'রিমাইন্ডার সংরক্ষিত হয়েছে'**
+  String get waterReminderSaved;
+
+  /// No description provided for @waterReminderDays.
+  ///
+  /// In bs, this message translates to:
+  /// **'সপ্তাহের দিন'**
+  String get waterReminderDays;
+
+  /// No description provided for @waterReminderDaysHint.
+  ///
+  /// In bs, this message translates to:
+  /// **'কোনো দিন না বাছাই করলে প্রতিদিন চলবে'**
+  String get waterReminderDaysHint;
+
+  /// No description provided for @waterWeekdayMonday.
+  ///
+  /// In bs, this message translates to:
+  /// **'সোম'**
+  String get waterWeekdayMonday;
+
+  /// No description provided for @waterWeekdayTuesday.
+  ///
+  /// In bs, this message translates to:
+  /// **'মঙ্গল'**
+  String get waterWeekdayTuesday;
+
+  /// No description provided for @waterWeekdayWednesday.
+  ///
+  /// In bs, this message translates to:
+  /// **'বুধ'**
+  String get waterWeekdayWednesday;
+
+  /// No description provided for @waterWeekdayThursday.
+  ///
+  /// In bs, this message translates to:
+  /// **'বৃহস্পতি'**
+  String get waterWeekdayThursday;
+
+  /// No description provided for @waterWeekdayFriday.
+  ///
+  /// In bs, this message translates to:
+  /// **'শুক্র'**
+  String get waterWeekdayFriday;
+
+  /// No description provided for @waterWeekdaySaturday.
+  ///
+  /// In bs, this message translates to:
+  /// **'শনি'**
+  String get waterWeekdaySaturday;
+
+  /// No description provided for @waterWeekdaySunday.
+  ///
+  /// In bs, this message translates to:
+  /// **'রবি'**
+  String get waterWeekdaySunday;
+
+  /// No description provided for @errorWaterNegative.
+  ///
+  /// In bs, this message translates to:
+  /// **'অনুগ্রহ করে ০-এর বেশি পরিমাণ দিন'**
+  String get errorWaterNegative;
+
+  /// No description provided for @errorWaterUnrealistic.
+  ///
+  /// In bs, this message translates to:
+  /// **'একবারে এত বেশি পানি যোগ করা যাবে না'**
+  String get errorWaterUnrealistic;
+
+  /// No description provided for @errorWaterGoalTooLow.
+  ///
+  /// In bs, this message translates to:
+  /// **'লক্ষ্য কমপক্ষে ৫০০ মিলি হতে হবে'**
+  String get errorWaterGoalTooLow;
+
+  /// No description provided for @errorWaterGoalTooHigh.
+  ///
+  /// In bs, this message translates to:
+  /// **'লক্ষ্য ১০০০০ মিলির বেশি হতে পারবে না'**
+  String get errorWaterGoalTooHigh;
 }
 
 class _AppLocalizationsDelegate

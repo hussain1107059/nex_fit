@@ -14,6 +14,7 @@ class WaterLogModel {
       'amount_ml': log.amountMl,
       'logged_at': ModelCodec.epochMs(log.loggedAt),
       'created_at': ModelCodec.epochMs(log.createdAt),
+      'note': log.note,
     };
   }
 
@@ -26,6 +27,7 @@ class WaterLogModel {
           ModelCodec.fromEpochMs(row['logged_at'] as int?) ?? DateTime.now(),
       createdAt:
           ModelCodec.fromEpochMs(row['created_at'] as int?) ?? DateTime.now(),
+      note: row['note'] as String?,
     );
   }
 }

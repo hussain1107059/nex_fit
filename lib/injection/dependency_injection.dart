@@ -48,6 +48,7 @@ import '../data/repositories/exercise_repository_impl.dart';
 import '../data/repositories/fitness_goal_repository_impl.dart';
 import '../data/repositories/food_item_repository_impl.dart';
 import '../data/repositories/food_log_repository_impl.dart';
+import '../data/repositories/hydration_repository_impl.dart';
 import '../data/repositories/meal_category_repository_impl.dart';
 import '../data/repositories/meal_item_repository_impl.dart';
 import '../data/repositories/meal_repository_impl.dart';
@@ -72,6 +73,7 @@ import '../data/services/auth/auth_service.dart';
 import '../data/services/auth/google_sign_in_service.dart';
 import '../data/services/backup/google_drive_backup_service.dart';
 import '../data/services/firebase_service.dart';
+import '../data/services/notifications/local_notification_service.dart';
 import '../data/services/storage/profile_photo_service.dart';
 import '../data/services/storage/secure_storage_service.dart';
 import '../data/services/food_seeder.dart';
@@ -95,6 +97,7 @@ import '../domain/repositories/exercise_repository.dart';
 import '../domain/repositories/fitness_goal_repository.dart';
 import '../domain/repositories/food_item_repository.dart';
 import '../domain/repositories/food_log_repository.dart';
+import '../domain/repositories/hydration_repository.dart';
 import '../domain/repositories/meal_category_repository.dart';
 import '../domain/repositories/meal_item_repository.dart';
 import '../domain/repositories/meal_repository.dart';
@@ -165,6 +168,10 @@ final googleDriveBackupServiceProvider = Provider<GoogleDriveBackupService>(
 
 final appDatabaseProvider = Provider<AppDatabase>(
   (ref) => AppDatabase(),
+);
+
+final localNotificationServiceProvider = Provider<LocalNotificationService>(
+  (ref) => LocalNotificationService.instance,
 );
 
 final userLocalDataSourceProvider = Provider<UserLocalDataSource>(
@@ -393,6 +400,15 @@ final nutritionRepositoryProvider = Provider<NutritionRepository>(
 
 final waterLogRepositoryProvider = Provider<WaterLogRepository>(
   (ref) => WaterLogRepositoryImpl(ref.watch(waterLogLocalDataSourceProvider)),
+);
+
+final hydrationRepositoryProvider = Provider<HydrationRepository>(
+  (ref) => HydrationRepositoryImpl(
+    waterLogRepository: ref.watch(waterLogRepositoryProvider),
+    userProfileRepository: ref.watch(userFitnessProfileRepositoryProvider),
+    reminderRepository: ref.watch(reminderRepositoryProvider),
+    notificationService: ref.watch(localNotificationServiceProvider),
+  ),
 );
 
 final weightLogRepositoryProvider = Provider<WeightLogRepository>(
