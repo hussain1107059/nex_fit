@@ -75,7 +75,17 @@ class AuthService {
       final fb.User? user = credential.user;
       if (user != null) {
         if (name.trim().isNotEmpty) {
-          await user.updateDisplayName(name.trim());
+          // Display name is best-effort: a failure here must not abort sign-up
+          // after the account has already been created.
+          try {
+            await user.updateDisplayName(name.trim());
+          } catch (error, stackTrace) {
+            _logger.warning(
+              'Failed to update display name: $error',
+              error,
+              stackTrace,
+            );
+          }
         }
         // New accounts must verify their email before entering the app.
         try {

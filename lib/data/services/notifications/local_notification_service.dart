@@ -54,6 +54,17 @@ class LocalNotificationService {
   /// Small icon drawable used on Android.
   static const String _smallIcon = '@drawable/ic_stat_notify';
 
+  /// Notification channel. High importance on some OEM skins (MIUI, Samsung)
+  /// labels the notification "urgent", so reminders use default importance and
+  /// auto-cancel after [toastTimeoutMs] to behave like a short-lived toast.
+  static const String _channelId = 'reminders_v2';
+  static const String _channelName = 'Reminders';
+  static const String _channelDescription = 'Your scheduled reminders';
+  static const int _toastTimeoutMs = 5000;
+  /// Legacy channel id used before the toast-like behaviour was introduced;
+  /// removed on init so devices don't keep a stale high-importance channel.
+  static const String _legacyChannelId = 'reminders';
+
   static const int _slotFactor = 10000;
   static const int _dailyBase = 0;
   static const int _oneTimeBase = 1000;
@@ -98,6 +109,14 @@ class LocalNotificationService {
         onDidReceiveBackgroundNotificationResponse: _onBackgroundResponse,
       );
       _initialized = true;
+
+      // Remove the old high-importance channel so the recreated one picks up
+      // the default importance instead of keeping the "urgent" label.
+      await _plugin
+          .resolvePlatformSpecificImplementation<
+            AndroidFlutterLocalNotificationsPlugin
+          >()
+          ?.deleteNotificationChannel(_legacyChannelId);
     } catch (_) {
       _initialized = false;
     }
@@ -313,17 +332,18 @@ class LocalNotificationService {
 
     final AndroidNotificationDetails androidDetails =
         AndroidNotificationDetails(
-          'reminders',
-          'Reminders',
-          channelDescription: 'Your scheduled reminders',
-          importance: Importance.high,
-          priority: Priority.high,
+          _channelId,
+          _channelName,
+          channelDescription: _channelDescription,
+          importance: Importance.defaultImportance,
+          priority: Priority.defaultPriority,
           playSound: sound,
           enableVibration: vibrate,
           color: colorValue != null ? Color(colorValue) : null,
           icon: _smallIcon,
           largeIcon: const DrawableResourceAndroidBitmap('mipmap/ic_launcher'),
           actions: actions,
+          timeoutAfter: _toastTimeoutMs,
           styleInformation: BigTextStyleInformation(
             reminder.body ?? '',
             contentTitle: reminder.title,

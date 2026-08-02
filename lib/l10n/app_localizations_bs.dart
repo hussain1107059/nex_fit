@@ -271,6 +271,10 @@ class AppLocalizationsBs extends AppLocalizations {
   String get authGoogleSignInFailed => 'গুগল সাইন ইন ব্যর্থ হয়েছে';
 
   @override
+  String get authGoogleSignInConfig =>
+      'গুগল সাইন ইন কনফিগার করা হয়নি। Google সার্ভার ক্লায়েন্ট আইডি যোগ করুন (--dart-define=GOOGLE_SIGN_IN_SERVER_CLIENT_ID) এবং নিশ্চিত করুন যে Firebase প্রজেক্টে Google প্রোভাইডার সক্রিয় আছে।';
+
+  @override
   String get authUserNotFound => 'এই ইমেইলের কোনো অ্যাকাউন্ট পাওয়া যায়নি';
 
   @override

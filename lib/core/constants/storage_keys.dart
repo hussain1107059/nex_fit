@@ -14,6 +14,10 @@ class StorageKeys {
   static const String googleRefreshToken = 'google_refresh_token';
   static const String driveBackupEnabled = 'drive_backup_enabled';
 
+  /// JSON-encoded list of locally created accounts used when Firebase is not
+  /// configured (offline-first mode).
+  static const String offlineUsers = 'offline_users';
+
   static const String notificationSound = 'notification_sound';
   static const String vibration = 'vibration';
   static const String silentMode = 'silent_mode';

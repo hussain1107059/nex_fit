@@ -50,6 +50,16 @@ class GoogleSignInService {
           error.code == GoogleSignInExceptionCode.interrupted) {
         throw const AuthException('authCancelled', code: 'cancelled');
       }
+      // Android fails with this code when no server client id is configured
+      // (missing --dart-define=GOOGLE_SIGN_IN_SERVER_CLIENT_ID or
+      // google-services.json / default_web_client_id).
+      if (error.code == GoogleSignInExceptionCode.clientConfigurationError ||
+          error.code == GoogleSignInExceptionCode.providerConfigurationError) {
+        throw const AuthException(
+          'authGoogleSignInConfig',
+          code: 'google_sign_in_config',
+        );
+      }
       throw const AuthException(
         'authGoogleSignInFailed',
         code: 'google_sign_in_failed',

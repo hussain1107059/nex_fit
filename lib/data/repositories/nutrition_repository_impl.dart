@@ -106,7 +106,7 @@ class NutritionRepositoryImpl implements NutritionRepository {
 
     final List<MealSlot> slots = categories.map((MealCategory category) {
       final List<FoodLogEntry> items =
-          grouped[category.id] ?? const <FoodLogEntry>[];
+          (grouped[category.id] ?? const <FoodLogEntry>[]).toList();
       items.sort((FoodLogEntry a, FoodLogEntry b) {
         final int byTime = a.log.loggedAt.compareTo(b.log.loggedAt);
         return byTime != 0

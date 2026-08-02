@@ -6,6 +6,7 @@ import '../../core/errors/failure.dart';
 import '../../core/errors/failure_mapper.dart';
 import '../../core/utils/release_logger.dart';
 import '../../core/utils/result.dart';
+import '../../data/services/firebase_service.dart';
 import '../../data/services/sync/sync_event_recorder.dart';
 import '../../domain/entities/app_user.dart';
 import '../../domain/repositories/auth_repository.dart';
@@ -257,6 +258,10 @@ class AuthController extends Notifier<AuthState> {  StreamSubscription<AppUser?>
   }
 
   Future<bool> _hasNetwork() async {
+    // Offline-first mode (no Firebase configuration) serves email auth from
+    // local accounts, so it must not be blocked by a connectivity check.
+    final FirebaseService firebase = ref.read(firebaseServiceProvider);
+    if (!firebase.isReady) return true;
     try {
       return await ref.read(networkInfoProvider).isConnected;
     } catch (_) {

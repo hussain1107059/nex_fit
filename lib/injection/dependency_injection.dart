@@ -678,6 +678,7 @@ final authRepositoryProvider = Provider<AuthRepository>(
   (ref) => AuthRepositoryImpl(
     ref.watch(authServiceProvider),
     ref.watch(userProfileRepositoryProvider),
+    ref.watch(secureStorageServiceProvider),
   ),
 );
 

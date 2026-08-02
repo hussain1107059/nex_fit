@@ -76,6 +76,14 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
         );
 
     if (!mounted || result.isFailure) return;
+    final AppUser user = result.valueOrNull!;
+
+    // Offline / already-verified accounts enter the app immediately; newly
+    // created online accounts must verify their email first.
+    if (user.isEmailVerified) {
+      context.go(AppRoutes.destinationFor(user));
+      return;
+    }
 
     await AppDialog.success(
       context: context,
@@ -83,7 +91,7 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
       message: context.l10n.authAccountCreatedSubtitle,
     );
     if (!mounted) return;
-    context.go(AppRoutes.emailVerification);
+    context.go(AppRoutes.destinationFor(user));
   }
 
   Future<void> _googleSignIn() async {

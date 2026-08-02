@@ -269,6 +269,10 @@ class AppLocalizationsEn extends AppLocalizations {
   String get authGoogleSignInFailed => 'Google sign in failed';
 
   @override
+  String get authGoogleSignInConfig =>
+      'Google sign in is not configured. Add the Google server client ID (--dart-define=GOOGLE_SIGN_IN_SERVER_CLIENT_ID) and make sure the Firebase project supports the Google provider.';
+
+  @override
   String get authUserNotFound => 'No account found for this email';
 
   @override
