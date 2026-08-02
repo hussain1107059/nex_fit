@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_svg/flutter_svg.dart';
 
 import '../../../core/constants/app_assets.dart';
 import '../../../core/extensions/context_extensions.dart';
@@ -37,7 +36,7 @@ class AuthLogoHeader extends StatelessWidget {
               ),
             ],
           ),
-          child: SvgPicture.asset(AppAssets.logo, fit: BoxFit.contain),
+          child: Image.asset(AppAssets.logo, fit: BoxFit.contain),
         ),
         const SizedBox(height: AppSpacing.lg),
         Text(

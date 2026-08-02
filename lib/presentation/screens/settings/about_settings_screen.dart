@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:flutter_svg/flutter_svg.dart';
 
 import '../../../core/constants/app_assets.dart';
 import '../../../core/constants/app_constants.dart';
@@ -39,7 +38,7 @@ class AboutSettingsScreen extends ConsumerWidget {
                 color: scheme.primaryContainer.withValues(alpha: 0.5),
               ),
               padding: const EdgeInsets.all(AppSpacing.md),
-              child: SvgPicture.asset(AppAssets.logo, fit: BoxFit.contain),
+              child: Image.asset(AppAssets.logo, fit: BoxFit.contain),
             ),
           ),
           AppSpacing.md.heightSpace,

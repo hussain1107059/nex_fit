@@ -2,7 +2,6 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:flutter_svg/flutter_svg.dart';
 
 import '../../../core/constants/app_assets.dart';
 import '../../../core/extensions/context_extensions.dart';
@@ -133,7 +132,7 @@ class _LockScreenState extends ConsumerState<LockScreen> {
                   color: scheme.primaryContainer.withValues(alpha: 0.5),
                 ),
                 padding: const EdgeInsets.all(AppSpacing.sm),
-                child: SvgPicture.asset(AppAssets.logo, fit: BoxFit.contain),
+                child: Image.asset(AppAssets.logo, fit: BoxFit.contain),
               ),
               AppSpacing.xl.heightSpace,
               Text(

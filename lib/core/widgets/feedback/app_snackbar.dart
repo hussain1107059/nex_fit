@@ -15,7 +15,7 @@ class AppSnackbar {
     BuildContext context,
     String message, {
     AppSnackbarType type = AppSnackbarType.info,
-    Duration duration = const Duration(seconds: 3),
+    Duration duration = const Duration(milliseconds: 1500),
   }) {
     final ColorScheme scheme = context.colorScheme;
     final Color background = switch (type) {
