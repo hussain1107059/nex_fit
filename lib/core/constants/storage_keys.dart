@@ -18,6 +18,10 @@ class StorageKeys {
   /// configured (offline-first mode).
   static const String offlineUsers = 'offline_users';
 
+  /// Id of the last signed-in offline user so the session can be restored the
+  /// next time the app opens (auto-login).
+  static const String activeUserId = 'active_user_id';
+
   static const String notificationSound = 'notification_sound';
   static const String vibration = 'vibration';
   static const String silentMode = 'silent_mode';

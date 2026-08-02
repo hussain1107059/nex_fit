@@ -102,8 +102,9 @@ class AuthController extends Notifier<AuthState> {  StreamSubscription<AppUser?>
         );
       },
     );
+    final AppUser? restored = await repository.getCurrentUser();
     state = state.copyWith(
-      user: repository.currentUser,
+      user: restored ?? AppUser.signedOut,
       status: AuthActionStatus.idle,
       clearFailure: true,
     );
@@ -129,6 +130,7 @@ class AuthController extends Notifier<AuthState> {  StreamSubscription<AppUser?>
     );
     await _finishAction(result);
     if (result.isSuccess) {
+      await _startSecureSession(result.valueOrNull);
       await ref.read(appPreferencesRepositoryProvider).setRememberMe(rememberMe);
     }
     return result;
@@ -147,6 +149,9 @@ class AuthController extends Notifier<AuthState> {  StreamSubscription<AppUser?>
         .read(signUpWithEmailUsecaseProvider)
         .call(name: name, email: email, password: password);
     await _finishAction(result);
+    if (result.isSuccess) {
+      await _startSecureSession(result.valueOrNull);
+    }
     return result;
   }
 
@@ -158,6 +163,9 @@ class AuthController extends Notifier<AuthState> {  StreamSubscription<AppUser?>
     final Result<AppUser> result =
         await ref.read(signInWithGoogleUsecaseProvider).call();
     await _finishAction(result);
+    if (result.isSuccess) {
+      await _startSecureSession(result.valueOrNull);
+    }
     return result;
   }
 
@@ -212,6 +220,7 @@ class AuthController extends Notifier<AuthState> {  StreamSubscription<AppUser?>
 
     final Result<void> result = await ref.read(signOutUsecaseProvider).call();
     if (result.isSuccess) {
+      await _endSecureSession();
       state = state.copyWith(
         status: AuthActionStatus.success,
         user: AppUser.signedOut,
@@ -234,6 +243,7 @@ class AuthController extends Notifier<AuthState> {  StreamSubscription<AppUser?>
     final Result<void> result =
         await ref.read(deleteAccountUsecaseProvider).call();
     if (result.isSuccess) {
+      await _endSecureSession();
       state = state.copyWith(
         status: AuthActionStatus.success,
         user: AppUser.signedOut,
@@ -246,6 +256,30 @@ class AuthController extends Notifier<AuthState> {  StreamSubscription<AppUser?>
       );
     }
     return result;
+  }
+
+  /// Records a fresh secure session so the splash screen can validate the
+  /// session on the next launch (auto-login). Best-effort: a session failure
+  /// must never fail the sign-in.
+  Future<void> _startSecureSession(AppUser? user) async {
+    if (user?.isSignedIn != true) return;
+    try {
+      await ref.read(sessionManagerProvider).startSession(user!.id);
+    } catch (error, stackTrace) {
+      devLog(
+        '[AUTH] startSession failed: $error',
+        error: error,
+        stackTrace: stackTrace,
+      );
+    }
+  }
+
+  /// Ends the current user's secure session on logout / account deletion so a
+  /// later launch cannot auto-login. Never throws.
+  Future<void> _endSecureSession() async {
+    final AppUser? current = state.user;
+    if (current?.isSignedIn != true) return;
+    await ref.read(sessionManagerProvider).endSession(current!.id);
   }
 
   Future<void> _finishAction(Result<Object?> result) async {

@@ -51,7 +51,10 @@ class AuthRepositoryImpl implements AuthRepository {
 
   @override
   Future<AppUser?> getCurrentUser() async {
-    if (_isOffline) return _devUser;
+    if (_isOffline) {
+      _devUser ??= await _restoreOfflineUser();
+      return _devUser;
+    }
     final fb.User? user = _authService.currentUser;
     return AppUserModel.fromFirebase(user);
   }
@@ -169,6 +172,7 @@ class AuthRepositoryImpl implements AuthRepository {
   Future<void> signOut() async {
     _devUser = null;
     _devController.add(AppUser.signedOut);
+    await _secureStorage.delete(StorageKeys.activeUserId);
     await _authService.signOut();
   }
 
@@ -176,6 +180,7 @@ class AuthRepositoryImpl implements AuthRepository {
   Future<void> deleteAccount() async {
     _devUser = null;
     _devController.add(AppUser.signedOut);
+    await _secureStorage.delete(StorageKeys.activeUserId);
     await _authService.deleteAccount();
   }
 
@@ -230,14 +235,44 @@ class AuthRepositoryImpl implements AuthRepository {
   }
 
   /// Marks [user] as the active offline session, persists the profile and
-  /// notifies listeners.
+  /// notifies listeners. The user id is stored so the session can be restored
+  /// automatically the next time the app opens.
   Future<AppUser> _activateOfflineUser(AppUser user) async {
     devLog('[AUTH-REPO] offline sign-in: activating user ${user.id}');
     _devUser = user;
     await _persistProfile(user);
+    await _secureStorage.write(StorageKeys.activeUserId, user.id);
     _devController.add(user);
     devLog('[AUTH-REPO] offline sign-in: profile persisted and emitted');
     return user;
+  }
+
+  /// Restores the last active offline session after an app restart. Reads the
+  /// stored active user id and resolves it against the locally saved accounts.
+  Future<AppUser?> _restoreOfflineUser() async {
+    try {
+      final String? activeId = await _secureStorage.read(
+        StorageKeys.activeUserId,
+      );
+      if (activeId == null || activeId.isEmpty) return null;
+      final List<Map<String, dynamic>> accounts = await _readOfflineAccounts();
+      for (final Map<String, dynamic> json in accounts) {
+        final _OfflineAccount? account = _OfflineAccount.fromJson(json);
+        if (account != null && account.user.id == activeId) {
+          devLog('[AUTH-REPO] offline session restored for $activeId');
+          _devUser = account.user;
+          _devController.add(account.user);
+          return account.user;
+        }
+      }
+    } catch (error, stackTrace) {
+      devLog(
+        '[AUTH-REPO] restore offline session failed: $error',
+        error: error,
+        stackTrace: stackTrace,
+      );
+    }
+    return null;
   }
 
   /// Persists the signed-in user's profile locally and stamps the last login.

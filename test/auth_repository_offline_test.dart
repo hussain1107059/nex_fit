@@ -216,4 +216,54 @@ void main() {
     expect(user.isSignedIn, isTrue);
     expect(user.displayName, 'Karim');
   });
+
+  test('offline session auto-restores on a fresh repository (auto-login)',
+      () async {
+    await repository.signUpWithEmail(
+      name: 'Rahim',
+      email: 'rahim@example.com',
+      password: 'secret123',
+    );
+
+    final AuthRepository fresh = buildRepository();
+    final AppUser? restored = await fresh.getCurrentUser();
+
+    expect(restored, isNotNull);
+    expect(restored!.isSignedIn, isTrue);
+    expect(restored.email, 'rahim@example.com');
+    expect(restored.displayName, 'Rahim');
+  });
+
+  test('sign-out clears the persisted offline session', () async {
+    await repository.signUpWithEmail(
+      name: 'Rahim',
+      email: 'rahim@example.com',
+      password: 'secret123',
+    );
+    await repository.signOut();
+
+    final AuthRepository fresh = buildRepository();
+    final AppUser? restored = await fresh.getCurrentUser();
+
+    expect(restored, isNull);
+  });
+
+  test('signing in again restores the session for that account', () async {
+    await repository.signUpWithEmail(
+      name: 'Karim',
+      email: 'karim@example.com',
+      password: 'pw1234',
+    );
+
+    final AuthRepository fresh = buildRepository();
+    await fresh.signInWithEmail(
+      email: 'karim@example.com',
+      password: 'pw1234',
+    );
+
+    final AuthRepository newest = buildRepository();
+    final AppUser? restored = await newest.getCurrentUser();
+    expect(restored, isNotNull);
+    expect(restored!.email, 'karim@example.com');
+  });
 }
