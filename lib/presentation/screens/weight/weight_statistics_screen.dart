@@ -47,7 +47,7 @@ class _StatsContent extends StatelessWidget {
     final AppLocalizations l10n = context.l10n;
     final ThemeData theme = Theme.of(context);
     final AppColors colors =
-        context.isDarkMode ? AppColors.dark : AppColors.light;
+        AppColors.light;
     final String kg = l10n.dashboardKgUnit;
 
     return ListView(

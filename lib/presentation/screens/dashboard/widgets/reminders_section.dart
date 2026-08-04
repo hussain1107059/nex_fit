@@ -80,7 +80,7 @@ class _ReminderTile extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final AppColors colors = context.isDarkMode ? AppColors.dark : AppColors.light;
+    final AppColors colors = AppColors.light;
     final (IconData icon, Color color) = switch (reminder.reminderType) {
       ReminderType.water => (Icons.water_drop_rounded, colors.info),
       ReminderType.step => (Icons.directions_walk_rounded, colors.success),

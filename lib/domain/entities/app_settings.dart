@@ -25,7 +25,6 @@ class AppSettings extends Equatable {
     this.backupRetentionCount = 5,
     this.backupOnWifiOnly = false,
     this.backupWhileCharging = false,
-    this.themeMode = AppThemeMode.system,
     this.dynamicColor = false,
     this.fontScale = FontScale.medium,
     this.weekStart = WeekStart.sunday,
@@ -81,7 +80,6 @@ class AppSettings extends Equatable {
   final bool backupWhileCharging;
 
   // Appearance
-  final AppThemeMode themeMode;
   final bool dynamicColor;
   final FontScale fontScale;
 
@@ -153,7 +151,6 @@ class AppSettings extends Equatable {
     int? backupRetentionCount,
     bool? backupOnWifiOnly,
     bool? backupWhileCharging,
-    AppThemeMode? themeMode,
     bool? dynamicColor,
     FontScale? fontScale,
     WeekStart? weekStart,
@@ -206,7 +203,6 @@ class AppSettings extends Equatable {
           backupRetentionCount ?? this.backupRetentionCount,
       backupOnWifiOnly: backupOnWifiOnly ?? this.backupOnWifiOnly,
       backupWhileCharging: backupWhileCharging ?? this.backupWhileCharging,
-      themeMode: themeMode ?? this.themeMode,
       dynamicColor: dynamicColor ?? this.dynamicColor,
       fontScale: fontScale ?? this.fontScale,
       weekStart: weekStart ?? this.weekStart,
@@ -265,7 +261,6 @@ class AppSettings extends Equatable {
         backupRetentionCount,
         backupOnWifiOnly,
         backupWhileCharging,
-        themeMode,
         dynamicColor,
         fontScale,
         weekStart,

@@ -822,9 +822,6 @@ class AppLocalizationsBs extends AppLocalizations {
   String get profileIncomplete => 'এটি দেখতে প্রোফাইল সম্পূর্ণ করুন';
 
   @override
-  String get settingsDarkMode => 'ডার্ক মোড';
-
-  @override
   String get settingsLanguage => 'ভাষা';
 
   @override
@@ -2666,25 +2663,6 @@ class AppLocalizationsBs extends AppLocalizations {
 
   @override
   String get settingsAppearance => 'চেহারা';
-
-  @override
-  String get settingsTheme => 'থিম';
-
-  @override
-  String get settingsThemeSystem => 'সিস্টেম ডিফল্ট';
-
-  @override
-  String get settingsThemeLight => 'লাইট';
-
-  @override
-  String get settingsThemeDark => 'ডার্ক';
-
-  @override
-  String get settingsThemeAmoled => 'AMOLED কালো';
-
-  @override
-  String get settingsThemeAmoledSubtitle =>
-      'গভীর কালো পটভূমি, AMOLED স্ক্রিনের জন্য';
 
   @override
   String get settingsDynamicColor => 'ডাইনামিক কালার';

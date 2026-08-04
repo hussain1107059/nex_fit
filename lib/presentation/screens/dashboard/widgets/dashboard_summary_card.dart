@@ -16,19 +16,15 @@ class DashboardSummaryCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final AppColors appColors =
-        context.isDarkMode ? AppColors.dark : AppColors.light;
-    final Color onGradient = Colors.white;
+    final AppColors colors = AppColors.light;
+    final Color onGradient = context.colorScheme.onSurface;
 
     return Container(
       decoration: BoxDecoration(
+        color: colors.scheme.surface,
         borderRadius: AppRadius.xlRadius,
-        gradient: LinearGradient(
-          begin: Alignment.topLeft,
-          end: Alignment.bottomRight,
-          colors: appColors.brandGradient,
-        ),
-        boxShadow: AppShadows.brand,
+        border: Border.all(color: colors.scheme.outlineVariant),
+        boxShadow: AppShadows.soft,
       ),
       child: Padding(
         padding: const EdgeInsets.all(AppSpacing.lg),
@@ -65,31 +61,38 @@ class _StreakChip extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final AppColors colors = AppColors.light;
     return Container(
       padding: const EdgeInsets.symmetric(
         horizontal: AppSpacing.sm,
         vertical: AppSpacing.xxs,
       ),
       decoration: BoxDecoration(
-        color: Colors.white.withValues(alpha: 0.2),
+        color: colors.scheme.primaryContainer,
         borderRadius: AppRadius.pillRadius,
       ),
       child: Row(
         mainAxisSize: MainAxisSize.min,
         children: [
-          const Icon(Icons.local_fire_department_rounded, size: 16, color: Colors.white),
+          Icon(
+            Icons.local_fire_department_rounded,
+            size: 16,
+            color: colors.primary,
+          ),
           const SizedBox(width: AppSpacing.xxs),
           Text(
             '$streak'.toBanglaDigits(),
             style: context.textTheme.labelMedium?.copyWith(
-              color: Colors.white,
+              color: colors.scheme.onPrimaryContainer,
               fontWeight: FontWeight.w800,
             ),
           ),
           const SizedBox(width: AppSpacing.xxs),
           Text(
             context.l10n.dashboardDays,
-            style: context.textTheme.labelSmall?.copyWith(color: Colors.white),
+            style: context.textTheme.labelSmall?.copyWith(
+              color: colors.scheme.onPrimaryContainer,
+            ),
           ),
         ],
       ),
@@ -177,12 +180,13 @@ class _MetricCell extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final AppColors colors = AppColors.light;
     return Container(
       padding: const EdgeInsets.all(AppSpacing.sm),
       decoration: BoxDecoration(
-        color: Colors.white.withValues(alpha: 0.16),
+        color: colors.scheme.surfaceContainerHighest,
         borderRadius: AppRadius.mdRadius,
-        border: Border.all(color: Colors.white.withValues(alpha: 0.18)),
+        border: Border.all(color: colors.scheme.outlineVariant),
       ),
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,

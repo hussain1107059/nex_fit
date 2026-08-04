@@ -21,7 +21,7 @@ class TodayGoalsSection extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final AppColors colors = context.isDarkMode ? AppColors.dark : AppColors.light;
+    final AppColors colors = AppColors.light;
     final String l10nMin = context.l10n.dashboardMinutesShort;
     final String l10nKcal = context.l10n.dashboardKcalUnit;
     final String l10nMl = context.l10n.dashboardMlUnit;

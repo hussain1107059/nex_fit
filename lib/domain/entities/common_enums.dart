@@ -230,21 +230,6 @@ enum Units {
   }
 }
 
-/// The theme the user selected in Appearance settings.
-enum AppThemeMode {
-  system,
-  light,
-  dark,
-  amoled;
-
-  static AppThemeMode fromName(String? value) {
-    return AppThemeMode.values.firstWhere(
-      (mode) => mode.name == value,
-      orElse: () => AppThemeMode.system,
-    );
-  }
-}
-
 /// Global text scaling for the whole app.
 enum FontScale {
   small,

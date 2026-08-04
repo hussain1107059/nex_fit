@@ -353,7 +353,7 @@ class _CaloriesChart extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final AppColors colors =
-        context.isDarkMode ? AppColors.dark : AppColors.light;
+        AppColors.light;
     final String kcal = context.l10n.dashboardKcalUnit;
     final List<TrendPoint> points = <TrendPoint>[];
     for (int i = 0; i < report.series.length; i++) {
@@ -380,7 +380,7 @@ class _WorkoutMinutesChart extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final AppColors colors =
-        context.isDarkMode ? AppColors.dark : AppColors.light;
+        AppColors.light;
     final String min = context.l10n.progressUnitMin;
     final List<TrendPoint> points = <TrendPoint>[];
     for (int i = 0; i < report.series.length; i++) {
@@ -407,7 +407,7 @@ class _WorkoutCountChart extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final AppColors colors =
-        context.isDarkMode ? AppColors.dark : AppColors.light;
+        AppColors.light;
     final List<TrendPoint> points = <TrendPoint>[];
     for (int i = 0; i < report.series.length; i++) {
       final point = report.series[i];
@@ -434,7 +434,7 @@ class _WaterChart extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final AppColors colors =
-        context.isDarkMode ? AppColors.dark : AppColors.light;
+        AppColors.light;
     final String ml = context.l10n.progressUnitMl;
     final List<TrendPoint> points = <TrendPoint>[];
     for (int i = 0; i < report.series.length; i++) {
@@ -460,7 +460,7 @@ class _StepsChart extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final AppColors colors =
-        context.isDarkMode ? AppColors.dark : AppColors.light;
+        AppColors.light;
     final List<TrendPoint> points = <TrendPoint>[];
     for (int i = 0; i < report.series.length; i++) {
       final point = report.series[i];
@@ -487,7 +487,7 @@ class _SleepChart extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final AppColors colors =
-        context.isDarkMode ? AppColors.dark : AppColors.light;
+        AppColors.light;
     final String hrs = context.l10n.progressUnitHours;
     final List<TrendPoint> points = <TrendPoint>[];
     for (int i = 0; i < report.series.length; i++) {
@@ -514,7 +514,7 @@ class _WeightChart extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final AppColors colors =
-        context.isDarkMode ? AppColors.dark : AppColors.light;
+        AppColors.light;
     final String kg = context.l10n.dashboardKgUnit;
     final List<TrendPoint> points = <TrendPoint>[];
     for (int i = 0; i < report.series.length; i++) {
@@ -542,7 +542,7 @@ class _BmiChart extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final AppColors colors =
-        context.isDarkMode ? AppColors.dark : AppColors.light;
+        AppColors.light;
     final List<TrendPoint> points = <TrendPoint>[];
     for (int i = 0; i < report.series.length; i++) {
       final point = report.series[i];
@@ -570,7 +570,7 @@ class _BalanceCard extends StatelessWidget {
   Widget build(BuildContext context) {
     final AppLocalizations l10n = context.l10n;
     final AppColors colors =
-        context.isDarkMode ? AppColors.dark : AppColors.light;
+        AppColors.light;
     final double burned = report.summary.caloriesBurned;
     final double consumed = report.summary.caloriesConsumed;
     final bool hasData = burned > 0 || consumed > 0;

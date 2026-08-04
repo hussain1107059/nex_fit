@@ -29,12 +29,7 @@ class ContinueWorkoutCard extends StatelessWidget {
     return AppCard(
       padding: EdgeInsets.zero,
       gradient: LinearGradient(
-        colors: context.isDarkMode
-            ? <Color>[
-                context.colorScheme.primaryContainer,
-                context.colorScheme.surface,
-              ]
-            : <Color>[const Color(0xFFE7F5EC), context.colorScheme.surface],
+        colors: <Color>[const Color(0xFFE7F5EC), context.colorScheme.surface],
       ),
       child: Padding(
         padding: const EdgeInsets.all(AppSpacing.md),

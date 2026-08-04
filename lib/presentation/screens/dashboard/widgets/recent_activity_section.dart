@@ -91,7 +91,7 @@ class _ActivityTile extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final AppColors colors = context.isDarkMode ? AppColors.dark : AppColors.light;
+    final AppColors colors = AppColors.light;
     final (IconData icon, Color color) = switch (item.kind) {
       DashboardActivityKind.workout => (
         Icons.fitness_center_rounded,

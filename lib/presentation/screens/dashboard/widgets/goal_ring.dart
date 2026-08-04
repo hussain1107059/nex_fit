@@ -30,7 +30,7 @@ class GoalRing extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final AppColors appColors =
-        context.isDarkMode ? AppColors.dark : AppColors.light;
+        AppColors.light;
     return Container(
       padding: const EdgeInsets.all(AppSpacing.md),
       decoration: BoxDecoration(

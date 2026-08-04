@@ -20,9 +20,8 @@ class ProfileHeaderCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final AppColors appColors =
-        context.isDarkMode ? AppColors.dark : AppColors.light;
-    final Color onGradient = Colors.white;
+    final AppColors colors = AppColors.light;
+    final Color onGradient = context.colorScheme.onSurface;
     final String name = data.user.displayName?.trim().isNotEmpty == true
         ? data.user.displayName!.trim()
         : context.l10n.commonProfile;
@@ -35,15 +34,12 @@ class ProfileHeaderCard extends StatelessWidget {
 
     return Container(
       decoration: BoxDecoration(
+        color: colors.scheme.surface,
         borderRadius: AppRadius.xlRadius,
-        gradient: LinearGradient(
-          begin: Alignment.topLeft,
-          end: Alignment.bottomRight,
-          colors: appColors.brandGradient,
-        ),
+        border: Border.all(color: colors.scheme.outlineVariant),
         boxShadow: [
           BoxShadow(
-            color: appColors.primary.withValues(alpha: 0.3),
+            color: colors.scheme.shadow.withValues(alpha: 0.06),
             blurRadius: 28,
             offset: const Offset(0, 12),
           ),
@@ -124,15 +120,16 @@ class _HeaderChip extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final AppColors colors = AppColors.light;
     return Container(
       padding: const EdgeInsets.symmetric(
         horizontal: AppSpacing.sm,
         vertical: AppSpacing.xs,
       ),
       decoration: BoxDecoration(
-        color: onGradient.withValues(alpha: 0.18),
+        color: colors.scheme.surfaceContainerHighest,
         borderRadius: AppRadius.pillRadius,
-        border: Border.all(color: onGradient.withValues(alpha: 0.22)),
+        border: Border.all(color: colors.scheme.outlineVariant),
       ),
       child: Row(
         mainAxisSize: MainAxisSize.min,

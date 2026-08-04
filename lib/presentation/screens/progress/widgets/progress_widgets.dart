@@ -168,7 +168,7 @@ class GoalProgressTile extends StatelessWidget {
   Widget build(BuildContext context) {
     final AppLocalizations l10n = context.l10n;
     final AppColors colors =
-        context.isDarkMode ? AppColors.dark : AppColors.light;
+        AppColors.light;
     final Color color = _goalColor(colors, goal.kind);
     final IconData icon = _goalIcon(goal.kind);
     final String title = _goalTitle(l10n, goal.kind);
@@ -278,7 +278,7 @@ class RecordTile extends StatelessWidget {
   Widget build(BuildContext context) {
     final AppLocalizations l10n = context.l10n;
     final AppColors colors =
-        context.isDarkMode ? AppColors.dark : AppColors.light;
+        AppColors.light;
     final Color color = _recordColor(colors, record.kind);
 
     return AppCard(

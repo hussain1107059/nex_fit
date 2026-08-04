@@ -5,16 +5,11 @@ import 'app_radius.dart';
 import 'app_spacing.dart';
 import 'app_typography.dart';
 
-/// Builds the complete Material 3 theme for both light and dark mode.
+/// Builds the complete Material 3 light theme for NexFit.
 class AppTheme {
   AppTheme._();
 
   static ThemeData get light => _build(AppColors.light);
-
-  static ThemeData get dark => _build(AppColors.dark);
-
-  /// True-black theme for OLED screens.
-  static ThemeData get amoled => _build(AppColors.amoled);
 
   /// Builds a complete theme from an arbitrary [ColorScheme] (used by the
   /// Material You dynamic-colour mode on Android 12+).
@@ -24,7 +19,7 @@ class AppTheme {
 
   static ThemeData _build(AppColors colors) {
     final ColorScheme scheme = colors.scheme;
-    final TextTheme textTheme = AppTypography.build(scheme);
+    final TextTheme textTheme = AppTypography.build();
 
     return ThemeData(
       useMaterial3: true,

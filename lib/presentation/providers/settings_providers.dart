@@ -104,9 +104,6 @@ class SettingsController extends AsyncNotifier<AppSettings?> {
   // Appearance
   // ---------------------------------------------------------------------
 
-  Future<void> setThemeMode(AppThemeMode mode) =>
-      _update((settings) => settings.copyWith(themeMode: mode));
-
   Future<void> setDynamicColor(bool enabled) =>
       _update((settings) => settings.copyWith(dynamicColor: enabled));
 

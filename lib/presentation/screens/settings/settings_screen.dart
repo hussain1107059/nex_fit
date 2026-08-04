@@ -29,7 +29,6 @@ class SettingsScreen extends ConsumerWidget {
     final String weekStartLabel = settings?.weekStart == WeekStart.monday
         ? context.l10n.settingsWeekStartsMonday
         : context.l10n.settingsWeekStartsSunday;
-    final String themeLabel = _themeLabel(context, settings?.themeMode);
     final String fontLabel = _fontLabel(context, settings?.fontScale);
 
     return Scaffold(
@@ -105,13 +104,6 @@ class SettingsScreen extends ConsumerWidget {
           SettingsSectionTitle(context.l10n.settingsAppearance),
           SettingsCard(
             children: [
-              SettingsTile(
-                icon: Icons.palette_rounded,
-                title: context.l10n.settingsTheme,
-                value: themeLabel,
-                onTap: () => context.push(AppRoutes.settingsAppearance),
-              ),
-              const Divider(height: 1, indent: AppSpacing.xxl),
               SettingsTile(
                 icon: Icons.format_size_rounded,
                 title: context.l10n.settingsFontSize,
@@ -249,15 +241,6 @@ class SettingsScreen extends ConsumerWidget {
         ],
       ),
     );
-  }
-
-  String _themeLabel(BuildContext context, AppThemeMode? mode) {
-    return switch (mode ?? AppThemeMode.system) {
-      AppThemeMode.system => context.l10n.settingsThemeSystem,
-      AppThemeMode.light => context.l10n.settingsThemeLight,
-      AppThemeMode.dark => context.l10n.settingsThemeDark,
-      AppThemeMode.amoled => context.l10n.settingsThemeAmoled,
-    };
   }
 
   String _fontLabel(BuildContext context, FontScale? scale) {

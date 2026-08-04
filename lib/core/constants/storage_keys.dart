@@ -2,7 +2,6 @@
 class StorageKeys {
   StorageKeys._();
 
-  static const String themeMode = 'theme_mode';
   static const String locale = 'locale';
   static const String onboarded = 'onboarded';
   static const String rememberMe = 'remember_me';

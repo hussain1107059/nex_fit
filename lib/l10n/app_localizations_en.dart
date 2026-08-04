@@ -817,9 +817,6 @@ class AppLocalizationsEn extends AppLocalizations {
   String get profileIncomplete => 'Complete your profile to see this';
 
   @override
-  String get settingsDarkMode => 'Dark mode';
-
-  @override
   String get settingsLanguage => 'Language';
 
   @override
@@ -2660,25 +2657,6 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get settingsAppearance => 'Appearance';
-
-  @override
-  String get settingsTheme => 'Theme';
-
-  @override
-  String get settingsThemeSystem => 'System default';
-
-  @override
-  String get settingsThemeLight => 'Light';
-
-  @override
-  String get settingsThemeDark => 'Dark';
-
-  @override
-  String get settingsThemeAmoled => 'AMOLED black';
-
-  @override
-  String get settingsThemeAmoledSubtitle =>
-      'Deep black background, great for AMOLED screens';
 
   @override
   String get settingsDynamicColor => 'Dynamic color';

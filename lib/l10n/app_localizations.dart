@@ -1670,12 +1670,6 @@ abstract class AppLocalizations {
   /// **'এটি দেখতে প্রোফাইল সম্পূর্ণ করুন'**
   String get profileIncomplete;
 
-  /// No description provided for @settingsDarkMode.
-  ///
-  /// In bs, this message translates to:
-  /// **'ডার্ক মোড'**
-  String get settingsDarkMode;
-
   /// No description provided for @settingsLanguage.
   ///
   /// In bs, this message translates to:
@@ -5251,42 +5245,6 @@ abstract class AppLocalizations {
   /// In bs, this message translates to:
   /// **'চেহারা'**
   String get settingsAppearance;
-
-  /// No description provided for @settingsTheme.
-  ///
-  /// In bs, this message translates to:
-  /// **'থিম'**
-  String get settingsTheme;
-
-  /// No description provided for @settingsThemeSystem.
-  ///
-  /// In bs, this message translates to:
-  /// **'সিস্টেম ডিফল্ট'**
-  String get settingsThemeSystem;
-
-  /// No description provided for @settingsThemeLight.
-  ///
-  /// In bs, this message translates to:
-  /// **'লাইট'**
-  String get settingsThemeLight;
-
-  /// No description provided for @settingsThemeDark.
-  ///
-  /// In bs, this message translates to:
-  /// **'ডার্ক'**
-  String get settingsThemeDark;
-
-  /// No description provided for @settingsThemeAmoled.
-  ///
-  /// In bs, this message translates to:
-  /// **'AMOLED কালো'**
-  String get settingsThemeAmoled;
-
-  /// No description provided for @settingsThemeAmoledSubtitle.
-  ///
-  /// In bs, this message translates to:
-  /// **'গভীর কালো পটভূমি, AMOLED স্ক্রিনের জন্য'**
-  String get settingsThemeAmoledSubtitle;
 
   /// No description provided for @settingsDynamicColor.
   ///

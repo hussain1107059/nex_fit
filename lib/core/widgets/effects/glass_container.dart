@@ -2,7 +2,6 @@ import 'dart:ui';
 
 import 'package:flutter/material.dart';
 
-import '../../extensions/context_extensions.dart';
 import '../../theme/app_colors.dart';
 import '../../theme/app_radius.dart';
 
@@ -29,7 +28,7 @@ class GlassContainer extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final AppColors colors = context.isDarkMode ? AppColors.dark : AppColors.light;
+    final AppColors colors = AppColors.light;
     final BorderSide effectiveBorder =
         border ??
         BorderSide(

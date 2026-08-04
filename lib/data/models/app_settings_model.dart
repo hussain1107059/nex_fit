@@ -29,7 +29,6 @@ class AppSettingsModel {
       'backup_on_wifi_only': ModelCodec.boolToInt(settings.backupOnWifiOnly),
       'backup_while_charging':
           ModelCodec.boolToInt(settings.backupWhileCharging),
-      'theme_mode': settings.themeMode.name,
       'dynamic_color': ModelCodec.boolToInt(settings.dynamicColor),
       'font_scale': settings.fontScale.name,
       'week_start': settings.weekStart.name,
@@ -100,7 +99,6 @@ class AppSettingsModel {
       backupRetentionCount: row['backup_retention_count'] as int? ?? 5,
       backupOnWifiOnly: ModelCodec.intToBool(row['backup_on_wifi_only']),
       backupWhileCharging: ModelCodec.intToBool(row['backup_while_charging']),
-      themeMode: AppThemeMode.fromName(row['theme_mode'] as String?),
       dynamicColor: ModelCodec.intToBool(row['dynamic_color']),
       fontScale: FontScale.fromName(row['font_scale'] as String?),
       weekStart: WeekStart.fromName(row['week_start'] as String?),

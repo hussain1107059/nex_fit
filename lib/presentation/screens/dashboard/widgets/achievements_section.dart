@@ -46,7 +46,7 @@ class _BadgeTile extends StatelessWidget {
   Widget build(BuildContext context) {
     final String? name = achievement.badgeName;
     final AppColors appColors =
-        context.isDarkMode ? AppColors.dark : AppColors.light;
+        AppColors.light;
 
     final Widget icon = Container(
       width: 44,
@@ -92,7 +92,7 @@ class _StreakTile extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final AppColors appColors =
-        context.isDarkMode ? AppColors.dark : AppColors.light;
+        AppColors.light;
     return _TileContent(
       icon: Container(
         width: 44,

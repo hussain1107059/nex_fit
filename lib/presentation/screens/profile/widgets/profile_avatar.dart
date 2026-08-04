@@ -63,7 +63,7 @@ class ProfileAvatar extends StatelessWidget {
 
   List<Color> _brandGradient(BuildContext context) {
     final AppColors colors =
-        context.isDarkMode ? AppColors.dark : AppColors.light;
+        AppColors.light;
     return colors.brandGradient;
   }
 

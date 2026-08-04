@@ -45,7 +45,7 @@ class _ScoreContent extends StatelessWidget {
   Widget build(BuildContext context) {
     final AppLocalizations l10n = context.l10n;
     final AppColors colors =
-        context.isDarkMode ? AppColors.dark : AppColors.light;
+        AppColors.light;
     final Color color = _scoreColor(context, colors, score.score);
 
     return ListView(
@@ -118,7 +118,7 @@ class _MetricRow extends StatelessWidget {
   Widget build(BuildContext context) {
     final AppLocalizations l10n = context.l10n;
     final AppColors colors =
-        context.isDarkMode ? AppColors.dark : AppColors.light;
+        AppColors.light;
     final Color color = _metricColor(colors, metric.key);
 
     return AppCard(

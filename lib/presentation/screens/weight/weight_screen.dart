@@ -158,7 +158,7 @@ class _HeroCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final AppLocalizations l10n = context.l10n;
-    final AppColors colors = context.isDarkMode ? AppColors.dark : AppColors.light;
+    final AppColors colors = AppColors.light;
     final double? weight = data.latestWeight?.weightKg;
     final double? goal = data.goalWeightKg;
     final double? remaining = data.remainingToGoal;
@@ -338,7 +338,7 @@ class _DiffChip extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final AppColors colors =
-        context.isDarkMode ? AppColors.dark : AppColors.light;
+        AppColors.light;
     final Color loss = context.colorScheme.primary;
     final Color gain = colors.danger;
     final bool isLoss = inverse ? value <= 0 : value > 0;
@@ -607,7 +607,7 @@ class _CompositionCard extends StatelessWidget {
   Widget build(BuildContext context) {
     final AppLocalizations l10n = context.l10n;
     final AppColors colors =
-        context.isDarkMode ? AppColors.dark : AppColors.light;
+        AppColors.light;
     final double? bodyFat = data.bodyFatPercent;
     final double? lbm = data.leanBodyMassKg;
 

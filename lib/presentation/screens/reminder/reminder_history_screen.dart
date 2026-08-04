@@ -190,7 +190,7 @@ class _HistoryTile extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final AppColors colors = context.isDarkMode ? AppColors.dark : AppColors.light;
+    final AppColors colors = AppColors.light;
     final (IconData, Color) style = switch (entry.status) {
       ReminderHistoryStatus.completed => (
         Icons.check_circle_rounded,

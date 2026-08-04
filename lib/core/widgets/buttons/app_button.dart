@@ -146,10 +146,8 @@ class AppButton extends StatelessWidget {
           decoration: BoxDecoration(
             borderRadius: _radius(),
             gradient: _isInteractive
-                ? LinearGradient(
-                    colors: context.isDarkMode
-                        ? [context.colorScheme.primary, context.colorScheme.primary]
-                        : const [Color(0xFF0E9F6E), Color(0xFF22C55E)],
+                ? const LinearGradient(
+                    colors: [Color(0xFF0E9F6E), Color(0xFF22C55E)],
                     begin: Alignment.topLeft,
                     end: Alignment.bottomRight,
                   )

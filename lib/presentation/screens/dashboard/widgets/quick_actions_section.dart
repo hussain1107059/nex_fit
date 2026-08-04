@@ -26,7 +26,7 @@ class QuickActionsSection extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final AppColors colors = context.isDarkMode ? AppColors.dark : AppColors.light;
+    final AppColors colors = AppColors.light;
     final List<_QuickActionData> items = <_QuickActionData>[
       _QuickActionData(
         icon: Icons.fitness_center_rounded,

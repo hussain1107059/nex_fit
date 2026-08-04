@@ -16,7 +16,7 @@ class WeeklyStatsSection extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final AppColors colors = context.isDarkMode ? AppColors.dark : AppColors.light;
+    final AppColors colors = AppColors.light;
     final String l10nKg = context.l10n.dashboardKgUnit;
 
     return Column(

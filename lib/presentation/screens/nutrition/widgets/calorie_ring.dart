@@ -30,9 +30,7 @@ class CalorieRing extends StatelessWidget {
           value: value.clamp(0.0, 1.0),
           strokeWidth: strokeWidth,
           trackColor: trackColor ?? Theme.of(context).colorScheme.outlineVariant,
-          gradientColors: Theme.of(context).brightness == Brightness.dark
-              ? const <Color>[Color(0xFF34D399), Color(0xFF22C55E)]
-              : const <Color>[Color(0xFF0E9F6E), Color(0xFF22C55E)],
+          gradientColors: const <Color>[Color(0xFF0E9F6E), Color(0xFF22C55E)],
         ),
         child: Center(child: child),
       ),

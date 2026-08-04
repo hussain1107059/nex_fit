@@ -11,8 +11,6 @@ extension ContextExtensions on BuildContext {
 
   ColorScheme get colorScheme => Theme.of(this).colorScheme;
 
-  bool get isDarkMode => Theme.of(this).brightness == Brightness.dark;
-
   bool get isWide => MediaQuery.sizeOf(this).width >= 600;
 
   Future<void> dismissKeyboard() async {

@@ -6,7 +6,6 @@ import '../../../../core/constants/app_constants.dart';
 import '../../../../core/extensions/context_extensions.dart';
 import '../../../../core/theme/app_radius.dart';
 import '../../../../core/theme/app_spacing.dart';
-import '../../../../core/theme/theme_mode_provider.dart';
 import '../../../../core/widgets/dialogs/app_dialog.dart';
 import '../../../../core/widgets/feedback/app_snackbar.dart';
 import '../../../../domain/repositories/app_preferences_repository.dart';
@@ -17,14 +16,13 @@ import '../../../providers/profile_providers.dart';
 import '../../../router/app_router.dart';
 import 'profile_section_card.dart';
 
-/// Settings shortcuts: dark mode, language, notifications, backup & restore,
+/// Settings shortcuts: language, notifications, backup & restore,
 /// about and logout.
 class ProfileSettingsCard extends ConsumerWidget {
   const ProfileSettingsCard({super.key});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final ThemeMode themeMode = ref.watch(themeModeProvider);
     final bool notificationsEnabled =
         ref.watch(profileSettingsProvider).valueOrNull?.notificationsEnabled ??
         true;
@@ -41,16 +39,6 @@ class ProfileSettingsCard extends ConsumerWidget {
             onTap: () => context.push(AppRoutes.settings),
           ),
           const Divider(height: 1, indent: AppSpacing.xxl),
-          _SwitchTile(
-            icon: Icons.dark_mode_rounded,
-            title: context.l10n.settingsDarkMode,
-            value: themeMode == ThemeMode.dark,
-            onChanged: (bool value) {
-              ref
-                  .read(themeModeProvider.notifier)
-                  .setThemeMode(value ? ThemeMode.dark : ThemeMode.light);
-            },
-          ),
           _SettingsTile(
             icon: Icons.language_rounded,
             title: context.l10n.settingsLanguage,

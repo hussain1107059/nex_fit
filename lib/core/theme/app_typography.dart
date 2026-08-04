@@ -12,16 +12,9 @@ class AppTypography {
   static const String bengaliFamily = 'NotoSansBengali';
   static const List<String> familyFallback = [bengaliFamily];
 
-  static TextTheme build(ColorScheme scheme) {
-    const Color lightOnSurface = Color(0xFF0E141B);
-    const Color lightOnSurfaceVariant = Color(0xFF4A5568);
-    const Color darkOnSurface = Color(0xFFE7ECF1);
-    const Color darkOnSurfaceVariant = Color(0xFFA7B2BE);
-
-    final bool isDark = scheme.brightness == Brightness.dark;
-    final Color onSurface = isDark ? darkOnSurface : lightOnSurface;
-    final Color onSurfaceVariant =
-        isDark ? darkOnSurfaceVariant : lightOnSurfaceVariant;
+  static TextTheme build() {
+    const Color onSurface = Color(0xFF0E141B);
+    const Color onSurfaceVariant = Color(0xFF4A5568);
 
     const double letterSpacing = 0.2;
 

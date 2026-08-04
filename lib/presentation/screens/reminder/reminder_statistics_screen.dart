@@ -56,7 +56,7 @@ class _StatisticsContent extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final AppColors colors = context.isDarkMode ? AppColors.dark : AppColors.light;
+    final AppColors colors = AppColors.light;
 
     return ListView(
       padding: const EdgeInsets.fromLTRB(

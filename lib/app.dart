@@ -93,32 +93,18 @@ class _NexFitAppState extends ConsumerState<NexFitApp>
   Widget build(BuildContext context) {
     final GoRouter router = ref.watch(appRouterProvider);
 
-    final AppThemeMode themeMode =
-        ref.watch(settingsControllerProvider).valueOrNull?.themeMode ??
-        AppThemeMode.system;
     final bool dynamicColor =
         ref.watch(settingsControllerProvider).valueOrNull?.dynamicColor ?? false;
     final FontScale fontScale =
         ref.watch(settingsControllerProvider).valueOrNull?.fontScale ??
         FontScale.medium;
 
-    final ThemeMode resolvedMode = switch (themeMode) {
-      AppThemeMode.system => ThemeMode.system,
-      AppThemeMode.light => ThemeMode.light,
-      AppThemeMode.dark || AppThemeMode.amoled => ThemeMode.dark,
-    };
-    final ThemeData darkTheme = switch (themeMode) {
-      AppThemeMode.amoled => AppTheme.amoled,
-      _ => AppTheme.dark,
-    };
-
-    Widget buildApp(ThemeData light, ThemeData dark) {
+    Widget buildApp(ThemeData light) {
       return MaterialApp.router(
         title: 'NexFit',
         debugShowCheckedModeBanner: false,
         theme: light,
-        darkTheme: dark,
-        themeMode: resolvedMode,
+        themeMode: ThemeMode.light,
         locale: ref.watch(localeProvider),
         supportedLocales: AppLocalizations.supportedLocales,
         localizationsDelegates: AppLocalizations.localizationsDelegates,
@@ -138,15 +124,12 @@ class _NexFitAppState extends ConsumerState<NexFitApp>
           final ThemeData light = lightDynamic == null
               ? AppTheme.light
               : AppTheme.fromColorScheme(lightDynamic);
-          final ThemeData dark = darkDynamic == null
-              ? AppTheme.dark
-              : AppTheme.fromColorScheme(darkDynamic);
-          return buildApp(light, dark);
+          return buildApp(light);
         },
       );
     }
 
-    return buildApp(AppTheme.light, darkTheme);
+    return buildApp(AppTheme.light);
   }
 }
 

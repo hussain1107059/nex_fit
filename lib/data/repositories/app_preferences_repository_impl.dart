@@ -1,4 +1,3 @@
-import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import '../../core/constants/storage_keys.dart';
@@ -13,22 +12,6 @@ class AppPreferencesRepositoryImpl implements AppPreferencesRepository {
 
   Future<SharedPreferences> _getPreferences() async {
     return preferences ??= await SharedPreferences.getInstance();
-  }
-
-  @override
-  ThemeMode getThemeMode() {
-    final String? stored = preferences?.getString(StorageKeys.themeMode);
-    if (stored == null) return ThemeMode.system;
-    return ThemeMode.values.firstWhere(
-      (mode) => mode.name == stored,
-      orElse: () => ThemeMode.system,
-    );
-  }
-
-  @override
-  Future<void> setThemeMode(ThemeMode mode) async {
-    final SharedPreferences prefs = await _getPreferences();
-    await prefs.setString(StorageKeys.themeMode, mode.name);
   }
 
   @override
