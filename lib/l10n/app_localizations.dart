@@ -2150,6 +2150,18 @@ abstract class AppLocalizations {
   /// **'ওয়ার্কআউট শুরু করুন'**
   String get workoutStartNow;
 
+  /// No description provided for @workoutGetReady.
+  ///
+  /// In bs, this message translates to:
+  /// **'প্রস্তুত হোন'**
+  String get workoutGetReady;
+
+  /// No description provided for @workoutGetReadySubtitle.
+  ///
+  /// In bs, this message translates to:
+  /// **'আপনার ওয়ার্কআউট শুরু হতে চলেছে'**
+  String get workoutGetReadySubtitle;
+
   /// No description provided for @workoutDifficultyBeginner.
   ///
   /// In bs, this message translates to:

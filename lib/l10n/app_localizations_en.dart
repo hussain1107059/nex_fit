@@ -1064,6 +1064,12 @@ class AppLocalizationsEn extends AppLocalizations {
   String get workoutStartNow => 'Start workout';
 
   @override
+  String get workoutGetReady => 'Get ready';
+
+  @override
+  String get workoutGetReadySubtitle => 'Your workout is about to begin';
+
+  @override
   String get workoutDifficultyBeginner => 'Beginner';
 
   @override

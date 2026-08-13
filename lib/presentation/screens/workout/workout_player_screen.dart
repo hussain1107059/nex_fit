@@ -14,11 +14,14 @@ import '../../../core/widgets/dialogs/app_dialog.dart';
 import '../../../core/widgets/layout/custom_app_bar.dart';
 import '../../../domain/entities/achievement.dart';
 import '../../../domain/entities/badge.dart';
+import '../../../domain/entities/workout_category.dart';
 import '../../../domain/entities/workout_completion.dart';
+import '../../../domain/entities/workout_detail.dart';
 import '../../../domain/entities/workout_exercise_detail.dart';
 import '../../../l10n/app_localizations.dart';
 import '../../providers/workout_providers.dart';
 import '../../router/app_router.dart';
+import 'widgets/workout_cover.dart';
 
 /// Drives a single workout session with a live countdown.
 class WorkoutPlayerScreen extends ConsumerStatefulWidget {
@@ -57,7 +60,8 @@ class _WorkoutPlayerScreenState extends ConsumerState<WorkoutPlayerScreen> {
         );
         if (after != null &&
             after.phase == WorkoutSessionPhase.exercising &&
-            before == WorkoutSessionPhase.resting) {
+            (before == WorkoutSessionPhase.resting ||
+                before == WorkoutSessionPhase.getReady)) {
           _vibrate();
         }
       });
@@ -179,6 +183,14 @@ class _WorkoutPlayerScreenState extends ConsumerState<WorkoutPlayerScreen> {
             child: Center(
               child: exercise == null
                   ? Text(l10n.workoutFinish)
+                  : state.phase == WorkoutSessionPhase.getReady
+                  ? _WorkoutIntroView(
+                      detail: state.detail,
+                      remaining: state.currentRemainingSeconds,
+                      onStart: () => ref
+                          .read(workoutPlayerControllerProvider.notifier)
+                          .skipIntro(),
+                    )
                   : state.phase == WorkoutSessionPhase.resting
                   ? _WorkoutRestScreen(
                       currentIndex: state.currentIndex,
@@ -229,33 +241,43 @@ class _WorkoutPlayerScreenState extends ConsumerState<WorkoutPlayerScreen> {
                     ),
             ),
           ),
-          Row(
-            children: [
-              Expanded(
-                child: AppButton(
-                  onPressed: () => ref
-                      .read(workoutPlayerControllerProvider.notifier)
-                      .skipExercise(),
-                  label: state.phase == WorkoutSessionPhase.resting
-                      ? l10n.workoutSkipRest
-                      : l10n.commonSkip,
-                  variant: AppButtonVariant.outline,
+          if (state.phase == WorkoutSessionPhase.getReady) ...[
+            AppButton(
+              onPressed: () => ref
+                  .read(workoutPlayerControllerProvider.notifier)
+                  .skipIntro(),
+              label: l10n.workoutStartNow,
+              icon: Icons.play_arrow_rounded,
+              size: AppButtonSize.large,
+            ),
+          ] else
+            Row(
+              children: [
+                Expanded(
+                  child: AppButton(
+                    onPressed: () => ref
+                        .read(workoutPlayerControllerProvider.notifier)
+                        .skipExercise(),
+                    label: state.phase == WorkoutSessionPhase.resting
+                        ? l10n.workoutSkipRest
+                        : l10n.commonSkip,
+                    variant: AppButtonVariant.outline,
+                  ),
                 ),
-              ),
-              AppSpacing.md.widthSpace,
-              Expanded(
-                child: AppButton(
-                  onPressed: () => ref
-                      .read(workoutPlayerControllerProvider.notifier)
-                      .completeCurrentExercise(),
-                  label: state.phase == WorkoutSessionPhase.resting
-                      ? l10n.workoutEndRest
-                      : l10n.workoutComplete,
-                  icon: Icons.check_rounded,
+                AppSpacing.md.widthSpace,
+                Expanded(
+                  child: AppButton(
+                    onPressed: () => ref
+                        .read(workoutPlayerControllerProvider.notifier)
+                        .completeCurrentExercise(),
+                    label: state.phase == WorkoutSessionPhase.resting
+                        ? l10n.workoutEndRest
+                        : l10n.workoutComplete,
+                    icon: Icons.check_rounded,
+                  ),
                 ),
-              ),
-            ],
-          ),
+              ],
+            ),
         ],
       ),
     );
@@ -305,6 +327,134 @@ class _CountdownRing extends StatelessWidget {
           ),
         ),
       ),
+    );
+  }
+}
+
+/// Animated intro shown when a workout starts, previewing its type.
+class _WorkoutIntroView extends StatefulWidget {
+  const _WorkoutIntroView({
+    required this.detail,
+    required this.remaining,
+    required this.onStart,
+  });
+
+  final WorkoutDetail detail;
+  final int remaining;
+  final VoidCallback onStart;
+
+  @override
+  State<_WorkoutIntroView> createState() => _WorkoutIntroViewState();
+}
+
+class _WorkoutIntroViewState extends State<_WorkoutIntroView>
+    with SingleTickerProviderStateMixin {
+  late final AnimationController _controller;
+
+  @override
+  void initState() {
+    super.initState();
+    _controller = AnimationController(
+      vsync: this,
+      duration: const Duration(milliseconds: 1200),
+    )..repeat(reverse: true);
+  }
+
+  @override
+  void dispose() {
+    _controller.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final AppLocalizations l10n = context.l10n;
+    final WorkoutCategory? category = widget.detail.category;
+    final Color base = category?.color != null
+        ? Color(category!.color!)
+        : context.colorScheme.primary;
+
+    return Column(
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        Text(
+          l10n.workoutGetReady,
+          style: context.textTheme.headlineSmall?.copyWith(
+            fontWeight: FontWeight.w800,
+          ),
+        ),
+        const SizedBox(height: 4),
+        Text(
+          l10n.workoutGetReadySubtitle,
+          style: context.textTheme.bodyMedium?.copyWith(
+            color: context.colorScheme.onSurfaceVariant,
+          ),
+        ),
+        const SizedBox(height: AppSpacing.lg),
+        AnimatedBuilder(
+          animation: _controller,
+          builder: (BuildContext context, Widget? child) {
+            return Transform.scale(
+              scale: 1 + (_controller.value * 0.12),
+              child: child,
+            );
+          },
+          child: Container(
+            width: 132,
+            height: 132,
+            decoration: BoxDecoration(
+              shape: BoxShape.circle,
+              gradient: LinearGradient(
+                begin: Alignment.topLeft,
+                end: Alignment.bottomRight,
+                colors: <Color>[
+                  base.withValues(alpha: 0.9),
+                  base.withValues(alpha: 0.55),
+                ],
+              ),
+              boxShadow: <BoxShadow>[
+                BoxShadow(
+                  color: base.withValues(alpha: 0.35),
+                  blurRadius: 28,
+                  spreadRadius: 2,
+                ),
+              ],
+            ),
+            child: Icon(
+              categoryIconFor(category?.icon),
+              size: 60,
+              color: Colors.white,
+            ),
+          ),
+        ),
+        if (category != null) ...[
+          const SizedBox(height: AppSpacing.md),
+          Text(
+            category.name,
+            style: context.textTheme.labelLarge?.copyWith(
+              color: context.colorScheme.primary,
+              fontWeight: FontWeight.w700,
+            ),
+          ),
+        ],
+        const SizedBox(height: 4),
+        Text(
+          widget.detail.workout.name,
+          textAlign: TextAlign.center,
+          style: context.textTheme.titleMedium?.copyWith(
+            fontWeight: FontWeight.w700,
+          ),
+        ),
+        const SizedBox(height: AppSpacing.lg),
+        Text(
+          widget.remaining.clamp(0, 1 << 20).toString().toBanglaDigits(),
+          style: context.textTheme.displayLarge?.copyWith(
+            fontWeight: FontWeight.w800,
+            color: base,
+            fontFeatures: const [FontFeature.tabularFigures()],
+          ),
+        ),
+      ],
     );
   }
 }

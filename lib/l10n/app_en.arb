@@ -367,6 +367,8 @@
   "workoutMuscles": "Muscles worked",
   "workoutEquipment": "Equipment needed",
   "workoutStartNow": "Start workout",
+  "workoutGetReady": "Get ready",
+  "workoutGetReadySubtitle": "Your workout is about to begin",
   "workoutDifficultyBeginner": "Beginner",
   "workoutDifficultyIntermediate": "Intermediate",
   "workoutDifficultyAdvanced": "Advanced",

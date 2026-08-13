@@ -1070,6 +1070,12 @@ class AppLocalizationsBs extends AppLocalizations {
   String get workoutStartNow => 'ওয়ার্কআউট শুরু করুন';
 
   @override
+  String get workoutGetReady => 'প্রস্তুত হোন';
+
+  @override
+  String get workoutGetReadySubtitle => 'আপনার ওয়ার্কআউট শুরু হতে চলেছে';
+
+  @override
   String get workoutDifficultyBeginner => 'শিক্ষানবিস';
 
   @override

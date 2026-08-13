@@ -207,7 +207,7 @@ class WorkoutPlayerArgs extends Equatable {
 }
 
 /// Where the player currently sits inside a session.
-enum WorkoutSessionPhase { idle, exercising, resting, completed }
+enum WorkoutSessionPhase { idle, getReady, exercising, resting, completed }
 
 /// Immutable snapshot of an active workout session.
 class WorkoutPlayerState extends Equatable {
@@ -241,6 +241,7 @@ class WorkoutPlayerState extends Equatable {
       : null;
 
   bool get isActive =>
+      phase == WorkoutSessionPhase.getReady ||
       phase == WorkoutSessionPhase.exercising ||
       phase == WorkoutSessionPhase.resting;
 
@@ -287,6 +288,9 @@ class WorkoutPlayerState extends Equatable {
 ///
 /// The owning screen owns a one-second [Timer] that calls [tick].
 class WorkoutPlayerController extends Notifier<WorkoutPlayerState?> {
+  /// Seconds shown on the animated intro before the first exercise.
+  static const int getReadySeconds = 5;
+
   @override
   WorkoutPlayerState? build() => null;
 
@@ -331,9 +335,11 @@ class WorkoutPlayerController extends Notifier<WorkoutPlayerState?> {
       historyId: historyId,
       phase: first == null
           ? WorkoutSessionPhase.idle
-          : WorkoutSessionPhase.exercising,
+          : WorkoutSessionPhase.getReady,
       currentIndex: completed,
-      currentRemainingSeconds: first?.durationSeconds ?? 0,
+      currentRemainingSeconds: first == null
+          ? 0
+          : getReadySeconds,
       elapsedSeconds: elapsedSeconds,
       completedExercises: completed,
     );
@@ -352,7 +358,17 @@ class WorkoutPlayerController extends Notifier<WorkoutPlayerState?> {
       elapsedSeconds: current.elapsedSeconds + 1,
     );
 
-    if (next.phase == WorkoutSessionPhase.exercising) {
+    if (next.phase == WorkoutSessionPhase.getReady) {
+      if (next.currentRemainingSeconds > 0) {
+        next = next.copyWith(
+          currentRemainingSeconds: next.currentRemainingSeconds - 1,
+        );
+      }
+      if (next.currentRemainingSeconds <= 0) {
+        _beginCurrentExercise();
+        return;
+      }
+    } else if (next.phase == WorkoutSessionPhase.exercising) {
       if (next.currentRemainingSeconds > 0) {
         next = next.copyWith(
           currentRemainingSeconds: next.currentRemainingSeconds - 1,
@@ -414,6 +430,25 @@ class WorkoutPlayerController extends Notifier<WorkoutPlayerState?> {
     final WorkoutPlayerState? current = state;
     if (current == null || current.currentExercise == null) return;
     _advance();
+  }
+
+  /// Skips the get-ready intro and starts the first exercise immediately.
+  void skipIntro() {
+    final WorkoutPlayerState? current = state;
+    if (current == null || current.phase != WorkoutSessionPhase.getReady) {
+      return;
+    }
+    _beginCurrentExercise();
+  }
+
+  void _beginCurrentExercise() {
+    final WorkoutPlayerState? current = state;
+    final WorkoutExerciseDetail? exercise = current?.currentExercise;
+    if (current == null || exercise == null) return;
+    state = current.copyWith(
+      phase: WorkoutSessionPhase.exercising,
+      currentRemainingSeconds: exercise.durationSeconds,
+    );
   }
 
   void _advance() {

@@ -367,6 +367,8 @@
   "workoutMuscles": "যে পেশি কাজ করে",
   "workoutEquipment": "প্রয়োজনীয় সরঞ্জাম",
   "workoutStartNow": "ওয়ার্কআউট শুরু করুন",
+  "workoutGetReady": "প্রস্তুত হোন",
+  "workoutGetReadySubtitle": "আপনার ওয়ার্কআউট শুরু হতে চলেছে",
   "workoutDifficultyBeginner": "শিক্ষানবিস",
   "workoutDifficultyIntermediate": "মাঝারি",
   "workoutDifficultyAdvanced": "অগ্রসর",
