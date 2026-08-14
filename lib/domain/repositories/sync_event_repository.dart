@@ -1,9 +1,14 @@
+import 'package:sqflite/sqflite.dart' show Transaction;
+
 import '../entities/security_enums.dart';
 import '../entities/sync_event.dart';
 
-/// Contract for the offline sync event queue.
+/// Contract for the offline sync event queue (outbox).
 abstract interface class SyncEventRepository {
   Future<int> insert(SyncEvent event);
+
+  /// Inserts [event] inside an existing transaction (atomic mutation+outbox).
+  Future<void> insertInTransaction(Transaction txn, SyncEvent event);
 
   Future<void> update(SyncEvent event);
 
@@ -15,6 +20,15 @@ abstract interface class SyncEventRepository {
     String userId, {
     int? limit,
     int? offset,
+  });
+
+  /// Events eligible to run right now: pending or retryable whose
+  /// `next_retry_at` has passed.
+  Future<List<SyncEvent>> getRetryableByUserId(
+    String userId, {
+    int? limit,
+    int? offset,
+    DateTime? now,
   });
 
   Future<SyncEvent?> findDuplicate(
@@ -31,4 +45,43 @@ abstract interface class SyncEventRepository {
   Future<void> deleteCompletedOlderThan(String userId, DateTime threshold);
 
   Future<void> deleteCompletedOlderThanAll(DateTime threshold);
+
+  /// Marks an event as in-flight (see outbox protocol).
+  Future<void> markProcessing(int id, {required DateTime at});
+
+  /// Marks an event as delivered.
+  Future<void> markSuccess(
+    int id, {
+    required DateTime at,
+    required DateTime syncedAt,
+  });
+
+  /// Marks an event as a transient failure eligible for retry after
+  /// [nextRetryAt].
+  Future<void> markRetryableFailure(
+    int id, {
+    required String lastError,
+    required int retryCount,
+    required DateTime at,
+    required DateTime nextRetryAt,
+  });
+
+  /// Marks an event as a terminal failure.
+  Future<void> markPermanentFailure(
+    int id, {
+    required String lastError,
+    required int retryCount,
+    required DateTime at,
+  });
+
+  /// Reclaims PROCESSING events stuck longer than [olderThan] back to PENDING.
+  Future<List<int>> resetStuckProcessingEvents(
+    String userId, {
+    required DateTime olderThan,
+    required DateTime at,
+  });
+
+  Future<int> getPendingCount(String userId);
+
+  Future<int> getFailedCount(String userId);
 }

@@ -1,30 +1,37 @@
-import 'package:firebase_auth/firebase_auth.dart' as fb;
+import 'package:supabase_flutter/supabase_flutter.dart' as supabase;
 
 import '../../domain/entities/app_user.dart';
 
-/// Maps a Firebase [fb.User] to the domain [AppUser].
+/// Maps a Supabase gotrue [supabase.User] to the domain [AppUser].
 class AppUserModel {
   const AppUserModel._();
 
-  static AppUser fromFirebase(fb.User? user) {
+  static AppUser fromSupabase(supabase.User? user) {
     if (user == null) return AppUser.signedOut;
 
+    final Map<String, dynamic> metadata = user.userMetadata ?? const {};
+
     return AppUser(
-      id: user.uid,
+      id: user.id,
       email: user.email,
-      displayName: user.displayName,
-      photoUrl: user.photoURL,
-      isEmailVerified: user.emailVerified,
-      provider: _mapProvider(user.providerData),
-      createdAt: user.metadata.creationTime,
+      displayName: _displayName(metadata),
+      photoUrl: _photoUrl(metadata),
+      isEmailVerified: user.emailConfirmedAt != null,
+      provider: AuthProvider.email,
+      createdAt: DateTime.tryParse(user.createdAt),
     );
   }
 
-  static AuthProvider _mapProvider(List<fb.UserInfo> providerData) {
-    for (final fb.UserInfo info in providerData) {
-      if (info.providerId == 'google.com') return AuthProvider.google;
-      if (info.providerId == 'password') return AuthProvider.email;
-    }
-    return AuthProvider.none;
+  static String? _displayName(Map<String, dynamic> metadata) {
+    final Object? raw =
+        metadata['display_name'] ?? metadata['full_name'] ?? metadata['name'];
+    if (raw is String && raw.trim().isNotEmpty) return raw.trim();
+    return null;
+  }
+
+  static String? _photoUrl(Map<String, dynamic> metadata) {
+    final Object? raw = metadata['avatar_url'];
+    if (raw is String && raw.trim().isNotEmpty) return raw.trim();
+    return null;
   }
 }

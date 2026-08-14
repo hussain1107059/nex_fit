@@ -1,14 +1,18 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:intl/intl.dart';
 
 import '../../../../core/extensions/context_extensions.dart';
 import '../../../../core/extensions/string_extensions.dart';
 import '../../../../core/theme/app_spacing.dart';
 import '../../../../domain/entities/app_user.dart';
+import '../../../providers/sync_providers.dart';
+import '../../../widgets/sync/sync_status_chip.dart';
 import 'global_search_field.dart';
 
-/// Greeting, user name, today's date and the global search field.
-class DashboardHeader extends StatelessWidget {
+/// Greeting, user name, today's date, a subtle sync indicator and the global
+/// search field.
+class DashboardHeader extends ConsumerWidget {
   const DashboardHeader({super.key, required this.user});
 
   final AppUser user;
@@ -24,7 +28,7 @@ class DashboardHeader extends StatelessWidget {
   }
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
     final DateTime now = DateTime.now();
     final String name = (user.displayName?.trim().isNotEmpty ?? false)
         ? user.displayName!.trim()
@@ -32,6 +36,10 @@ class DashboardHeader extends StatelessWidget {
     final String date = DateFormat('d MMMM yyyy')
         .format(now)
         .toBanglaDigits();
+    // Subtle sync indicator (PROMPT 22): a compact pill that always reflects
+    // the live engine status without cluttering the header.
+    final SyncUiStatus syncStatus =
+        ref.watch(syncStatusProvider).status;
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -80,6 +88,8 @@ class DashboardHeader extends StatelessWidget {
                 color: context.colorScheme.onSurfaceVariant,
               ),
             ),
+            const Spacer(),
+            SyncStatusChip(status: syncStatus, compact: true),
           ],
         ),
         const SizedBox(height: AppSpacing.md),

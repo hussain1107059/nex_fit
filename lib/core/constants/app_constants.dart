@@ -6,7 +6,7 @@ class AppConstants {
   static const String appVersion = '1.0.0';
 
   static const String databaseName = 'nexfit.db';
-  static const int databaseVersion = 14;
+  static const int databaseVersion = 17;
 
   static const Duration splashDuration = Duration(milliseconds: 900);
   static const Duration debounceDuration = Duration(milliseconds: 400);
@@ -57,6 +57,34 @@ class AppConstants {
   static const Duration errorLogRetention = Duration(days: 30);
   /// How long inactive session records are kept before being pruned.
   static const Duration sessionRetention = Duration(days: 30);
-  /// Maximum retry attempts before a sync event is moved to failed.
+  /// Maximum retry attempts before a sync event is moved to permanent failure.
   static const int syncEventMaxRetries = 3;
+
+  // ---------------------------------------------------------------------
+  // Two-way sync foundation
+  // ---------------------------------------------------------------------
+  /// How long a stuck PROCESSING event may age before it is reclaimed on
+  /// startup (safe because a sync run never exceeds this).
+  static const Duration syncStuckProcessingTimeout = Duration(minutes: 5);
+  /// Exponential retry backoff (seconds) for transient push/pull failures.
+  /// The last value caps the sequence. Index = attempt index - 1.
+  static const List<int> syncRetryBackoffSeconds = <int>[
+    2,
+    5,
+    15,
+    30,
+    60,
+    120,
+    300,
+  ];
+  /// Maximum number of pull batches drained in a single sync run.
+  static const int syncMaxPullBatches = 50;
+  /// Pull batch size (rows of `sync_changes` per request).
+  static const int syncPullBatchSize = 100;
+  /// Maximum `event_uuid` characters allowed to flow into `last_error` logs.
+  static const int syncLogMaxEventUuidChars = 12;
+  /// Page size for outbox queue drains.
+  static const int syncQueuePageSize = 500;
+  /// Monotonic id used to seed a fresh cursor for a never-synced user.
+  static const int syncInitialCursor = 0;
 }

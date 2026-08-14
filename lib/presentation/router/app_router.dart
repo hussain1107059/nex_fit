@@ -43,6 +43,7 @@ import '../screens/settings/security_settings_screen.dart';
 import '../screens/settings/settings_screen.dart';
 import '../screens/settings/storage_settings_screen.dart';
 import '../screens/settings/support_settings_screen.dart';
+import '../screens/settings/sync_settings_screen.dart';
 import '../screens/settings/workout_settings_screen.dart';
 import '../screens/shell/app_shell_screen.dart';
 import '../screens/splash/splash_screen.dart';
@@ -105,6 +106,7 @@ abstract final class AppRoutes {
   static const String settingsPrivacy = '/settings/privacy';
   static const String settingsSecurity = '/settings/security';
   static const String settingsStorage = '/settings/storage';
+  static const String settingsSync = '/settings/sync';
   static const String settingsBackup = '/settings/backup';
   static const String settingsSupport = '/settings/support';
   static const String settingsAbout = '/settings/about';
@@ -442,6 +444,12 @@ final appRouterProvider = Provider<GoRouter>((ref) {
             const StorageSettingsScreen(),
       ),
       GoRoute(
+        path: AppRoutes.settingsSync,
+        name: 'settings-sync',
+        builder: (BuildContext context, GoRouterState state) =>
+            const SyncSettingsScreen(),
+      ),
+      GoRoute(
         path: AppRoutes.settingsBackup,
         name: 'settings-backup',
         builder: (BuildContext context, GoRouterState state) =>
@@ -483,36 +491,39 @@ final appRouterProvider = Provider<GoRouter>((ref) {
   return router;
 });
 
-/// Route guard that keeps unauthenticated users on the auth screens and
-/// forces unverified users through the email verification screen.
+/// Route guard that keeps unauthenticated users on the auth screens, forces
+/// unverified users (signed in or awaiting email confirmation) through the
+/// verification screen and holds on the splash while the session restores.
 String? _resolveRedirect(Ref ref, GoRouterState state) {
   final String path = state.matchedLocation;
 
   // The splash screen bootstraps services and performs the first navigation.
   if (path == AppRoutes.splash) return null;
 
-  final AuthState auth = ref.read(authControllerProvider);
-  final AppUser? user = auth.user;
-  final bool signedIn = user != null && user.isSignedIn;
+  final AuthPhase phase = ref.read(authControllerProvider).phase;
 
   final bool onPublic =
       path.startsWith(AppRoutes.login) ||
       path.startsWith(AppRoutes.register) ||
       path.startsWith(AppRoutes.forgotPassword);
 
-  if (!signedIn) {
-    return onPublic ? null : AppRoutes.login;
+  switch (phase) {
+    case AuthPhase.initializing:
+      // Persisted session is still being restored; hold on the splash screen.
+      return AppRoutes.splash;
+    case AuthPhase.unauthenticated:
+      return onPublic ? null : AppRoutes.login;
+    case AuthPhase.emailVerificationRequired:
+      if (onPublic || path.startsWith(AppRoutes.emailVerification)) {
+        return null;
+      }
+      return AppRoutes.emailVerification;
+    case AuthPhase.authenticated:
+      if (onPublic || path.startsWith(AppRoutes.emailVerification)) {
+        return AppRoutes.shell;
+      }
+      return null;
   }
-
-  if (!user.isEmailVerified) {
-    if (path.startsWith(AppRoutes.emailVerification)) return null;
-    return AppRoutes.emailVerification;
-  }
-
-  if (onPublic || path.startsWith(AppRoutes.emailVerification)) {
-    return AppRoutes.shell;
-  }
-  return null;
 }
 
 /// Bridges the auth controller state into [GoRouter]'s refresh mechanism.

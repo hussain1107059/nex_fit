@@ -6422,6 +6422,96 @@ abstract class AppLocalizations {
   /// **'এখন সিঙ্ক'**
   String get settingsSyncNow;
 
+  /// No description provided for @syncStatusSynced.
+  ///
+  /// In bs, this message translates to:
+  /// **'সিঙ্ক হয়েছে'**
+  String get syncStatusSynced;
+
+  /// No description provided for @syncStatusOffline.
+  ///
+  /// In bs, this message translates to:
+  /// **'অফলাইন'**
+  String get syncStatusOffline;
+
+  /// No description provided for @syncStatusFailed.
+  ///
+  /// In bs, this message translates to:
+  /// **'সিঙ্ক ব্যর্থ'**
+  String get syncStatusFailed;
+
+  /// No description provided for @syncStatusConflict.
+  ///
+  /// In bs, this message translates to:
+  /// **'দ্বন্দ্ব মনোযোগ প্রয়োজন'**
+  String get syncStatusConflict;
+
+  /// No description provided for @syncStatusPending.
+  ///
+  /// In bs, this message translates to:
+  /// **'মুলতুবি পরিবর্তন'**
+  String get syncStatusPending;
+
+  /// No description provided for @syncStatusNotSynced.
+  ///
+  /// In bs, this message translates to:
+  /// **'এখনো সিঙ্ক হয়নি'**
+  String get syncStatusNotSynced;
+
+  /// No description provided for @syncSettingsTitle.
+  ///
+  /// In bs, this message translates to:
+  /// **'সিঙ্ক'**
+  String get syncSettingsTitle;
+
+  /// No description provided for @syncSettingsLastSynced.
+  ///
+  /// In bs, this message translates to:
+  /// **'সর্বশেষ সিঙ্ক'**
+  String get syncSettingsLastSynced;
+
+  /// No description provided for @syncSettingsNeverSynced.
+  ///
+  /// In bs, this message translates to:
+  /// **'কখনো সিঙ্ক হয়নি'**
+  String get syncSettingsNeverSynced;
+
+  /// No description provided for @syncSettingsPendingChanges.
+  ///
+  /// In bs, this message translates to:
+  /// **'মুলতুবি পরিবর্তন'**
+  String get syncSettingsPendingChanges;
+
+  /// No description provided for @syncSettingsFailedChanges.
+  ///
+  /// In bs, this message translates to:
+  /// **'ব্যর্থ পরিবর্তন'**
+  String get syncSettingsFailedChanges;
+
+  /// No description provided for @syncSettingsConflicts.
+  ///
+  /// In bs, this message translates to:
+  /// **'দ্বন্দ্ব'**
+  String get syncSettingsConflicts;
+
+  /// No description provided for @syncCompleted.
+  ///
+  /// In bs, this message translates to:
+  /// **'সিঙ্ক সম্পন্ন'**
+  String get syncCompleted;
+
+  /// No description provided for @syncCompletedOffline.
+  ///
+  /// In bs, this message translates to:
+  /// **'আপনি অফলাইনে আছেন। অনলাইনে ফিরলে পরিবর্তনগুলো সিঙ্ক হবে।'**
+  String get syncCompletedOffline;
+
+  /// No description provided for @syncCompletedWithErrors.
+  ///
+  /// In bs, this message translates to:
+  /// **'কিছু ত্রুটি নিয়ে সিঙ্ক শেষ হয়েছে। পরিবর্তনগুলো স্বয়ংক্রিয়ভাবে আবার চেষ্টা হবে।'**
+  String get syncCompletedWithErrors;
+
   /// No description provided for @settingsScreenshotLock.
   ///
   /// In bs, this message translates to:

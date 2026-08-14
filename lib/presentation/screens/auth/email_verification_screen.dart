@@ -12,13 +12,16 @@ import '../../../core/widgets/feedback/app_snackbar.dart';
 import '../../../core/theme/app_spacing.dart';
 import '../../../domain/entities/app_user.dart';
 import '../../providers/auth_controller.dart';
-import '../../providers/auth_provider.dart';
 import '../../router/app_router.dart';
 import '../../widgets/auth/auth_layout.dart';
 import '../../widgets/auth/auth_logo_header.dart';
 
 /// Blocks the user from entering the app until their email is verified.
-/// Offers resend + refresh actions.
+///
+/// Two modes:
+/// * signed in but unverified - offers resend + refresh + sign out;
+/// * just registered (email confirmation still pending, no session yet) -
+///   shows the confirmation state, offers resend + back to login.
 class EmailVerificationScreen extends ConsumerStatefulWidget {
   const EmailVerificationScreen({super.key});
 
@@ -49,10 +52,11 @@ class _EmailVerificationScreenState
     );
   }
 
-  Future<void> _resend() async {
+  Future<void> _resend(String email) async {
     setState(() => _action = _VerificationAction.resend);
-    final Result<void> result =
-        await ref.read(authControllerProvider.notifier).sendVerificationEmail();
+    final Result<void> result = await ref
+        .read(authControllerProvider.notifier)
+        .sendVerificationEmail();
     if (!mounted) return;
     setState(() => _action = _VerificationAction.none);
     if (result.isFailure) return;
@@ -88,15 +92,23 @@ class _EmailVerificationScreenState
     context.go(AppRoutes.login);
   }
 
+  void _backToLogin() {
+    ref.read(authControllerProvider.notifier).clearPendingVerification();
+    context.go(AppRoutes.login);
+  }
+
   @override
   Widget build(BuildContext context) {
     _listenForFailures();
     final l10n = context.l10n;
-    final AppUser? user = ref.watch(currentUserProvider);
+    final AuthState authState = ref.watch(authControllerProvider);
+    final AppUser? user = authState.user;
     final bool signedIn = user != null && user.isSignedIn;
+    final String? pendingEmail = authState.pendingVerificationEmail;
+    final String email = pendingEmail ?? user?.email ?? '';
     final bool busy = _isBusy;
 
-    if (!signedIn) {
+    if (!signedIn && pendingEmail == null) {
       return const Scaffold(body: SizedBox.shrink());
     }
 
@@ -133,7 +145,7 @@ class _EmailVerificationScreenState
               ),
               const SizedBox(height: AppSpacing.xs),
               Text(
-                user.email ?? '',
+                email,
                 textAlign: TextAlign.center,
                 style: context.textTheme.titleMedium,
               ),
@@ -172,24 +184,32 @@ class _EmailVerificationScreenState
         ),
         const SizedBox(height: AppSpacing.xxxl),
         AppButton(
-          onPressed: busy ? null : _resend,
+          onPressed: busy ? null : () => _resend(email),
           label: l10n.authResendEmail,
           icon: Icons.send_rounded,
           variant: AppButtonVariant.outline,
           isLoading: _action == _VerificationAction.resend,
         ),
-        const SizedBox(height: AppSpacing.md),
-        AppButton(
-          onPressed: busy ? null : _refreshStatus,
-          label: l10n.authRefreshStatus,
-          icon: Icons.refresh_rounded,
-          isLoading: _action == _VerificationAction.refresh,
-        ),
-        const SizedBox(height: AppSpacing.xs),
-        TextButton(
-          onPressed: busy ? null : _signOut,
-          child: Text(l10n.authSignOut),
-        ),
+        if (signedIn) ...[
+          const SizedBox(height: AppSpacing.md),
+          AppButton(
+            onPressed: busy ? null : _refreshStatus,
+            label: l10n.authRefreshStatus,
+            icon: Icons.refresh_rounded,
+            isLoading: _action == _VerificationAction.refresh,
+          ),
+          const SizedBox(height: AppSpacing.xs),
+          TextButton(
+            onPressed: busy ? null : _signOut,
+            child: Text(l10n.authSignOut),
+          ),
+        ] else ...[
+          const SizedBox(height: AppSpacing.md),
+          TextButton(
+            onPressed: busy ? null : _backToLogin,
+            child: Text(l10n.authBackToLogin),
+          ),
+        ],
       ],
     );
   }

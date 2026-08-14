@@ -1,3 +1,5 @@
+import 'dart:math';
+
 import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:logging/logging.dart';
 import 'package:path/path.dart' as path;
@@ -21,9 +23,17 @@ class DatabaseMigration {
 /// Owns the schema version and applies pending migrations on startup.
 /// New tables are registered by appending [DatabaseMigration]s to the
 /// [migrations] list during a future feature build.
+///
+/// [databaseName] overrides the physical database file (default
+/// [AppConstants.databaseName]). It is used by tests to give each logical
+/// device its own SQLite database so multi-device sync can be validated
+/// against truly separate stores (PROMPT 23).
 class AppDatabase {
-  AppDatabase({Logger? logger}) : _logger = logger ?? Logger('AppDatabase');
+  AppDatabase({Logger? logger, String? databaseName})
+      : _databaseName = databaseName ?? AppConstants.databaseName,
+        _logger = logger ?? Logger('AppDatabase');
 
+  final String _databaseName;
   final Logger _logger;
 
   static const String migrationsTable = 'schema_migrations';
@@ -45,6 +55,9 @@ class AppDatabase {
     DatabaseMigration(version: 12, apply: _migrationV12BackupModule),
     DatabaseMigration(version: 13, apply: _migrationV13SecuritySyncModule),
     DatabaseMigration(version: 14, apply: _migrationV14IndexOptimization),
+    DatabaseMigration(version: 15, apply: _migrationV15SyncMetadata),
+    DatabaseMigration(version: 16, apply: _migrationV16MasterDataSync),
+    DatabaseMigration(version: 17, apply: _migrationV17SyncConflictStore),
   ];
 
   Future<Database> get database async {
@@ -56,9 +69,9 @@ class AppDatabase {
   Future<String> get _databasePath async {
     // Web has no filesystem; the ffi web factory resolves the bare file
     // name against its IndexedDB-backed storage.
-    if (kIsWeb) return AppConstants.databaseName;
+    if (kIsWeb) return _databaseName;
     final String databasesPath = await getDatabasesPath();
-    return path.join(databasesPath, AppConstants.databaseName);
+    return path.join(databasesPath, _databaseName);
   }
 
   Future<Database> _open() async {
@@ -1593,5 +1606,451 @@ class AppDatabase {
         'CREATE INDEX IF NOT EXISTS ${entry.key} ON ${entry.value}',
       );
     }
+  }
+
+  /// v15: sync metadata for the offline-first two-way sync foundation.
+  ///
+  /// Adds the four shared sync columns (`uuid`, `updated_at`, `deleted_at`,
+  /// `row_version`) to every one of the 31 user-syncable tables, backfills
+  /// them for existing rows, creates the per-user pull cursor table
+  /// `sync_state`, and extends `sync_event` with `event_uuid` / `device_id` /
+  /// `base_version` / `next_retry_at` so outbox events are idempotent and
+  /// conflict-detectable. See `docs/SQFLITE_MIGRATION_V15_DDL_REVIEW.md`.
+  ///
+  /// `uuid` is nullable in the DDL because SQLite cannot add a NOT NULL column
+  /// via `ALTER TABLE`; uniqueness is enforced by a UNIQUE index and non-null
+  /// is enforced by the app write path in the following phase. All ALTERs,
+  /// backfills and index creation run inside the migration framework's single
+  /// transaction, so a failure rolls the database back to version 14.
+  static Future<void> _migrationV15SyncMetadata(
+    DatabaseExecutor executor,
+    int version,
+  ) async {
+    final DatabaseExecutor db = executor;
+    final int now = DateTime.now().millisecondsSinceEpoch;
+
+    // Column groups by current schema (docs §4.3).
+    const List<String> groupA = <String>[
+      // Have created_at + updated_at: add uuid, deleted_at, row_version.
+      'fitness_goal', 'workout', 'meal', 'reminder', 'badge', 'streak',
+      'daily_progress', 'user_level', 'challenge', 'milestone', 'reward',
+    ];
+    const List<String> groupB = <String>[
+      // Have created_at, missing updated_at: add uuid, updated_at, deleted_at,
+      // row_version.
+      'exercise', 'food_item', 'food_log', 'water_log', 'weight_log',
+      'bmi_log', 'body_measurement', 'sleep_log', 'step_log', 'achievement',
+      'exercise_favorite', 'food_favorite', 'reminder_history', 'xp_history',
+      'workout_history',
+    ];
+    const List<String> groupC = <String>[
+      // Child tables: no user_id, created_at or updated_at.
+      'workout_exercise', 'exercise_history', 'meal_item',
+    ];
+    const List<String> groupD = <String>[
+      // Singletons: updated_at but no created_at.
+      'user_profile', 'app_settings',
+    ];
+
+    // 1. Per-user pull cursor state.
+    await db.execute('''
+      CREATE TABLE sync_state (
+        user_id                TEXT PRIMARY KEY NOT NULL,
+        cursor                 INTEGER NOT NULL DEFAULT 0,
+        initial_sync_completed INTEGER NOT NULL DEFAULT 0,
+        last_sync_at           INTEGER,
+        status                 TEXT,
+        master_versions        TEXT,
+        updated_at             INTEGER NOT NULL,
+        FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
+      )
+    ''');
+
+    // 2. Outbox identity / backoff columns.
+    await db.execute('ALTER TABLE sync_event ADD COLUMN event_uuid TEXT');
+    await db.execute('ALTER TABLE sync_event ADD COLUMN device_id TEXT');
+    await db.execute('ALTER TABLE sync_event ADD COLUMN base_version INTEGER');
+    await db.execute('ALTER TABLE sync_event ADD COLUMN next_retry_at INTEGER');
+
+    // 3. Per-table sync metadata columns.
+    for (final String table in groupA) {
+      await _addSyncColumns(db, table);
+    }
+    for (final String table in groupB) {
+      await _addSyncColumns(db, table);
+      await db.execute('ALTER TABLE $table ADD COLUMN updated_at INTEGER');
+    }
+    for (final String table in groupC) {
+      await db.execute('ALTER TABLE $table ADD COLUMN user_id TEXT');
+      await _addSyncColumns(db, table);
+      await db.execute('ALTER TABLE $table ADD COLUMN created_at INTEGER');
+      await db.execute('ALTER TABLE $table ADD COLUMN updated_at INTEGER');
+    }
+    for (final String table in groupD) {
+      await _addSyncColumns(db, table);
+      await db.execute('ALTER TABLE $table ADD COLUMN created_at INTEGER');
+    }
+
+    // 4. Backfill uuid for every existing row (singletons reuse their stable
+    //    user identity; everything else gets a fresh v4).
+    for (final String table in groupA) {
+      await _backfillUuid(db, table);
+    }
+    for (final String table in groupB) {
+      await _backfillUuid(db, table);
+    }
+    for (final String table in groupC) {
+      await _backfillUuid(db, table);
+    }
+    await db.execute(
+      'UPDATE user_profile SET uuid = user_id WHERE uuid IS NULL',
+    );
+    await db.execute(
+      'UPDATE app_settings SET uuid = user_id WHERE uuid IS NULL',
+    );
+
+    // 5. Backfill created_at / updated_at.
+    for (final String table in groupB) {
+      await db.execute(
+        'UPDATE $table SET updated_at = created_at WHERE updated_at IS NULL',
+      );
+    }
+    for (final String table in groupD) {
+      await db.execute(
+        'UPDATE $table SET created_at = $now WHERE created_at IS NULL',
+      );
+    }
+    await db.execute('''
+      UPDATE workout_exercise
+      SET created_at = COALESCE(
+        (SELECT created_at FROM workout WHERE workout.id = workout_exercise.workout_id),
+        $now
+      )
+      WHERE created_at IS NULL
+    ''');
+    await db.execute('''
+      UPDATE exercise_history
+      SET created_at = COALESCE(
+        (SELECT created_at FROM workout_history
+         WHERE workout_history.id = exercise_history.workout_history_id),
+        $now
+      )
+      WHERE created_at IS NULL
+    ''');
+    await db.execute('''
+      UPDATE meal_item
+      SET created_at = COALESCE(
+        (SELECT created_at FROM meal WHERE meal.id = meal_item.meal_id),
+        $now
+      )
+      WHERE created_at IS NULL
+    ''');
+    for (final String table in groupC) {
+      await db.execute(
+        'UPDATE $table SET updated_at = created_at WHERE updated_at IS NULL',
+      );
+    }
+
+    // 6. Backfill child-table user_id from the owning parent row.
+    await db.execute('''
+      UPDATE workout_exercise
+      SET user_id = (SELECT user_id FROM workout WHERE workout.id = workout_exercise.workout_id)
+      WHERE user_id IS NULL
+    ''');
+    await db.execute('''
+      UPDATE exercise_history
+      SET user_id = (SELECT user_id FROM workout_history
+                     WHERE workout_history.id = exercise_history.workout_history_id)
+      WHERE user_id IS NULL
+    ''');
+    await db.execute('''
+      UPDATE meal_item
+      SET user_id = (SELECT user_id FROM meal WHERE meal.id = meal_item.meal_id)
+      WHERE user_id IS NULL
+    ''');
+
+    // 7. Indexes (docs §14): unique uuid per table, per-user updated_at
+    //    lookups, and outbox identity / device indexes.
+    final List<String> uuidIndexTables = <String>[
+      ...groupA, ...groupB, ...groupC, ...groupD,
+    ];
+    for (final String table in uuidIndexTables) {
+      await db.execute(
+        'CREATE UNIQUE INDEX IF NOT EXISTS idx_${table}_uuid ON $table(uuid)',
+      );
+    }
+    final List<String> userUpdatedTables = <String>[
+      ...groupA, ...groupB, ...groupC,
+    ];
+    for (final String table in userUpdatedTables) {
+      await db.execute(
+        'CREATE INDEX IF NOT EXISTS idx_${table}_user_updated '
+        'ON $table(user_id, updated_at)',
+      );
+    }
+    await db.execute(
+      'CREATE UNIQUE INDEX IF NOT EXISTS idx_sync_event_event_uuid '
+      'ON sync_event(event_uuid)',
+    );
+    await db.execute(
+      'CREATE INDEX IF NOT EXISTS idx_sync_event_device ON sync_event(device_id)',
+    );
+  }
+
+  /// Adds the four shared sync columns to [table]. `uuid` and `deleted_at`
+  /// are nullable (SQLite cannot add NOT NULL via ALTER); `row_version`
+  /// defaults to 0.
+  static Future<void> _addSyncColumns(
+    DatabaseExecutor db,
+    String table,
+  ) async {
+    await db.execute('ALTER TABLE $table ADD COLUMN uuid TEXT');
+    await db.execute('ALTER TABLE $table ADD COLUMN deleted_at INTEGER');
+    await db.execute(
+      'ALTER TABLE $table ADD COLUMN row_version INTEGER NOT NULL DEFAULT 0',
+    );
+  }
+
+  /// Backfills `uuid` for every row in [table] still missing one, using the
+  /// table's implicit `rowid` so INT, TEXT and composite primary keys all
+  /// work. Idempotent: only rows where `uuid IS NULL` are touched.
+  static Future<void> _backfillUuid(
+    DatabaseExecutor db,
+    String table,
+  ) async {
+    final List<Map<String, Object?>> rows = await db.rawQuery(
+      'SELECT rowid AS _r FROM $table WHERE uuid IS NULL',
+    );
+    for (final Map<String, Object?> row in rows) {
+      await db.rawUpdate(
+        'UPDATE $table SET uuid = ? WHERE rowid = ?',
+        <Object?>[_generateUuidV4(), row['_r']],
+      );
+    }
+  }
+
+  /// RFC 4122 version 4 UUID generated from [Random.secure()] (no dependency).
+  /// Bytes 6 and 8 are masked to fix the version / variant bits.
+  static String _generateUuidV4() {
+    final Random random = Random.secure();
+    final List<int> bytes = List<int>.generate(16, (_) => random.nextInt(256));
+    bytes[6] = (bytes[6] & 0x0f) | 0x40;
+    bytes[8] = (bytes[8] & 0x3f) | 0x80;
+    final String hex = bytes
+        .map((byte) => byte.toRadixString(16).padLeft(2, '0'))
+        .join();
+    return '${hex.substring(0, 8)}-${hex.substring(8, 12)}-'
+        '${hex.substring(12, 16)}-${hex.substring(16, 20)}-${hex.substring(20)}';
+  }
+
+  /// v16: master-data catalog sync (PROMPT 16).
+  ///
+  /// Adds the per-catalog version watermark table plus the five local catalog
+  /// tables the app does not yet persist (workout templates, template
+  /// exercises, achievement / badge / challenge definitions), and stamps the
+  /// shared `workout_category` / `meal_category` catalogs with the same sync
+  /// metadata columns the user tables got in v15 so the master sync can
+  /// upsert them in place (preserving their integer ids and therefore the
+  /// `workout.category_id` / `meal.category_id` links).
+  static Future<void> _migrationV16MasterDataSync(
+    DatabaseExecutor executor,
+    int version,
+  ) async {
+    final DatabaseExecutor db = executor;
+    final int now = DateTime.now().millisecondsSinceEpoch;
+
+    // 1. Per-catalog watermark for the master sync service.
+    await db.execute('''
+      CREATE TABLE master_catalog_state (
+        catalog        TEXT PRIMARY KEY NOT NULL,
+        data_version   INTEGER NOT NULL DEFAULT 0,
+        schema_version INTEGER NOT NULL DEFAULT 1,
+        since          INTEGER NOT NULL DEFAULT 0,
+        status         TEXT NOT NULL DEFAULT 'pending',
+        applied_at     INTEGER,
+        last_error_at  INTEGER,
+        last_error     TEXT,
+        updated_at     INTEGER NOT NULL
+      )
+    ''');
+
+    // 2. Local catalog tables (mirror the cloud master definitions; every row
+    //    carries the v15 sync metadata columns so `_backfillUuid` and the
+    //    transport conversions stay uniform).
+    await db.execute('''
+      CREATE TABLE workout_template (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        uuid TEXT,
+        category_id INTEGER,
+        name TEXT NOT NULL,
+        description TEXT,
+        difficulty TEXT,
+        duration_minutes INTEGER,
+        calories_burn REAL,
+        created_at INTEGER NOT NULL,
+        updated_at INTEGER NOT NULL,
+        deleted_at INTEGER,
+        row_version INTEGER NOT NULL DEFAULT 0,
+        FOREIGN KEY (category_id) REFERENCES workout_category(id) ON DELETE SET NULL
+      )
+    ''');
+    await db.execute(
+      'CREATE UNIQUE INDEX IF NOT EXISTS idx_workout_template_uuid '
+      'ON workout_template(uuid)',
+    );
+
+    await db.execute('''
+      CREATE TABLE workout_template_exercise (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        uuid TEXT,
+        template_id INTEGER NOT NULL,
+        exercise_id INTEGER NOT NULL,
+        sets INTEGER NOT NULL DEFAULT 0,
+        reps INTEGER NOT NULL DEFAULT 0,
+        duration_seconds INTEGER NOT NULL DEFAULT 0,
+        rest_seconds INTEGER NOT NULL DEFAULT 0,
+        sort_order INTEGER NOT NULL DEFAULT 0,
+        created_at INTEGER NOT NULL,
+        updated_at INTEGER NOT NULL,
+        deleted_at INTEGER,
+        row_version INTEGER NOT NULL DEFAULT 0,
+        FOREIGN KEY (template_id) REFERENCES workout_template(id) ON DELETE CASCADE,
+        FOREIGN KEY (exercise_id) REFERENCES exercise(id) ON DELETE RESTRICT
+      )
+    ''');
+    await db.execute(
+      'CREATE UNIQUE INDEX IF NOT EXISTS idx_workout_template_exercise_uuid '
+      'ON workout_template_exercise(uuid)',
+    );
+
+    await db.execute('''
+      CREATE TABLE achievement_def (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        uuid TEXT,
+        achievement_type TEXT NOT NULL UNIQUE,
+        name TEXT NOT NULL,
+        description TEXT,
+        icon TEXT,
+        xp_reward INTEGER NOT NULL DEFAULT 0,
+        sort_order INTEGER NOT NULL DEFAULT 0,
+        created_at INTEGER NOT NULL,
+        updated_at INTEGER NOT NULL,
+        deleted_at INTEGER,
+        row_version INTEGER NOT NULL DEFAULT 0
+      )
+    ''');
+    await db.execute(
+      'CREATE UNIQUE INDEX IF NOT EXISTS idx_achievement_def_uuid '
+      'ON achievement_def(uuid)',
+    );
+
+    await db.execute('''
+      CREATE TABLE badge_def (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        uuid TEXT,
+        badge_type TEXT NOT NULL UNIQUE,
+        badge_name TEXT NOT NULL,
+        icon TEXT,
+        description TEXT,
+        level INTEGER NOT NULL DEFAULT 1,
+        target REAL NOT NULL DEFAULT 0,
+        sort_order INTEGER NOT NULL DEFAULT 0,
+        created_at INTEGER NOT NULL,
+        updated_at INTEGER NOT NULL,
+        deleted_at INTEGER,
+        row_version INTEGER NOT NULL DEFAULT 0
+      )
+    ''');
+    await db.execute(
+      'CREATE UNIQUE INDEX IF NOT EXISTS idx_badge_def_uuid '
+      'ON badge_def(uuid)',
+    );
+
+    await db.execute('''
+      CREATE TABLE challenge_def (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        uuid TEXT,
+        challenge_type TEXT NOT NULL UNIQUE,
+        title TEXT NOT NULL,
+        description TEXT,
+        difficulty TEXT NOT NULL DEFAULT 'medium',
+        target INTEGER NOT NULL DEFAULT 0,
+        reward_xp INTEGER NOT NULL DEFAULT 0,
+        sort_order INTEGER NOT NULL DEFAULT 0,
+        created_at INTEGER NOT NULL,
+        updated_at INTEGER NOT NULL,
+        deleted_at INTEGER,
+        row_version INTEGER NOT NULL DEFAULT 0
+      )
+    ''');
+    await db.execute(
+      'CREATE UNIQUE INDEX IF NOT EXISTS idx_challenge_def_uuid '
+      'ON challenge_def(uuid)',
+    );
+
+    // 3. Stamp the shared category catalogs with sync metadata and adopt a
+    //    stable uuid per existing row (id-based, idempotent). No unique index
+    //    is created before the backfill so a fresh / pre-seeded DB upgrades
+    //    cleanly.
+    for (final String table in <String>['workout_category', 'meal_category']) {
+      await db.execute('ALTER TABLE $table ADD COLUMN uuid TEXT');
+      await db.execute('ALTER TABLE $table ADD COLUMN deleted_at INTEGER');
+      await db.execute(
+        'ALTER TABLE $table ADD COLUMN row_version INTEGER NOT NULL DEFAULT 0',
+      );
+      await db.execute('ALTER TABLE $table ADD COLUMN updated_at INTEGER');
+      await _backfillUuid(db, table);
+      await db.execute(
+        'UPDATE $table SET updated_at = $now WHERE updated_at IS NULL',
+      );
+      await db.execute(
+        'CREATE UNIQUE INDEX IF NOT EXISTS idx_${table}_uuid ON $table(uuid)',
+      );
+    }
+  }
+
+  /// v17: durable conflict store (PROMPT 19).
+  ///
+  /// A local conflict record is written every time a push is rejected because
+  /// the remote `row_version` moved past the event's `base_version`. It
+  /// snapshots both the local and the server row so the conflicting local data
+  /// is never discarded and can be reviewed/recovered later. `status` holds
+  /// the resolution lifecycle (`pending` / `serverWon` / `resolved`); a partial
+  /// unique index keeps at most one `pending` record per (user, entity, record
+  /// uuid) while resolved records accumulate as history.
+  static Future<void> _migrationV17SyncConflictStore(
+    DatabaseExecutor executor,
+    int version,
+  ) async {
+    final DatabaseExecutor db = executor;
+
+    await db.execute('''
+      CREATE TABLE sync_conflict (
+        id               INTEGER PRIMARY KEY AUTOINCREMENT,
+        user_id          TEXT NOT NULL,
+        entity           TEXT NOT NULL,
+        record_uuid      TEXT NOT NULL,
+        local_data       TEXT,
+        server_data      TEXT,
+        local_version    INTEGER NOT NULL DEFAULT 0,
+        server_version   INTEGER NOT NULL DEFAULT 0,
+        local_updated_at INTEGER,
+        server_updated_at INTEGER,
+        detected_at      INTEGER NOT NULL,
+        status           TEXT NOT NULL DEFAULT 'pending',
+        strategy         TEXT NOT NULL DEFAULT 'latest_wins',
+        resolved_at      INTEGER,
+        FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
+      )
+    ''');
+    await db.execute(
+      'CREATE UNIQUE INDEX IF NOT EXISTS idx_sync_conflict_pending '
+      'ON sync_conflict(user_id, entity, record_uuid) '
+      "WHERE status = 'pending'",
+    );
+    await db.execute(
+      'CREATE INDEX IF NOT EXISTS idx_sync_conflict_user_status '
+      'ON sync_conflict(user_id, status, detected_at)',
+    );
   }
 }

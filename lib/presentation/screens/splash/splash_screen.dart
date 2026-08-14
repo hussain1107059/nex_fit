@@ -12,10 +12,11 @@ import '../../../core/theme/app_spacing.dart';
 import '../../../core/utils/release_logger.dart';
 import '../../../data/datasources/local/app_database.dart';
 import '../../../data/services/auth/google_sign_in_service.dart';
-import '../../../data/services/firebase_service.dart';
+import '../../../data/services/supabase/supabase_service.dart';
 import '../../../data/services/security/app_error_logger.dart';
 import '../../../data/services/security/encryption_service.dart';
 import '../../../data/services/security/session_manager.dart';
+import '../../../data/services/sync/incremental_sync_coordinator.dart';
 import '../../../data/services/sync/sync_event_recorder.dart';
 import '../../../domain/entities/app_user.dart';
 import '../../../domain/entities/security_enums.dart';
@@ -24,6 +25,7 @@ import '../../../domain/repositories/auth_repository.dart';
 import '../../../injection/dependency_injection.dart';
 import '../../providers/auth_controller.dart';
 import '../../providers/auth_provider.dart';
+import '../../providers/incremental_sync_providers.dart';
 import '../../providers/reminder_providers.dart';
 import '../../providers/settings_providers.dart';
 import '../../providers/water_providers.dart';
@@ -60,19 +62,19 @@ class _SplashScreenState extends ConsumerState<SplashScreen>
 
   Future<void> _bootstrap() async {
     try {
-      final FirebaseService firebase = ref.read(firebaseServiceProvider);
+      final SupabaseService supabase = ref.read(supabaseServiceProvider);
       final GoogleSignInService googleSignIn =
           ref.read(googleSignInServiceProvider);
       final AppDatabase database = ref.read(appDatabaseProvider);
 
       await Future.wait([
-        firebase.initialize(),
+        supabase.initialize(),
         _safeGoogleSignInInit(googleSignIn),
         database.database,
         Future<void>.delayed(AppConstants.splashDuration),
       ]);
 
-      // Pick up any persisted session now that Firebase is ready.
+      // Pick up any persisted session now that Supabase is ready.
       await ref.read(authControllerProvider.notifier).syncSession();
 
       // --- Security bootstrap -------------------------------------------
@@ -95,6 +97,8 @@ class _SplashScreenState extends ConsumerState<SplashScreen>
       );
       SyncEventRecorder.configure(
         repository: ref.read(syncEventRepositoryProvider),
+        deviceIdProvider: () =>
+            ref.read(deviceIdServiceProvider).getOrCreate(),
         activeUserId: user?.isSignedIn == true ? user?.id : null,
       );
 
@@ -134,13 +138,21 @@ class _SplashScreenState extends ConsumerState<SplashScreen>
   }
 
   /// Deferred, non-blocking tasks: DB recovery/maintenance, reminder schedule
-  /// sync, remember-me handling and the due auto-backup.
+  /// sync, remember-me handling, the incremental sync on startup and the due
+  /// auto-backup.
   Future<void> _runBackgroundTasks(AppUser? user) async {
     try {
       // Check DB integrity (auto-restore latest backup when corrupted) and run
       // a maintenance pass.
       await ref.read(recoveryManagerProvider).checkAndRecover(userId: user?.id);
       unawaited(ref.read(databaseOptimizerServiceProvider).runMaintenance());
+
+      // Activate the incremental-sync hub (Realtime + connectivity listeners)
+      // and run the first sync of the session. Missed changes are recovered by
+      // the cursor pull (PROMPT 18).
+      ref.read(incrementalSyncCoordinatorProvider).requestSync(
+            SyncTrigger.startup,
+          );
 
       // Re-sync the hydration reminders with the signed-in user's schedule so
       // notifications survive reboots, app updates and account switches.

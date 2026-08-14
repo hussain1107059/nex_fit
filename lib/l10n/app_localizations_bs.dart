@@ -3283,6 +3283,53 @@ class AppLocalizationsBs extends AppLocalizations {
   String get settingsSyncNow => 'এখন সিঙ্ক';
 
   @override
+  String get syncStatusSynced => 'সিঙ্ক হয়েছে';
+
+  @override
+  String get syncStatusOffline => 'অফলাইন';
+
+  @override
+  String get syncStatusFailed => 'সিঙ্ক ব্যর্থ';
+
+  @override
+  String get syncStatusConflict => 'দ্বন্দ্ব মনোযোগ প্রয়োজন';
+
+  @override
+  String get syncStatusPending => 'মুলতুবি পরিবর্তন';
+
+  @override
+  String get syncStatusNotSynced => 'এখনো সিঙ্ক হয়নি';
+
+  @override
+  String get syncSettingsTitle => 'সিঙ্ক';
+
+  @override
+  String get syncSettingsLastSynced => 'সর্বশেষ সিঙ্ক';
+
+  @override
+  String get syncSettingsNeverSynced => 'কখনো সিঙ্ক হয়নি';
+
+  @override
+  String get syncSettingsPendingChanges => 'মুলতুবি পরিবর্তন';
+
+  @override
+  String get syncSettingsFailedChanges => 'ব্যর্থ পরিবর্তন';
+
+  @override
+  String get syncSettingsConflicts => 'দ্বন্দ্ব';
+
+  @override
+  String get syncCompleted => 'সিঙ্ক সম্পন্ন';
+
+  @override
+  String get syncCompletedOffline =>
+      'আপনি অফলাইনে আছেন। অনলাইনে ফিরলে পরিবর্তনগুলো সিঙ্ক হবে।';
+
+  @override
+  String get syncCompletedWithErrors =>
+      'কিছু ত্রুটি নিয়ে সিঙ্ক শেষ হয়েছে। পরিবর্তনগুলো স্বয়ংক্রিয়ভাবে আবার চেষ্টা হবে।';
+
+  @override
   String get settingsScreenshotLock => 'স্ক্রিনশট লক';
 
   @override

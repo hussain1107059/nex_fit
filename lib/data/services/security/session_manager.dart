@@ -7,6 +7,7 @@ import '../../../domain/entities/app_session.dart';
 import '../../../domain/entities/security_enums.dart';
 import '../../../domain/repositories/session_repository.dart';
 import '../storage/secure_storage_service.dart';
+import 'device_id_service.dart';
 
 /// Secure session lifecycle: token issuance, expiry, activity tracking and
 /// device-level re-login detection.
@@ -19,30 +20,22 @@ class SessionManager {
   SessionManager({
     required this.repository,
     required this.storage,
+    DeviceIdService? deviceIdService,
     Logger? logger,
-  }) : _logger = logger ?? Logger('SessionManager');
+  }) : _deviceIdService =
+           deviceIdService ?? DeviceIdService(storage: storage),
+       _logger = logger ?? Logger('SessionManager');
 
   final SessionRepository repository;
   final SecureStorageService storage;
+  final DeviceIdService _deviceIdService;
   final Logger _logger;
 
   static const int _tokenBytes = 24;
 
-  /// Stable per-install device id used for multi-device detection.
-  Future<String> getOrCreateDeviceId() async {
-    final String? existing = await storage.read(
-      AppConstants.deviceIdStorageKey,
-    );
-    if (existing != null && existing.isNotEmpty) return existing;
-
-    final Random random = Random.secure();
-    final String id = List<String>.generate(
-      12,
-      (_) => random.nextInt(16).toRadixString(16),
-    ).join();
-    await storage.write(AppConstants.deviceIdStorageKey, id);
-    return id;
-  }
+  /// Stable per-install device id used for multi-device detection. Delegates
+  /// to [DeviceIdService] so the outbox and the session share one identity.
+  Future<String> getOrCreateDeviceId() => _deviceIdService.getOrCreate();
 
   String _generateToken() {
     final Random random = Random.secure();

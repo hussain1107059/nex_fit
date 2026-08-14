@@ -15,11 +15,10 @@ import '../../../domain/entities/app_user.dart';
 import '../../../injection/dependency_injection.dart';
 import '../../providers/auth_controller.dart';
 import '../../router/app_router.dart';
-import '../../widgets/auth/auth_divider.dart';
 import '../../widgets/auth/auth_layout.dart';
 import '../../widgets/auth/auth_logo_header.dart';
 
-/// Email/password and Google sign-in screen.
+/// Email/password sign-in screen.
 class LoginScreen extends ConsumerStatefulWidget {
   const LoginScreen({super.key});
 
@@ -76,16 +75,6 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
           password: _passwordController.text,
           rememberMe: _rememberMe,
         );
-
-    if (!mounted || result.isFailure) return;
-    final AppUser user = result.valueOrNull!;
-    context.go(AppRoutes.destinationFor(user));
-  }
-
-  Future<void> _googleSignIn() async {
-    final Result<AppUser> result =
-        await ref.read(authControllerProvider.notifier).signInWithGoogle();
-
     if (!mounted || result.isFailure) return;
     final AppUser user = result.valueOrNull!;
     context.go(AppRoutes.destinationFor(user));
@@ -194,17 +183,6 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
           label: l10n.authSignIn,
           icon: Icons.login_rounded,
           isLoading: busy,
-        ),
-        const SizedBox(height: AppSpacing.lg),
-        AuthDivider(label: l10n.authOrContinueWith),
-        const SizedBox(height: AppSpacing.lg),
-        AppButton(
-          onPressed: busy ? null : _googleSignIn,
-          label: l10n.authContinueWithGoogle,
-          variant: AppButtonVariant.outline,
-          icon: Icons.g_mobiledata_rounded,
-          iconTrailing: null,
-          isLoading: false,
         ),
       ],
     );

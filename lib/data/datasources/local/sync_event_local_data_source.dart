@@ -17,6 +17,211 @@ class SyncEventLocalDataSource extends BaseLocalDataSource {
     });
   }
 
+  /// Inserts [event] inside an existing [Transaction] so the local mutation
+  /// and its outbox entry commit atomically (Part 5 of the sync foundation).
+  Future<void> insertInTransaction(Transaction txn, SyncEvent event) {
+    return guard('insert_in_transaction', () async {
+      await txn.insert(SyncEventModel.table, SyncEventModel.toMap(event));
+    });
+  }
+
+  /// Marks [id] as in-flight. Events in this state are reclaimed on startup.
+  Future<void> markProcessing(int id, {required DateTime at}) {
+    return guard('mark_processing', () async {
+      final Database db = await dbConnection;
+      await db.update(
+        SyncEventModel.table,
+        <String, Object?>{
+          'status': SyncStatus.processing.name,
+          'updated_at': at.millisecondsSinceEpoch,
+        },
+        where: 'id = ?',
+        whereArgs: <Object?>[id],
+      );
+    });
+  }
+
+  /// Marks [id] as successfully delivered.
+  Future<void> markSuccess(
+    int id, {
+    required DateTime at,
+    required DateTime syncedAt,
+  }) {
+    return guard('mark_success', () async {
+      final Database db = await dbConnection;
+      await db.update(
+        SyncEventModel.table,
+        <String, Object?>{
+          'status': SyncStatus.completed.name,
+          'updated_at': at.millisecondsSinceEpoch,
+          'synced_at': syncedAt.millisecondsSinceEpoch,
+          'last_error': null,
+          'next_retry_at': null,
+        },
+        where: 'id = ?',
+        whereArgs: <Object?>[id],
+      );
+    });
+  }
+
+  /// Marks [id] as a transient failure eligible for retry after [nextRetryAt].
+  Future<void> markRetryableFailure(
+    int id, {
+    required String lastError,
+    required int retryCount,
+    required DateTime at,
+    required DateTime nextRetryAt,
+  }) {
+    return guard('mark_retryable_failure', () async {
+      final Database db = await dbConnection;
+      await db.update(
+        SyncEventModel.table,
+        <String, Object?>{
+          'status': SyncStatus.failedRetryable.name,
+          'retry_count': retryCount,
+          'last_error': lastError,
+          'next_retry_at': nextRetryAt.millisecondsSinceEpoch,
+          'updated_at': at.millisecondsSinceEpoch,
+        },
+        where: 'id = ?',
+        whereArgs: <Object?>[id],
+      );
+    });
+  }
+
+  /// Marks [id] as a permanent (terminal) failure.
+  Future<void> markPermanentFailure(
+    int id, {
+    required String lastError,
+    required int retryCount,
+    required DateTime at,
+  }) {
+    return guard('mark_permanent_failure', () async {
+      final Database db = await dbConnection;
+      await db.update(
+        SyncEventModel.table,
+        <String, Object?>{
+          'status': SyncStatus.failedPermanent.name,
+          'retry_count': retryCount,
+          'last_error': lastError,
+          'updated_at': at.millisecondsSinceEpoch,
+        },
+        where: 'id = ?',
+        whereArgs: <Object?>[id],
+      );
+    });
+  }
+
+  /// Reclaims PROCESSING events for [userId] that have been in-flight longer
+  /// than [olderThan] (e.g. a crashed sync run). Returns the reclaimed ids.
+  Future<List<int>> resetStuckProcessingEvents(
+    String userId, {
+    required DateTime olderThan,
+    required DateTime at,
+  }) {
+    return guard('reset_stuck_processing', () async {
+      final Database db = await dbConnection;
+      final List<Map<String, Object?>> stuck = await db.query(
+        SyncEventModel.table,
+        columns: <String>['id'],
+        where:
+            'user_id = ? AND status = ? AND updated_at < ?',
+        whereArgs: <Object?>[
+          userId,
+          SyncStatus.processing.name,
+          olderThan.millisecondsSinceEpoch,
+        ],
+      );
+      if (stuck.isEmpty) return <int>[];
+      final List<int> ids = stuck
+          .map((Map<String, Object?> row) => row['id'] as int)
+          .toList();
+      final String placeholders =
+          List<String>.filled(ids.length, '?').join(',');
+      await db.update(
+        SyncEventModel.table,
+        <String, Object?>{
+          'status': SyncStatus.pending.name,
+          'next_retry_at': null,
+          'last_error': 'reclaimed_stuck_processing',
+          'updated_at': at.millisecondsSinceEpoch,
+        },
+        where: 'id IN ($placeholders)',
+        whereArgs: ids,
+      );
+      return ids;
+    });
+  }
+
+  /// Returns events for [userId] that are eligible for processing right now:
+  /// pending or retryable events whose `next_retry_at` has passed.
+  Future<List<SyncEvent>> getRetryableByUserId(
+    String userId, {
+    int? limit,
+    int? offset,
+    DateTime? now,
+  }) {
+    return guard('get_retryable_by_user', () async {
+      final Database db = await dbConnection;
+      final int nowMs = (now ?? DateTime.now()).millisecondsSinceEpoch;
+      final List<Map<String, Object?>> rows = await db.query(
+        SyncEventModel.table,
+        where:
+            'user_id = ? AND status IN (?, ?) AND (next_retry_at IS NULL OR '
+            'next_retry_at <= ?)',
+        whereArgs: <Object?>[
+          userId,
+          SyncStatus.pending.name,
+          SyncStatus.failedRetryable.name,
+          nowMs,
+        ],
+        // ORDER BY must be stable: the outbox drain paginates with LIMIT/OFFSET
+        // over a set that shrinks as rows transition to PROCESSING/COMPLETED.
+        // `id` (AUTOINCREMENT, monotonic with enqueue order) is the tie-breaker
+        // so OFFSET never skips or re-reads an event when `created_at` ties
+        // (PROMPT 20/21).
+        orderBy: 'created_at ASC, id ASC',
+        limit: limit,
+        offset: offset,
+      );
+      return rows.map(SyncEventModel.fromMap).toList();
+    });
+  }
+
+  /// Number of events waiting to be sent (pending + retryable).
+  Future<int> getPendingCount(String userId) {
+    return guard('get_pending_count', () async {
+      final Database db = await dbConnection;
+      final List<Map<String, Object?>> rows = await db.rawQuery(
+        'SELECT COUNT(*) AS count FROM sync_event WHERE user_id = ? '
+        'AND status IN (?, ?)',
+        <Object?>[
+          userId,
+          SyncStatus.pending.name,
+          SyncStatus.failedRetryable.name,
+        ],
+      );
+      return (rows.first['count'] as num).toInt();
+    });
+  }
+
+  /// Number of permanently failed events for [userId].
+  Future<int> getFailedCount(String userId) {
+    return guard('get_failed_count', () async {
+      final Database db = await dbConnection;
+      final List<Map<String, Object?>> rows = await db.rawQuery(
+        'SELECT COUNT(*) AS count FROM sync_event WHERE user_id = ? '
+        'AND status IN (?, ?)',
+        <Object?>[
+          userId,
+          SyncStatus.failedPermanent.name,
+          SyncStatus.failed.name,
+        ],
+      );
+      return (rows.first['count'] as num).toInt();
+    });
+  }
+
   Future<void> update(SyncEvent event) {
     return guard('update', () async {
       final Database db = await dbConnection;

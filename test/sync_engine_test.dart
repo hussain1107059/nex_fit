@@ -19,6 +19,14 @@ class _MemorySyncEventRepository implements SyncEventRepository {
   }
 
   @override
+  Future<void> insertInTransaction(
+    Object txn,
+    SyncEvent event,
+  ) async {
+    await insert(event);
+  }
+
+  @override
   Future<void> update(SyncEvent event) async {
     final int index = events.indexWhere((SyncEvent e) => e.id == event.id);
     if (index >= 0) events[index] = event;
@@ -38,12 +46,27 @@ class _MemorySyncEventRepository implements SyncEventRepository {
     int? limit,
     int? offset,
   }) async {
+    return getRetryableByUserId(userId, limit: limit, offset: offset);
+  }
+
+  @override
+  Future<List<SyncEvent>> getRetryableByUserId(
+    String userId, {
+    int? limit,
+    int? offset,
+    DateTime? now,
+  }) async {
+    final DateTime effectiveNow = now ?? DateTime.now();
     List<SyncEvent> pending = events
         .where(
           (SyncEvent e) =>
-              e.userId == userId && e.status == SyncStatus.pending,
+              e.userId == userId &&
+              (e.status == SyncStatus.pending ||
+                  e.status == SyncStatus.failedRetryable) &&
+              (e.nextRetryAt == null || !e.nextRetryAt!.isAfter(effectiveNow)),
         )
-        .toList();
+        .toList()
+      ..sort((SyncEvent a, SyncEvent b) => a.createdAt.compareTo(b.createdAt));
     if (offset != null && offset > 0) {
       if (offset >= pending.length) return <SyncEvent>[];
       pending = pending.sublist(offset);
@@ -115,26 +138,164 @@ class _MemorySyncEventRepository implements SyncEventRepository {
           (e.syncedAt?.isBefore(threshold) ?? false),
     );
   }
+
+  @override
+  Future<void> markProcessing(int id, {required DateTime at}) async {
+    await _set(
+      id,
+      <String, Object?>{
+        'status': SyncStatus.processing.name,
+        'updated_at': at,
+      },
+    );
+  }
+
+  @override
+  Future<void> markSuccess(
+    int id, {
+    required DateTime at,
+    required DateTime syncedAt,
+  }) async {
+    await _set(
+      id,
+      <String, Object?>{
+        'status': SyncStatus.completed.name,
+        'updated_at': at,
+        'synced_at': syncedAt,
+      },
+    );
+  }
+
+  @override
+  Future<void> markRetryableFailure(
+    int id, {
+    required String lastError,
+    required int retryCount,
+    required DateTime at,
+    required DateTime nextRetryAt,
+  }) async {
+    await _set(
+      id,
+      <String, Object?>{
+        'status': SyncStatus.failedRetryable.name,
+        'retry_count': retryCount,
+        'last_error': lastError,
+        'next_retry_at': nextRetryAt,
+        'updated_at': at,
+      },
+    );
+  }
+
+  @override
+  Future<void> markPermanentFailure(
+    int id, {
+    required String lastError,
+    required int retryCount,
+    required DateTime at,
+  }) async {
+    await _set(
+      id,
+      <String, Object?>{
+        'status': SyncStatus.failedPermanent.name,
+        'retry_count': retryCount,
+        'last_error': lastError,
+        'updated_at': at,
+      },
+    );
+  }
+
+  Future<void> _set(int id, Map<String, Object?> fields) async {
+    final int index = events.indexWhere((SyncEvent e) => e.id == id);
+    if (index < 0) return;
+    final SyncEvent current = events[index];
+    final SyncEvent next = current.copyWith(
+      status: SyncStatus.fromName(fields['status'] as String?),
+      updatedAt: fields['updated_at'] as DateTime? ?? current.updatedAt,
+      syncedAt: fields['synced_at'] as DateTime? ?? current.syncedAt,
+      retryCount: fields['retry_count'] as int? ?? current.retryCount,
+      lastError: fields['last_error'] as String? ?? current.lastError,
+      nextRetryAt: fields['next_retry_at'] as DateTime?,
+    );
+    events[index] = next;
+  }
+
+  @override
+  Future<List<int>> resetStuckProcessingEvents(
+    String userId, {
+    required DateTime olderThan,
+    required DateTime at,
+  }) async {
+    final List<int> stuck = <int>[];
+    for (int i = 0; i < events.length; i++) {
+      final SyncEvent e = events[i];
+      if (e.userId == userId &&
+          e.status == SyncStatus.processing &&
+          (e.updatedAt.isBefore(olderThan))) {
+        stuck.add(e.id!);
+        events[i] = e.copyWith(
+          status: SyncStatus.pending,
+          updatedAt: at,
+          lastError: 'reclaimed_stuck_processing',
+          nextRetryAt: null,
+        );
+      }
+    }
+    return stuck;
+  }
+
+  @override
+  Future<int> getPendingCount(String userId) async {
+    return (await getRetryableByUserId(userId)).length;
+  }
+
+  @override
+  Future<int> getFailedCount(String userId) async {
+    return events
+        .where(
+          (SyncEvent e) =>
+              e.userId == userId &&
+              (e.status == SyncStatus.failedPermanent ||
+                  e.status == SyncStatus.failed),
+        )
+        .length;
+  }
 }
 
-/// Transport that returns a fixed remote revision.
+/// Transport that returns a fixed push result and no pull data.
 class _EchoTransport implements SyncTransport {
-  _EchoTransport({this.remoteUpdatedAt, this.throwError = false});
+  _EchoTransport({
+    this.applied = true,
+    this.conflict = false,
+    this.throwError = false,
+  });
 
-  final DateTime? remoteUpdatedAt;
+  final bool applied;
+  final bool conflict;
   final bool throwError;
 
   @override
-  Future<SyncEvent> push(SyncEvent event) {
+  String get name => 'echo';
+
+  @override
+  bool get isReady => true;
+
+  @override
+  Future<SyncPushResult> push(SyncEvent event) {
     if (throwError) {
       throw StateError('transport offline');
     }
     return Future.value(
-      event.copyWith(
-        updatedAt: remoteUpdatedAt ?? event.updatedAt,
-        id: event.id == null ? 999 : event.id! + 1000,
-      ),
+      SyncPushResult(applied: applied, conflict: conflict),
     );
+  }
+
+  @override
+  Future<SyncPullBatch> pull({
+    required String userId,
+    required int cursor,
+    int limit = 100,
+  }) async {
+    return const SyncPullBatch(changes: <SyncChange>[], nextCursor: 0, hasMore: false);
   }
 }
 
@@ -165,7 +326,7 @@ void main() {
     engine = SyncEngine(repository: repository);
   });
 
-  test('track inserts a pending event', () async {
+test('track inserts a pending event with an event uuid', () async {
     await engine.track(
       userId: 'user-1',
       entity: 'weight',
@@ -175,6 +336,7 @@ void main() {
 
     expect(repository.events, hasLength(1));
     expect(repository.events.single.status, SyncStatus.pending);
+    expect(repository.events.single.eventUuid, isNotNull);
   });
 
   test('duplicate pending events are merged instead of duplicated', () async {
@@ -185,6 +347,7 @@ void main() {
       operation: SyncOperation.update,
       payload: '{"kg":80}',
     );
+    final String firstUuid = repository.events.single.eventUuid!;
     await engine.track(
       userId: 'user-1',
       entity: 'weight',
@@ -195,6 +358,8 @@ void main() {
 
     expect(repository.events, hasLength(1));
     expect(repository.events.single.payload, '{"kg":81}');
+    // The idempotency key survives the merge (Part 3).
+    expect(repository.events.single.eventUuid, firstUuid);
   });
 
   test('processQueue acknowledges every event offline', () async {
@@ -228,7 +393,8 @@ void main() {
     );
   });
 
-  test('marks an event failed after the retry budget is exhausted', () async {
+test('marks an event permanently failed after the retry budget is exhausted',
+      () async {
     await engine.track(
       userId: 'user-1',
       entity: 'weight',
@@ -239,12 +405,44 @@ void main() {
     final SyncTransport offline = _EchoTransport(throwError: true);
     for (int attempt = 1; attempt <= AppConstants.syncEventMaxRetries; attempt++) {
       await engine.processQueue('user-1', transport: offline);
+      // Simulate the backoff window elapsing so the retryable event is due.
+      final SyncEvent e = repository.events.single;
+      if (e.status == SyncStatus.failedRetryable) {
+        await repository.update(
+          e.copyWith(
+            nextRetryAt: DateTime.now().subtract(const Duration(seconds: 1)),
+          ),
+        );
+      }
     }
 
     final SyncEvent event = repository.events.single;
-    expect(event.status, SyncStatus.failed);
+    expect(event.status, SyncStatus.failedPermanent);
     expect(event.retryCount, AppConstants.syncEventMaxRetries);
     expect(event.lastError, isNotNull);
+  });
+
+  test('retryable failures schedule a backoff and stay eligible', () async {
+    await engine.track(
+      userId: 'user-1',
+      entity: 'weight',
+      entityId: 'w1',
+      operation: SyncOperation.update,
+    );
+
+    final SyncTransport offline = _EchoTransport(throwError: true);
+    await engine.processQueue('user-1', transport: offline);
+
+    final SyncEvent event = repository.events.single;
+    expect(event.status, SyncStatus.failedRetryable);
+    expect(event.retryCount, 1);
+    expect(event.nextRetryAt, isNotNull);
+    // An immediate re-run must NOT process the event again (backoff gate).
+    final SyncRunResult second = await engine.processQueue(
+      'user-1',
+      transport: offline,
+    );
+    expect(second.processed, 0);
   });
 
   test('latestWins resolves conflicts and completes the event', () async {
@@ -257,13 +455,12 @@ void main() {
 
     final SyncRunResult result = await engine.processQueue(
       'user-1',
-      transport: _EchoTransport(
-        remoteUpdatedAt: DateTime.now().add(const Duration(hours: 1)),
-      ),
+      transport: _EchoTransport(applied: false, conflict: true),
     );
 
     expect(result.failed, 0);
-    expect(result.succeeded, 1);
+    expect(result.succeeded, 0);
+    expect(result.conflicts, 1);
     expect(repository.events.single.status, SyncStatus.completed);
   });
 
@@ -276,15 +473,33 @@ void main() {
 
     final SyncRunResult result = await engine.processQueue(
       'user-1',
-      transport: _EchoTransport(
-        remoteUpdatedAt: DateTime.now().add(const Duration(hours: 1)),
-      ),
+      transport: _EchoTransport(applied: false, conflict: true),
     );
 
     expect(result.conflicts, 1);
     expect(result.succeeded, 0);
     expect(repository.events.single.lastError, 'manual_merge_required');
     expect(repository.events.single.status, SyncStatus.pending);
+  });
+
+  test('stuck PROCESSING events are reclaimed on sync start', () async {
+    await engine.track(
+      userId: 'user-1',
+      entity: 'weight',
+      entityId: 'w1',
+      operation: SyncOperation.update,
+    );
+    final SyncEvent event = repository.events.single;
+    await repository.markProcessing(
+      event.id!,
+      at: DateTime.now().subtract(const Duration(minutes: 10)),
+    );
+
+    await engine.resetStuckProcessingEvents('user-1');
+
+    final SyncEvent reclaimed = repository.events.single;
+    expect(reclaimed.status, SyncStatus.pending);
+    expect(reclaimed.lastError, 'reclaimed_stuck_processing');
   });
 
   test('snapshot reports queue statistics', () async {

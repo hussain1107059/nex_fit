@@ -1,14 +1,16 @@
-import 'dart:async';
-
 import 'package:sqflite/sqflite.dart' hide DatabaseException;
 
 import '../../../domain/entities/daily_progress.dart';
-import '../../../domain/entities/security_enums.dart';
 import '../../models/daily_progress_model.dart';
-import '../../services/sync/sync_event_recorder.dart';
 import 'base_local_data_source.dart';
 
 /// SQLite data source for the `daily_progress` table (unique per user + date).
+///
+/// PROMPT 14 classification: `daily_progress` is a **derived** daily rollup
+/// that is recomputable from already-synced raw logs (step_log, water_log,
+/// food_log, workout_history, sleep_log, weight_log). It is therefore NOT a
+/// sync source-of-truth: no outbox events are recorded and the table is not in
+/// the sync registry, so calculated values are never blindly uploaded.
 class DailyProgressLocalDataSource extends BaseLocalDataSource {
   DailyProgressLocalDataSource({required super.database})
     : super(logName: 'DailyProgressLocalDataSource');
@@ -16,20 +18,11 @@ class DailyProgressLocalDataSource extends BaseLocalDataSource {
   Future<int> upsert(DailyProgress progress) {
     return guard('upsert', () async {
       final Database db = await dbConnection;
-      final int id = await db.insert(
+      return db.insert(
         DailyProgressModel.table,
         DailyProgressModel.toMap(progress),
         conflictAlgorithm: ConflictAlgorithm.replace,
       );
-      unawaited(
-        SyncEventRecorder.record(
-          entity: DailyProgressModel.table,
-          entityId: '$id',
-          operation: SyncOperation.update,
-          userId: progress.userId,
-        ),
-      );
-      return id;
     });
   }
 
@@ -78,13 +71,6 @@ class DailyProgressLocalDataSource extends BaseLocalDataSource {
         DailyProgressModel.table,
         where: 'id = ?',
         whereArgs: <Object?>[id],
-      );
-      unawaited(
-        SyncEventRecorder.record(
-          entity: DailyProgressModel.table,
-          entityId: '$id',
-          operation: SyncOperation.delete,
-        ),
       );
     });
   }

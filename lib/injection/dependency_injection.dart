@@ -29,6 +29,8 @@ import '../data/datasources/local/sleep_log_local_data_source.dart';
 import '../data/datasources/local/step_log_local_data_source.dart';
 import '../data/datasources/local/streak_local_data_source.dart';
 import '../data/datasources/local/sync_event_local_data_source.dart';
+import '../data/datasources/local/sync_conflict_local_data_source.dart';
+import '../data/datasources/local/sync_state_local_data_source.dart';
 import '../data/datasources/local/user_local_data_source.dart';
 import '../data/datasources/local/user_profile_local_data_source.dart';
 import '../data/datasources/local/water_log_local_data_source.dart';
@@ -71,6 +73,8 @@ import '../data/repositories/smart_reminder_repository_impl.dart';
 import '../data/repositories/step_log_repository_impl.dart';
 import '../data/repositories/streak_repository_impl.dart';
 import '../data/repositories/sync_event_repository_impl.dart';
+import '../data/repositories/sync_conflict_repository_impl.dart';
+import '../data/repositories/sync_state_repository_impl.dart';
 import '../data/repositories/user_fitness_profile_repository_impl.dart';
 import '../data/repositories/xp_history_repository_impl.dart';
 import '../data/repositories/user_profile_repository_impl.dart';
@@ -92,7 +96,7 @@ import '../data/services/backup/backup_encryption_service.dart';
 import '../data/services/backup/backup_packaging_service.dart';
 import '../data/services/backup/backup_service.dart';
 import '../data/services/backup/google_drive_backup_service.dart';
-import '../data/services/firebase_service.dart';
+import '../data/services/supabase/supabase_service.dart';
 import '../data/services/notifications/local_notification_service.dart';
 import '../data/services/report/report_exporter.dart';
 import '../data/services/security/app_error_logger.dart';
@@ -100,11 +104,19 @@ import '../data/services/security/app_security_service.dart';
 import '../data/services/security/key_manager.dart';
 import '../data/services/security/recovery_manager.dart';
 import '../data/services/security/session_manager.dart';
+import '../data/services/security/device_id_service.dart';
 import '../data/services/storage/database_optimizer_service.dart';
 import '../data/services/storage/profile_photo_service.dart';
 import '../data/services/storage/secure_storage_service.dart';
 import '../data/services/storage/settings_storage_service.dart';
 import '../data/services/sync/sync_engine.dart';
+import '../data/services/sync/remote_change_applier.dart';
+import '../data/services/sync/supabase_sync_transport.dart';
+import '../data/services/sync/master_data_sync_service.dart';
+import '../data/services/sync/initial_sync_service.dart';
+import '../data/services/sync/local_data_ownership.dart';
+import '../data/services/sync/supabase_master_data_transport.dart';
+import '../data/datasources/local/master_catalog_state_local_data_source.dart';
 import '../data/services/food_seeder.dart';
 import '../data/services/workout_seeder.dart';
 import '../domain/repositories/app_preferences_repository.dart';
@@ -142,6 +154,8 @@ import '../domain/repositories/smart_reminder_repository.dart';
 import '../domain/repositories/step_log_repository.dart';
 import '../domain/repositories/streak_repository.dart';
 import '../domain/repositories/sync_event_repository.dart';
+import '../domain/repositories/sync_conflict_repository.dart';
+import '../domain/repositories/sync_state_repository.dart';
 import '../domain/repositories/user_fitness_profile_repository.dart';
 import '../domain/repositories/xp_history_repository.dart';
 import '../domain/repositories/user_profile_repository.dart';
@@ -160,7 +174,6 @@ import '../domain/usecases/auth/delete_account_usecase.dart';
 import '../domain/usecases/auth/reset_password_usecase.dart';
 import '../domain/usecases/auth/send_email_verification_usecase.dart';
 import '../domain/usecases/auth/sign_in_with_email_usecase.dart';
-import '../domain/usecases/auth/sign_in_with_google_usecase.dart';
 import '../domain/usecases/auth/sign_out_usecase.dart';
 import '../domain/usecases/auth/sign_up_with_email_usecase.dart';
 
@@ -184,8 +197,8 @@ final profilePhotoServiceProvider = Provider<ProfilePhotoService>(
   (ref) => ProfilePhotoService(),
 );
 
-final firebaseServiceProvider = Provider<FirebaseService>(
-  (ref) => FirebaseService(),
+final supabaseServiceProvider = Provider<SupabaseService>(
+  (ref) => SupabaseService(),
 );
 
 final googleSignInServiceProvider = Provider<GoogleSignInService>(
@@ -194,8 +207,7 @@ final googleSignInServiceProvider = Provider<GoogleSignInService>(
 
 final authServiceProvider = Provider<AuthService>(
   (ref) => AuthService(
-    firebaseService: ref.watch(firebaseServiceProvider),
-    googleSignInService: ref.watch(googleSignInServiceProvider),
+    supabaseService: ref.watch(supabaseServiceProvider),
   ),
 );
 
@@ -678,7 +690,6 @@ final authRepositoryProvider = Provider<AuthRepository>(
   (ref) => AuthRepositoryImpl(
     ref.watch(authServiceProvider),
     ref.watch(userProfileRepositoryProvider),
-    ref.watch(secureStorageServiceProvider),
   ),
 );
 
@@ -721,10 +732,6 @@ final signUpWithEmailUsecaseProvider = Provider<SignUpWithEmailUsecase>(
   (ref) => SignUpWithEmailUsecase(ref.watch(authRepositoryProvider)),
 );
 
-final signInWithGoogleUsecaseProvider = Provider<SignInWithGoogleUsecase>(
-  (ref) => SignInWithGoogleUsecase(ref.watch(authRepositoryProvider)),
-);
-
 final signOutUsecaseProvider = Provider<SignOutUsecase>(
   (ref) => SignOutUsecase(ref.watch(authRepositoryProvider)),
 );
@@ -762,6 +769,10 @@ final syncEventLocalDataSourceProvider = Provider<SyncEventLocalDataSource>(
   (ref) => SyncEventLocalDataSource(database: ref.watch(appDatabaseProvider)),
 );
 
+final syncStateLocalDataSourceProvider = Provider<SyncStateLocalDataSource>(
+  (ref) => SyncStateLocalDataSource(database: ref.watch(appDatabaseProvider)),
+);
+
 final errorLogLocalDataSourceProvider = Provider<ErrorLogLocalDataSource>(
   (ref) => ErrorLogLocalDataSource(database: ref.watch(appDatabaseProvider)),
 );
@@ -774,6 +785,10 @@ final syncEventRepositoryProvider = Provider<SyncEventRepository>(
   (ref) => SyncEventRepositoryImpl(ref.watch(syncEventLocalDataSourceProvider)),
 );
 
+final syncStateRepositoryProvider = Provider<SyncStateRepository>(
+  (ref) => SyncStateRepositoryImpl(ref.watch(syncStateLocalDataSourceProvider)),
+);
+
 final errorLogRepositoryProvider = Provider<ErrorLogRepository>(
   (ref) => ErrorLogRepositoryImpl(ref.watch(errorLogLocalDataSourceProvider)),
 );
@@ -782,11 +797,83 @@ final sessionManagerProvider = Provider<SessionManager>(
   (ref) => SessionManager(
     repository: ref.watch(sessionRepositoryProvider),
     storage: ref.watch(secureStorageServiceProvider),
+    deviceIdService: ref.watch(deviceIdServiceProvider),
+  ),
+);
+
+final deviceIdServiceProvider = Provider<DeviceIdService>(
+  (ref) => DeviceIdService(
+    storage: ref.watch(secureStorageServiceProvider),
   ),
 );
 
 final syncEngineProvider = Provider<SyncEngine>(
-  (ref) => SyncEngine(repository: ref.watch(syncEventRepositoryProvider)),
+  (ref) => SyncEngine(
+    repository: ref.watch(syncEventRepositoryProvider),
+    syncStateRepository: ref.watch(syncStateRepositoryProvider),
+    conflictRepository: ref.watch(syncConflictRepositoryProvider),
+    database: ref.watch(appDatabaseProvider),
+    deviceIdProvider: ref.watch(deviceIdServiceProvider).getOrCreate,
+  ),
+);
+
+final syncConflictLocalDataSourceProvider = Provider<SyncConflictLocalDataSource>(
+  (ref) => SyncConflictLocalDataSource(
+    database: ref.watch(appDatabaseProvider),
+  ),
+);
+
+final syncConflictRepositoryProvider = Provider<SyncConflictRepository>(
+  (ref) => SyncConflictRepositoryImpl(
+    ref.watch(syncConflictLocalDataSourceProvider),
+  ),
+);
+
+final remoteChangeApplierProvider = Provider<RemoteChangeApplier>(
+  (ref) => RemoteChangeApplier(
+    database: ref.watch(appDatabaseProvider),
+  ),
+);
+
+final supabaseSyncTransportProvider = Provider<SupabaseSyncTransport>(
+  (ref) => SupabaseSyncTransport(
+    service: ref.watch(supabaseServiceProvider),
+    database: ref.watch(appDatabaseProvider),
+  ),
+);
+
+final masterCatalogStateLocalDataSourceProvider =
+    Provider<MasterCatalogStateLocalDataSource>(
+      (ref) => MasterCatalogStateLocalDataSource(
+        database: ref.watch(appDatabaseProvider),
+      ),
+    );
+
+final supabaseMasterDataTransportProvider = Provider<SupabaseMasterDataTransport>(
+  (ref) => SupabaseMasterDataTransport(
+    service: ref.watch(supabaseServiceProvider),
+  ),
+);
+
+final masterDataSyncServiceProvider = Provider<MasterDataSyncService>(
+  (ref) => MasterDataSyncService(
+    database: ref.watch(appDatabaseProvider),
+    transport: ref.watch(supabaseMasterDataTransportProvider),
+    stateDataSource: ref.watch(masterCatalogStateLocalDataSourceProvider),
+  ),
+);
+
+final initialSyncServiceProvider = Provider<InitialSyncService>(
+  (ref) => InitialSyncService(
+    database: ref.watch(appDatabaseProvider),
+    engine: ref.watch(syncEngineProvider),
+    transport: ref.watch(supabaseSyncTransportProvider),
+    applier: ref.watch(remoteChangeApplierProvider),
+    ownershipAnalyzer: LocalDataOwnershipAnalyzer(
+      database: ref.watch(appDatabaseProvider),
+    ),
+    syncStateRepository: ref.watch(syncStateRepositoryProvider),
+  ),
 );
 
 final errorLoggerProvider = Provider<AppErrorLogger>(

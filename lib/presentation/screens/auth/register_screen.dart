@@ -16,7 +16,6 @@ import '../../../core/theme/app_spacing.dart';
 import '../../../domain/entities/app_user.dart';
 import '../../providers/auth_controller.dart';
 import '../../router/app_router.dart';
-import '../../widgets/auth/auth_divider.dart';
 import '../../widgets/auth/auth_layout.dart';
 import '../../widgets/auth/auth_logo_header.dart';
 import '../../widgets/auth/password_strength_bar.dart';
@@ -91,15 +90,6 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
       message: context.l10n.authAccountCreatedSubtitle,
     );
     if (!mounted) return;
-    context.go(AppRoutes.destinationFor(user));
-  }
-
-  Future<void> _googleSignIn() async {
-    final Result<AppUser> result =
-        await ref.read(authControllerProvider.notifier).signInWithGoogle();
-
-    if (!mounted || result.isFailure) return;
-    final AppUser user = result.valueOrNull!;
     context.go(AppRoutes.destinationFor(user));
   }
 
@@ -204,15 +194,6 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
           label: l10n.authSignUp,
           icon: Icons.person_add_alt_1_rounded,
           isLoading: busy,
-        ),
-        const SizedBox(height: AppSpacing.lg),
-        AuthDivider(label: l10n.authOrContinueWith),
-        const SizedBox(height: AppSpacing.lg),
-        AppButton(
-          onPressed: busy ? null : _googleSignIn,
-          label: l10n.authContinueWithGoogle,
-          variant: AppButtonVariant.outline,
-          icon: Icons.g_mobiledata_rounded,
         ),
       ],
     );

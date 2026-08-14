@@ -1,14 +1,17 @@
-import 'dart:async';
-
 import 'package:sqflite/sqflite.dart' hide DatabaseException;
 
-import '../../../domain/entities/security_enums.dart';
 import '../../../domain/entities/weight_log.dart';
 import '../../models/weight_log_model.dart';
-import '../../services/sync/sync_event_recorder.dart';
 import 'base_local_data_source.dart';
+import 'syncable_dao.dart';
 
 /// SQLite data source for the `weight_log` table.
+///
+/// Sync-aware (PROMPT 13 Batch 3): every mutation runs inside a transaction
+/// together with its outbox event. Weight history can grow very large, so no
+/// operation loads an entire table into memory: bulk writes go through a
+/// single batched transaction and reads always target a single row or a
+/// bounded date/user range.
 class WeightLogLocalDataSource extends BaseLocalDataSource {
   WeightLogLocalDataSource({required super.database})
     : super(logName: 'WeightLogLocalDataSource');
@@ -16,39 +19,78 @@ class WeightLogLocalDataSource extends BaseLocalDataSource {
   Future<int> insert(WeightLog log) {
     return guard('insert', () async {
       final Database db = await dbConnection;
-      final int id = await db.insert(
-        WeightLogModel.table,
-        WeightLogModel.toMap(log),
-      );
-      unawaited(
-        SyncEventRecorder.record(
+      return db.transaction((Transaction txn) async {
+        final int now = SyncableDao.nowMs();
+        final Map<String, Object?> values = WeightLogModel.toMap(log);
+        values['uuid'] = SyncableDao.newUuid();
+        values['created_at'] = values['created_at'] ?? now;
+        values['updated_at'] = now;
+        values['row_version'] = SyncableDao.firstRowVersion;
+        final int id = await txn.insert(WeightLogModel.table, values);
+        await SyncableDao.recordCreate(
+          txn,
           entity: WeightLogModel.table,
           entityId: '$id',
-          operation: SyncOperation.create,
           userId: log.userId,
-        ),
-      );
-      return id;
+        );
+        return id;
+      });
+    });
+  }
+
+  /// Inserts many logs in a single transaction (never loads the table into
+  /// memory); each row gets its own uuid and CREATE outbox event.
+  Future<void> insertAll(List<WeightLog> logs) {
+    return guard('insert_all', () async {
+      final Database db = await dbConnection;
+      await db.transaction((Transaction txn) async {
+        final int now = SyncableDao.nowMs();
+        for (final WeightLog log in logs) {
+          final Map<String, Object?> values = WeightLogModel.toMap(log);
+          values['uuid'] = SyncableDao.newUuid();
+          values['created_at'] = values['created_at'] ?? now;
+          values['updated_at'] = now;
+          values['row_version'] = SyncableDao.firstRowVersion;
+          final int id = await txn.insert(WeightLogModel.table, values);
+          await SyncableDao.recordCreate(
+            txn,
+            entity: WeightLogModel.table,
+            entityId: '$id',
+            userId: log.userId,
+          );
+        }
+      });
     });
   }
 
   Future<void> update(WeightLog log) {
     return guard('update', () async {
       final Database db = await dbConnection;
-      await db.update(
-        WeightLogModel.table,
-        WeightLogModel.toMap(log),
-        where: 'id = ?',
-        whereArgs: <Object?>[log.id],
-      );
-      unawaited(
-        SyncEventRecorder.record(
+      await db.transaction((Transaction txn) async {
+        final Map<String, Object?>? existing = await _findRow(txn, log.id);
+        if (existing == null) return;
+        final int now = SyncableDao.nowMs();
+        final int baseVersion = _version(existing);
+        final Map<String, Object?> values = WeightLogModel.toMap(log);
+        values['id'] = existing['id'];
+        values['uuid'] = existing['uuid'] as String;
+        values['created_at'] = values['created_at'] ?? existing['created_at'];
+        values['updated_at'] = now;
+        values['row_version'] = baseVersion + 1;
+        await txn.update(
+          WeightLogModel.table,
+          values,
+          where: 'id = ?',
+          whereArgs: <Object?>[log.id],
+        );
+        await SyncableDao.recordUpdate(
+          txn,
           entity: WeightLogModel.table,
           entityId: '${log.id}',
-          operation: SyncOperation.update,
           userId: log.userId,
-        ),
-      );
+          baseVersion: baseVersion,
+        );
+      });
     });
   }
 
@@ -57,7 +99,7 @@ class WeightLogLocalDataSource extends BaseLocalDataSource {
       final Database db = await dbConnection;
       final List<Map<String, Object?>> rows = await db.query(
         WeightLogModel.table,
-        where: 'id = ?',
+        where: 'id = ? AND deleted_at IS NULL',
         whereArgs: <Object?>[id],
         limit: 1,
       );
@@ -71,7 +113,7 @@ class WeightLogLocalDataSource extends BaseLocalDataSource {
       final Database db = await dbConnection;
       final List<Map<String, Object?>> rows = await db.query(
         WeightLogModel.table,
-        where: 'user_id = ?',
+        where: 'user_id = ? AND deleted_at IS NULL',
         whereArgs: <Object?>[userId],
         orderBy: 'logged_at DESC',
       );
@@ -88,7 +130,8 @@ class WeightLogLocalDataSource extends BaseLocalDataSource {
       final Database db = await dbConnection;
       final List<Map<String, Object?>> rows = await db.query(
         WeightLogModel.table,
-        where: 'user_id = ? AND logged_at >= ? AND logged_at < ?',
+        where:
+            'user_id = ? AND deleted_at IS NULL AND logged_at >= ? AND logged_at < ?',
         whereArgs: <Object?>[
           userId,
           start.millisecondsSinceEpoch,
@@ -105,7 +148,7 @@ class WeightLogLocalDataSource extends BaseLocalDataSource {
       final Database db = await dbConnection;
       final List<Map<String, Object?>> rows = await db.query(
         WeightLogModel.table,
-        where: 'user_id = ?',
+        where: 'user_id = ? AND deleted_at IS NULL',
         whereArgs: <Object?>[userId],
         orderBy: 'logged_at DESC',
         limit: 1,
@@ -118,18 +161,43 @@ class WeightLogLocalDataSource extends BaseLocalDataSource {
   Future<void> delete(int id) {
     return guard('delete', () async {
       final Database db = await dbConnection;
-      await db.delete(
-        WeightLogModel.table,
-        where: 'id = ?',
-        whereArgs: <Object?>[id],
-      );
-      unawaited(
-        SyncEventRecorder.record(
+      await db.transaction((Transaction txn) async {
+        final Map<String, Object?>? existing = await _findRow(txn, id);
+        if (existing == null) return;
+        final int now = SyncableDao.nowMs();
+        final int baseVersion = _version(existing);
+        await txn.update(
+          WeightLogModel.table,
+          <String, Object?>{
+            'deleted_at': now,
+            'updated_at': now,
+            'row_version': baseVersion + 1,
+          },
+          where: 'id = ?',
+          whereArgs: <Object?>[id],
+        );
+        await SyncableDao.recordDelete(
+          txn,
           entity: WeightLogModel.table,
           entityId: '$id',
-          operation: SyncOperation.delete,
-        ),
-      );
+          userId: existing['user_id'] as String,
+          baseVersion: baseVersion,
+        );
+      });
     });
   }
+
+  Future<Map<String, Object?>?> _findRow(Transaction txn, int? id) async {
+    if (id == null) return null;
+    final List<Map<String, Object?>> rows = await txn.query(
+      WeightLogModel.table,
+      where: 'id = ?',
+      whereArgs: <Object?>[id],
+      limit: 1,
+    );
+    return rows.isEmpty ? null : rows.first;
+  }
+
+  static int _version(Map<String, Object?> row) =>
+      (row['row_version'] as num?)?.toInt() ?? 0;
 }

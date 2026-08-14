@@ -15,12 +15,40 @@ enum SyncOperation {
 }
 
 /// Lifecycle state of a sync event inside the offline queue.
+///
+/// The statuses mirror the outbox protocol: PENDING -> PROCESSING -> SUCCESS,
+/// with FAILED_RETRYABLE (backoff, will retry) and FAILED_PERMANENT (terminal).
+/// `failed` is the pre-v16 legacy name for a permanent failure and is read as
+/// [SyncStatus.failedPermanent].
 enum SyncStatus {
+  /// Queued and eligible to run (immediately or once `next_retry_at` passes).
   pending,
+
+  /// In-flight on a device. Events left in this state are reclaimed on startup
+  /// by [SyncEngine.resetStuckProcessingEvents] (see `sync_state` docs).
+  processing,
+
+  /// Successfully delivered and acknowledged by the remote store.
   completed,
+
+  /// Transient failure (network / 5xx / auth). Retried with exponential
+  /// backoff up to `AppConstants.syncMaxRetries`.
+  failedRetryable,
+
+  /// Terminal failure. Requires manual intervention; never auto-retried.
+  failedPermanent,
+
+  /// Legacy alias persisted by pre-foundation versions. Treated as a
+  /// permanent failure everywhere.
   failed;
 
+  bool get isFinal => this == completed || this == failedPermanent;
+
+  bool get isRetryable =>
+      this == pending || this == failedRetryable || this == processing;
+
   static SyncStatus fromName(String? value) {
+    if (value == 'failed') return SyncStatus.failedPermanent;
     return SyncStatus.values.firstWhere(
       (status) => status.name == value,
       orElse: () => SyncStatus.pending,

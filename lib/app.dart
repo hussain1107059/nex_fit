@@ -7,12 +7,14 @@ import 'package:go_router/go_router.dart';
 
 import 'core/theme/app_theme.dart';
 import 'data/services/security/session_manager.dart';
+import 'data/services/sync/incremental_sync_coordinator.dart';
 import 'domain/entities/app_settings.dart';
 import 'domain/entities/app_user.dart';
 import 'domain/entities/common_enums.dart';
 import 'injection/dependency_injection.dart';
 import 'l10n/app_localizations.dart';
 import 'presentation/providers/auth_provider.dart';
+import 'presentation/providers/incremental_sync_providers.dart';
 import 'presentation/providers/locale_provider.dart';
 import 'presentation/providers/settings_providers.dart';
 import 'presentation/router/app_router.dart';
@@ -74,6 +76,12 @@ class _NexFitAppState extends ConsumerState<NexFitApp>
       );
       unawaited(session.touch(user!.id, timeout: timeout));
     }
+
+    // Incremental sync on resume: a single Realtime event may have been missed
+    // while the app was backgrounded; the cursor pull recovers it (PROMPT 18).
+    ref
+        .read(incrementalSyncCoordinatorProvider)
+        .requestSync(SyncTrigger.resume);
 
     final AppSettings? settings =
         ref.read(settingsControllerProvider).valueOrNull;

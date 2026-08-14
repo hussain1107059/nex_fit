@@ -25,9 +25,9 @@ abstract interface class AuthRepository {
     required String password,
   });
 
-  Future<AppUser> signInWithGoogle();
-
-  Future<void> sendEmailVerification();
+  /// Resends the verification email. [email] is used when the user is not
+  /// signed in yet (email-confirmation flow).
+  Future<void> sendEmailVerification({String? email});
 
   Future<AppUser?> reloadUser();
 

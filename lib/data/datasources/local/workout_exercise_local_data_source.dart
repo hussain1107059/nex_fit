@@ -5,9 +5,18 @@ import '../../../domain/entities/workout_exercise.dart';
 import '../../../domain/entities/workout_exercise_detail.dart';
 import '../../models/exercise_model.dart';
 import '../../models/workout_exercise_model.dart';
+import '../../models/workout_model.dart';
 import 'base_local_data_source.dart';
+import 'syncable_dao.dart';
 
 /// SQLite data source for the `workout_exercise` join table.
+///
+/// Sync-aware (PROMPT 11 Batch 1). This is a child table: it has no `user_id`
+/// on its entity, so the DAO resolves ownership from the owning `workout` row.
+/// If the parent workout is not present yet the join row is stored without a
+/// sync event (it becomes syncable once the parent flow re-inserts it, which
+/// never happens in practice because workouts are written before their
+/// exercises).
 class WorkoutExerciseLocalDataSource extends BaseLocalDataSource {
   WorkoutExerciseLocalDataSource({required super.database})
     : super(logName: 'WorkoutExerciseLocalDataSource');
@@ -15,22 +24,64 @@ class WorkoutExerciseLocalDataSource extends BaseLocalDataSource {
   Future<int> insert(WorkoutExercise workoutExercise) {
     return guard('insert', () async {
       final Database db = await dbConnection;
-      return db.insert(
-        WorkoutExerciseModel.table,
-        WorkoutExerciseModel.toMap(workoutExercise),
-      );
+      return db.transaction((Transaction txn) async {
+        final int now = SyncableDao.nowMs();
+        final Map<String, Object?> values =
+            WorkoutExerciseModel.toMap(workoutExercise);
+        values['uuid'] = SyncableDao.newUuid();
+        values['created_at'] = now;
+        values['updated_at'] = now;
+        values['row_version'] = SyncableDao.firstRowVersion;
+        final String? userId = await _userIdForWorkout(
+          txn,
+          workoutExercise.workoutId,
+        );
+        if (userId != null) values['user_id'] = userId;
+        final int id = await txn.insert(WorkoutExerciseModel.table, values);
+        if (userId != null) {
+          await SyncableDao.recordCreate(
+            txn,
+            entity: WorkoutExerciseModel.table,
+            entityId: '$id',
+            userId: userId,
+          );
+        }
+        return id;
+      });
     });
   }
 
   Future<void> update(WorkoutExercise workoutExercise) {
     return guard('update', () async {
       final Database db = await dbConnection;
-      await db.update(
-        WorkoutExerciseModel.table,
-        WorkoutExerciseModel.toMap(workoutExercise),
-        where: 'id = ?',
-        whereArgs: <Object?>[workoutExercise.id],
-      );
+      await db.transaction((Transaction txn) async {
+        final Map<String, Object?>? existing =
+            await _findRow(txn, workoutExercise.id);
+        if (existing == null) return;
+        final int now = SyncableDao.nowMs();
+        final int baseVersion = _version(existing);
+        final Map<String, Object?> values =
+            WorkoutExerciseModel.toMap(workoutExercise);
+        values['uuid'] = existing['uuid'] as String;
+        values['updated_at'] = now;
+        values['row_version'] = baseVersion + 1;
+        await txn.update(
+          WorkoutExerciseModel.table,
+          values,
+          where: 'id = ?',
+          whereArgs: <Object?>[workoutExercise.id],
+        );
+        final String? userId = existing['user_id'] as String?;
+        if (userId != null) {
+          await SyncableDao.recordUpdate(
+            txn,
+            entity: WorkoutExerciseModel.table,
+            entityId: '${workoutExercise.id}',
+            userId: userId,
+            baseVersion: baseVersion,
+          );
+        }
+      });
     });
   }
 
@@ -39,7 +90,7 @@ class WorkoutExerciseLocalDataSource extends BaseLocalDataSource {
       final Database db = await dbConnection;
       final List<Map<String, Object?>> rows = await db.query(
         WorkoutExerciseModel.table,
-        where: 'id = ?',
+        where: 'id = ? AND deleted_at IS NULL',
         whereArgs: <Object?>[id],
         limit: 1,
       );
@@ -53,7 +104,7 @@ class WorkoutExerciseLocalDataSource extends BaseLocalDataSource {
       final Database db = await dbConnection;
       final List<Map<String, Object?>> rows = await db.query(
         WorkoutExerciseModel.table,
-        where: 'workout_id = ?',
+        where: 'workout_id = ? AND deleted_at IS NULL',
         whereArgs: <Object?>[workoutId],
         orderBy: 'sort_order ASC, id ASC',
       );
@@ -66,7 +117,7 @@ class WorkoutExerciseLocalDataSource extends BaseLocalDataSource {
     return guard('get_details_by_workout', () async {
       final Database db = await dbConnection;
       final List<Map<String, Object?>> rows = await db.rawQuery(
-        '$_joinSelect WHERE we.workout_id = ? '
+        '$_joinSelect WHERE we.workout_id = ? AND we.deleted_at IS NULL '
         'ORDER BY we.sort_order ASC, we.id ASC',
         <Object?>[workoutId],
       );
@@ -87,6 +138,7 @@ class WorkoutExerciseLocalDataSource extends BaseLocalDataSource {
       ).join(', ');
       final List<Map<String, Object?>> rows = await db.rawQuery(
         '$_joinSelect WHERE we.workout_id IN ($placeholders) '
+        'AND we.deleted_at IS NULL '
         'ORDER BY we.workout_id ASC, we.sort_order ASC, we.id ASC',
         workoutIds,
       );
@@ -109,24 +161,98 @@ class WorkoutExerciseLocalDataSource extends BaseLocalDataSource {
   Future<void> delete(int id) {
     return guard('delete', () async {
       final Database db = await dbConnection;
-      await db.delete(
-        WorkoutExerciseModel.table,
-        where: 'id = ?',
-        whereArgs: <Object?>[id],
-      );
+      await db.transaction((Transaction txn) async {
+        final Map<String, Object?>? existing = await _findRow(txn, id);
+        if (existing == null) return;
+        final int now = SyncableDao.nowMs();
+        final int baseVersion = _version(existing);
+        await _softDelete(txn, id, now: now, baseVersion: baseVersion);
+        final String? userId = existing['user_id'] as String?;
+        if (userId != null) {
+          await SyncableDao.recordDelete(
+            txn,
+            entity: WorkoutExerciseModel.table,
+            entityId: '$id',
+            userId: userId,
+            baseVersion: baseVersion,
+          );
+        }
+      });
     });
   }
 
   Future<void> deleteByWorkout(int workoutId) {
     return guard('delete_by_workout', () async {
       final Database db = await dbConnection;
-      await db.delete(
-        WorkoutExerciseModel.table,
-        where: 'workout_id = ?',
-        whereArgs: <Object?>[workoutId],
-      );
+      await db.transaction((Transaction txn) async {
+        final String? userId = await _userIdForWorkout(txn, workoutId);
+        final List<Map<String, Object?>> rows = await txn.query(
+          WorkoutExerciseModel.table,
+          columns: const <String>['id', 'row_version'],
+          where: 'workout_id = ? AND deleted_at IS NULL',
+          whereArgs: <Object?>[workoutId],
+        );
+        final int now = SyncableDao.nowMs();
+        for (final Map<String, Object?> row in rows) {
+          final int id = row['id'] as int;
+          final int baseVersion = _version(row);
+          await _softDelete(txn, id, now: now, baseVersion: baseVersion);
+          if (userId != null) {
+            await SyncableDao.recordDelete(
+              txn,
+              entity: WorkoutExerciseModel.table,
+              entityId: '$id',
+              userId: userId,
+              baseVersion: baseVersion,
+            );
+          }
+        }
+      });
     });
   }
+
+  Future<Map<String, Object?>?> _findRow(Transaction txn, int? id) async {
+    if (id == null) return null;
+    final List<Map<String, Object?>> rows = await txn.query(
+      WorkoutExerciseModel.table,
+      where: 'id = ?',
+      whereArgs: <Object?>[id],
+      limit: 1,
+    );
+    return rows.isEmpty ? null : rows.first;
+  }
+
+  Future<String?> _userIdForWorkout(Transaction txn, int workoutId) async {
+    final List<Map<String, Object?>> rows = await txn.query(
+      WorkoutModel.table,
+      columns: const <String>['user_id'],
+      where: 'id = ?',
+      whereArgs: <Object?>[workoutId],
+      limit: 1,
+    );
+    return rows.isEmpty ? null : rows.first['user_id'] as String?;
+  }
+
+  Future<void> _softDelete(
+    Transaction txn,
+    int id, {
+    required int now,
+    required int baseVersion,
+  }) async {
+    await txn.update(
+      WorkoutExerciseModel.table,
+      <String, Object?>{
+        'deleted_at': now,
+        'updated_at': now,
+        'row_version': baseVersion + 1,
+      },
+      where: 'id = ?',
+      whereArgs: <Object?>[id],
+    );
+  }
+
+  static int _version(Map<String, Object?> row) =>
+      (row['row_version'] as num?)?.toInt() ?? 0;
 
   static const String _joinSelect = '''
     SELECT

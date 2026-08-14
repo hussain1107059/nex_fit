@@ -195,6 +195,17 @@ class SettingsScreen extends ConsumerWidget {
               ),
             ],
           ),
+          SettingsSectionTitle(context.l10n.syncSettingsTitle),
+          SettingsCard(
+            children: [
+              SettingsTile(
+                icon: Icons.sync_rounded,
+                title: context.l10n.syncSettingsTitle,
+                subtitle: context.l10n.settingsSyncStatus,
+                onTap: () => context.push(AppRoutes.settingsSync),
+              ),
+            ],
+          ),
           SettingsSectionTitle(context.l10n.settingsBackup),
           SettingsCard(
             children: [

@@ -3276,6 +3276,53 @@ class AppLocalizationsEn extends AppLocalizations {
   String get settingsSyncNow => 'Sync now';
 
   @override
+  String get syncStatusSynced => 'Synced';
+
+  @override
+  String get syncStatusOffline => 'Offline';
+
+  @override
+  String get syncStatusFailed => 'Sync failed';
+
+  @override
+  String get syncStatusConflict => 'Conflict needs attention';
+
+  @override
+  String get syncStatusPending => 'Pending changes';
+
+  @override
+  String get syncStatusNotSynced => 'Not synced yet';
+
+  @override
+  String get syncSettingsTitle => 'Sync';
+
+  @override
+  String get syncSettingsLastSynced => 'Last synced';
+
+  @override
+  String get syncSettingsNeverSynced => 'Never synced';
+
+  @override
+  String get syncSettingsPendingChanges => 'Pending changes';
+
+  @override
+  String get syncSettingsFailedChanges => 'Failed changes';
+
+  @override
+  String get syncSettingsConflicts => 'Conflicts';
+
+  @override
+  String get syncCompleted => 'Sync complete';
+
+  @override
+  String get syncCompletedOffline =>
+      'You\'re offline. Your changes will sync when you\'re back online.';
+
+  @override
+  String get syncCompletedWithErrors =>
+      'Sync finished with some issues. Your changes will be retried automatically.';
+
+  @override
   String get settingsScreenshotLock => 'Screenshot lock';
 
   @override

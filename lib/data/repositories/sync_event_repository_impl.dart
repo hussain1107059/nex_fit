@@ -1,3 +1,5 @@
+import 'package:sqflite/sqflite.dart' show Transaction;
+
 import '../../domain/entities/security_enums.dart';
 import '../../domain/entities/sync_event.dart';
 import '../../domain/repositories/sync_event_repository.dart';
@@ -13,6 +15,10 @@ class SyncEventRepositoryImpl implements SyncEventRepository {
   Future<int> insert(SyncEvent event) => _dataSource.insert(event);
 
   @override
+  Future<void> insertInTransaction(Transaction txn, SyncEvent event) =>
+      _dataSource.insertInTransaction(txn, event);
+
+  @override
   Future<void> update(SyncEvent event) => _dataSource.update(event);
 
   @override
@@ -24,6 +30,19 @@ class SyncEventRepositoryImpl implements SyncEventRepository {
     int? limit,
     int? offset,
   }) => _dataSource.getPendingByUserId(userId, limit: limit, offset: offset);
+
+  @override
+  Future<List<SyncEvent>> getRetryableByUserId(
+    String userId, {
+    int? limit,
+    int? offset,
+    DateTime? now,
+  }) => _dataSource.getRetryableByUserId(
+    userId,
+    limit: limit,
+    offset: offset,
+    now: now,
+  );
 
   @override
   Future<SyncEvent?> findDuplicate(
@@ -48,4 +67,62 @@ class SyncEventRepositoryImpl implements SyncEventRepository {
   @override
   Future<void> deleteCompletedOlderThanAll(DateTime threshold) =>
       _dataSource.deleteCompletedOlderThanAll(threshold);
+
+  @override
+  Future<void> markProcessing(int id, {required DateTime at}) =>
+      _dataSource.markProcessing(id, at: at);
+
+  @override
+  Future<void> markSuccess(
+    int id, {
+    required DateTime at,
+    required DateTime syncedAt,
+  }) => _dataSource.markSuccess(id, at: at, syncedAt: syncedAt);
+
+  @override
+  Future<void> markRetryableFailure(
+    int id, {
+    required String lastError,
+    required int retryCount,
+    required DateTime at,
+    required DateTime nextRetryAt,
+  }) => _dataSource.markRetryableFailure(
+    id,
+    lastError: lastError,
+    retryCount: retryCount,
+    at: at,
+    nextRetryAt: nextRetryAt,
+  );
+
+  @override
+  Future<void> markPermanentFailure(
+    int id, {
+    required String lastError,
+    required int retryCount,
+    required DateTime at,
+  }) => _dataSource.markPermanentFailure(
+    id,
+    lastError: lastError,
+    retryCount: retryCount,
+    at: at,
+  );
+
+  @override
+  Future<List<int>> resetStuckProcessingEvents(
+    String userId, {
+    required DateTime olderThan,
+    required DateTime at,
+  }) => _dataSource.resetStuckProcessingEvents(
+    userId,
+    olderThan: olderThan,
+    at: at,
+  );
+
+  @override
+  Future<int> getPendingCount(String userId) =>
+      _dataSource.getPendingCount(userId);
+
+  @override
+  Future<int> getFailedCount(String userId) =>
+      _dataSource.getFailedCount(userId);
 }
