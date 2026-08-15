@@ -12,5 +12,11 @@ abstract interface class StepLogRepository {
 
   Future<StepLog?> getByDate(String userId, DateTime stepDate);
 
+  Future<List<StepLog>> getByDateRange(
+    String userId,
+    DateTime start,
+    DateTime end,
+  );
+
   Future<void> delete(int id);
 }

@@ -1,4 +1,6 @@
-﻿import 'package:flutter/material.dart' hide ErrorWidget;
+﻿import 'dart:async';
+
+import 'package:flutter/material.dart' hide ErrorWidget;
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
@@ -55,6 +57,7 @@ class _FoodDatabaseScreenState extends ConsumerState<FoodDatabaseScreen> {
   final TextEditingController _searchController = TextEditingController();
   _FoodSection _section = _FoodSection.catalog;
   FoodCategory? _category;
+  Timer? _searchDebounce;
 
   @override
   void initState() {
@@ -64,15 +67,23 @@ class _FoodDatabaseScreenState extends ConsumerState<FoodDatabaseScreen> {
 
   @override
   void dispose() {
+    _searchDebounce?.cancel();
     _searchController.removeListener(_onSearchChanged);
     _searchController.dispose();
     super.dispose();
   }
 
   void _onSearchChanged() {
-    ref
-        .read(nutritionFoodSearchQueryProvider.notifier)
-        .state = _searchController.text;
+    final String text = _searchController.text;
+    // Search always targets the catalog: typing while another section is
+    // active silently switched the section to catalog instead of doing nothing.
+    if (text.trim().isNotEmpty && _section != _FoodSection.catalog) {
+      setState(() => _section = _FoodSection.catalog);
+    }
+    _searchDebounce?.cancel();
+    _searchDebounce = Timer(const Duration(milliseconds: 250), () {
+      ref.read(nutritionFoodSearchQueryProvider.notifier).state = text;
+    });
   }
 
   void _clearFilters() {

@@ -1,10 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 
 import '../../../../core/extensions/context_extensions.dart';
 import '../../../../core/theme/app_radius.dart';
 import '../../../../core/theme/app_spacing.dart';
 import '../../../../core/widgets/buttons/app_button.dart';
-import '../../../../core/widgets/feedback/app_snackbar.dart';
+import '../../../../presentation/router/app_router.dart';
 
 /// Illustrated empty state shown when the user has no workouts yet.
 class EmptyWorkoutCard extends StatelessWidget {
@@ -68,8 +69,7 @@ class EmptyWorkoutCard extends StatelessWidget {
                 ),
                 const SizedBox(height: AppSpacing.sm),
                 AppButton(
-                  onPressed: () =>
-                      AppSnackbar.info(context, context.l10n.dashboardComingSoon),
+                  onPressed: () => context.push(AppRoutes.workoutList),
                   label: context.l10n.dashboardFirstWorkout,
                   icon: Icons.play_arrow_rounded,
                   variant: AppButtonVariant.secondary,

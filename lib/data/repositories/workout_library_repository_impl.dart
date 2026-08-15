@@ -220,6 +220,7 @@ class WorkoutLibraryRepositoryImpl implements WorkoutLibraryRepository {
 
   @override
   Future<List<Workout>> search(String userId, WorkoutFilter filter) async {
+    await ensureSeeded(userId);
     final List<Workout> all = await workoutRepository.getByUserId(userId);
     List<Workout> results = all;
 

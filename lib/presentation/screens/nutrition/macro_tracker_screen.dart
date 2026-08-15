@@ -54,7 +54,8 @@ class MacroTrackerScreen extends ConsumerWidget {
             children: [
               const HistoryRangeSelector(),
               const SizedBox(height: AppSpacing.md),
-              _MacroSplitCard(history: history),              const SizedBox(height: AppSpacing.md),
+              _MacroSplitCard(history: history),
+              const SizedBox(height: AppSpacing.md),
               if (profile != null)
                 _GoalsCard(history: history, profile: profile),
               const SizedBox(height: AppSpacing.md),

@@ -9,6 +9,7 @@ import '../../../domain/entities/dashboard_data.dart';
 import '../../providers/auth_provider.dart';
 import '../../providers/dashboard_providers.dart';
 import '../../providers/sync_providers.dart';
+import '../../router/app_router.dart';
 import 'widgets/achievements_section.dart';
 import 'widgets/backup_card.dart';
 import 'widgets/dashboard_header.dart';
@@ -118,7 +119,10 @@ class _DashboardContent extends StatelessWidget {
                   const SizedBox(height: AppSpacing.md),
                 ],
                 const SizedBox(height: AppSpacing.md),
-                DashboardSummaryCard(summary: data.summary),
+                DashboardSummaryCard(
+                  summary: data.summary,
+                  onSleepTap: () => context.push(AppRoutes.sleepHistory),
+                ),
                 const SizedBox(height: AppSpacing.lg),
                 const BackupCard(),
                 const SizedBox(height: AppSpacing.lg),

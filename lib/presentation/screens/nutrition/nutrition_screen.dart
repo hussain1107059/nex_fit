@@ -14,7 +14,6 @@ import '../../../domain/entities/daily_nutrition.dart';
 import '../../../domain/entities/meal_category.dart';
 import '../../../domain/entities/meal_slot.dart';
 import '../../../l10n/app_localizations.dart';
-import '../../../injection/dependency_injection.dart';
 import '../../providers/auth_provider.dart';
 import '../../providers/dashboard_providers.dart';
 import '../../providers/nutrition_providers.dart';
@@ -205,7 +204,7 @@ class _DateNavigator extends ConsumerWidget {
           child: Column(
             children: [
               Text(
-                formatNutritionDate(selected),
+                formatNutritionDate(selected, l10n),
                 style: theme.textTheme.titleMedium?.copyWith(
                   fontWeight: FontWeight.w800,
                 ),
@@ -520,12 +519,9 @@ class _DailyActions extends ConsumerWidget {
   }
 
   Future<int> _copyYesterdayCount(WidgetRef ref) async {
-    final AppUser? user = ref.read(currentUserProvider);
-    if (user == null || !user.isSignedIn) return 0;
-    final DateTime date = ref.read(nutritionSelectedDateProvider);
     final int before =
         ref.read(nutritionDailyControllerProvider).value?.itemCount ?? 0;
-    await ref.read(nutritionRepositoryProvider).copyYesterdayMeals(user.id, date);
+    await copyYesterdayMeals(ref);
     final NutritionDailyController controller =
         ref.read(nutritionDailyControllerProvider.notifier);
     await controller.refresh();

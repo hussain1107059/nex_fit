@@ -26,5 +26,12 @@ class SleepLogRepositoryImpl implements SleepLogRepository {
       _dataSource.getByDate(userId, sleepDate);
 
   @override
+  Future<List<SleepLog>> getByDateRange(
+    String userId,
+    DateTime start,
+    DateTime end,
+  ) => _dataSource.getByDateRange(userId, start, end);
+
+  @override
   Future<void> delete(int id) => _dataSource.delete(id);
 }

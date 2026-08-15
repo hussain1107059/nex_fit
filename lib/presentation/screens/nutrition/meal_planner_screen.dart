@@ -1,5 +1,6 @@
 ﻿import 'package:flutter/material.dart' hide ErrorWidget;
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
 
 import '../../../core/extensions/context_extensions.dart';
 import '../../../core/extensions/string_extensions.dart';
@@ -16,7 +17,9 @@ import '../../../domain/entities/meal_category.dart';
 import '../../../domain/entities/meal_template_detail.dart';
 import '../../../l10n/app_localizations.dart';
 import '../../providers/nutrition_providers.dart';
+import '../../router/app_router.dart';
 import 'widgets/food_tile.dart';
+import 'widgets/meal_category_icon.dart';
 import 'widgets/quantity_stepper.dart';
 import 'food_database_screen.dart';
 
@@ -158,8 +161,8 @@ class _TemplateCard extends StatelessWidget {
                     ),
                     if (template.category != null) ...[
                       const SizedBox(height: 2),
-                      Text(
-                        template.category!.name,
+Text(
+                        mealCategoryLabel(template.category!, l10n),
                         style: theme.textTheme.labelSmall?.copyWith(
                           color: theme.colorScheme.onSurfaceVariant,
                         ),
@@ -179,8 +182,8 @@ class _TemplateCard extends StatelessWidget {
           ),
           const SizedBox(height: AppSpacing.sm),
           Text(
-            '${template.items.length.toString().toBanglaDigits()} '
-            '${l10n.nutritionItems} Â· '
+'${template.items.length.toString().toBanglaDigits()} '
+            '${l10n.nutritionItems} · '
             '${template.calories.round().toString().toBanglaDigits()} '
             '${l10n.dashboardKcalUnit}',
             style: theme.textTheme.labelSmall?.copyWith(
@@ -194,7 +197,7 @@ class _TemplateCard extends StatelessWidget {
               child: Row(
                 children: [
                   Text(
-                    '${item.quantity.toStringAsFixed(1).toBanglaDigits()}Ã—',
+                    '${item.quantity.toStringAsFixed(1).toBanglaDigits()}×',
                     style: theme.textTheme.labelSmall?.copyWith(
                       color: theme.colorScheme.onSurfaceVariant,
                     ),
@@ -272,13 +275,10 @@ class _TemplateBuilderSheetState extends ConsumerState<_TemplateBuilderSheet> {
     super.dispose();
   }
 
-  Future<void> _addFood(BuildContext context) async {
-    final FoodItem? picked = await Navigator.of(context).push<FoodItem>(
-      MaterialPageRoute<FoodItem>(
-        builder: (BuildContext context) => const FoodDatabaseScreen(
-          args: FoodDatabaseArgs(mode: FoodDatabaseMode.template),
-        ),
-      ),
+Future<void> _addFood(BuildContext context) async {
+    final FoodItem? picked = await context.push<FoodItem>(
+      AppRoutes.foodDatabase,
+      extra: const FoodDatabaseArgs.template(),
     );
     if (picked != null && mounted) {
       setState(() {
@@ -374,8 +374,8 @@ class _TemplateBuilderSheetState extends ConsumerState<_TemplateBuilderSheet> {
                   spacing: 8,
                   runSpacing: 8,
                   children: widget.meals.map((MealCategory category) {
-                    return ChoiceChip(
-                      label: Text(category.name),
+return ChoiceChip(
+                      label: Text(mealCategoryLabel(category, l10n)),
                       selected: category.id == _mealTypeId,
                       onSelected: (_) =>
                           setState(() => _mealTypeId = category.id),
@@ -415,10 +415,15 @@ class _TemplateBuilderSheetState extends ConsumerState<_TemplateBuilderSheet> {
                   ...List<Widget>.generate(_foods.length, (int index) {
                     return Padding(
                       padding: const EdgeInsets.only(bottom: AppSpacing.xs),
-                      child: FoodTile(
+child: FoodTile(
                         food: _foods[index],
                         showFavorite: false,
-                        onTap: () {},
+                        onTap: () {
+                          final int? foodId = _foods[index].id;
+                          if (foodId != null) {
+                            context.push(AppRoutes.foodDetailPath(foodId));
+                          }
+                        },
                         trailing: QuantityStepper(
                           quantity: _quantities[index],
                           onChanged: (double value) {

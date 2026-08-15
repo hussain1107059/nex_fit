@@ -16,6 +16,7 @@ class UserProfile extends Equatable {
     this.fitnessGoal,
     this.country,
     this.language,
+    this.timezone,
     this.photoPath,
     this.targetCalories,
     this.targetProtein,
@@ -36,6 +37,7 @@ class UserProfile extends Equatable {
   final GoalType? fitnessGoal;
   final String? country;
   final String? language;
+  final String? timezone;
   final String? photoPath;
   final double? targetCalories;
   final double? targetProtein;
@@ -56,6 +58,7 @@ class UserProfile extends Equatable {
     GoalType? fitnessGoal,
     String? country,
     String? language,
+    String? timezone,
     String? photoPath,
     double? targetCalories,
     double? targetProtein,
@@ -76,6 +79,7 @@ class UserProfile extends Equatable {
       fitnessGoal: fitnessGoal ?? this.fitnessGoal,
       country: country ?? this.country,
       language: language ?? this.language,
+      timezone: timezone ?? this.timezone,
       photoPath: photoPath ?? this.photoPath,
       targetCalories: targetCalories ?? this.targetCalories,
       targetProtein: targetProtein ?? this.targetProtein,
@@ -99,6 +103,7 @@ class UserProfile extends Equatable {
         fitnessGoal,
         country,
         language,
+        timezone,
         photoPath,
         targetCalories,
         targetProtein,

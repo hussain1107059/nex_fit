@@ -143,6 +143,22 @@ class AuthService {
     }
   }
 
+  /// Changes the signed-in user's password through GoTrue's `updateUser`.
+  ///
+  /// The server re-authenticates implicitly and rejects weak or expired
+  /// sessions with a friendly [AuthException] (e.g. the recent-login window
+  /// may require the user to sign in again before a password change).
+  Future<void> updatePassword({required String newPassword}) async {
+    _ensureReady();
+    try {
+      await _client.auth.updateUser(
+        supabase.UserAttributes(password: newPassword),
+      );
+    } catch (error) {
+      throw _toAuthException(error);
+    }
+  }
+
   Future<void> signOut() async {
     if (!supabaseService.isReady) return;
     try {

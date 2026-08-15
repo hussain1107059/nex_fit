@@ -58,6 +58,7 @@ class AppDatabase {
     DatabaseMigration(version: 15, apply: _migrationV15SyncMetadata),
     DatabaseMigration(version: 16, apply: _migrationV16MasterDataSync),
     DatabaseMigration(version: 17, apply: _migrationV17SyncConflictStore),
+    DatabaseMigration(version: 18, apply: _migrationV18ProfileFinalization),
   ];
 
   Future<Database> get database async {
@@ -2052,5 +2053,16 @@ class AppDatabase {
       'CREATE INDEX IF NOT EXISTS idx_sync_conflict_user_status '
       'ON sync_conflict(user_id, status, detected_at)',
     );
+  }
+
+  static Future<void> _migrationV18ProfileFinalization(
+    DatabaseExecutor executor,
+    int version,
+  ) async {
+    final DatabaseExecutor db = executor;
+    // PROMPT 27: the profile gains an optional timezone. Additive only — the
+    // existing profile fields, uuid and row_version stay untouched. Old rows
+    // simply get a NULL timezone (kept local-only until the user sets one).
+    await db.execute('ALTER TABLE user_profile ADD COLUMN timezone TEXT');
   }
 }

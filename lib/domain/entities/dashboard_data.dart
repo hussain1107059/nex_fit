@@ -66,6 +66,9 @@ class DashboardSummary extends Equatable {
     required this.hasWorkouts,
     required this.hasWeight,
     required this.hasActivity,
+    this.sleepMinutes = 0,
+    this.hasSleep = false,
+    this.totalXp = 0,
   });
 
   final double caloriesBurned;
@@ -78,6 +81,13 @@ class DashboardSummary extends Equatable {
   final bool hasWeight;
   final bool hasActivity;
 
+  /// Minutes slept on the most recent logged night.
+  final int sleepMinutes;
+  final bool hasSleep;
+
+  /// Lifetime experience points from the `user_level` singleton.
+  final int totalXp;
+
   @override
   List<Object?> get props => [
         caloriesBurned,
@@ -89,6 +99,9 @@ class DashboardSummary extends Equatable {
         hasWorkouts,
         hasWeight,
         hasActivity,
+        sleepMinutes,
+        hasSleep,
+        totalXp,
       ];
 }
 

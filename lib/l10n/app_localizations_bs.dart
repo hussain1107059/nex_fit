@@ -500,6 +500,30 @@ class AppLocalizationsBs extends AppLocalizations {
   String get dashboardStreak => 'ধারাবাহিকতা';
 
   @override
+  String get dashboardSleep => 'ঘুম';
+
+  @override
+  String get dashboardXp => 'এক্সপি';
+
+  @override
+  String get dashboardSleepHour => 'ঘণ্টা';
+
+  @override
+  String get dashboardSleepMinute => 'মিনিট';
+
+  @override
+  String get dashboardLogSleepTitle => 'ঘুম যোগ করুন';
+
+  @override
+  String get dashboardLogSleepHint => 'কতক্ষণ ঘুমিয়েছেন?';
+
+  @override
+  String get dashboardLogSleepCustomHint => 'নিজস্ব সময় (মিনিট)';
+
+  @override
+  String get dashboardLogSleepSuccess => 'ঘুম যোগ করা হয়েছে';
+
+  @override
   String get dashboardQuickActions => 'দ্রুত কর্ম';
 
   @override
@@ -883,6 +907,12 @@ class AppLocalizationsBs extends AppLocalizations {
   String get editLanguageEnglish => 'ইংরেজি';
 
   @override
+  String get editTimezone => 'টাইমজোন';
+
+  @override
+  String get editTimezoneHint => 'যেমন: UTC+06:00';
+
+  @override
   String get editHeightCm => 'উচ্চতা (সেমি)';
 
   @override
@@ -1043,6 +1073,9 @@ class AppLocalizationsBs extends AppLocalizations {
       'আপনার ওয়ার্কআউট লাইব্রেরি এখানে দেখা যাবে।';
 
   @override
+  String get workoutBrowse => 'ওয়ার্কআউট ব্রাউজ করুন';
+
+  @override
   String get workoutContinueTitle => 'ওয়ার্কআউট চালিয়ে যান';
 
   @override
@@ -1179,6 +1212,21 @@ class AppLocalizationsBs extends AppLocalizations {
 
   @override
   String get workoutFilterEquipment => 'সরঞ্জাম';
+
+  @override
+  String get workoutEquipmentNone => 'কোনোটি নয়';
+
+  @override
+  String get workoutEquipmentDumbbell => 'ডাম্বেল';
+
+  @override
+  String get workoutEquipmentJumpRope => 'লাফ দড়ি';
+
+  @override
+  String get workoutEquipmentChair => 'চেয়ার';
+
+  @override
+  String get workoutEquipmentPullUpBar => 'পুল-আপ বার';
 
   @override
   String get workoutClearFilters => 'ফিল্টার মুছুন';
@@ -1351,6 +1399,60 @@ class AppLocalizationsBs extends AppLocalizations {
 
   @override
   String get foodCategoryHealthySnacks => 'স্বাস্থ্যকর স্ন্যাকস';
+
+  @override
+  String get mealCategoryBreakfast => 'সকালের নাস্তা';
+
+  @override
+  String get mealCategoryMorningSnack => 'সকালের স্ন্যাক';
+
+  @override
+  String get mealCategoryLunch => 'দুপুরের খাবার';
+
+  @override
+  String get mealCategoryEveningSnack => 'বিকেলের স্ন্যাক';
+
+  @override
+  String get mealCategoryDinner => 'রাতের খাবার';
+
+  @override
+  String get mealCategoryLateNightSnack => 'গভীর রাতের স্ন্যাক';
+
+  @override
+  String get monthJan => 'জানুয়ারি';
+
+  @override
+  String get monthFeb => 'ফেব্রুয়ারি';
+
+  @override
+  String get monthMar => 'মার্চ';
+
+  @override
+  String get monthApr => 'এপ্রিল';
+
+  @override
+  String get monthMay => 'মে';
+
+  @override
+  String get monthJun => 'জুন';
+
+  @override
+  String get monthJul => 'জুলাই';
+
+  @override
+  String get monthAug => 'আগস্ট';
+
+  @override
+  String get monthSep => 'সেপ্টেম্বর';
+
+  @override
+  String get monthOct => 'অক্টোবর';
+
+  @override
+  String get monthNov => 'নভেম্বর';
+
+  @override
+  String get monthDec => 'ডিসেম্বর';
 
   @override
   String get nutritionKcal => 'কিলোক্যালরি';
@@ -3043,6 +3145,48 @@ class AppLocalizationsBs extends AppLocalizations {
 
   @override
   String get settingsDeleteAccountFailed => 'অ্যাকাউন্ট মুছতে ব্যর্থ হয়েছে';
+
+  @override
+  String get settingsAccountSubtitle => 'ইমেইল, পাসওয়ার্ড ও লগ-আউট নিয়ন্ত্রণ';
+
+  @override
+  String get accountChangePassword => 'পাসওয়ার্ড পরিবর্তন করুন';
+
+  @override
+  String get accountChangePasswordNew => 'নতুন পাসওয়ার্ড';
+
+  @override
+  String get accountChangePasswordConfirm => 'নতুন পাসওয়ার্ড নিশ্চিত করুন';
+
+  @override
+  String get accountChangePasswordHint => 'অন্তত ৮ অক্ষর';
+
+  @override
+  String get accountChangePasswordMismatch => 'পাসওয়ার্ড মিলছে না';
+
+  @override
+  String get accountChangePasswordShort => 'পাসওয়ার্ড অন্তত ৮ অক্ষরের হতে হবে';
+
+  @override
+  String get accountChangePasswordFailed =>
+      'পাসওয়ার্ড পরিবর্তন করা যায়নি। আবার সাইন-ইন করে চেষ্টা করুন।';
+
+  @override
+  String get accountPasswordChangedTitle => 'পাসওয়ার্ড পরিবর্তন হয়েছে';
+
+  @override
+  String get accountPasswordChangedMessage =>
+      'আপনার পাসওয়ার্ড আপডেট করা হয়েছে।';
+
+  @override
+  String get accountLogout => 'লগ আউট';
+
+  @override
+  String get accountLogoutConfirm =>
+      'ডেটা অ্যাক্সেস করতে আপনাকে আবার সাইন-ইন করতে হবে।';
+
+  @override
+  String get accountLogoutFailed => 'লগ আউট করা যায়নি। আবার চেষ্টা করুন।';
 
   @override
   String get settingsDeveloperLogging => 'লগিং';

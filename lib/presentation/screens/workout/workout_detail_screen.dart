@@ -222,7 +222,11 @@ class _DetailContent extends ConsumerWidget {
                   ExerciseTile(
                     detail: detail.exercises[index],
                     index: index,
-                    onTap: () {},
+                    onTap: () => context.push(
+                      AppRoutes.exerciseDetailPath(
+                        detail.exercises[index].exercise.id!,
+                      ),
+                    ),
                   ),
                   if (index < detail.exercises.length - 1)
                     AppSpacing.sm.heightSpace,

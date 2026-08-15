@@ -374,15 +374,27 @@ class _SearchBodyState extends ConsumerState<_SearchBody> {
   }
 
   Future<void> _showEquipmentPicker() async {
-    const List<String> equipment = <String>[
-      'None',
-      'Dumbbell',
-      'Barbell',
-      'Kettlebell',
-      'Resistance Band',
-      'Yoga Mat',
-      'Treadmill',
-      'Exercise Ball',
+    final List<_EquipmentOption> equipment = <_EquipmentOption>[
+      _EquipmentOption(
+        value: 'None',
+        label: context.l10n.workoutEquipmentNone,
+      ),
+      _EquipmentOption(
+        value: 'Dumbbell',
+        label: context.l10n.workoutEquipmentDumbbell,
+      ),
+      _EquipmentOption(
+        value: 'Jump Rope',
+        label: context.l10n.workoutEquipmentJumpRope,
+      ),
+      _EquipmentOption(
+        value: 'Chair',
+        label: context.l10n.workoutEquipmentChair,
+      ),
+      _EquipmentOption(
+        value: 'Pull-up bar',
+        label: context.l10n.workoutEquipmentPullUpBar,
+      ),
     ];
     final WorkoutFilter filter = ref.read(workoutSearchFilterProvider);
     final String? selected = await showModalBottomSheet<String?>(
@@ -395,11 +407,11 @@ class _SearchBodyState extends ConsumerState<_SearchBody> {
             value: null,
             selected: filter.equipment == null,
           ),
-          for (final String item in equipment)
+          for (final _EquipmentOption option in equipment)
             _PickerOption<String?>(
-              label: item,
-              value: item,
-              selected: filter.equipment == item,
+              label: option.label,
+              value: option.value,
+              selected: filter.equipment == option.value,
             ),
         ],
       ),
@@ -505,6 +517,13 @@ class _FilterChipButton extends StatelessWidget {
       ),
     );
   }
+}
+
+class _EquipmentOption {
+  const _EquipmentOption({required this.value, required this.label});
+
+  final String value;
+  final String label;
 }
 
 class _PickerOption<T> {

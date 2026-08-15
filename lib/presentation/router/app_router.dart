@@ -31,6 +31,7 @@ import '../screens/reminder/reminder_list_screen.dart';
 import '../screens/reminder/reminder_settings_screen.dart';
 import '../screens/reminder/reminder_statistics_screen.dart';
 import '../screens/settings/about_settings_screen.dart';
+import '../screens/settings/account_settings_screen.dart';
 import '../screens/settings/appearance_settings_screen.dart';
 import '../screens/settings/backup_settings_screen.dart';
 import '../screens/settings/developer_settings_screen.dart';
@@ -98,6 +99,7 @@ abstract final class AppRoutes {
   static const String reminderStatistics = '/reminders/statistics';
   static const String reminderSettings = '/reminders/settings';
   static const String settings = '/settings';
+  static const String settingsAccount = '/settings/account';
   static const String settingsAppearance = '/settings/appearance';
   static const String settingsLanguage = '/settings/language';
   static const String settingsNotifications = '/settings/notifications';
@@ -466,6 +468,12 @@ final appRouterProvider = Provider<GoRouter>((ref) {
         name: 'settings-about',
         builder: (BuildContext context, GoRouterState state) =>
             const AboutSettingsScreen(),
+      ),
+      GoRoute(
+        path: AppRoutes.settingsAccount,
+        name: 'settings-account',
+        builder: (BuildContext context, GoRouterState state) =>
+            const AccountSettingsScreen(),
       ),
       GoRoute(
         path: AppRoutes.settingsDeveloper,

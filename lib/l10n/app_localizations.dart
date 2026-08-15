@@ -1034,6 +1034,54 @@ abstract class AppLocalizations {
   /// **'ধারাবাহিকতা'**
   String get dashboardStreak;
 
+  /// No description provided for @dashboardSleep.
+  ///
+  /// In bs, this message translates to:
+  /// **'ঘুম'**
+  String get dashboardSleep;
+
+  /// No description provided for @dashboardXp.
+  ///
+  /// In bs, this message translates to:
+  /// **'এক্সপি'**
+  String get dashboardXp;
+
+  /// No description provided for @dashboardSleepHour.
+  ///
+  /// In bs, this message translates to:
+  /// **'ঘণ্টা'**
+  String get dashboardSleepHour;
+
+  /// No description provided for @dashboardSleepMinute.
+  ///
+  /// In bs, this message translates to:
+  /// **'মিনিট'**
+  String get dashboardSleepMinute;
+
+  /// No description provided for @dashboardLogSleepTitle.
+  ///
+  /// In bs, this message translates to:
+  /// **'ঘুম যোগ করুন'**
+  String get dashboardLogSleepTitle;
+
+  /// No description provided for @dashboardLogSleepHint.
+  ///
+  /// In bs, this message translates to:
+  /// **'কতক্ষণ ঘুমিয়েছেন?'**
+  String get dashboardLogSleepHint;
+
+  /// No description provided for @dashboardLogSleepCustomHint.
+  ///
+  /// In bs, this message translates to:
+  /// **'নিজস্ব সময় (মিনিট)'**
+  String get dashboardLogSleepCustomHint;
+
+  /// No description provided for @dashboardLogSleepSuccess.
+  ///
+  /// In bs, this message translates to:
+  /// **'ঘুম যোগ করা হয়েছে'**
+  String get dashboardLogSleepSuccess;
+
   /// No description provided for @dashboardQuickActions.
   ///
   /// In bs, this message translates to:
@@ -1790,6 +1838,18 @@ abstract class AppLocalizations {
   /// **'ইংরেজি'**
   String get editLanguageEnglish;
 
+  /// No description provided for @editTimezone.
+  ///
+  /// In bs, this message translates to:
+  /// **'টাইমজোন'**
+  String get editTimezone;
+
+  /// No description provided for @editTimezoneHint.
+  ///
+  /// In bs, this message translates to:
+  /// **'যেমন: UTC+06:00'**
+  String get editTimezoneHint;
+
   /// No description provided for @editHeightCm.
   ///
   /// In bs, this message translates to:
@@ -2096,6 +2156,12 @@ abstract class AppLocalizations {
   /// **'আপনার ওয়ার্কআউট লাইব্রেরি এখানে দেখা যাবে।'**
   String get workoutEmptySubtitle;
 
+  /// No description provided for @workoutBrowse.
+  ///
+  /// In bs, this message translates to:
+  /// **'ওয়ার্কআউট ব্রাউজ করুন'**
+  String get workoutBrowse;
+
   /// No description provided for @workoutContinueTitle.
   ///
   /// In bs, this message translates to:
@@ -2365,6 +2431,36 @@ abstract class AppLocalizations {
   /// In bs, this message translates to:
   /// **'সরঞ্জাম'**
   String get workoutFilterEquipment;
+
+  /// No description provided for @workoutEquipmentNone.
+  ///
+  /// In bs, this message translates to:
+  /// **'কোনোটি নয়'**
+  String get workoutEquipmentNone;
+
+  /// No description provided for @workoutEquipmentDumbbell.
+  ///
+  /// In bs, this message translates to:
+  /// **'ডাম্বেল'**
+  String get workoutEquipmentDumbbell;
+
+  /// No description provided for @workoutEquipmentJumpRope.
+  ///
+  /// In bs, this message translates to:
+  /// **'লাফ দড়ি'**
+  String get workoutEquipmentJumpRope;
+
+  /// No description provided for @workoutEquipmentChair.
+  ///
+  /// In bs, this message translates to:
+  /// **'চেয়ার'**
+  String get workoutEquipmentChair;
+
+  /// No description provided for @workoutEquipmentPullUpBar.
+  ///
+  /// In bs, this message translates to:
+  /// **'পুল-আপ বার'**
+  String get workoutEquipmentPullUpBar;
 
   /// No description provided for @workoutClearFilters.
   ///
@@ -2695,6 +2791,114 @@ abstract class AppLocalizations {
   /// In bs, this message translates to:
   /// **'স্বাস্থ্যকর স্ন্যাকস'**
   String get foodCategoryHealthySnacks;
+
+  /// No description provided for @mealCategoryBreakfast.
+  ///
+  /// In bs, this message translates to:
+  /// **'সকালের নাস্তা'**
+  String get mealCategoryBreakfast;
+
+  /// No description provided for @mealCategoryMorningSnack.
+  ///
+  /// In bs, this message translates to:
+  /// **'সকালের স্ন্যাক'**
+  String get mealCategoryMorningSnack;
+
+  /// No description provided for @mealCategoryLunch.
+  ///
+  /// In bs, this message translates to:
+  /// **'দুপুরের খাবার'**
+  String get mealCategoryLunch;
+
+  /// No description provided for @mealCategoryEveningSnack.
+  ///
+  /// In bs, this message translates to:
+  /// **'বিকেলের স্ন্যাক'**
+  String get mealCategoryEveningSnack;
+
+  /// No description provided for @mealCategoryDinner.
+  ///
+  /// In bs, this message translates to:
+  /// **'রাতের খাবার'**
+  String get mealCategoryDinner;
+
+  /// No description provided for @mealCategoryLateNightSnack.
+  ///
+  /// In bs, this message translates to:
+  /// **'গভীর রাতের স্ন্যাক'**
+  String get mealCategoryLateNightSnack;
+
+  /// No description provided for @monthJan.
+  ///
+  /// In bs, this message translates to:
+  /// **'জানুয়ারি'**
+  String get monthJan;
+
+  /// No description provided for @monthFeb.
+  ///
+  /// In bs, this message translates to:
+  /// **'ফেব্রুয়ারি'**
+  String get monthFeb;
+
+  /// No description provided for @monthMar.
+  ///
+  /// In bs, this message translates to:
+  /// **'মার্চ'**
+  String get monthMar;
+
+  /// No description provided for @monthApr.
+  ///
+  /// In bs, this message translates to:
+  /// **'এপ্রিল'**
+  String get monthApr;
+
+  /// No description provided for @monthMay.
+  ///
+  /// In bs, this message translates to:
+  /// **'মে'**
+  String get monthMay;
+
+  /// No description provided for @monthJun.
+  ///
+  /// In bs, this message translates to:
+  /// **'জুন'**
+  String get monthJun;
+
+  /// No description provided for @monthJul.
+  ///
+  /// In bs, this message translates to:
+  /// **'জুলাই'**
+  String get monthJul;
+
+  /// No description provided for @monthAug.
+  ///
+  /// In bs, this message translates to:
+  /// **'আগস্ট'**
+  String get monthAug;
+
+  /// No description provided for @monthSep.
+  ///
+  /// In bs, this message translates to:
+  /// **'সেপ্টেম্বর'**
+  String get monthSep;
+
+  /// No description provided for @monthOct.
+  ///
+  /// In bs, this message translates to:
+  /// **'অক্টোবর'**
+  String get monthOct;
+
+  /// No description provided for @monthNov.
+  ///
+  /// In bs, this message translates to:
+  /// **'নভেম্বর'**
+  String get monthNov;
+
+  /// No description provided for @monthDec.
+  ///
+  /// In bs, this message translates to:
+  /// **'ডিসেম্বর'**
+  String get monthDec;
 
   /// No description provided for @nutritionKcal.
   ///
@@ -5965,6 +6169,84 @@ abstract class AppLocalizations {
   /// In bs, this message translates to:
   /// **'অ্যাকাউন্ট মুছতে ব্যর্থ হয়েছে'**
   String get settingsDeleteAccountFailed;
+
+  /// No description provided for @settingsAccountSubtitle.
+  ///
+  /// In bs, this message translates to:
+  /// **'ইমেইল, পাসওয়ার্ড ও লগ-আউট নিয়ন্ত্রণ'**
+  String get settingsAccountSubtitle;
+
+  /// No description provided for @accountChangePassword.
+  ///
+  /// In bs, this message translates to:
+  /// **'পাসওয়ার্ড পরিবর্তন করুন'**
+  String get accountChangePassword;
+
+  /// No description provided for @accountChangePasswordNew.
+  ///
+  /// In bs, this message translates to:
+  /// **'নতুন পাসওয়ার্ড'**
+  String get accountChangePasswordNew;
+
+  /// No description provided for @accountChangePasswordConfirm.
+  ///
+  /// In bs, this message translates to:
+  /// **'নতুন পাসওয়ার্ড নিশ্চিত করুন'**
+  String get accountChangePasswordConfirm;
+
+  /// No description provided for @accountChangePasswordHint.
+  ///
+  /// In bs, this message translates to:
+  /// **'অন্তত ৮ অক্ষর'**
+  String get accountChangePasswordHint;
+
+  /// No description provided for @accountChangePasswordMismatch.
+  ///
+  /// In bs, this message translates to:
+  /// **'পাসওয়ার্ড মিলছে না'**
+  String get accountChangePasswordMismatch;
+
+  /// No description provided for @accountChangePasswordShort.
+  ///
+  /// In bs, this message translates to:
+  /// **'পাসওয়ার্ড অন্তত ৮ অক্ষরের হতে হবে'**
+  String get accountChangePasswordShort;
+
+  /// No description provided for @accountChangePasswordFailed.
+  ///
+  /// In bs, this message translates to:
+  /// **'পাসওয়ার্ড পরিবর্তন করা যায়নি। আবার সাইন-ইন করে চেষ্টা করুন।'**
+  String get accountChangePasswordFailed;
+
+  /// No description provided for @accountPasswordChangedTitle.
+  ///
+  /// In bs, this message translates to:
+  /// **'পাসওয়ার্ড পরিবর্তন হয়েছে'**
+  String get accountPasswordChangedTitle;
+
+  /// No description provided for @accountPasswordChangedMessage.
+  ///
+  /// In bs, this message translates to:
+  /// **'আপনার পাসওয়ার্ড আপডেট করা হয়েছে।'**
+  String get accountPasswordChangedMessage;
+
+  /// No description provided for @accountLogout.
+  ///
+  /// In bs, this message translates to:
+  /// **'লগ আউট'**
+  String get accountLogout;
+
+  /// No description provided for @accountLogoutConfirm.
+  ///
+  /// In bs, this message translates to:
+  /// **'ডেটা অ্যাক্সেস করতে আপনাকে আবার সাইন-ইন করতে হবে।'**
+  String get accountLogoutConfirm;
+
+  /// No description provided for @accountLogoutFailed.
+  ///
+  /// In bs, this message translates to:
+  /// **'লগ আউট করা যায়নি। আবার চেষ্টা করুন।'**
+  String get accountLogoutFailed;
 
   /// No description provided for @settingsDeveloperLogging.
   ///

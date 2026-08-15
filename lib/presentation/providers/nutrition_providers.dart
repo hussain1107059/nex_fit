@@ -2,7 +2,6 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../domain/entities/app_user.dart';
 import '../../domain/entities/daily_nutrition.dart';
-import '../../domain/entities/food_category.dart';
 import '../../domain/entities/food_filter.dart';
 import '../../domain/entities/food_item.dart';
 import '../../domain/entities/food_log.dart';
@@ -47,11 +46,6 @@ final nutritionMealCategoriesProvider = FutureProvider<List<MealCategory>>((
 ) async {
   return ref.watch(nutritionRepositoryProvider).getMealCategories();
 });
-
-/// The food category catalog (16 categories).
-final nutritionFoodCategoriesProvider = Provider<List<FoodCategory>>(
-  (ref) => FoodCategory.valuesInOrder,
-);
 
 /// Current food search text.
 final nutritionFoodSearchQueryProvider = StateProvider<String>((ref) => '');

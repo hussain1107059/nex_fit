@@ -495,6 +495,30 @@ class AppLocalizationsEn extends AppLocalizations {
   String get dashboardStreak => 'Streak';
 
   @override
+  String get dashboardSleep => 'Sleep';
+
+  @override
+  String get dashboardXp => 'XP';
+
+  @override
+  String get dashboardSleepHour => 'h';
+
+  @override
+  String get dashboardSleepMinute => 'm';
+
+  @override
+  String get dashboardLogSleepTitle => 'Log sleep';
+
+  @override
+  String get dashboardLogSleepHint => 'How long did you sleep?';
+
+  @override
+  String get dashboardLogSleepCustomHint => 'Custom time (min)';
+
+  @override
+  String get dashboardLogSleepSuccess => 'Sleep logged';
+
+  @override
   String get dashboardQuickActions => 'Quick actions';
 
   @override
@@ -878,6 +902,12 @@ class AppLocalizationsEn extends AppLocalizations {
   String get editLanguageEnglish => 'English';
 
   @override
+  String get editTimezone => 'Timezone';
+
+  @override
+  String get editTimezoneHint => 'e.g. UTC+06:00';
+
+  @override
   String get editHeightCm => 'Height (cm)';
 
   @override
@@ -1037,6 +1067,9 @@ class AppLocalizationsEn extends AppLocalizations {
   String get workoutEmptySubtitle => 'Your workout library will appear here.';
 
   @override
+  String get workoutBrowse => 'Browse workouts';
+
+  @override
   String get workoutContinueTitle => 'Continue workout';
 
   @override
@@ -1172,6 +1205,21 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get workoutFilterEquipment => 'Equipment';
+
+  @override
+  String get workoutEquipmentNone => 'None';
+
+  @override
+  String get workoutEquipmentDumbbell => 'Dumbbell';
+
+  @override
+  String get workoutEquipmentJumpRope => 'Jump Rope';
+
+  @override
+  String get workoutEquipmentChair => 'Chair';
+
+  @override
+  String get workoutEquipmentPullUpBar => 'Pull-up bar';
 
   @override
   String get workoutClearFilters => 'Clear filters';
@@ -1343,6 +1391,60 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get foodCategoryHealthySnacks => 'Healthy Snacks';
+
+  @override
+  String get mealCategoryBreakfast => 'Breakfast';
+
+  @override
+  String get mealCategoryMorningSnack => 'Morning snack';
+
+  @override
+  String get mealCategoryLunch => 'Lunch';
+
+  @override
+  String get mealCategoryEveningSnack => 'Evening snack';
+
+  @override
+  String get mealCategoryDinner => 'Dinner';
+
+  @override
+  String get mealCategoryLateNightSnack => 'Late-night snack';
+
+  @override
+  String get monthJan => 'Jan';
+
+  @override
+  String get monthFeb => 'Feb';
+
+  @override
+  String get monthMar => 'Mar';
+
+  @override
+  String get monthApr => 'Apr';
+
+  @override
+  String get monthMay => 'May';
+
+  @override
+  String get monthJun => 'Jun';
+
+  @override
+  String get monthJul => 'Jul';
+
+  @override
+  String get monthAug => 'Aug';
+
+  @override
+  String get monthSep => 'Sep';
+
+  @override
+  String get monthOct => 'Oct';
+
+  @override
+  String get monthNov => 'Nov';
+
+  @override
+  String get monthDec => 'Dec';
 
   @override
   String get nutritionKcal => 'kcal';
@@ -3036,6 +3138,48 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get settingsDeleteAccountFailed => 'Could not delete your account';
+
+  @override
+  String get settingsAccountSubtitle => 'Email, password and sign-out controls';
+
+  @override
+  String get accountChangePassword => 'Change password';
+
+  @override
+  String get accountChangePasswordNew => 'New password';
+
+  @override
+  String get accountChangePasswordConfirm => 'Confirm new password';
+
+  @override
+  String get accountChangePasswordHint => 'At least 8 characters';
+
+  @override
+  String get accountChangePasswordMismatch => 'Passwords do not match';
+
+  @override
+  String get accountChangePasswordShort =>
+      'Password must be at least 8 characters';
+
+  @override
+  String get accountChangePasswordFailed =>
+      'Could not change the password. Sign in again and try again.';
+
+  @override
+  String get accountPasswordChangedTitle => 'Password changed';
+
+  @override
+  String get accountPasswordChangedMessage => 'Your password has been updated.';
+
+  @override
+  String get accountLogout => 'Log out';
+
+  @override
+  String get accountLogoutConfirm =>
+      'You will need to sign in again to access your data.';
+
+  @override
+  String get accountLogoutFailed => 'Could not log out. Please try again.';
 
   @override
   String get settingsDeveloperLogging => 'Logging';

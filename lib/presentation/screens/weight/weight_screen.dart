@@ -150,13 +150,13 @@ class _WeightContent extends ConsumerWidget {
   }
 }
 
-class _HeroCard extends StatelessWidget {
+class _HeroCard extends ConsumerWidget {
   const _HeroCard({required this.data});
 
   final WeightOverview data;
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
     final AppLocalizations l10n = context.l10n;
     final AppColors colors = AppColors.light;
     final double? weight = data.latestWeight?.weightKg;
@@ -252,12 +252,19 @@ class _HeroCard extends StatelessWidget {
               ),
             ),
             const SizedBox(width: AppSpacing.md),
-            _GoalRing(
-              progress: progress,
-              valueText:
-                  '${(progress * 100).round().toString().toBanglaDigits()}%',
-              color: colors.secondary,
-              goalSet: goal != null,
+            GestureDetector(
+              onTap: () => showWeightGoalSheet(
+                context,
+                ref,
+                data.latestWeight?.weightKg,
+              ),
+              child: _GoalRing(
+                progress: progress,
+                valueText:
+                    '${(progress * 100).round().toString().toBanglaDigits()}%',
+                color: colors.secondary,
+                goalSet: goal != null,
+              ),
             ),
           ],
         ),
@@ -320,6 +327,15 @@ class _GoalRing extends StatelessWidget {
           textAlign: TextAlign.center,
           style: context.textTheme.labelSmall?.copyWith(
             color: context.colorScheme.onSurfaceVariant,
+          ),
+        ),
+        const SizedBox(height: AppSpacing.xxs),
+        Text(
+          context.l10n.weightSetGoalHint,
+          textAlign: TextAlign.center,
+          style: context.textTheme.labelSmall?.copyWith(
+            color: context.colorScheme.outline,
+            fontSize: 10,
           ),
         ),
       ],

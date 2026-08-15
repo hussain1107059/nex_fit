@@ -72,13 +72,19 @@ final waterStatisticsProvider =
       return ref.read(hydrationRepositoryProvider).loadStatistics(user.id);
     });
 
-/// The user's hydration reminders (only water type is used by this module).
+/// The user's hydration reminders. The reminder table is shared with the
+/// reminder module, so only water-type reminders are surfaced here.
 final waterRemindersProvider = FutureProvider.autoDispose<List<Reminder>>((
   ref,
 ) async {
   final AppUser? user = ref.watch(currentUserProvider);
   if (user == null || !user.isSignedIn) return const <Reminder>[];
-  return ref.read(hydrationRepositoryProvider).getReminders(user.id);
+  final List<Reminder> reminders = await ref
+      .read(hydrationRepositoryProvider)
+      .getReminders(user.id);
+  return reminders
+      .where((Reminder r) => r.reminderType == ReminderType.water)
+      .toList();
 });
 
 /// Logs a water entry for the current user and refreshes every aggregate that

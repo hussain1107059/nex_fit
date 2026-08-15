@@ -11,6 +11,7 @@ import '../../../../domain/entities/food_item.dart';
 import '../../../../domain/entities/meal_category.dart';
 import '../../../providers/nutrition_providers.dart';
 import 'quantity_stepper.dart';
+import 'meal_category_icon.dart';
 
 /// Presents the "add food to a meal slot" bottom sheet and handles logging.
 Future<void> showAddFoodSheet(
@@ -123,7 +124,7 @@ class _AddFoodSheetState extends ConsumerState<_AddFoodSheet> {
                 ),
                 const SizedBox(height: AppSpacing.xs),
                 Text(
-                  '${widget.food.name} Â· ${widget.food.servingSize ?? ''}',
+                  '${widget.food.name} · ${widget.food.servingSize ?? ''}',
                   style: theme.textTheme.bodyMedium?.copyWith(
                     color: theme.colorScheme.onSurfaceVariant,
                   ),
@@ -141,8 +142,8 @@ class _AddFoodSheetState extends ConsumerState<_AddFoodSheet> {
                   runSpacing: 8,
                   children: widget.mealCategories.map((MealCategory category) {
                     final bool selected = category.id == _mealTypeId;
-                    return ChoiceChip(
-                      label: Text(category.name),
+return ChoiceChip(
+                      label: Text(mealCategoryLabel(category, context.l10n)),
                       selected: selected,
                       onSelected: (_) => setState(() => _mealTypeId = category.id),
                     );

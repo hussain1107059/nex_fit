@@ -210,8 +210,12 @@ class NutritionRepositoryImpl implements NutritionRepository {
   }
 
   @override
-  Future<List<FoodItem>> searchFoods(String userId, FoodFilter filter) =>
-      foodItemRepository.search(filter, userId);
+  Future<List<FoodItem>> searchFoods(String userId, FoodFilter filter) async {
+    // Search is reachable as a first entry point (deep link), so it must
+    // never silently return an empty library before the catalog is seeded.
+    await ensureSeeded();
+    return foodItemRepository.search(filter, userId);
+  }
 
   @override
   Future<List<FoodItem>> getFavorites(String userId) =>

@@ -3,6 +3,7 @@ import '../../domain/entities/bmi_log.dart';
 import '../../domain/entities/common_enums.dart';
 import '../../domain/entities/dashboard_data.dart';
 import '../../domain/entities/food_log.dart';
+import '../../domain/entities/level.dart';
 import '../../domain/entities/reminder.dart';
 import '../../domain/entities/sleep_log.dart';
 import '../../domain/entities/step_log.dart';
@@ -15,6 +16,7 @@ import '../../domain/repositories/badge_repository.dart';
 import '../../domain/repositories/bmi_log_repository.dart';
 import '../../domain/repositories/dashboard_repository.dart';
 import '../../domain/repositories/food_log_repository.dart';
+import '../../domain/repositories/level_repository.dart';
 import '../../domain/repositories/reminder_repository.dart';
 import '../../domain/repositories/sleep_log_repository.dart';
 import '../../domain/repositories/step_log_repository.dart';
@@ -38,6 +40,7 @@ class DashboardRepositoryImpl implements DashboardRepository {
     required this._badgeRepository,
     required this._reminderRepository,
     required this._userFitnessProfileRepository,
+    required this._levelRepository,
   });
 
   final WorkoutHistoryRepository _workoutHistoryRepository;
@@ -51,6 +54,7 @@ class DashboardRepositoryImpl implements DashboardRepository {
   final BadgeRepository _badgeRepository;
   final ReminderRepository _reminderRepository;
   final UserFitnessProfileRepository _userFitnessProfileRepository;
+  final LevelRepository _levelRepository;
 
   static const int _dailyWorkoutTargetMinutes = 30;
   static const int _dailyQuoteCount = 12;
@@ -59,19 +63,27 @@ class DashboardRepositoryImpl implements DashboardRepository {
   Future<DashboardData> loadDashboard(String userId, DateTime now) async {
     final DateTime day = DateTime(now.year, now.month, now.day);
     final DateTime weekStart = day.subtract(const Duration(days: 6));
+    final DateTime tomorrow = day.add(const Duration(days: 1));
 
+    // Bounded reads: the aggregate only ever renders the last 7 days, so the
+    // SQL queries are scoped to that window instead of scanning the whole
+    // table. `hasWeight` / `hasWorkouts` keep their full-history meaning via
+    // cheap `getLatest` / `countCompleted` calls.
     final List<Object?> results = await Future.wait<Object?>([
-      _workoutHistoryRepository.getByUserId(userId),
-      _waterLogRepository.getByUserId(userId),
-      _foodLogRepository.getByUserId(userId),
-      _weightLogRepository.getByUserId(userId),
-      _sleepLogRepository.getByUserId(userId),
-      _stepLogRepository.getByUserId(userId),
+      _workoutHistoryRepository.getByDateRange(userId, weekStart, tomorrow),
+      _waterLogRepository.getByDateRange(userId, weekStart, tomorrow),
+      _foodLogRepository.getByDateRange(userId, weekStart, tomorrow),
+      _weightLogRepository.getByDateRange(userId, weekStart, tomorrow),
+      _sleepLogRepository.getByDateRange(userId, weekStart, tomorrow),
+      _stepLogRepository.getByDateRange(userId, weekStart, tomorrow),
+      _weightLogRepository.getLatest(userId),
+      _workoutHistoryRepository.countCompleted(userId),
       _bmiLogRepository.getByUserId(userId),
       _streakRepository.getByUserId(userId),
       _badgeRepository.getByUserId(userId),
       _reminderRepository.getEnabled(userId),
       _userFitnessProfileRepository.getById(userId),
+      _levelRepository.getByUserId(userId),
     ]);
 
     final List<WorkoutHistory> workouts = results[0] as List<WorkoutHistory>;
@@ -80,11 +92,14 @@ class DashboardRepositoryImpl implements DashboardRepository {
     final List<WeightLog> weightLogs = results[3] as List<WeightLog>;
     final List<SleepLog> sleepLogs = results[4] as List<SleepLog>;
     final List<StepLog> stepLogs = results[5] as List<StepLog>;
-    final List<BmiLog> bmiLogs = results[6] as List<BmiLog>;
-    final List<Streak> streaks = results[7] as List<Streak>;
-    final List<Badge> badges = results[8] as List<Badge>;
-    final List<Reminder> reminders = results[9] as List<Reminder>;
-    final UserProfile? profile = results[10] as UserProfile?;
+    final WeightLog? latestWeight = results[6] as WeightLog?;
+    final int completedWorkouts = results[7] as int;
+    final List<BmiLog> bmiLogs = results[8] as List<BmiLog>;
+    final List<Streak> streaks = results[9] as List<Streak>;
+    final List<Badge> badges = results[10] as List<Badge>;
+    final List<Reminder> reminders = results[11] as List<Reminder>;
+    final UserProfile? profile = results[12] as UserProfile?;
+    final LevelProgress? level = results[13] as LevelProgress?;
 
     final List<WorkoutHistory> todayWorkouts = _onDay(
       workouts,
@@ -116,7 +131,6 @@ class DashboardRepositoryImpl implements DashboardRepository {
       (int sum, WaterLog w) => sum + w.amountMl,
     );
     final int stepsToday = stepToday?.steps ?? 0;
-    final WeightLog? latestWeight = weightLogs.firstOrNull;
     final BmiLog? latestBmi = bmiLogs.firstOrNull;
     final Streak? bestStreak = streaks.isEmpty
         ? null
@@ -125,6 +139,10 @@ class DashboardRepositoryImpl implements DashboardRepository {
                 a.currentStreak >= b.currentStreak ? a : b,
           );
     final int workoutStreak = bestStreak?.currentStreak ?? 0;
+    final int sleepMinutes = sleepLogs.isEmpty
+        ? 0
+        : sleepLogs.first.durationMinutes;
+    final bool hasSleep = sleepLogs.isNotEmpty;
 
     final DashboardSummary summary = DashboardSummary(
       caloriesBurned: caloriesBurnedToday,
@@ -133,13 +151,18 @@ class DashboardRepositoryImpl implements DashboardRepository {
       weightKg: latestWeight?.weightKg,
       bmi: latestBmi?.bmi,
       workoutStreak: workoutStreak,
-      hasWorkouts: workouts.isNotEmpty,
-      hasWeight: weightLogs.isNotEmpty,
-      hasActivity: workouts.isNotEmpty ||
+      hasWorkouts: completedWorkouts > 0,
+      hasWeight: latestWeight != null,
+      hasActivity: completedWorkouts > 0 ||
+          workouts.isNotEmpty ||
           waterLogs.isNotEmpty ||
           foodLogs.isNotEmpty ||
-          weightLogs.isNotEmpty ||
-          sleepLogs.isNotEmpty,
+          latestWeight != null ||
+          sleepLogs.isNotEmpty ||
+          stepLogs.isNotEmpty,
+      sleepMinutes: sleepMinutes,
+      hasSleep: hasSleep,
+      totalXp: level?.totalXp ?? 0,
     );
 
     final int workoutMinutes = todayWorkouts.fold(

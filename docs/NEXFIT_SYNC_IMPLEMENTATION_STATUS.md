@@ -47,7 +47,18 @@
 | `test/multi_device_sync_test.dart` | 8/8 green (PROMPT 23 — two logical devices on separate SQLite DBs; workout create/update, offline food log, SERVER_WINS conflict, delete tombstone, 100 offline records uploaded exactly once, 1000 remote changes incremental cursor, kill-and-restart recovery; see `docs/NEXFIT_MULTI_DEVICE_SYNC_TEST.md`) |
 | `test/sync_security_audit_test.dart` | 10/10 green (PROMPT 24 — two-user cross-user read/write/update/delete isolation, `sync_state` local-only, master read-only, no service-role key, no PII columns, no passwords in payloads, no token/secret logging; see `docs/NEXFIT_SYNC_SECURITY_AUDIT.md`) |
 | `test/offline_first_e2e_test.dart` | 3/3 green (PROMPT 25 — offline-first journey through seven real DAOs: offline reads reflect create/edit/delete immediately, offline sync uploads nothing, reconnect converges a second device, flapping push-succeeds/pull-fails run recovers without duplicates; see `docs/NEXFIT_OFFLINE_FIRST_E2E_TEST.md`) |
-| Full regression | **437 pass / 2 fail** — both pre-existing and unrelated |
+| `test/profile_settings_finalization_test.dart` | 10/10 green (PROMPT 27 — profile timezone v18 round-trip, schema/mapping static checks, offline profile update queued then uploaded, pulled profile change applies without re-queuing, change-password forward/success/failure, logout/login cycle, delete-account; see `NEXFIT_DAO_SYNC_MIGRATION_PLAN.md` §23) |
+| `test/dashboard_finalization_test.dart` | 11/11 green (PROMPT 28 — dashboard reads bounded 7-day windows while `hasWeight`/`hasWorkouts` keep full-history meaning, sleep + lifetime XP metrics, `getByDateRange` on sleep/step repos; see `NEXFIT_DAO_SYNC_MIGRATION_PLAN.md` §24) |
+| `test/workout_finalization_test.dart` | 5/5 green (PROMPT 29 — routine tiles navigate to exercise detail, seeded exercises carry instructions for the player chip, seeding idempotent + never empty, equipment filter matches the real seeded catalog with localized labels, search self-seeds; see `NEXFIT_DAO_SYNC_MIGRATION_PLAN.md` §25) |
+| `test/nutrition_finalization_test.dart` | 10/10 green (PROMPT 30 — meal categories seeded with the six canonical slugs, daily slots always resolve to localized labels, catalog items expose ids, search self-seeds, category-filtered search matches, no corrupted `Â`/`Ã` bytes anywhere under `lib/`, en/bs meal-slot + month labels, localized `formatNutritionDate`, `MealSlotCard` renders clean `× ·` + localized slot name with raw-name fallback; see `NEXFIT_DAO_SYNC_MIGRATION_PLAN.md` §26) |
+| Full regression | **472 pass / 2 fail** — both pre-existing and unrelated |
+
+> Note on `test/large_dataset_sync_test.dart` (PROMPT 20): the 10,001-record
+> benchmark does real SQLite work (initial pull ≈12s + push ≈22s). On a loaded
+> machine it can exceed the default 30s per-test timeout and surface as a
+> flaky failure; it passes reliably with an extended timeout
+> (`flutter test --timeout 120s`) and is unrelated to the finalization work
+> (no sync/DAO code touched since PROMPT 20).
 | `test/hydration_repository_test.dart` | 1 pre-existing unrelated failure unchanged: `loadStatistics computes averages, best day and streaks` — Expected `<2>` Actual `<0>`. Not introduced by this work; left untouched. |
 
 ## 3. What is NOT yet done (by design)
@@ -65,6 +76,24 @@
   `NEXFIT_PRODUCTION_READINESS.md`: the sync core is ready; go-live requires a
   staging Supabase smoke suite + server-side RLS / `sync_changes` / Realtime
   provisioning, and 13+ user tables remain to be DAO-migrated.
+- Profile & settings finalization (PROMPT 27) is complete — profile timezone
+  (migration v18, sync-mapped), Account screen (change password / logout /
+  delete account); see `NEXFIT_DAO_SYNC_MIGRATION_PLAN.md` §23.
+- Dashboard UX finalization (PROMPT 28) is complete — bounded 7-day dashboard
+  reads, sleep + XP summary metrics, all six quick actions wired (sleep logger
+  added), sleep/step `getByDateRange`; see `NEXFIT_DAO_SYNC_MIGRATION_PLAN.md`
+  §24.
+- Workout experience finalization (PROMPT 29) is complete — routine tiles open
+  exercise detail, "How to" instructions in the player, completion returns to
+  the Workout tab, empty-library browse CTA, equipment filter aligned and
+  localized to the real catalog, search self-seeds, history empty-state CTA;
+  see `NEXFIT_DAO_SYNC_MIGRATION_PLAN.md` §25.
+- Nutrition experience finalization (PROMPT 30) is complete — corrupted
+  `Â`/`Ã` bytes fixed, meal-slot names localized by slug, dead template tiles
+  wired, template food picker via go_router, debounced search that auto-targets
+  the catalog, history empty state, copy-yesterday centralized, localized
+  months, self-seeding food search; see
+  `NEXFIT_DAO_SYNC_MIGRATION_PLAN.md` §26.
 
 ## 4. Constants introduced
 

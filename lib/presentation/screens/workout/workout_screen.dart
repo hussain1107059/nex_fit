@@ -7,6 +7,7 @@ import '../../../core/extensions/string_extensions.dart';
 import '../../../core/theme/app_radius.dart';
 import '../../../core/theme/app_spacing.dart';
 import '../../../core/widgets/cards/app_card.dart';
+import '../../../core/widgets/buttons/app_button.dart';
 import '../../../core/widgets/feedback/error_widget.dart';
 import '../../../core/widgets/feedback/loading_widget.dart';
 import '../../../domain/entities/app_user.dart';
@@ -487,6 +488,15 @@ class _EmptyLibrary extends StatelessWidget {
               color: context.colorScheme.onSurfaceVariant,
             ),
             textAlign: TextAlign.center,
+          ),
+          const SizedBox(height: AppSpacing.md),
+          AppButton(
+            onPressed: onBrowse,
+            label: context.l10n.workoutBrowse,
+            icon: Icons.explore_rounded,
+            variant: AppButtonVariant.secondary,
+            size: AppButtonSize.small,
+            fullWidth: false,
           ),
         ],
       ),

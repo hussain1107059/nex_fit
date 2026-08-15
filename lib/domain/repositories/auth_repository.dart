@@ -33,6 +33,12 @@ abstract interface class AuthRepository {
 
   Future<void> resetPassword(String email);
 
+  /// Changes the signed-in user's password.
+  ///
+  /// Throws an [AuthException] when the current session is not recent enough
+  /// to allow a password change or the new password is rejected.
+  Future<void> updatePassword({required String newPassword});
+
   Future<void> signOut();
 
   /// Permanently deletes the signed-in authentication account.

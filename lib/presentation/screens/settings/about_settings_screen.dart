@@ -6,12 +6,8 @@ import '../../../core/constants/app_constants.dart';
 import '../../../core/extensions/context_extensions.dart';
 import '../../../core/extensions/string_extensions.dart';
 import '../../../core/theme/app_spacing.dart';
-import '../../../core/widgets/dialogs/app_dialog.dart';
-import '../../../core/widgets/feedback/app_snackbar.dart';
-import '../../providers/auth_controller.dart';
-import 'widgets/settings_widgets.dart';
 
-/// App info and account-level destructive actions.
+/// App information screen.
 class AboutSettingsScreen extends ConsumerWidget {
   const AboutSettingsScreen({super.key});
 
@@ -65,40 +61,8 @@ class AboutSettingsScreen extends ConsumerWidget {
               color: scheme.onSurfaceVariant,
             ),
           ),
-          AppSpacing.xl.heightSpace,
-          SettingsSectionTitle(context.l10n.settingsAccount),
-          SettingsCard(
-            children: [
-              SettingsTile(
-                icon: Icons.delete_outline_rounded,
-                title: context.l10n.settingsDeleteAccount,
-                subtitle: context.l10n.settingsDeleteAccountSubtitle,
-                destructive: true,
-                onTap: () => _confirmDeleteAccount(context, ref),
-              ),
-            ],
-          ),
         ],
       ),
     );
-  }
-
-  Future<void> _confirmDeleteAccount(
-    BuildContext context,
-    WidgetRef ref,
-  ) async {
-    final bool? confirmed = await AppDialog.confirm(
-      context: context,
-      title: context.l10n.settingsDeleteAccount,
-      message: context.l10n.settingsDeleteAccountConfirm,
-      confirmLabel: context.l10n.settingsDeleteAccountAction,
-      destructive: true,
-    );
-    if (confirmed != true || !context.mounted) return;
-
-    final result = await ref.read(authControllerProvider.notifier).deleteAccount();
-    if (result.isFailure && context.mounted) {
-      AppSnackbar.error(context, context.l10n.settingsDeleteAccountFailed);
-    }
   }
 }

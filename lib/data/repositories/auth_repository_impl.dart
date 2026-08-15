@@ -109,6 +109,15 @@ class AuthRepositoryImpl implements AuthRepository {
   }
 
   @override
+  Future<void> updatePassword({required String newPassword}) async {
+    try {
+      await _authService.updatePassword(newPassword: newPassword);
+    } catch (error) {
+      throw _toDomainError(error);
+    }
+  }
+
+  @override
   Future<void> signOut() async {
     try {
       await _authService.signOut();

@@ -12,5 +12,11 @@ abstract interface class SleepLogRepository {
 
   Future<SleepLog?> getByDate(String userId, DateTime sleepDate);
 
+  Future<List<SleepLog>> getByDateRange(
+    String userId,
+    DateTime start,
+    DateTime end,
+  );
+
   Future<void> delete(int id);
 }

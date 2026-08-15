@@ -44,6 +44,7 @@ class ProfileController extends AsyncNotifier<ProfileData> {
     ActivityLevel? activityLevel,
     String? country,
     String? language,
+    String? timezone,
     String? photoPath,
   }) async {
     final ProfileData? data = state.valueOrNull;
@@ -74,6 +75,7 @@ class ProfileController extends AsyncNotifier<ProfileData> {
       fitnessGoal: fitnessGoal,
       country: country,
       language: language,
+      timezone: timezone ?? existing?.timezone,
       photoPath: photoPath ?? existing?.photoPath,
       targetCalories: dailyCalories ?? existing?.targetCalories,
       targetProtein: existing?.targetProtein,
@@ -152,6 +154,7 @@ class ProfileController extends AsyncNotifier<ProfileData> {
       fitnessGoal: existing?.fitnessGoal,
       country: existing?.country,
       language: existing?.language,
+      timezone: existing?.timezone,
       photoPath: photoPath,
       targetCalories: existing?.targetCalories,
       targetProtein: existing?.targetProtein,

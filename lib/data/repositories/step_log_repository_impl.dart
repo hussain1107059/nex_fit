@@ -26,5 +26,12 @@ class StepLogRepositoryImpl implements StepLogRepository {
       _dataSource.getByDate(userId, stepDate);
 
   @override
+  Future<List<StepLog>> getByDateRange(
+    String userId,
+    DateTime start,
+    DateTime end,
+  ) => _dataSource.getByDateRange(userId, start, end);
+
+  @override
   Future<void> delete(int id) => _dataSource.delete(id);
 }

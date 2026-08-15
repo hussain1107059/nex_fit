@@ -10,9 +10,16 @@ import '../../../../domain/entities/dashboard_data.dart';
 
 /// Gradient overview card with the headline daily numbers.
 class DashboardSummaryCard extends StatelessWidget {
-  const DashboardSummaryCard({super.key, required this.summary});
+  const DashboardSummaryCard({
+    super.key,
+    required this.summary,
+    this.onSleepTap,
+  });
 
   final DashboardSummary summary;
+
+  /// Opens the sleep history screen when the sleep metric is tapped.
+  final VoidCallback? onSleepTap;
 
   @override
   Widget build(BuildContext context) {
@@ -46,7 +53,11 @@ class DashboardSummaryCard extends StatelessWidget {
               ],
             ),
             const SizedBox(height: AppSpacing.md),
-            _MetricGrid(summary: summary, onGradient: onGradient),
+            _MetricGrid(
+              summary: summary,
+              onGradient: onGradient,
+              onSleepTap: onSleepTap,
+            ),
           ],
         ),
       ),
@@ -101,10 +112,15 @@ class _StreakChip extends StatelessWidget {
 }
 
 class _MetricGrid extends StatelessWidget {
-  const _MetricGrid({required this.summary, required this.onGradient});
+  const _MetricGrid({
+    required this.summary,
+    required this.onGradient,
+    this.onSleepTap,
+  });
 
   final DashboardSummary summary;
   final Color onGradient;
+  final VoidCallback? onSleepTap;
 
   @override
   Widget build(BuildContext context) {
@@ -136,6 +152,9 @@ class _MetricGrid extends StatelessWidget {
     final String bmi = summary.bmi == null
         ? '—'
         : summary.bmi!.toStringAsFixed(1).toBanglaDigits();
+    final String sleep = summary.hasSleep
+        ? _formatSleep(context, summary.sleepMinutes)
+        : '—';
 
     return <_MetricData>[
       _MetricData(
@@ -168,7 +187,28 @@ class _MetricGrid extends StatelessWidget {
         value: '${summary.workoutStreak}'.toBanglaDigits(),
         label: context.l10n.dashboardStreak,
       ),
+      _MetricData(
+        icon: Icons.bedtime_rounded,
+        value: sleep,
+        label: context.l10n.dashboardSleep,
+        onTap: onSleepTap,
+      ),
+      _MetricData(
+        icon: Icons.stars_rounded,
+        value: '${summary.totalXp}'.toBanglaDigits(),
+        label: context.l10n.dashboardXp,
+      ),
     ];
+  }
+
+  /// Formats sleep minutes as `7h 30m` (digits localized).
+  String _formatSleep(BuildContext context, int minutes) {
+    final int hours = minutes ~/ 60;
+    final int rest = minutes % 60;
+    final String h = context.l10n.dashboardSleepHour;
+    final String m = context.l10n.dashboardSleepMinute;
+    return '${'$hours$h'.toBanglaDigits()} '
+        '${'$rest$m'.toBanglaDigits()}';
   }
 }
 
@@ -181,7 +221,7 @@ class _MetricCell extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final AppColors colors = AppColors.light;
-    return Container(
+    final Widget cell = Container(
       padding: const EdgeInsets.all(AppSpacing.sm),
       decoration: BoxDecoration(
         color: colors.scheme.surfaceContainerHighest,
@@ -221,6 +261,18 @@ class _MetricCell extends StatelessWidget {
         ],
       ),
     );
+
+    final VoidCallback? onTap = data.onTap;
+    if (onTap == null) return cell;
+    return Material(
+      color: Colors.transparent,
+      borderRadius: AppRadius.mdRadius,
+      child: InkWell(
+        onTap: onTap,
+        borderRadius: AppRadius.mdRadius,
+        child: cell,
+      ),
+    );
   }
 }
 
@@ -229,9 +281,11 @@ class _MetricData {
     required this.icon,
     required this.value,
     required this.label,
+    this.onTap,
   });
 
   final IconData icon;
   final String value;
   final String label;
+  final VoidCallback? onTap;
 }

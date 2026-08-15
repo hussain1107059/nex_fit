@@ -172,6 +172,7 @@ import '../domain/repositories/error_log_repository.dart';
 import '../domain/usecases/auth/reload_user_usecase.dart';
 import '../domain/usecases/auth/delete_account_usecase.dart';
 import '../domain/usecases/auth/reset_password_usecase.dart';
+import '../domain/usecases/auth/update_password_usecase.dart';
 import '../domain/usecases/auth/send_email_verification_usecase.dart';
 import '../domain/usecases/auth/sign_in_with_email_usecase.dart';
 import '../domain/usecases/auth/sign_out_usecase.dart';
@@ -614,6 +615,7 @@ final dashboardRepositoryProvider = Provider<DashboardRepository>(
     userFitnessProfileRepository: ref.watch(
       userFitnessProfileRepositoryProvider,
     ),
+    levelRepository: ref.watch(levelRepositoryProvider),
   ),
 );
 
@@ -747,6 +749,10 @@ final reloadUserUsecaseProvider = Provider<ReloadUserUsecase>(
 
 final resetPasswordUsecaseProvider = Provider<ResetPasswordUsecase>(
   (ref) => ResetPasswordUsecase(ref.watch(authRepositoryProvider)),
+);
+
+final updatePasswordUsecaseProvider = Provider<UpdatePasswordUsecase>(
+  (ref) => UpdatePasswordUsecase(ref.watch(authRepositoryProvider)),
 );
 
 final deleteAccountUsecaseProvider = Provider<DeleteAccountUsecase>(

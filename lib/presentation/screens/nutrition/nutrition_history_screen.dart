@@ -198,7 +198,10 @@ class _DayList extends StatelessWidget {
     final ThemeData theme = Theme.of(context);
 
     if (history.days.isEmpty) {
-      return const SizedBox.shrink();
+      return _EmptyCard(
+        title: l10n.nutritionNoHistory,
+        subtitle: l10n.nutritionNoHistorySubtitle,
+      );
     }
 
     return Column(
@@ -223,7 +226,7 @@ class _DayList extends StatelessWidget {
                 children: [
                   Expanded(
                     child: Text(
-                      formatNutritionDate(day.date),
+                      formatNutritionDate(day.date, l10n),
                       style: theme.textTheme.titleSmall?.copyWith(
                         fontWeight: FontWeight.w700,
                       ),

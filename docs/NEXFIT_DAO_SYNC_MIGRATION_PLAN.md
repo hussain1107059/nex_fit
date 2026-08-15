@@ -1062,3 +1062,220 @@ verdict backed by a test suite, a static check or a documented constant.
   and unrelated (`session_manager` device-change, `hydration_repository`
   loadStatistics).
 - See `docs/NEXFIT_PRODUCTION_READINESS.md`.
+
+## 23. Profile & Settings Finalization (PROMPT 27)
+
+### Goal
+Finalize the Profile & Settings module without redesigning it: give the profile
+a timezone field end to end (entity → migration v18 → sync mapping → edit UI),
+move account-level actions (change password, logout, delete account) into a
+dedicated Account screen, and prove the profile offline-first + auth flows with
+a dedicated test suite.
+
+### Changes
+- **Timezone field**: `user_profile.timezone` added by migration v18
+  (`_migrationV18ProfileFinalization`, additive; existing rows get `NULL` and
+  keep their `uuid`/`row_version`). `UserProfile.timezone`, model map/parse and
+  the `user_profile → profiles` sync mapping (`timezone ↔ timezone`) all carry
+  it. `AppConstants.databaseVersion` bumped 17 → 18.
+- **Edit Profile**: timezone text field pre-filled from the stored value or the
+  device UTC offset (`UTC±HH:MM`), saved via `ProfileController.updateProfile`.
+- **Account settings**: new `AccountSettingsScreen` (route `settingsAccount`)
+  holding the identity header, change-password bottom sheet, logout and the
+  destructive delete-account action. The delete-account tile was removed from
+  the About screen (single location). Change password flows through
+  `AuthService.updatePassword` → `AuthRepository.updatePassword` →
+  `UpdatePasswordUsecase` → `AuthController.changePassword`, using GoTrue
+  `auth.updateUser(UserAttributes(password:))`.
+- New l10n keys (en + bs) for the timezone and account strings.
+
+### Verification
+- New `test/profile_settings_finalization_test.dart` — **10/10**:
+  1. profile timezone persists and round-trips (v18),
+  2. schema version is 18 and the column exists,
+  3. the profile sync mapping carries timezone and never auth credentials,
+  4. an offline profile update stays queued and uploads once connectivity
+     returns,
+  5. applying a pulled profile change locally never re-queues (no sync loop),
+  6. change password forwards the new password and succeeds,
+  7. a rejected password surfaces a friendly `AuthException`,
+  8. `UpdatePasswordUsecase` maps success/failure through `Result`,
+  9. logout clears the session and a fresh sign-in restores it,
+  10. delete account leaves the user signed out.
+- `flutter analyze` — clean.
+- Full regression after PROMPT 27: **447 pass / 2 fail** — both pre-existing
+  and unrelated (`session_manager` device-change, `hydration_repository`
+  loadStatistics).
+
+## 24. Dashboard UX Finalization (PROMPT 28)
+
+### Goal
+Close the remaining dashboard gaps without redesigning it: surface sleep and
+lifetime XP, wire every quick action to a real destination, make the dashboard
+aggregate read bounded 7-day windows (so large histories stay fast) while
+keeping the full-history meaning of the `hasWeight` / `hasWorkouts` empty-state
+flags, and prove it all with a dedicated test suite.
+
+### Changes
+- **Bounded reads**: `DashboardRepositoryImpl.loadDashboard` now queries the six
+  activity tables through `getByDateRange(weekStart, tomorrow)` instead of
+  scanning each table end to end. The `has*` flags keep their full-history
+  meaning via cheap extra reads: `weightLog.getLatest` (hasWeight / latest
+  weight) and `workoutHistory.countCompleted` (hasWorkouts). `hasActivity`
+  still includes in-window workouts.
+- **Sleep metric**: `DashboardSummary` gains `sleepMinutes` / `hasSleep` from the
+  most recent night within the window; shown as a new "Sleep" metric cell
+  (`7h 30m` or `—`). `getByDateRange` was added to the sleep data source,
+  repository and implementation, and exposed on the `StepLogRepository` for the
+  weekly charts.
+- **Lifetime XP**: `DashboardSummary.totalXp` read from the `user_level`
+  singleton (`LevelRepository.getByUserId`, added to the dashboard repository
+  wiring and DI) and shown as a new "XP" metric cell.
+- **Quick actions wired**: Start Workout → workout list (`AppRoutes.workoutList`),
+  Add Meal → food database (`AppRoutes.foodDatabase`), Sleep Tracker → new
+  `DashboardDialogs.showLogSleep` bottom sheet (duration presets + custom
+  minutes + quality slider) that writes a real `SleepLog` and refreshes the
+  dashboard. `EmptyWorkoutCard`'s "first workout" button now pushes the workout
+  list instead of a coming-soon snackbar.
+- New l10n keys (en + bs): dashboardSleep, dashboardXp, dashboardSleepHour,
+  dashboardSleepMinute, dashboardLogSleepTitle, dashboardLogSleepHint,
+  dashboardLogSleepCustomHint, dashboardLogSleepSuccess.
+
+### Verification
+- New `test/dashboard_finalization_test.dart` — **11/11**:
+  1. sleep metric uses the most recent night in the window (older nights ignored),
+  2. sleep stays empty when the only entry predates the window,
+  3. totalXp surfaces the `user_level` singleton,
+  4. totalXp is zero when no level row exists,
+  5. hasWeight keeps full-history meaning while weekly charts stay bounded,
+  6. hasWorkouts counts completed workouts from all history, charts bounded,
+  7. today's aggregates and weekly charts are bounded to the window,
+  8. best workout streak still drives summary + achievement,
+  9. `SleepLogRepository.getByDateRange` filters correctly,
+  10. `StepLogRepository.getByDateRange` filters correctly,
+  11. an in-progress workout alone sets hasActivity but not hasWorkouts.
+- `flutter analyze` — clean.
+- Full regression: **457 pass / 2 fail** — the same two pre-existing failures
+  (`session_manager` device-change, `hydration_repository` loadStatistics).
+  The `large_dataset_sync_test` 10k-record benchmark is timing-sensitive: it
+  takes ≈34s (initial pull 12s + push 22s) and trips the default 30s test
+  timeout on a loaded machine — it passes with an extended timeout and is
+  unrelated to these changes (no sync/DAO code touched).
+
+## 25. Workout Experience Finalization (PROMPT 29)
+
+### Goal
+Close the workout UX gaps without redesigning it: make every tile and button
+navigate somewhere real, surface the exercise instructions that already exist
+in the data during a session, return the user to the Workout tab after a
+completed session, align and localize the equipment filter with the actual
+seeded catalog, and make search self-sufficient as a first entry point.
+
+### Changes
+- **Routine tiles navigate**: `WorkoutDetailScreen`'s `ExerciseTile` was a
+  dead `onTap: () {}`; it now pushes `AppRoutes.exerciseDetailPath(exerciseId)`
+  (the id is always present for the seeded library).
+- **Instructions in the player**: during the exercising phase a "How to"
+  (`exerciseHowTo`) chip appears when the exercise has instructions; tapping it
+  opens a bottom sheet with the full text. Real data only — no instructions,
+  no chip.
+- **Completion returns to Workout**: after a session the summary's Done button
+  sets `shellTabIndexProvider` to the Workout tab before going to the shell
+  (previously it landed on Home).
+- **Empty-library CTA**: `_EmptyLibrary` accepted an `onBrowse` callback that
+  was never invoked; it now renders a "Browse workouts" (`workoutBrowse`)
+  button wired to the full workout list.
+- **Equipment filter aligned + localized**: the picker previously listed 8
+  English names ("Barbell", "Kettlebell", "Resistance Band", "Yoga Mat",
+  "Treadmill", "Exercise Ball") that never match the seeded catalog — such
+  filters always returned nothing. It now lists the real catalog values
+  (`None`, `Dumbbell`, `Jump Rope`, `Chair`, `Pull-up bar`) with localized
+  labels (values stay canonical so filtering keeps working).
+- **Search self-seeds**: `WorkoutLibraryRepositoryImpl.search` now calls
+  `ensureSeeded(userId)` first, so search never silently returns an empty
+  library when it is the first entry point (deep link, fresh state).
+- **History empty state**: the empty-history action was a "Retry" that only
+  invalidated the provider; it now reads "Start now" and opens the workout
+  list.
+- New l10n keys (en + bs): workoutBrowse, workoutEquipmentNone,
+  workoutEquipmentDumbbell, workoutEquipmentJumpRope, workoutEquipmentChair,
+  workoutEquipmentPullUpBar.
+
+### Verification
+- New `test/workout_finalization_test.dart` — **5/5**:
+  1. the equipment filter matches real seeded values (`Dumbbell` matches,
+     legacy `Barbell` matches nothing),
+  2. every routine exercise in a workout detail exposes an id (navigation
+     target always valid),
+  3. seeded exercises carry instructions (the player "How to" chip renders),
+  4. seeding is idempotent and the library is never empty,
+  5. search without filters returns the seeded library (self-seeding works).
+- `flutter analyze` — clean.
+- Full regression: **463 pass / 2 fail** — the same two pre-existing failures
+  (`session_manager` device-change, `hydration_repository` loadStatistics).
+  The `large_dataset_sync_test` 10k-record benchmark passed this run (it
+  remains timing-sensitive under the 30s default timeout on a loaded machine).
+
+## 26. Nutrition Experience Finalization (PROMPT 30)
+
+### Goal
+Close the nutrition UX gaps without redesigning it: fix four user-visible
+strings carrying corrupted `Â`/`Ã` bytes, stop English meal-slot names leaking
+into the Bangla UI, wire the template builder's dead tiles, route the template
+food picker through go_router, make food search meaningful on every section
+(and debounced), give the history day-list a real empty state, centralize the
+copy-yesterday action, localize month abbreviations, and make food search
+self-sufficient as a first entry point.
+
+### Changes
+- **Mojibake fixed** (4 strings): `add_food_sheet` title, the meal-template
+  item/count lines, and the meal-slot entry row rendered corrupted bytes
+  (`Â·`, `Ã—`) literally. Now the proper `·` and `×` characters.
+- **Meal-slot names localized**: the six meal slots were rendered straight
+  from the DB's English `meal_category.name`. New `mealCategory*` l10n keys
+  (en + bs) map the canonical slugs (`breakfast`, `morning_snack`, `lunch`,
+  `evening_snack`, `dinner`, `late_night_snack`) via a shared
+  `mealCategoryLabel` helper (with a raw-name fallback for unknown slugs),
+  used by the slot card, the add-food sheet, the meal-planner card and the
+  template builder chips.
+- **Dead template tiles wired**: `FoodTile(onTap: () {})` in the template
+  builder now opens the food detail screen (`foodDetailPath(id)`).
+- **go_router for template picker**: the template builder pushed the food
+  database with a raw `Navigator.push(MaterialPageRoute(...))`; it now uses
+  `context.push(AppRoutes.foodDatabase, extra: FoodDatabaseArgs.template())`
+  (deep-linkable, consistent back stack).
+- **Search always does something + debounced**: typing while Favorites/Recent/
+  Frequent was selected silently did nothing; the query is now debounced
+  (250 ms) and auto-switches to the catalog section so search results always
+  appear.
+- **History empty state**: the "Daily breakdown" section was blank when no
+  days had data; it now shows the standard no-history card.
+- **Copy-yesterday centralized**: the nutrition home's copy-yesterday button
+  called the repository directly; it now goes through the `copyYesterdayMeals`
+  provider helper (single source of truth for invalidation).
+- **Localized months**: `formatNutritionDate` took `AppLocalizations` and uses
+  new `month*` keys (en + bs) instead of hard-coded English abbreviations.
+- **Search self-seeds**: `NutritionRepositoryImpl.searchFoods` calls
+  `ensureSeeded()` first, so the food database never silently returns an empty
+  library as a first entry point (deep link) — mirroring the workout library.
+- **Cleanup**: removed the unreferenced `nutritionFoodCategoriesProvider` and
+  the now-unused direct repository import from the nutrition home.
+
+### Verification
+- New `test/nutrition_finalization_test.dart` — **10/10**:
+  1. the six meal categories are seeded with the canonical slugs + ids,
+  2. every daily slot carries a category that resolves to a localized label,
+  3. seeded catalog items expose ids (food-detail navigation always valid),
+  4. search without filters self-seeds and returns the 200+ catalog,
+  5. category-filtered search matches the requested category,
+  6. no `.dart` file under `lib/` contains the corrupted `Â`/`Ã` bytes,
+  7. en/bs l10n expose the localized meal-slot and month labels,
+  8. `formatNutritionDate` uses localized month abbreviations,
+  9. `MealSlotCard` renders a clean `× ·` separator and a localized slot name,
+  10. `MealSlotCard` falls back to the raw name for unknown slugs.
+- `flutter analyze` — clean.
+- Full regression: **472 pass / 2 fail** — the same two pre-existing failures
+  (`session_manager` device-change, `hydration_repository` loadStatistics).
+  The `large_dataset_sync_test` 10k-record benchmark failed this run under the
+  default 30s timeout and then passed 5/5 with `--timeout 120s` (real work
+  ≈34s) — a documented timing flake, not a regression.

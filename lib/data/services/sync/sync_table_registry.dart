@@ -295,6 +295,7 @@ class SyncTableRegistry {
         'gender': 'gender',
         'birth_date': 'birth_date',
         'activity_level': 'activity_level',
+        'timezone': 'timezone',
         'target_calories': 'target_calories',
         'target_protein': 'target_protein',
         'target_carbs': 'target_carbs',

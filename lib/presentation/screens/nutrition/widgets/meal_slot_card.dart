@@ -79,8 +79,8 @@ class _MealSlotCardState extends ConsumerState<MealSlotCard> {
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        Text(
-                          slot.category.name,
+Text(
+                          mealCategoryLabel(slot.category, context.l10n),
                           style: theme.textTheme.titleSmall?.copyWith(
                             fontWeight: FontWeight.w700,
                           ),
@@ -254,7 +254,7 @@ class _EntryRow extends ConsumerWidget {
                 ),
                 const SizedBox(height: 1),
                 Text(
-                  '${entry.log.quantity.toStringAsFixed(1).toBanglaDigits()}Ã— Â· '
+'${entry.log.quantity.toStringAsFixed(1).toBanglaDigits()}× · '
                   'P ${entry.protein.toStringAsFixed(0).toBanglaDigits()} '
                   'C ${entry.carbs.toStringAsFixed(0).toBanglaDigits()} '
                   'F ${entry.fat.toStringAsFixed(0).toBanglaDigits()}',

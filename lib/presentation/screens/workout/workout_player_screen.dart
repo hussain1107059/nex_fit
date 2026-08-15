@@ -19,6 +19,7 @@ import '../../../domain/entities/workout_completion.dart';
 import '../../../domain/entities/workout_detail.dart';
 import '../../../domain/entities/workout_exercise_detail.dart';
 import '../../../l10n/app_localizations.dart';
+import '../../providers/dashboard_providers.dart';
 import '../../providers/workout_providers.dart';
 import '../../router/app_router.dart';
 import 'widgets/workout_cover.dart';
@@ -237,6 +238,14 @@ class _WorkoutPlayerScreenState extends ConsumerState<WorkoutPlayerScreen> {
                             color: context.colorScheme.onSurfaceVariant,
                           ),
                         ),
+                        if (exercise.exercise.instructions != null &&
+                            exercise.exercise.instructions!.trim().isNotEmpty) ...[
+                          const SizedBox(height: AppSpacing.md),
+                          _InstructionsChip(
+                            exerciseName: exercise.exercise.name,
+                            instructions: exercise.exercise.instructions!,
+                          ),
+                        ],
                       ],
                     ),
             ),
@@ -289,6 +298,108 @@ class _WorkoutPlayerScreenState extends ConsumerState<WorkoutPlayerScreen> {
     final String mm = minutes.toString().padLeft(2, '0');
     final String ss = seconds.toString().padLeft(2, '0');
     return '$mm:$ss';
+  }
+}
+
+/// Opens the exercise instructions in a bottom sheet during the session.
+class _InstructionsChip extends StatelessWidget {
+  const _InstructionsChip({
+    required this.exerciseName,
+    required this.instructions,
+  });
+
+  final String exerciseName;
+  final String instructions;
+
+  void _show(BuildContext context) {
+    showModalBottomSheet<void>(
+      context: context,
+      isScrollControlled: true,
+      backgroundColor: Colors.transparent,
+      builder: (BuildContext sheetContext) => Container(
+        decoration: BoxDecoration(
+          color: context.colorScheme.surface,
+          borderRadius: const BorderRadius.vertical(
+            top: Radius.circular(AppRadius.xl),
+          ),
+        ),
+        padding: const EdgeInsets.fromLTRB(
+          AppSpacing.lg,
+          AppSpacing.md,
+          AppSpacing.lg,
+          AppSpacing.xxl,
+        ),
+        child: SafeArea(
+          child: SingleChildScrollView(
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: [
+                Text(
+                  exerciseName,
+                  style: context.textTheme.titleMedium?.copyWith(
+                    fontWeight: FontWeight.w800,
+                  ),
+                ),
+                const SizedBox(height: AppSpacing.sm),
+                Text(
+                  instructions,
+                  style: context.textTheme.bodyMedium?.copyWith(
+                    color: context.colorScheme.onSurfaceVariant,
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final AppLocalizations l10n = context.l10n;
+    return Align(
+      alignment: Alignment.center,
+      child: InkWell(
+        borderRadius: AppRadius.pillRadius,
+        onTap: () => _show(context),
+        child: Container(
+          padding: const EdgeInsets.symmetric(
+            horizontal: AppSpacing.md,
+            vertical: 6,
+          ),
+          decoration: BoxDecoration(
+            borderRadius: AppRadius.pillRadius,
+            color: context.colorScheme.secondaryContainer,
+          ),
+          child: Row(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Icon(
+                Icons.info_outline_rounded,
+                size: 16,
+                color: context.colorScheme.onSecondaryContainer,
+              ),
+              const SizedBox(width: 6),
+              Text(
+                l10n.exerciseHowTo,
+                style: context.textTheme.labelMedium?.copyWith(
+                  color: context.colorScheme.onSecondaryContainer,
+                  fontWeight: FontWeight.w700,
+                ),
+              ),
+              const SizedBox(width: 4),
+              Icon(
+                Icons.expand_more_rounded,
+                size: 16,
+                color: context.colorScheme.onSecondaryContainer,
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
   }
 }
 
@@ -664,7 +775,10 @@ class WorkoutCompletionView extends ConsumerWidget {
                         ],
                         const SizedBox(height: AppSpacing.lg),
                         AppButton(
-                          onPressed: () => context.go(AppRoutes.shell),
+                          onPressed: () {
+                            ref.read(shellTabIndexProvider.notifier).state = 1;
+                            context.go(AppRoutes.shell);
+                          },
                           label: l10n.workoutDone,
                           icon: Icons.check_circle_rounded,
                           size: AppButtonSize.large,

@@ -264,6 +264,20 @@ class AuthController extends Notifier<AuthState> {  StreamSubscription<AppUser?>
     return result;
   }
 
+  /// Changes the signed-in user's password. Requires a recent session; the
+  /// server may reject it and the friendly error is surfaced through [Result].
+  Future<Result<void>> changePassword({required String newPassword}) async {
+    if (state.isBusy) return _busyResult<void>();
+    if (!await _hasNetwork()) return _offlineResult<void>();
+    state = state.copyWith(status: AuthActionStatus.loading, failure: null);
+
+    final Result<void> result = await ref
+        .read(updatePasswordUsecaseProvider)
+        .call(newPassword: newPassword);
+    await _finishAction(result);
+    return result;
+  }
+
   Future<Result<void>> signOut() async {
     if (state.isBusy) return _busyResult<void>();
     state = state.copyWith(status: AuthActionStatus.loading, failure: null);

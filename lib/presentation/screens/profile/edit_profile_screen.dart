@@ -37,6 +37,7 @@ class _EditProfileScreenState extends ConsumerState<EditProfileScreen> {
   late final TextEditingController _weightController;
   late final TextEditingController _targetWeightController;
   late final TextEditingController _countryController;
+  late final TextEditingController _timezoneController;
 
   DateTime? _birthDate;
   Gender? _gender;
@@ -72,6 +73,9 @@ class _EditProfileScreenState extends ConsumerState<EditProfileScreen> {
           : profile!.targetWeightKg!.toStringAsFixed(1),
     );
     _countryController = TextEditingController(text: profile?.country ?? '');
+    _timezoneController = TextEditingController(
+      text: profile?.timezone ?? _deviceTimezoneLabel(),
+    );
 
     _birthDate = profile?.birthDate;
     _gender = profile?.gender;
@@ -88,6 +92,7 @@ class _EditProfileScreenState extends ConsumerState<EditProfileScreen> {
     _weightController.dispose();
     _targetWeightController.dispose();
     _countryController.dispose();
+    _timezoneController.dispose();
     super.dispose();
   }
 
@@ -173,6 +178,9 @@ class _EditProfileScreenState extends ConsumerState<EditProfileScreen> {
             ? null
             : _countryController.text.trim(),
         language: _language,
+        timezone: _timezoneController.text.trim().isEmpty
+            ? null
+            : _timezoneController.text.trim(),
         photoPath: _photoRemoved ? null : _photoPath,
       );
 
@@ -225,6 +233,17 @@ class _EditProfileScreenState extends ConsumerState<EditProfileScreen> {
       return context.l10n.profileTargetWeightInvalid;
     }
     return null;
+  }
+
+  /// The device's current UTC offset, e.g. `UTC+06:00`, used as a sensible
+  /// default when the profile has no timezone stored yet.
+  String _deviceTimezoneLabel() {
+    final Duration offset = DateTime.now().timeZoneOffset;
+    final String sign = offset.isNegative ? '-' : '+';
+    final Duration abs = offset.abs();
+    final String hh = abs.inHours.toString().padLeft(2, '0');
+    final String mm = (abs.inMinutes % 60).toString().padLeft(2, '0');
+    return 'UTC$sign$hh:$mm';
   }
 
   @override
@@ -438,6 +457,20 @@ class _EditProfileScreenState extends ConsumerState<EditProfileScreen> {
                         enabled: !_saving,
                         onChanged: (String? code) =>
                             setState(() => _language = code),
+                      ),
+                      const SizedBox(height: AppSpacing.lg),
+                      _SectionLabel(
+                        icon: Icons.schedule_rounded,
+                        label: l10n.editTimezone,
+                      ),
+                      const SizedBox(height: AppSpacing.xs),
+                      AppTextField(
+                        controller: _timezoneController,
+                        label: l10n.editTimezone,
+                        hintText: l10n.editTimezoneHint,
+                        prefixIcon: Icons.schedule_rounded,
+                        enabled: !_saving,
+                        textCapitalization: TextCapitalization.characters,
                       ),
                       const SizedBox(height: AppSpacing.xxl),
                       AppButton(

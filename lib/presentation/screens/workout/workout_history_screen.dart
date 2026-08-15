@@ -40,9 +40,9 @@ class WorkoutHistoryScreen extends ConsumerWidget {
                       title: l10n.workoutNoHistory,
                       subtitle: l10n.workoutNoHistorySubtitle,
                       icon: Icons.history_rounded,
-                      actionLabel: l10n.commonRetry,
+                      actionLabel: l10n.workoutStartNow,
                       onActionPressed: () =>
-                          ref.invalidate(workoutHistoryProvider),
+                          context.push(AppRoutes.workoutList),
                     );
                   }
                   return _HistoryBody(data: data);

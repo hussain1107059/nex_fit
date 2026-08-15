@@ -135,6 +135,28 @@ class SleepLogLocalDataSource extends BaseLocalDataSource {
     });
   }
 
+  Future<List<SleepLog>> getByDateRange(
+    String userId,
+    DateTime start,
+    DateTime end,
+  ) {
+    return guard('get_by_date_range', () async {
+      final Database db = await dbConnection;
+      final List<Map<String, Object?>> rows = await db.query(
+        SleepLogModel.table,
+        where:
+            'user_id = ? AND deleted_at IS NULL AND sleep_date >= ? AND sleep_date < ?',
+        whereArgs: <Object?>[
+          userId,
+          start.millisecondsSinceEpoch,
+          end.millisecondsSinceEpoch,
+        ],
+        orderBy: 'sleep_date DESC',
+      );
+      return rows.map(SleepLogModel.fromMap).toList();
+    });
+  }
+
   Future<void> delete(int id) {
     return guard('delete', () async {
       final Database db = await dbConnection;

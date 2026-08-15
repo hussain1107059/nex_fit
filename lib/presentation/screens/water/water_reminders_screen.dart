@@ -46,6 +46,8 @@ class WaterRemindersScreen extends ConsumerWidget {
         ),
         data: (List<Reminder> reminders) => _RemindersContent(
           reminders: reminders,
+          onEdit: (Reminder reminder) =>
+              _openEditor(context, ref, existing: reminder),
         ),
       ),
     );
@@ -63,9 +65,10 @@ class WaterRemindersScreen extends ConsumerWidget {
 }
 
 class _RemindersContent extends ConsumerWidget {
-  const _RemindersContent({required this.reminders});
+  const _RemindersContent({required this.reminders, required this.onEdit});
 
   final List<Reminder> reminders;
+  final ValueChanged<Reminder> onEdit;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -140,7 +143,7 @@ class _RemindersContent extends ConsumerWidget {
                       endIndent: AppSpacing.md,
                       color: theme.colorScheme.outlineVariant,
                     ),
-                  _ReminderTile(reminder: reminders[i]),
+                  _ReminderTile(reminder: reminders[i], onEdit: onEdit),
                 ],
               ],
             ),
@@ -241,9 +244,10 @@ class _EmptyReminders extends StatelessWidget {
 }
 
 class _ReminderTile extends ConsumerWidget {
-  const _ReminderTile({required this.reminder});
+  const _ReminderTile({required this.reminder, required this.onEdit});
 
   final Reminder reminder;
+  final ValueChanged<Reminder> onEdit;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -252,6 +256,7 @@ class _ReminderTile extends ConsumerWidget {
     final Color accent = theme.colorScheme.tertiary;
 
     return ListTile(
+      onTap: () => onEdit(reminder),
       leading: Container(
         width: 42,
         height: 42,

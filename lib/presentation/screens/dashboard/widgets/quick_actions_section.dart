@@ -6,9 +6,9 @@ import '../../../../core/extensions/context_extensions.dart';
 import '../../../../core/theme/app_colors.dart';
 import '../../../../core/theme/app_radius.dart';
 import '../../../../core/theme/app_spacing.dart';
-import '../../../../core/widgets/feedback/app_snackbar.dart';
 import '../../../../domain/entities/dashboard_data.dart';
 import '../../../providers/dashboard_providers.dart';
+import '../../../providers/profile_providers.dart';
 import '../../../router/app_router.dart';
 import 'dashboard_dialogs.dart';
 import 'section_header.dart';
@@ -58,6 +58,11 @@ class QuickActionsSection extends ConsumerWidget {
         label: context.l10n.dashboardSleepTracker,
         color: colors.secondary,
       ),
+      _QuickActionData(
+        icon: Icons.directions_walk_rounded,
+        label: context.l10n.dashboardLogSteps,
+        color: colors.info,
+      ),
     ];
 
     return Column(
@@ -92,13 +97,13 @@ class QuickActionsSection extends ConsumerWidget {
   void _handleAction(BuildContext context, WidgetRef ref, int index) {
     switch (index) {
       case 0:
-        AppSnackbar.info(context, context.l10n.dashboardComingSoon);
+        context.push(AppRoutes.workoutList);
         break;
       case 1:
         context.push(AppRoutes.water);
         break;
       case 2:
-        AppSnackbar.info(context, context.l10n.dashboardComingSoon);
+        context.push(AppRoutes.foodDatabase);
         break;
       case 3:
         ref.read(shellTabIndexProvider.notifier).state = 2;
@@ -109,10 +114,18 @@ class QuickActionsSection extends ConsumerWidget {
           ref,
           userId,
           latestWeight: summary.weightKg,
+          heightCm: ref
+              .read(profileControllerProvider)
+              .valueOrNull
+              ?.profile
+              ?.heightCm,
         );
         break;
       case 5:
-        AppSnackbar.info(context, context.l10n.dashboardComingSoon);
+        DashboardDialogs.showLogSleep(context, ref, userId);
+        break;
+      case 6:
+        DashboardDialogs.showLogSteps(context, ref, userId);
         break;
     }
   }

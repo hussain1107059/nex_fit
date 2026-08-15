@@ -41,6 +41,17 @@ class SettingsScreen extends ConsumerWidget {
           AppSpacing.xxl,
         ),
         children: [
+          SettingsSectionTitle(context.l10n.settingsAccount),
+          SettingsCard(
+            children: [
+              SettingsTile(
+                icon: Icons.person_rounded,
+                title: context.l10n.settingsAccount,
+                subtitle: context.l10n.settingsAccountSubtitle,
+                onTap: () => context.push(AppRoutes.settingsAccount),
+              ),
+            ],
+          ),
           SettingsSectionTitle(context.l10n.settingsGeneral),
           SettingsCard(
             children: [
