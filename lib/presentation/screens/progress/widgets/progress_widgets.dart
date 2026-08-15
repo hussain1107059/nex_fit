@@ -235,6 +235,47 @@ class GoalProgressTile extends StatelessWidget {
                       ),
                   ],
                 ),
+                if (goal.hasTarget && goal.remaining > 0) ...<Widget>[
+                  const SizedBox(height: 2),
+                  Text(
+                    '${_formatValue(goal.remaining, goal.unit)} $unit '
+                    '${l10n.progressToGoal}'.toBanglaDigits(),
+                    style: context.textTheme.labelSmall?.copyWith(
+                      color: context.colorScheme.onSurfaceVariant,
+                    ),
+                  ),
+                ],
+                if (goal.streak > 0) ...<Widget>[
+                  const SizedBox(height: 2),
+                  Row(
+                    children: <Widget>[
+                      Icon(
+                        Icons.local_fire_department_rounded,
+                        size: 14,
+                        color: colors.warning,
+                      ),
+                      const SizedBox(width: 4),
+                      Text(
+                        '${goal.streak.toString().toBanglaDigits()} '
+                        '${l10n.progressDayStreak}',
+                        style: context.textTheme.labelSmall?.copyWith(
+                          color: colors.warning,
+                          fontWeight: FontWeight.w700,
+                        ),
+                      ),
+                    ],
+                  ),
+                ],
+                if (goal.hasTarget && goal.fraction >= 1) ...<Widget>[
+                  const SizedBox(height: 2),
+                  Text(
+                    l10n.progressGoalReached,
+                    style: context.textTheme.labelSmall?.copyWith(
+                      color: colors.success,
+                      fontWeight: FontWeight.w700,
+                    ),
+                  ),
+                ],
                 if (goal.hasTarget && goal.daysLeft > 0) ...<Widget>[
                   const SizedBox(height: 2),
                   Text(

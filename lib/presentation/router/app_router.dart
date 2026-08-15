@@ -21,6 +21,7 @@ import '../screens/nutrition/meal_planner_screen.dart';
 import '../screens/nutrition/nutrition_history_screen.dart';
 import '../screens/profile/edit_profile_screen.dart';
 import '../screens/progress/fitness_score_screen.dart';
+import '../screens/progress/goal_management_screen.dart';
 import '../screens/progress/goal_progress_screen.dart';
 import '../screens/progress/personal_records_screen.dart';
 import '../screens/progress/progress_dashboard_screen.dart';
@@ -94,6 +95,7 @@ abstract final class AppRoutes {
   static const String progressReport = '/progress/report';
   static const String progressRecords = '/progress/records';
   static const String progressGoals = '/progress/goals';
+  static const String progressGoalManagement = '/progress/goals/manage';
   static const String progressScore = '/progress/score';
   static const String reminders = '/reminders';
   static const String reminderEditor = '/reminders/edit';
@@ -360,6 +362,12 @@ final appRouterProvider = Provider<GoRouter>((ref) {
         name: 'progress-goals',
         builder: (BuildContext context, GoRouterState state) =>
             const GoalProgressScreen(),
+      ),
+      GoRoute(
+        path: AppRoutes.progressGoalManagement,
+        name: 'progress-goal-management',
+        builder: (BuildContext context, GoRouterState state) =>
+            const GoalManagementScreen(),
       ),
       GoRoute(
         path: AppRoutes.progressScore,

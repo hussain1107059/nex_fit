@@ -4592,6 +4592,24 @@ abstract class AppLocalizations {
   /// **'দিন বাকি:'**
   String get progressDaysLeft;
 
+  /// No description provided for @progressToGoal.
+  ///
+  /// In bs, this message translates to:
+  /// **'লক্ষ্যের জন্য'**
+  String get progressToGoal;
+
+  /// No description provided for @progressDayStreak.
+  ///
+  /// In bs, this message translates to:
+  /// **'দিনের ধারা'**
+  String get progressDayStreak;
+
+  /// No description provided for @progressGoalReached.
+  ///
+  /// In bs, this message translates to:
+  /// **'লক্ষ্য পূরণ হয়েছে'**
+  String get progressGoalReached;
+
   /// No description provided for @progressGoalWeight.
   ///
   /// In bs, this message translates to:
@@ -5011,6 +5029,168 @@ abstract class AppLocalizations {
   /// In bs, this message translates to:
   /// **'লক্ষ্য অগ্রগতি'**
   String get progressGoalsTitle;
+
+  /// No description provided for @goalManagementTitle.
+  ///
+  /// In bs, this message translates to:
+  /// **'আমার লক্ষ্যসমূহ'**
+  String get goalManagementTitle;
+
+  /// No description provided for @goalManagementSubtitle.
+  ///
+  /// In bs, this message translates to:
+  /// **'আপনার ফিটনেস লক্ষ্যগুলো ডিভাইস জুড়ে সিঙ্ক হয়।'**
+  String get goalManagementSubtitle;
+
+  /// No description provided for @goalAdd.
+  ///
+  /// In bs, this message translates to:
+  /// **'লক্ষ্য যোগ করুন'**
+  String get goalAdd;
+
+  /// No description provided for @goalEdit.
+  ///
+  /// In bs, this message translates to:
+  /// **'লক্ষ্য সম্পাদনা'**
+  String get goalEdit;
+
+  /// No description provided for @goalDelete.
+  ///
+  /// In bs, this message translates to:
+  /// **'লক্ষ্য মুছুন'**
+  String get goalDelete;
+
+  /// No description provided for @goalDeleteConfirm.
+  ///
+  /// In bs, this message translates to:
+  /// **'এই লক্ষ্যটি মুছবেন?'**
+  String get goalDeleteConfirm;
+
+  /// No description provided for @goalDeleteMessage.
+  ///
+  /// In bs, this message translates to:
+  /// **'এটি ফিরিয়ে আনা যাবে না।'**
+  String get goalDeleteMessage;
+
+  /// No description provided for @goalTypeLabel.
+  ///
+  /// In bs, this message translates to:
+  /// **'লক্ষ্যের ধরন'**
+  String get goalTypeLabel;
+
+  /// No description provided for @goalTargetValue.
+  ///
+  /// In bs, this message translates to:
+  /// **'টার্গেট মান'**
+  String get goalTargetValue;
+
+  /// No description provided for @goalTargetValueHint.
+  ///
+  /// In bs, this message translates to:
+  /// **'যেমন ৭০'**
+  String get goalTargetValueHint;
+
+  /// No description provided for @goalTargetValueRequired.
+  ///
+  /// In bs, this message translates to:
+  /// **'টার্গেট মান লিখুন'**
+  String get goalTargetValueRequired;
+
+  /// No description provided for @goalTargetDate.
+  ///
+  /// In bs, this message translates to:
+  /// **'টার্গেট তারিখ'**
+  String get goalTargetDate;
+
+  /// No description provided for @goalStatusActive.
+  ///
+  /// In bs, this message translates to:
+  /// **'সক্রিয়'**
+  String get goalStatusActive;
+
+  /// No description provided for @goalStatusCompleted.
+  ///
+  /// In bs, this message translates to:
+  /// **'সম্পন্ন'**
+  String get goalStatusCompleted;
+
+  /// No description provided for @goalStatusAbandoned.
+  ///
+  /// In bs, this message translates to:
+  /// **'পরিত্যক্ত'**
+  String get goalStatusAbandoned;
+
+  /// No description provided for @goalSaved.
+  ///
+  /// In bs, this message translates to:
+  /// **'লক্ষ্য সংরক্ষিত হয়েছে'**
+  String get goalSaved;
+
+  /// No description provided for @goalUpdated.
+  ///
+  /// In bs, this message translates to:
+  /// **'লক্ষ্য হালনাগাদ হয়েছে'**
+  String get goalUpdated;
+
+  /// No description provided for @goalDeleted.
+  ///
+  /// In bs, this message translates to:
+  /// **'লক্ষ্য মুছে ফেলা হয়েছে'**
+  String get goalDeleted;
+
+  /// No description provided for @goalEmptyTitle.
+  ///
+  /// In bs, this message translates to:
+  /// **'এখনো কোনো লক্ষ্য নেই'**
+  String get goalEmptyTitle;
+
+  /// No description provided for @goalEmptySubtitle.
+  ///
+  /// In bs, this message translates to:
+  /// **'অগ্রগতি ট্র্যাক করতে একটি ওজন বা ওয়ার্কআউট লক্ষ্য নির্ধারণ করুন।'**
+  String get goalEmptySubtitle;
+
+  /// No description provided for @goalTemplates.
+  ///
+  /// In bs, this message translates to:
+  /// **'প্রস্তাবিত লক্ষ্য'**
+  String get goalTemplates;
+
+  /// No description provided for @goalUseTemplate.
+  ///
+  /// In bs, this message translates to:
+  /// **'ব্যবহার করুন'**
+  String get goalUseTemplate;
+
+  /// No description provided for @goalTemplateUsed.
+  ///
+  /// In bs, this message translates to:
+  /// **'লক্ষ্য যোগ হয়েছে'**
+  String get goalTemplateUsed;
+
+  /// No description provided for @goalCurrentValue.
+  ///
+  /// In bs, this message translates to:
+  /// **'বর্তমান'**
+  String get goalCurrentValue;
+
+  /// No description provided for @goalCompletionLabel.
+  ///
+  /// In bs, this message translates to:
+  /// **'সম্পন্ন'**
+  String get goalCompletionLabel;
+
+  /// No description provided for @goalMarkComplete.
+  ///
+  /// In bs, this message translates to:
+  /// **'সম্পন্ন চিহ্নিত করুন'**
+  String get goalMarkComplete;
+
+  /// No description provided for @goalDaysLeftLabel.
+  ///
+  /// In bs, this message translates to:
+  /// **'দিন বাকি'**
+  String get goalDaysLeftLabel;
 
   /// No description provided for @progressScoreBreakdown.
   ///

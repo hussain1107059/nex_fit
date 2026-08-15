@@ -341,6 +341,7 @@ class ProgressAnalyticsRepositoryImpl implements ProgressAnalyticsRepository {
       _sleepLogRepository.getByUserId(userId),
       _fitnessGoalRepository.getByUserId(userId),
       _userFitnessProfileRepository.getById(userId),
+      _streakRepository.getByUserId(userId),
     ]);
 
     final List<WorkoutHistory> workouts = results[0] as List<WorkoutHistory>;
@@ -352,6 +353,7 @@ class ProgressAnalyticsRepositoryImpl implements ProgressAnalyticsRepository {
     final List<SleepLog> sleepLogs = results[5] as List<SleepLog>;
     final List<FitnessGoal> goals = results[6] as List<FitnessGoal>;
     final UserProfile? profile = results[7] as UserProfile?;
+    final List<Streak> streaks = results[8] as List<Streak>;
 
     final List<WorkoutHistory> completed = workouts
         .where((WorkoutHistory w) => w.isCompleted)
@@ -408,6 +410,14 @@ class ProgressAnalyticsRepositoryImpl implements ProgressAnalyticsRepository {
 
     final List<GoalProgress> result = <GoalProgress>[];
 
+    final int workoutStreak = _streakFor(
+      streaks,
+      StreakType.workout,
+    );
+    final int waterStreak = _streakFor(streaks, StreakType.water);
+    final int stepStreak = _streakFor(streaks, StreakType.step);
+    final int sleepStreak = _streakFor(streaks, StreakType.sleep);
+
     final double? startWeight =
         weightLogs.isEmpty ? null : weightLogs.first.weightKg;
     final double? currentWeight =
@@ -424,6 +434,12 @@ class ProgressAnalyticsRepositoryImpl implements ProgressAnalyticsRepository {
         start: startWeight,
         hasTarget: targetWeight != null && startWeight != null,
         targetDate: _explicitWeightTargetDate(goals),
+        streak: currentStreak(
+          weightLogs
+              .map((WeightLog w) => dayStart(w.loggedAt))
+              .toSet(),
+          now,
+        ),
       ),
     );
 
@@ -437,6 +453,7 @@ class ProgressAnalyticsRepositoryImpl implements ProgressAnalyticsRepository {
         target: workoutTarget,
         unit: 'workouts',
         hasTarget: true,
+        streak: workoutStreak,
       ),
     );
 
@@ -466,6 +483,7 @@ class ProgressAnalyticsRepositoryImpl implements ProgressAnalyticsRepository {
         target: (waterTarget ?? 0).toDouble(),
         unit: 'ml',
         hasTarget: waterTarget != null && waterTarget > 0,
+        streak: waterStreak,
       ),
     );
 
@@ -479,6 +497,7 @@ class ProgressAnalyticsRepositoryImpl implements ProgressAnalyticsRepository {
         target: (stepsTarget ?? 0).toDouble(),
         unit: 'steps',
         hasTarget: stepsTarget != null && stepsTarget > 0,
+        streak: stepStreak,
       ),
     );
 
@@ -492,6 +511,7 @@ class ProgressAnalyticsRepositoryImpl implements ProgressAnalyticsRepository {
         target: _defaultSleepTargetHours.toDouble(),
         unit: 'hrs',
         hasTarget: true,
+        streak: sleepStreak,
       ),
     );
 
@@ -930,6 +950,13 @@ class ProgressAnalyticsRepositoryImpl implements ProgressAnalyticsRepository {
       bmiStart: sortedBmis.isEmpty ? null : sortedBmis.first.bmi,
       bmiEnd: sortedBmis.isEmpty ? null : sortedBmis.last.bmi,
     );
+  }
+
+  int _streakFor(List<Streak> streaks, StreakType type) {
+    for (final Streak streak in streaks) {
+      if (streak.streakType == type) return streak.currentStreak;
+    }
+    return 0;
   }
 
   double? _explicitWeightTarget(List<FitnessGoal> goals) {

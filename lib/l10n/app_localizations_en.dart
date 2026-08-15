@@ -2315,6 +2315,15 @@ class AppLocalizationsEn extends AppLocalizations {
   String get progressDaysLeft => 'Days left:';
 
   @override
+  String get progressToGoal => 'to goal';
+
+  @override
+  String get progressDayStreak => 'day streak';
+
+  @override
+  String get progressGoalReached => 'Goal reached';
+
+  @override
   String get progressGoalWeight => 'Weight';
 
   @override
@@ -2524,6 +2533,89 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get progressGoalsTitle => 'Goal progress';
+
+  @override
+  String get goalManagementTitle => 'My goals';
+
+  @override
+  String get goalManagementSubtitle =>
+      'Your fitness goals sync across devices.';
+
+  @override
+  String get goalAdd => 'Add goal';
+
+  @override
+  String get goalEdit => 'Edit goal';
+
+  @override
+  String get goalDelete => 'Delete goal';
+
+  @override
+  String get goalDeleteConfirm => 'Delete this goal?';
+
+  @override
+  String get goalDeleteMessage => 'This can\'t be undone.';
+
+  @override
+  String get goalTypeLabel => 'Goal type';
+
+  @override
+  String get goalTargetValue => 'Target value';
+
+  @override
+  String get goalTargetValueHint => 'e.g. 70';
+
+  @override
+  String get goalTargetValueRequired => 'Enter a target value';
+
+  @override
+  String get goalTargetDate => 'Target date';
+
+  @override
+  String get goalStatusActive => 'Active';
+
+  @override
+  String get goalStatusCompleted => 'Completed';
+
+  @override
+  String get goalStatusAbandoned => 'Abandoned';
+
+  @override
+  String get goalSaved => 'Goal saved';
+
+  @override
+  String get goalUpdated => 'Goal updated';
+
+  @override
+  String get goalDeleted => 'Goal deleted';
+
+  @override
+  String get goalEmptyTitle => 'No goals yet';
+
+  @override
+  String get goalEmptySubtitle =>
+      'Set a weight or workout goal to start tracking progress.';
+
+  @override
+  String get goalTemplates => 'Recommended goals';
+
+  @override
+  String get goalUseTemplate => 'Use';
+
+  @override
+  String get goalTemplateUsed => 'Goal added';
+
+  @override
+  String get goalCurrentValue => 'Current';
+
+  @override
+  String get goalCompletionLabel => 'Complete';
+
+  @override
+  String get goalMarkComplete => 'Mark complete';
+
+  @override
+  String get goalDaysLeftLabel => 'days left';
 
   @override
   String get progressScoreBreakdown => 'Score breakdown';

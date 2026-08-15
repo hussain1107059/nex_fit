@@ -2322,6 +2322,15 @@ class AppLocalizationsBs extends AppLocalizations {
   String get progressDaysLeft => 'দিন বাকি:';
 
   @override
+  String get progressToGoal => 'লক্ষ্যের জন্য';
+
+  @override
+  String get progressDayStreak => 'দিনের ধারা';
+
+  @override
+  String get progressGoalReached => 'লক্ষ্য পূরণ হয়েছে';
+
+  @override
   String get progressGoalWeight => 'ওজন';
 
   @override
@@ -2531,6 +2540,89 @@ class AppLocalizationsBs extends AppLocalizations {
 
   @override
   String get progressGoalsTitle => 'লক্ষ্য অগ্রগতি';
+
+  @override
+  String get goalManagementTitle => 'আমার লক্ষ্যসমূহ';
+
+  @override
+  String get goalManagementSubtitle =>
+      'আপনার ফিটনেস লক্ষ্যগুলো ডিভাইস জুড়ে সিঙ্ক হয়।';
+
+  @override
+  String get goalAdd => 'লক্ষ্য যোগ করুন';
+
+  @override
+  String get goalEdit => 'লক্ষ্য সম্পাদনা';
+
+  @override
+  String get goalDelete => 'লক্ষ্য মুছুন';
+
+  @override
+  String get goalDeleteConfirm => 'এই লক্ষ্যটি মুছবেন?';
+
+  @override
+  String get goalDeleteMessage => 'এটি ফিরিয়ে আনা যাবে না।';
+
+  @override
+  String get goalTypeLabel => 'লক্ষ্যের ধরন';
+
+  @override
+  String get goalTargetValue => 'টার্গেট মান';
+
+  @override
+  String get goalTargetValueHint => 'যেমন ৭০';
+
+  @override
+  String get goalTargetValueRequired => 'টার্গেট মান লিখুন';
+
+  @override
+  String get goalTargetDate => 'টার্গেট তারিখ';
+
+  @override
+  String get goalStatusActive => 'সক্রিয়';
+
+  @override
+  String get goalStatusCompleted => 'সম্পন্ন';
+
+  @override
+  String get goalStatusAbandoned => 'পরিত্যক্ত';
+
+  @override
+  String get goalSaved => 'লক্ষ্য সংরক্ষিত হয়েছে';
+
+  @override
+  String get goalUpdated => 'লক্ষ্য হালনাগাদ হয়েছে';
+
+  @override
+  String get goalDeleted => 'লক্ষ্য মুছে ফেলা হয়েছে';
+
+  @override
+  String get goalEmptyTitle => 'এখনো কোনো লক্ষ্য নেই';
+
+  @override
+  String get goalEmptySubtitle =>
+      'অগ্রগতি ট্র্যাক করতে একটি ওজন বা ওয়ার্কআউট লক্ষ্য নির্ধারণ করুন।';
+
+  @override
+  String get goalTemplates => 'প্রস্তাবিত লক্ষ্য';
+
+  @override
+  String get goalUseTemplate => 'ব্যবহার করুন';
+
+  @override
+  String get goalTemplateUsed => 'লক্ষ্য যোগ হয়েছে';
+
+  @override
+  String get goalCurrentValue => 'বর্তমান';
+
+  @override
+  String get goalCompletionLabel => 'সম্পন্ন';
+
+  @override
+  String get goalMarkComplete => 'সম্পন্ন চিহ্নিত করুন';
+
+  @override
+  String get goalDaysLeftLabel => 'দিন বাকি';
 
   @override
   String get progressScoreBreakdown => 'স্কোর বিশ্লেষণ';

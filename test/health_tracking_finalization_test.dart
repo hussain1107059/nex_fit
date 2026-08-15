@@ -22,7 +22,6 @@ import 'package:nexfit/data/repositories/badge_repository_impl.dart';
 import 'package:nexfit/data/repositories/bmi_log_repository_impl.dart';
 import 'package:nexfit/data/repositories/dashboard_repository_impl.dart';
 import 'package:nexfit/data/repositories/food_log_repository_impl.dart';
-import 'package:nexfit/data/repositories/hydration_repository_impl.dart';
 import 'package:nexfit/data/repositories/level_repository_impl.dart';
 import 'package:nexfit/data/repositories/reminder_repository_impl.dart';
 import 'package:nexfit/data/repositories/sleep_log_repository_impl.dart';

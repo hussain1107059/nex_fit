@@ -21,6 +21,7 @@ class GoalProgress extends Equatable {
     this.start,
     this.hasTarget = true,
     this.targetDate,
+    this.streak = 0,
   });
 
   final GoalKind kind;
@@ -38,6 +39,11 @@ class GoalProgress extends Equatable {
 
   /// Optional deadline used to estimate days remaining.
   final DateTime? targetDate;
+
+  /// Current run of consecutive days for this habit, where applicable
+  /// (workout/water/steps/sleep from the streak table; weight from consecutive
+  /// weight-log days). Zero when the habit has no meaningful streak.
+  final int streak;
 
   /// Fraction of the target reached, clamped to 0..1.
   double get fraction {
@@ -79,5 +85,6 @@ class GoalProgress extends Equatable {
         start,
         hasTarget,
         targetDate,
+        streak,
       ];
 }

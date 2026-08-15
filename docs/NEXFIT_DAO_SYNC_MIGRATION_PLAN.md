@@ -1338,3 +1338,65 @@ abbreviations across the water/weight flows.
 - Full regression: **479 pass / 2 fail** — the same two pre-existing failures
   (`session_manager` device-change, `hydration_repository` loadStatistics). The
   `large_dataset_sync_test` benchmark passed this run under `--timeout 120s`.
+
+## 28. Fitness Goals & Progress (PROMPT 32)
+
+### Goal
+Finalize the goal-management flow without redesigning: goals track
+weight/workout/water/steps/nutrition/sleep (only schema-supported types),
+templates stay server-authoritative master data (`user_id NULL`), user goals
+are user-owned and syncable, and progress tiles show current vs target, percent,
+remaining and streak computed deterministically from real DB records — never
+fake values. Create/update/complete/delete enqueue sync events; remote updates
+must not loop.
+
+### Changes
+- **Goal progress streaks**: `GoalProgress` gained a `streak` field. In
+  `loadGoalProgress` the analysis now also awaits
+  `streakRepository.getByUserId` (9th item in the shared `Future.wait`), derives
+  the weight streak with `currentStreak(weight-log days, now)` and computes
+  workout/water/steps/sleep streaks via a new `_streakFor` helper; the streak is
+  set on every goal type. The mangled `_explicitWeightTarget` /
+  `_explicitWeightTargetDate` / `_explicitWorkoutTarget` helpers were restored.
+- **Progress tile**: `GoalProgressTile` shows the remaining amount ("X unit to
+  goal"), a flame icon with "N day streak", and a "Goal reached" state once
+  `fraction >= 1`.
+- **Goal management providers**: new `fitness_goal_providers.dart` with
+  `userGoalsProvider`, `goalTemplatesProvider`, `createGoalFromTemplate`,
+  `createUserGoal`, `updateUserGoal`, `completeUserGoal`, `deleteUserGoal`.
+  `_refreshGoalDependents` invalidates `userGoalsProvider`, `goalProgressProvider`
+  and `dashboardControllerProvider` after every mutation.
+- **Goal management UI**: new `goal_management_screen.dart` (goal list with
+  status chip + progress row + streak, template adoption section, delete
+  confirm dialog, empty state) and `goal_editor_sheet.dart` (GoalType choice
+  chips, target value field, target date picker, save). Reached from the
+  `GoalProgressScreen` app-bar settings action via the new
+  `AppRoutes.progressGoalManagement` (`/progress/goals/manage`).
+- **Template seed fix**: the four seeded `fitness_goal` templates stored
+  `goal_type` in snake_case (`weight_loss`) but `GoalType.fromName` matches
+  camelCase enum names, so every template parsed as `GoalType.other`. The seed
+  now uses the enum names (`weightLoss`, `weightGain`, `maintainWeight`,
+  `muscleBuilding`), restoring template type resolution.
+- **l10n**: goal-management keys added to both `app_en.arb` and `app_bs.arb`
+  (progress remaining/streak/reached, management title/subtitle, add/edit/delete
+  labels, delete confirm, goal-type/target/date labels, status labels, saved /
+  updated / deleted toasts, empty state, templates, mark-complete, days-left) and
+  `flutter gen-l10n` regenerated.
+
+### Verification
+- New `test/goals_finalization_test.dart` — **12/12**:
+  1. creating a user goal persists it and generates a CREATE sync event,
+  2. templates are master data (`user_id NULL`) and never carry a user id,
+  3. adopting a template copies master data into a user-owned goal,
+  4. updating a goal bumps `row_version` and records an UPDATE event,
+  5. completion marks the goal completed without losing sync metadata,
+  6. deleting a goal soft-deletes the row and records a DELETE event,
+  7. goal progress shows current, target, percent, remaining and streak,
+  8. progress is computed offline from local records only,
+  9. a reached goal reports 100% and zero remaining,
+  10. the user-goal provider reflects the user-owned goals,
+  11. a remote apply updates a goal without creating a loop event,
+  12. user isolation keeps events scoped to the owning user.
+- `flutter analyze` — clean.
+- Full regression: **491 pass / 2 fail** — the same two pre-existing failures
+  (`session_manager` device-change, `hydration_repository` loadStatistics).

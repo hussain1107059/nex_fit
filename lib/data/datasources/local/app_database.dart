@@ -746,10 +746,10 @@ class AppDatabase {
     await db.execute('''
       INSERT OR IGNORE INTO fitness_goal (title, description, goal_type, status, created_at, updated_at)
       VALUES
-        ('Weight Loss', 'Gradually lose body weight', 'weight_loss', 'active', $now, $now),
-        ('Weight Gain', 'Gain healthy body weight', 'weight_gain', 'active', $now, $now),
-        ('Maintain Weight', 'Keep current body weight stable', 'maintain_weight', 'active', $now, $now),
-        ('Muscle Building', 'Build lean muscle mass', 'muscle_building', 'active', $now, $now)
+        ('Weight Loss', 'Gradually lose body weight', 'weightLoss', 'active', $now, $now),
+        ('Weight Gain', 'Gain healthy body weight', 'weightGain', 'active', $now, $now),
+        ('Maintain Weight', 'Keep current body weight stable', 'maintainWeight', 'active', $now, $now),
+        ('Muscle Building', 'Build lean muscle mass', 'muscleBuilding', 'active', $now, $now)
     ''');
   }
 

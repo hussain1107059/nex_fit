@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart' hide ErrorWidget;
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
 
 import '../../../core/extensions/context_extensions.dart';
 import '../../../core/theme/app_spacing.dart';
@@ -8,6 +9,7 @@ import '../../../core/widgets/feedback/error_widget.dart';
 import '../../../core/widgets/feedback/loading_widget.dart';
 import '../../../domain/entities/progress/goal_progress.dart';
 import '../../../l10n/app_localizations.dart';
+import '../../../presentation/router/app_router.dart';
 import '../../providers/progress_providers.dart';
 import 'widgets/progress_widgets.dart';
 
@@ -21,7 +23,17 @@ class GoalProgressScreen extends ConsumerWidget {
     final AsyncValue<List<GoalProgress>> async = ref.watch(goalProgressProvider);
 
     return Scaffold(
-      appBar: AppBar(title: Text(context.l10n.progressGoalsTitle)),
+      appBar: AppBar(
+        title: Text(context.l10n.progressGoalsTitle),
+        actions: <Widget>[
+          IconButton(
+            onPressed: () => context.push(AppRoutes.progressGoalManagement),
+            icon: const Icon(Icons.settings_rounded),
+            tooltip: context.l10n.goalManagementTitle,
+          ),
+          const SizedBox(width: AppSpacing.xs),
+        ],
+      ),
       body: async.when(
         loading: () => const LoadingWidget(),
         error: (Object error, StackTrace stackTrace) => ErrorWidget(
