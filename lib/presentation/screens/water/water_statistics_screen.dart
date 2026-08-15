@@ -4,6 +4,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../core/extensions/context_extensions.dart';
 import '../../../core/extensions/string_extensions.dart';
 import '../../../core/theme/app_spacing.dart';
+import '../../../core/utils/date_formatting.dart';
 import '../../../core/widgets/cards/app_card.dart';
 import '../../../core/widgets/feedback/error_widget.dart';
 import '../../../core/widgets/feedback/loading_widget.dart';
@@ -314,7 +315,7 @@ class _BestDayCard extends StatelessWidget {
                 ),
                 const SizedBox(height: 2),
                 Text(
-                  _formatDate(stats.bestDay!),
+                  _formatDate(l10n, stats.bestDay!),
                   style: theme.textTheme.titleMedium?.copyWith(
                     fontWeight: FontWeight.w800,
                   ),
@@ -345,13 +346,7 @@ class _BestDayCard extends StatelessWidget {
     );
   }
 
-  String _formatDate(DateTime date) {
-    const List<String> months = <String>[
-      'Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun',
-      'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec',
-    ];
-    return '${date.day.toString().toBanglaDigits()} '
-        '${months[date.month - 1]} '
-        '${date.year.toString().toBanglaDigits()}';
+  String _formatDate(AppLocalizations l10n, DateTime date) {
+    return formatLocalizedDate(date, l10n);
   }
 }

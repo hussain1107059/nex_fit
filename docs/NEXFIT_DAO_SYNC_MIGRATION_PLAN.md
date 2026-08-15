@@ -1279,3 +1279,62 @@ self-sufficient as a first entry point.
   The `large_dataset_sync_test` 10k-record benchmark failed this run under the
   default 30s timeout and then passed 5/5 with `--timeout 120s` (real work
   ≈34s) — a documented timing flake, not a regression.
+
+## 27. Health Tracking Finalization (PROMPT 31)
+
+### Goal
+Close the remaining health-tracking UX gaps without redesigning: scope the
+water reminder list to water only (it was leaking other reminder types from
+the shared reminder table), make weight goals reachable/editable from the
+dashboard, pre-fill BMI height from the profile, add a manual steps-logging
+entry point from the dashboard, build a real sleep history screen with
+add/edit/delete, link the dashboard sleep metric to it, and localize month
+abbreviations across the water/weight flows.
+
+### Changes
+- **Water reminders scoped**: `waterRemindersProvider` now filters
+  `hydrationRepositoryProvider.getReminders()` to `ReminderType.water`, so the
+  water reminders screen no longer lists sleep/step/weight reminders that share
+  the same table.
+- **Reminder editing**: the water reminders list is now fully editable — tapping
+  a tile opens the same editor in edit mode (`_openEditor(context, ref,
+  existing: reminder)`).
+- **Weight goal ring tappable**: the dashboard weight `_HeroCard` became a
+  `ConsumerWidget` and its goal ring is wrapped in a `GestureDetector` that opens
+  `showWeightGoalSheet`; a `weightSetGoalHint` ("Tap the ring…") text shows until
+  a goal is set.
+- **BMI height pre-fill**: the dashboard BMI quick action reads the profile
+  (`profileControllerProvider.valueOrNull?.profile?.heightCm`) to pre-fill the
+  height field in the goal sheet instead of leaving it blank.
+- **Manual step logging**: new `DashboardDialogs.showLogSteps` dialog (digits-only
+  step field, optional date picker) writes a `StepLog` through the step-log
+  repository, then refreshes the dashboard. A seventh quick-action tile
+  (`Icons.directions_walk_rounded`) opens it. Manual entries carry derived
+  distance/calories via the new `StepEstimator` (stride 0.000762 km/step,
+  0.04 kcal/step) so progress reports treat them like tracker data.
+- **Sleep history screen**: new `SleepHistoryScreen` + `showSleepEntrySheet`
+  (add/edit: date, duration presets or custom minutes, quality 0–5, note) backed
+  by new `sleep_providers.dart` (`sleepHistoryProvider` newest-first,
+  `addSleepEntry`, `updateSleepEntry`, `deleteSleepEntry`). Stats row shows
+  nights, average duration and average quality via the new `SleepStats` helper.
+- **Dashboard sleep metric linked**: `DashboardSummaryCard` grew an `onSleepTap`
+  callback threaded through the metric grid; the sleep metric cell is now an
+  `InkWell` that `context.push(AppRoutes.sleepHistory)` (new `/sleep/history`
+  route).
+- **Localized months**: hard-coded English month arrays replaced with
+  `localizedMonth` / `formatLocalizedDate` (`lib/core/utils/date_formatting.dart`,
+  Bangla digits preserved) across the water screen, water statistics, water
+  history, weight screen, weight history and weight statistics.
+
+### Verification
+- New `test/health_tracking_finalization_test.dart` — **6/6**:
+  1. `waterRemindersProvider` exposes only water-type reminders,
+  2. sleep history sorts newest-first (synthetic repositories),
+  3. logging a manual step updates the dashboard summary,
+  4. `StepEstimator` distance/calories math,
+  5. `SleepStats` aggregation (nights, avg duration, avg quality),
+  6. `formatLocalizedDate` / `localizedMonth` localized en+bs (Bangla digits).
+- `flutter analyze` — clean.
+- Full regression: **479 pass / 2 fail** — the same two pre-existing failures
+  (`session_manager` device-change, `hydration_repository` loadStatistics). The
+  `large_dataset_sync_test` benchmark passed this run under `--timeout 120s`.

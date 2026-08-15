@@ -4,6 +4,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../core/extensions/context_extensions.dart';
 import '../../../core/extensions/string_extensions.dart';
 import '../../../core/theme/app_spacing.dart';
+import '../../../core/utils/date_formatting.dart';
 import '../../../core/widgets/cards/app_card.dart';
 import '../../../core/widgets/feedback/error_widget.dart';
 import '../../../core/widgets/feedback/loading_widget.dart';
@@ -229,7 +230,7 @@ class _ChartCard extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
           Text(
-            _titleFor(history),
+            _titleFor(history, l10n),
             style: theme.textTheme.titleSmall?.copyWith(
               fontWeight: FontWeight.w700,
             ),
@@ -266,16 +267,16 @@ class _ChartCard extends StatelessWidget {
     };
   }
 
-  String _titleFor(WaterHistory history) {
+  String _titleFor(WaterHistory history, AppLocalizations l10n) {
     final DateTime start = history.start;
     final DateTime end = history.end;
     return switch (history.period) {
       WaterHistoryPeriod.daily =>
         '${start.day.toString().toBanglaDigits()} – '
             '${end.day.toString().toBanglaDigits()} '
-            '${_monthName(start.month)}',
+            '${_monthName(l10n, start.month)}',
       WaterHistoryPeriod.weekly =>
-        '${_monthName(start.month)} ${start.year.toString().toBanglaDigits()}',
+        '${_monthName(l10n, start.month)} ${start.year.toString().toBanglaDigits()}',
       WaterHistoryPeriod.monthly => start.year.toString().toBanglaDigits(),
       WaterHistoryPeriod.yearly =>
         '${start.year.toString().toBanglaDigits()} – '
@@ -283,11 +284,7 @@ class _ChartCard extends StatelessWidget {
     };
   }
 
-  String _monthName(int month) {
-    const List<String> months = <String>[
-      'Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun',
-      'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec',
-    ];
-    return months[month - 1];
+  String _monthName(AppLocalizations l10n, int month) {
+    return localizedMonth(l10n, month);
   }
 }

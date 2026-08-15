@@ -4,6 +4,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../core/extensions/context_extensions.dart';
 import '../../../core/extensions/string_extensions.dart';
 import '../../../core/theme/app_spacing.dart';
+import '../../../core/utils/date_formatting.dart';
 import '../../../core/widgets/cards/app_card.dart';
 import '../../../core/widgets/feedback/error_widget.dart';
 import '../../../core/widgets/feedback/loading_widget.dart';
@@ -250,7 +251,7 @@ class _ChartCard extends StatelessWidget {
     }
 
     return TrendChartCard(
-      title: _titleFor(history),
+      title: _titleFor(history, l10n),
       child: TrendLineChart(
         points: points,
         color: theme.colorScheme.tertiary,
@@ -272,15 +273,15 @@ class _ChartCard extends StatelessWidget {
     };
   }
 
-  String _titleFor(WeightHistory history) {
+  String _titleFor(WeightHistory history, AppLocalizations l10n) {
     final DateTime start = history.start;
     return switch (history.period) {
       WeightHistoryPeriod.daily =>
         '${start.day.toString().toBanglaDigits()} – '
             '${history.end.day.toString().toBanglaDigits()} '
-            '${_monthName(start.month)}',
+            '${_monthName(l10n, start.month)}',
       WeightHistoryPeriod.weekly =>
-        '${_monthName(start.month)} ${start.year.toString().toBanglaDigits()}',
+        '${_monthName(l10n, start.month)} ${start.year.toString().toBanglaDigits()}',
       WeightHistoryPeriod.monthly => start.year.toString().toBanglaDigits(),
       WeightHistoryPeriod.yearly =>
         '${start.year.toString().toBanglaDigits()} – '
@@ -288,12 +289,8 @@ class _ChartCard extends StatelessWidget {
     };
   }
 
-  String _monthName(int month) {
-    const List<String> months = <String>[
-      'Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun',
-      'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec',
-    ];
-    return months[month - 1];
+  String _monthName(AppLocalizations l10n, int month) {
+    return localizedMonth(l10n, month);
   }
 }
 
@@ -368,7 +365,7 @@ class _BucketRow extends StatelessWidget {
       ),
       subtitle: Text(
         '${bucket.start.day.toString().toBanglaDigits()} '
-        '${_monthName(bucket.start.month)}',
+        '${_monthName(context.l10n, bucket.start.month)}',
         style: theme.textTheme.labelSmall?.copyWith(
           color: theme.colorScheme.onSurfaceVariant,
         ),
@@ -391,11 +388,7 @@ class _BucketRow extends StatelessWidget {
     );
   }
 
-  String _monthName(int month) {
-    const List<String> months = <String>[
-      'Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun',
-      'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec',
-    ];
-    return months[month - 1];
+  String _monthName(AppLocalizations l10n, int month) {
+    return localizedMonth(l10n, month);
   }
 }

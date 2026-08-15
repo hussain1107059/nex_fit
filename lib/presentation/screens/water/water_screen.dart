@@ -6,6 +6,7 @@ import '../../../core/extensions/context_extensions.dart';
 import '../../../core/extensions/string_extensions.dart';
 import '../../../core/theme/app_radius.dart';
 import '../../../core/theme/app_spacing.dart';
+import '../../../core/utils/date_formatting.dart';
 import '../../../core/widgets/cards/app_card.dart';
 import '../../../core/widgets/feedback/error_widget.dart';
 import '../../../core/widgets/feedback/loading_widget.dart';
@@ -162,7 +163,7 @@ class _DateNavigator extends ConsumerWidget {
           child: Column(
             children: [
               Text(
-                formatWaterDate(selected),
+                formatWaterDate(selected, l10n),
                 style: theme.textTheme.titleMedium?.copyWith(
                   fontWeight: FontWeight.w800,
                 ),
@@ -503,13 +504,6 @@ class _WaterError extends StatelessWidget {
 }
 
 /// Local date label shared by the water screens.
-String formatWaterDate(DateTime date) {
-  const List<String> months = <String>[
-    'Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun',
-    'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec',
-  ];
-  final String day = date.day.toString().toBanglaDigits();
-  final String month = months[date.month - 1];
-  final String year = date.year.toString().toBanglaDigits();
-  return '$day $month $year';
+String formatWaterDate(DateTime date, AppLocalizations l10n) {
+  return formatLocalizedDate(date, l10n);
 }

@@ -1124,6 +1124,30 @@ abstract class AppLocalizations {
   /// **'ঘুম ট্র্যাকার'**
   String get dashboardSleepTracker;
 
+  /// No description provided for @dashboardLogSteps.
+  ///
+  /// In bs, this message translates to:
+  /// **'ধাপ যোগ করুন'**
+  String get dashboardLogSteps;
+
+  /// No description provided for @dashboardLogStepsTitle.
+  ///
+  /// In bs, this message translates to:
+  /// **'ধাপ যোগ করুন'**
+  String get dashboardLogStepsTitle;
+
+  /// No description provided for @dashboardLogStepsHint.
+  ///
+  /// In bs, this message translates to:
+  /// **'আজ কতটি ধাপ নিয়েছেন?'**
+  String get dashboardLogStepsHint;
+
+  /// No description provided for @dashboardLogStepsSuccess.
+  ///
+  /// In bs, this message translates to:
+  /// **'ধাপ যোগ করা হয়েছে'**
+  String get dashboardLogStepsSuccess;
+
   /// No description provided for @dashboardTodaysGoal.
   ///
   /// In bs, this message translates to:
@@ -1333,6 +1357,84 @@ abstract class AppLocalizations {
   /// In bs, this message translates to:
   /// **'বিএমআই সংরক্ষিত হয়েছে'**
   String get dashboardBmiSaved;
+
+  /// No description provided for @sleepHistory.
+  ///
+  /// In bs, this message translates to:
+  /// **'ঘুমের ইতিহাস'**
+  String get sleepHistory;
+
+  /// No description provided for @sleepHistoryEmpty.
+  ///
+  /// In bs, this message translates to:
+  /// **'কোনো ঘুমের রেকর্ড নেই'**
+  String get sleepHistoryEmpty;
+
+  /// No description provided for @sleepHistoryEmptySubtitle.
+  ///
+  /// In bs, this message translates to:
+  /// **'ট্র্যাকিং শুরু করতে আপনার ঘুম যোগ করুন।'**
+  String get sleepHistoryEmptySubtitle;
+
+  /// No description provided for @sleepHistoryAdd.
+  ///
+  /// In bs, this message translates to:
+  /// **'ঘুম যোগ করুন'**
+  String get sleepHistoryAdd;
+
+  /// No description provided for @sleepHistoryNights.
+  ///
+  /// In bs, this message translates to:
+  /// **'রাত'**
+  String get sleepHistoryNights;
+
+  /// No description provided for @sleepHistoryAvgDuration.
+  ///
+  /// In bs, this message translates to:
+  /// **'গড় সময়কাল'**
+  String get sleepHistoryAvgDuration;
+
+  /// No description provided for @sleepHistoryAvgQuality.
+  ///
+  /// In bs, this message translates to:
+  /// **'গড় মান'**
+  String get sleepHistoryAvgQuality;
+
+  /// No description provided for @sleepEntryNote.
+  ///
+  /// In bs, this message translates to:
+  /// **'নোট (ঐচ্ছিক)'**
+  String get sleepEntryNote;
+
+  /// No description provided for @sleepLogTitle.
+  ///
+  /// In bs, this message translates to:
+  /// **'ঘুম যোগ করুন'**
+  String get sleepLogTitle;
+
+  /// No description provided for @sleepEditEntry.
+  ///
+  /// In bs, this message translates to:
+  /// **'ঘুম সম্পাদনা করুন'**
+  String get sleepEditEntry;
+
+  /// No description provided for @sleepLogSaved.
+  ///
+  /// In bs, this message translates to:
+  /// **'ঘুম সংরক্ষিত হয়েছে'**
+  String get sleepLogSaved;
+
+  /// No description provided for @sleepLogUpdated.
+  ///
+  /// In bs, this message translates to:
+  /// **'ঘুম আপডেট হয়েছে'**
+  String get sleepLogUpdated;
+
+  /// No description provided for @sleepLogDeleted.
+  ///
+  /// In bs, this message translates to:
+  /// **'ঘুমের রেকর্ড মুছে ফেলা হয়েছে'**
+  String get sleepLogDeleted;
 
   /// No description provided for @dashboardSearchHint.
   ///
@@ -3925,6 +4027,12 @@ abstract class AppLocalizations {
   /// In bs, this message translates to:
   /// **'লক্ষ্যের অগ্রগতি'**
   String get weightTargetProgress;
+
+  /// No description provided for @weightSetGoalHint.
+  ///
+  /// In bs, this message translates to:
+  /// **'টার্গেট ওজন নির্ধারণ করতে রিংয়ে চাপ দিন'**
+  String get weightSetGoalHint;
 
   /// No description provided for @weightBmi.
   ///

@@ -7,6 +7,7 @@ import '../../../core/extensions/string_extensions.dart';
 import '../../../core/theme/app_colors.dart';
 import '../../../core/theme/app_radius.dart';
 import '../../../core/theme/app_spacing.dart';
+import '../../../core/utils/date_formatting.dart';
 import '../../../core/utils/health_calculator.dart';
 import '../../../core/widgets/cards/app_card.dart';
 import '../../../core/widgets/feedback/error_widget.dart';
@@ -859,7 +860,7 @@ class _TrendChart extends StatelessWidget {
     }
 
     return TrendChartCard(
-      title: _titleFor(history),
+      title: _titleFor(history, l10n),
       child: TrendLineChart(
         points: points,
         color: color,
@@ -885,15 +886,15 @@ class _TrendChart extends StatelessWidget {
     };
   }
 
-  String _titleFor(WeightHistory history) {
+  String _titleFor(WeightHistory history, AppLocalizations l10n) {
     final DateTime start = history.start;
     return switch (history.period) {
       WeightHistoryPeriod.daily =>
         '${start.day.toString().toBanglaDigits()} – '
             '${history.end.day.toString().toBanglaDigits()} '
-            '${_monthName(start.month)}',
+            '${_monthName(l10n, start.month)}',
       WeightHistoryPeriod.weekly =>
-        '${_monthName(start.month)} ${start.year.toString().toBanglaDigits()}',
+        '${_monthName(l10n, start.month)} ${start.year.toString().toBanglaDigits()}',
       WeightHistoryPeriod.monthly => start.year.toString().toBanglaDigits(),
       WeightHistoryPeriod.yearly =>
         '${start.year.toString().toBanglaDigits()} – '
@@ -901,12 +902,8 @@ class _TrendChart extends StatelessWidget {
     };
   }
 
-  String _monthName(int month) {
-    const List<String> months = <String>[
-      'Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun',
-      'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec',
-    ];
-    return months[month - 1];
+  String _monthName(AppLocalizations l10n, int month) {
+    return localizedMonth(l10n, month);
   }
 }
 

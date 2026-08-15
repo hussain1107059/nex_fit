@@ -540,6 +540,18 @@ class AppLocalizationsEn extends AppLocalizations {
   String get dashboardSleepTracker => 'Sleep tracker';
 
   @override
+  String get dashboardLogSteps => 'Log steps';
+
+  @override
+  String get dashboardLogStepsTitle => 'Log steps';
+
+  @override
+  String get dashboardLogStepsHint => 'How many steps did you take?';
+
+  @override
+  String get dashboardLogStepsSuccess => 'Steps logged';
+
+  @override
   String get dashboardTodaysGoal => 'Today\'s goal';
 
   @override
@@ -646,6 +658,45 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get dashboardBmiSaved => 'BMI saved';
+
+  @override
+  String get sleepHistory => 'Sleep history';
+
+  @override
+  String get sleepHistoryEmpty => 'No sleep records';
+
+  @override
+  String get sleepHistoryEmptySubtitle => 'Log your sleep to start tracking.';
+
+  @override
+  String get sleepHistoryAdd => 'Log sleep';
+
+  @override
+  String get sleepHistoryNights => 'Nights';
+
+  @override
+  String get sleepHistoryAvgDuration => 'Avg duration';
+
+  @override
+  String get sleepHistoryAvgQuality => 'Avg quality';
+
+  @override
+  String get sleepEntryNote => 'Note (optional)';
+
+  @override
+  String get sleepLogTitle => 'Log sleep';
+
+  @override
+  String get sleepEditEntry => 'Edit sleep';
+
+  @override
+  String get sleepLogSaved => 'Sleep saved';
+
+  @override
+  String get sleepLogUpdated => 'Sleep updated';
+
+  @override
+  String get sleepLogDeleted => 'Sleep record deleted';
 
   @override
   String get dashboardSearchHint => 'Search workouts, foods, exercises...';
@@ -1972,6 +2023,9 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get weightTargetProgress => 'progress to goal';
+
+  @override
+  String get weightSetGoalHint => 'Tap the ring to set your target weight';
 
   @override
   String get weightBmi => 'BMI';

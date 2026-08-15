@@ -545,6 +545,18 @@ class AppLocalizationsBs extends AppLocalizations {
   String get dashboardSleepTracker => 'ঘুম ট্র্যাকার';
 
   @override
+  String get dashboardLogSteps => 'ধাপ যোগ করুন';
+
+  @override
+  String get dashboardLogStepsTitle => 'ধাপ যোগ করুন';
+
+  @override
+  String get dashboardLogStepsHint => 'আজ কতটি ধাপ নিয়েছেন?';
+
+  @override
+  String get dashboardLogStepsSuccess => 'ধাপ যোগ করা হয়েছে';
+
+  @override
   String get dashboardTodaysGoal => 'আজকের লক্ষ্য';
 
   @override
@@ -651,6 +663,46 @@ class AppLocalizationsBs extends AppLocalizations {
 
   @override
   String get dashboardBmiSaved => 'বিএমআই সংরক্ষিত হয়েছে';
+
+  @override
+  String get sleepHistory => 'ঘুমের ইতিহাস';
+
+  @override
+  String get sleepHistoryEmpty => 'কোনো ঘুমের রেকর্ড নেই';
+
+  @override
+  String get sleepHistoryEmptySubtitle =>
+      'ট্র্যাকিং শুরু করতে আপনার ঘুম যোগ করুন।';
+
+  @override
+  String get sleepHistoryAdd => 'ঘুম যোগ করুন';
+
+  @override
+  String get sleepHistoryNights => 'রাত';
+
+  @override
+  String get sleepHistoryAvgDuration => 'গড় সময়কাল';
+
+  @override
+  String get sleepHistoryAvgQuality => 'গড় মান';
+
+  @override
+  String get sleepEntryNote => 'নোট (ঐচ্ছিক)';
+
+  @override
+  String get sleepLogTitle => 'ঘুম যোগ করুন';
+
+  @override
+  String get sleepEditEntry => 'ঘুম সম্পাদনা করুন';
+
+  @override
+  String get sleepLogSaved => 'ঘুম সংরক্ষিত হয়েছে';
+
+  @override
+  String get sleepLogUpdated => 'ঘুম আপডেট হয়েছে';
+
+  @override
+  String get sleepLogDeleted => 'ঘুমের রেকর্ড মুছে ফেলা হয়েছে';
 
   @override
   String get dashboardSearchHint => 'ওয়ার্কআউট, খাবার, ব্যায়াম খুঁজুন...';
@@ -1981,6 +2033,9 @@ class AppLocalizationsBs extends AppLocalizations {
 
   @override
   String get weightTargetProgress => 'লক্ষ্যের অগ্রগতি';
+
+  @override
+  String get weightSetGoalHint => 'টার্গেট ওজন নির্ধারণ করতে রিংয়ে চাপ দিন';
 
   @override
   String get weightBmi => 'BMI';

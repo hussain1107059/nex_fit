@@ -51,7 +51,8 @@
 | `test/dashboard_finalization_test.dart` | 11/11 green (PROMPT 28 — dashboard reads bounded 7-day windows while `hasWeight`/`hasWorkouts` keep full-history meaning, sleep + lifetime XP metrics, `getByDateRange` on sleep/step repos; see `NEXFIT_DAO_SYNC_MIGRATION_PLAN.md` §24) |
 | `test/workout_finalization_test.dart` | 5/5 green (PROMPT 29 — routine tiles navigate to exercise detail, seeded exercises carry instructions for the player chip, seeding idempotent + never empty, equipment filter matches the real seeded catalog with localized labels, search self-seeds; see `NEXFIT_DAO_SYNC_MIGRATION_PLAN.md` §25) |
 | `test/nutrition_finalization_test.dart` | 10/10 green (PROMPT 30 — meal categories seeded with the six canonical slugs, daily slots always resolve to localized labels, catalog items expose ids, search self-seeds, category-filtered search matches, no corrupted `Â`/`Ã` bytes anywhere under `lib/`, en/bs meal-slot + month labels, localized `formatNutritionDate`, `MealSlotCard` renders clean `× ·` + localized slot name with raw-name fallback; see `NEXFIT_DAO_SYNC_MIGRATION_PLAN.md` §26) |
-| Full regression | **472 pass / 2 fail** — both pre-existing and unrelated |
+| `test/health_tracking_finalization_test.dart` | 6/6 green (PROMPT 31 — water reminders scoped to water type, sleep history newest-first, manual step log drives the dashboard summary, `StepEstimator` distance/calories, `SleepStats` aggregation, localized month/date en+bs with Bangla digits; see `NEXFIT_DAO_SYNC_MIGRATION_PLAN.md` §27) |
+| Full regression | **479 pass / 2 fail** — both pre-existing and unrelated |
 
 > Note on `test/large_dataset_sync_test.dart` (PROMPT 20): the 10,001-record
 > benchmark does real SQLite work (initial pull ≈12s + push ≈22s). On a loaded
@@ -94,6 +95,12 @@
   the catalog, history empty state, copy-yesterday centralized, localized
   months, self-seeding food search; see
   `NEXFIT_DAO_SYNC_MIGRATION_PLAN.md` §26.
+- Health tracking finalization (PROMPT 31) is complete — water reminders scoped
+  to water type + editable, tappable weight goal ring with hint, BMI height
+  pre-filled from profile, manual step-logging quick action, sleep history
+  screen with add/edit/delete + stats, dashboard sleep metric links to it,
+  localized months across water/weight flows; see
+  `NEXFIT_DAO_SYNC_MIGRATION_PLAN.md` §27.
 
 ## 4. Constants introduced
 

@@ -47,6 +47,7 @@ import '../screens/settings/support_settings_screen.dart';
 import '../screens/settings/sync_settings_screen.dart';
 import '../screens/settings/workout_settings_screen.dart';
 import '../screens/shell/app_shell_screen.dart';
+import '../screens/sleep/sleep_history_screen.dart';
 import '../screens/splash/splash_screen.dart';
 import '../screens/water/water_history_screen.dart';
 import '../screens/water/water_reminders_screen.dart';
@@ -85,6 +86,7 @@ abstract final class AppRoutes {
   static const String waterHistory = '/water/history';
   static const String waterStatistics = '/water/statistics';
   static const String waterReminders = '/water/reminders';
+  static const String sleepHistory = '/sleep/history';
   static const String weightHistory = '/weight/history';
   static const String weightStatistics = '/weight/statistics';
   static const String bodyMeasurement = '/weight/measurements';
@@ -310,6 +312,12 @@ final appRouterProvider = Provider<GoRouter>((ref) {
         name: 'water-reminders',
         builder: (BuildContext context, GoRouterState state) =>
             const WaterRemindersScreen(),
+      ),
+      GoRoute(
+        path: AppRoutes.sleepHistory,
+        name: 'sleep-history',
+        builder: (BuildContext context, GoRouterState state) =>
+            const SleepHistoryScreen(),
       ),
       GoRoute(
         path: AppRoutes.weightHistory,
