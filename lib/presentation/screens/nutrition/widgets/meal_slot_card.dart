@@ -271,7 +271,7 @@ class _EntryRow extends ConsumerWidget {
               fontWeight: FontWeight.w700,
             ),
           ),
-          PopupMenuButton<String>(
+PopupMenuButton<String>(
             padding: EdgeInsets.zero,
             iconSize: 20,
             onSelected: (String value) {

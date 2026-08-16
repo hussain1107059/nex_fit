@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Prevents Android Auto Backup from exporting the local SQFlite database
+     (which holds unencrypted fitness PII, PIN hashes and session tokens) and
+     the SharedPreferences/session data to Google Drive. The app's own Google
+     Drive backup feature encrypts user data explicitly; OS-level auto-backup
+     of raw app internals would defeat the app-lock and field encryption. -->
+<full-backup-content>
+    <exclude
+        domain="database"
+        path="." />
+    <exclude
+        domain="sharedpref"
+        path="." />
+    <exclude
+        domain="root"
+        path="." />
+    <exclude
+        domain="file"
+        path="." />
+    <exclude
+        domain="external"
+        path="." />
+    <exclude
+        domain="device_encrypted"
+        path="." />
+    <exclude
+        domain="device_protected"
+        path="." />
+</full-backup-content>

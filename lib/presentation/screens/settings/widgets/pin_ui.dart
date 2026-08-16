@@ -51,12 +51,14 @@ class PinPad extends StatelessWidget {
     required this.onBackspace,
     this.onBiometric,
     this.biometricAvailable = false,
+    this.enabled = true,
   });
 
   final ValueChanged<String> onDigit;
   final VoidCallback onBackspace;
   final VoidCallback? onBiometric;
   final bool biometricAvailable;
+  final bool enabled;
 
   @override
   Widget build(BuildContext context) {
@@ -81,33 +83,41 @@ class PinPad extends StatelessWidget {
               for (int col = 0; col < 3; col++)
                 _KeyButton(
                   label: keys[row * 3 + col],
-                  onTap: () => onDigit(keys[row * 3 + col]),
+                  enabled: enabled,
+                  onTap: enabled ? () => onDigit(keys[row * 3 + col]) : null,
                 ),
             ],
           ),
         Row(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
+            if (!biometricAvailable)
+              const SizedBox(width: 72 + AppSpacing.xs * 2)
+            else
+              _KeyButton(
+                label: '',
+                enabled: enabled,
+                leading: Icon(
+                  Icons.fingerprint_rounded,
+                  size: 28,
+                  color: context.colorScheme.primary,
+                ),
+                onTap: enabled && biometricAvailable ? onBiometric : null,
+              ),
             _KeyButton(
-              label: '',
-              leading: biometricAvailable
-                  ? Icon(
-                      Icons.fingerprint_rounded,
-                      size: 28,
-                      color: context.colorScheme.primary,
-                    )
-                  : null,
-              onTap: biometricAvailable ? onBiometric : null,
+              label: '0',
+              enabled: enabled,
+              onTap: enabled ? () => onDigit('0') : null,
             ),
-            _KeyButton(label: '0', onTap: () => onDigit('0')),
             _KeyButton(
               label: '',
+              enabled: enabled,
               leading: Icon(
                 Icons.backspace_outlined,
                 size: 24,
                 color: context.colorScheme.onSurfaceVariant,
               ),
-              onTap: onBackspace,
+              onTap: enabled ? onBackspace : null,
             ),
           ],
         ),
@@ -117,11 +127,17 @@ class PinPad extends StatelessWidget {
 }
 
 class _KeyButton extends StatelessWidget {
-  const _KeyButton({required this.label, this.leading, this.onTap});
+  const _KeyButton({
+    required this.label,
+    this.leading,
+    this.onTap,
+    this.enabled = true,
+  });
 
   final String label;
   final Widget? leading;
   final VoidCallback? onTap;
+  final bool enabled;
 
   @override
   Widget build(BuildContext context) {
@@ -133,21 +149,25 @@ class _KeyButton extends StatelessWidget {
         child: InkWell(
           onTap: onTap,
           borderRadius: BorderRadius.circular(999),
-          child: Container(
-            width: 72,
-            height: 72,
-            alignment: Alignment.center,
-            decoration: BoxDecoration(
-              shape: BoxShape.circle,
-              color: scheme.surfaceContainerHighest.withValues(alpha: 0.6),
-            ),
-            child: leading ??
-                Text(
-                  label,
-                  style: context.textTheme.headlineSmall?.copyWith(
-                    fontWeight: FontWeight.w700,
+          child: AnimatedOpacity(
+            duration: const Duration(milliseconds: 150),
+            opacity: enabled ? 1.0 : 0.35,
+            child: Container(
+              width: 72,
+              height: 72,
+              alignment: Alignment.center,
+              decoration: BoxDecoration(
+                shape: BoxShape.circle,
+                color: scheme.surfaceContainerHighest.withValues(alpha: 0.6),
+              ),
+              child: leading ??
+                  Text(
+                    label,
+                    style: context.textTheme.headlineSmall?.copyWith(
+                      fontWeight: FontWeight.w700,
+                    ),
                   ),
-                ),
+            ),
           ),
         ),
       ),

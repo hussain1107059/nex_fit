@@ -24,10 +24,19 @@ class LockScreen extends ConsumerStatefulWidget {
 class _LockScreenState extends ConsumerState<LockScreen> {
   static const int _pinLength = 4;
 
+  /// Consecutive failed attempts that trigger an escalating retry delay.
+  /// The counter is in-memory and resets on app restart (the lock is a
+  /// rapid-brute-force deterrent, not a cryptographic guarantee).
+  static const int _failuresBeforeDelay = 5;
+
   final List<String> _entered = <String>[];
   bool _error = false;
   bool _checking = false;
   Timer? _errorTimer;
+
+  int _consecutiveFailures = 0;
+  DateTime? _lockedUntil;
+  Timer? _lockTick;
 
   @override
   void initState() {
@@ -38,7 +47,43 @@ class _LockScreenState extends ConsumerState<LockScreen> {
   @override
   void dispose() {
     _errorTimer?.cancel();
+    _lockTick?.cancel();
     super.dispose();
+  }
+
+  bool get _locked {
+    final DateTime? until = _lockedUntil;
+    return until != null && until.isAfter(DateTime.now());
+  }
+
+  int get _lockRemainingSeconds {
+    final DateTime? until = _lockedUntil;
+    if (until == null) return 0;
+    final int seconds = until.difference(DateTime.now()).inSeconds;
+    return seconds < 0 ? 0 : seconds;
+  }
+
+  Duration _delayForFailures(int failures) {
+    if (failures >= 10) return const Duration(minutes: 5);
+    if (failures >= 8) return const Duration(minutes: 2);
+    if (failures >= 6) return const Duration(minutes: 1);
+    return const Duration(seconds: 30);
+  }
+
+  void _startLockout() {
+    _lockedUntil = DateTime.now().add(
+      _delayForFailures(_consecutiveFailures),
+    );
+    _lockTick?.cancel();
+    _lockTick = Timer.periodic(const Duration(seconds: 1), (_) {
+      if (!mounted) return;
+      if (!_locked) {
+        _lockTick?.cancel();
+        setState(() {});
+        return;
+      }
+      setState(() {});
+    });
   }
 
   Future<void> _tryBiometric() async {
@@ -56,7 +101,7 @@ class _LockScreenState extends ConsumerState<LockScreen> {
   }
 
   void _onDigit(String digit) {
-    if (_checking) return;
+    if (_checking || _locked) return;
     if (_entered.length >= _pinLength) return;
     setState(() {
       _entered.add(digit);
@@ -68,7 +113,7 @@ class _LockScreenState extends ConsumerState<LockScreen> {
   }
 
   void _onBackspace() {
-    if (_entered.isEmpty || _checking) return;
+    if (_entered.isEmpty || _checking || _locked) return;
     setState(() {
       _entered.removeLast();
       _error = false;
@@ -76,6 +121,7 @@ class _LockScreenState extends ConsumerState<LockScreen> {
   }
 
   Future<void> _verify() async {
+    if (_locked) return;
     setState(() => _checking = true);
     final String pin = _entered.join();
     final bool ok = await ref
@@ -83,13 +129,22 @@ class _LockScreenState extends ConsumerState<LockScreen> {
         .verifyPin(pin);
     if (!mounted) return;
     if (ok) {
+      _consecutiveFailures = 0;
+      _lockTick?.cancel();
+      _lockedUntil = null;
       await ref.read(appLockProvider.notifier).unlock();
       return;
     }
+    _consecutiveFailures++;
     setState(() {
       _checking = false;
       _error = true;
+      if (_consecutiveFailures >= _failuresBeforeDelay) {
+        _startLockout();
+        _entered.clear();
+      }
     });
+    if (_locked) return;
     _errorTimer?.cancel();
     _errorTimer = Timer(const Duration(milliseconds: 700), () {
       if (!mounted) return;
@@ -106,6 +161,8 @@ class _LockScreenState extends ConsumerState<LockScreen> {
     final bool biometricEnabled =
         ref.watch(settingsControllerProvider).valueOrNull?.biometricEnabled ??
         false;
+    final bool locked = _locked;
+    final int remaining = _lockRemainingSeconds;
 
     return Scaffold(
       body: Container(
@@ -121,57 +178,79 @@ class _LockScreenState extends ConsumerState<LockScreen> {
           ),
         ),
         child: SafeArea(
-          child: Column(
-            children: [
-              AppSpacing.xxxl.heightSpace,
-              Container(
-                width: 84,
-                height: 84,
-                decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(24),
-                  color: scheme.primaryContainer.withValues(alpha: 0.5),
-                ),
-                padding: const EdgeInsets.all(AppSpacing.sm),
-                child: Image.asset(AppAssets.logo, fit: BoxFit.contain),
-              ),
-              AppSpacing.xl.heightSpace,
-              Text(
-                context.l10n.settingsLockTitle,
-                style: context.textTheme.headlineSmall?.copyWith(
-                  fontWeight: FontWeight.w800,
-                ),
-              ),
-              AppSpacing.xs.heightSpace,
-              Text(
-                context.l10n.settingsLockSubtitle,
-                style: context.textTheme.bodyMedium?.copyWith(
-                  color: scheme.onSurfaceVariant,
-                ),
-              ),
-              AppSpacing.xl.heightSpace,
-              PinDots(
-                length: _pinLength,
-                entered: _entered.length,
-                error: _error,
-              ),
-              AppSpacing.xs.heightSpace,
-              if (_error)
-                Text(
-                  context.l10n.settingsPinIncorrect,
-                  style: context.textTheme.bodySmall?.copyWith(
-                    color: scheme.error,
-                    fontWeight: FontWeight.w600,
+          child: LayoutBuilder(
+            builder: (BuildContext context, BoxConstraints constraints) {
+              return SingleChildScrollView(
+                child: ConstrainedBox(
+                  constraints: BoxConstraints(
+                    minHeight: constraints.maxHeight,
+                  ),
+                  child: IntrinsicHeight(
+                    child: Column(
+                      children: [
+                        AppSpacing.xxxl.heightSpace,
+                        Container(
+                          width: 84,
+                          height: 84,
+                          decoration: BoxDecoration(
+                            borderRadius: BorderRadius.circular(24),
+                            color: scheme.primaryContainer.withValues(alpha: 0.5),
+                          ),
+                          padding: const EdgeInsets.all(AppSpacing.sm),
+                          child: Image.asset(AppAssets.logo, fit: BoxFit.contain),
+                        ),
+                        AppSpacing.xl.heightSpace,
+                        Text(
+                          context.l10n.settingsLockTitle,
+                          style: context.textTheme.headlineSmall?.copyWith(
+                            fontWeight: FontWeight.w800,
+                          ),
+                        ),
+                        AppSpacing.xs.heightSpace,
+                        Text(
+                          context.l10n.settingsLockSubtitle,
+                          style: context.textTheme.bodyMedium?.copyWith(
+                            color: scheme.onSurfaceVariant,
+                          ),
+                        ),
+                        AppSpacing.xl.heightSpace,
+                        PinDots(
+                          length: _pinLength,
+                          entered: _entered.length,
+                          error: _error,
+                        ),
+                        AppSpacing.xs.heightSpace,
+                        if (locked)
+                          Text(
+                            context.l10n.settingsLockTooManyAttempts(remaining + 1),
+                            style: context.textTheme.bodySmall?.copyWith(
+                              color: scheme.error,
+                              fontWeight: FontWeight.w600,
+                            ),
+                          )
+                        else if (_error)
+                          Text(
+                            context.l10n.settingsPinIncorrect,
+                            style: context.textTheme.bodySmall?.copyWith(
+                              color: scheme.error,
+                              fontWeight: FontWeight.w600,
+                            ),
+                          ),
+                        const Spacer(),
+                        PinPad(
+                          onDigit: _onDigit,
+                          onBackspace: _onBackspace,
+                          onBiometric: _tryBiometric,
+                          biometricAvailable: biometricEnabled,
+                          enabled: !locked,
+                        ),
+                        AppSpacing.xxl.heightSpace,
+                      ],
+                    ),
                   ),
                 ),
-              const Spacer(),
-              PinPad(
-                onDigit: _onDigit,
-                onBackspace: _onBackspace,
-                onBiometric: _tryBiometric,
-                biometricAvailable: biometricEnabled,
-              ),
-              AppSpacing.xxl.heightSpace,
-            ],
+              );
+            },
           ),
         ),
       ),

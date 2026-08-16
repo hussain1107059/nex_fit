@@ -35,7 +35,11 @@ class NutritionSettingsScreen extends ConsumerWidget {
               SettingsTile(
                 icon: Icons.local_fire_department_rounded,
                 title: context.l10n.settingsDailyCalories,
-                value: _grams(context, settings?.dailyCalorieTarget),
+                value: _grams(
+                  context,
+                  settings?.dailyCalorieTarget,
+                  context.l10n.dashboardKcalUnit,
+                ),
                 onTap: () => _editGoal<double>(
                   context: context,
                   title: context.l10n.settingsDailyCalories,
@@ -48,7 +52,11 @@ class NutritionSettingsScreen extends ConsumerWidget {
               SettingsTile(
                 icon: Icons.egg_alt_rounded,
                 title: context.l10n.settingsProtein,
-                value: _grams(context, settings?.proteinGoal),
+                value: _grams(
+                  context,
+                  settings?.proteinGoal,
+                  context.l10n.settingsGramUnit,
+                ),
                 onTap: () => _editGoal<double>(
                   context: context,
                   title: context.l10n.settingsProtein,
@@ -61,7 +69,11 @@ class NutritionSettingsScreen extends ConsumerWidget {
               SettingsTile(
                 icon: Icons.grain_rounded,
                 title: context.l10n.settingsCarbs,
-                value: _grams(context, settings?.carbsGoal),
+                value: _grams(
+                  context,
+                  settings?.carbsGoal,
+                  context.l10n.settingsGramUnit,
+                ),
                 onTap: () => _editGoal<double>(
                   context: context,
                   title: context.l10n.settingsCarbs,
@@ -74,7 +86,11 @@ class NutritionSettingsScreen extends ConsumerWidget {
               SettingsTile(
                 icon: Icons.bloodtype_rounded,
                 title: context.l10n.settingsFat,
-                value: _grams(context, settings?.fatGoal),
+                value: _grams(
+                  context,
+                  settings?.fatGoal,
+                  context.l10n.settingsGramUnit,
+                ),
                 onTap: () => _editGoal<double>(
                   context: context,
                   title: context.l10n.settingsFat,
@@ -114,8 +130,8 @@ class NutritionSettingsScreen extends ConsumerWidget {
     );
   }
 
-  String _grams(BuildContext context, double? value) =>
-      value == null ? '—' : '${value.round().toString()} g';
+String _grams(BuildContext context, double? value, String unit) =>
+    value == null ? '—' : '${value.round().toString()} $unit';
 
   Future<void> _editGoal<T extends num>({
     required BuildContext context,

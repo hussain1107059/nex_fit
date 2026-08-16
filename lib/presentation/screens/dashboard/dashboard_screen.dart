@@ -9,7 +9,6 @@ import '../../../domain/entities/app_user.dart';
 import '../../../domain/entities/dashboard_data.dart';
 import '../../providers/auth_provider.dart';
 import '../../providers/dashboard_providers.dart';
-import '../../providers/sync_providers.dart';
 import '../../router/app_router.dart';
 import 'widgets/achievements_section.dart';
 import 'widgets/backup_card.dart';
@@ -52,13 +51,6 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
     final AsyncValue<DashboardData> async = ref.watch(
       dashboardControllerProvider,
     );
-
-    // Keep the offline sync queue snapshot fresh for the health card.
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      if (mounted) {
-        ref.read(syncControllerProvider.notifier).refresh();
-      }
-    });
 
     return Scaffold(
       body: SafeArea(

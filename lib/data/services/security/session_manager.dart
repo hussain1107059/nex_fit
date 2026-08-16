@@ -7,6 +7,7 @@ import '../../../domain/entities/app_session.dart';
 import '../../../domain/entities/security_enums.dart';
 import '../../../domain/repositories/session_repository.dart';
 import '../storage/secure_storage_service.dart';
+import '../sync/sync_log.dart';
 import 'device_id_service.dart';
 
 /// Secure session lifecycle: token issuance, expiry, activity tracking and
@@ -96,7 +97,8 @@ class SessionManager {
 
     if (session.deviceId != deviceId) {
       _logger.warning(
-        'Session device mismatch for $userId; deactivating for secure logout',
+        'Session device mismatch for ${SyncLog.maskUserId(userId)}; '
+        'deactivating for secure logout',
       );
       await repository.deactivateByUserId(userId);
       return SessionStatus.deviceChanged;

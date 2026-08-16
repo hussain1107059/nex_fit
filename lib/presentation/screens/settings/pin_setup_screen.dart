@@ -143,53 +143,69 @@ class _PinSetupScreenState extends ConsumerState<PinSetupScreen> {
     return Scaffold(
       appBar: AppBar(title: Text(context.l10n.settingsPinLock)),
       body: SafeArea(
-        child: Column(
-          children: [
-            AppSpacing.xl.heightSpace,
-            Icon(
-              Icons.lock_rounded,
-              size: 56,
-              color: scheme.primary,
-            ),
-            AppSpacing.lg.heightSpace,
-            Text(
-              title,
-              style: context.textTheme.headlineSmall?.copyWith(
-                fontWeight: FontWeight.w800,
-              ),
-            ),
-            AppSpacing.xs.heightSpace,
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: AppSpacing.xl),
-              child: Text(
-                subtitle,
-                textAlign: TextAlign.center,
-                style: context.textTheme.bodyMedium?.copyWith(
-                  color: scheme.onSurfaceVariant,
+        child: LayoutBuilder(
+          builder: (BuildContext context, BoxConstraints constraints) {
+            return SingleChildScrollView(
+              child: ConstrainedBox(
+                constraints: BoxConstraints(minHeight: constraints.maxHeight),
+                child: IntrinsicHeight(
+                  child: Column(
+                    children: [
+                      AppSpacing.xl.heightSpace,
+                      Icon(
+                        Icons.lock_rounded,
+                        size: 56,
+                        color: scheme.primary,
+                      ),
+                      AppSpacing.lg.heightSpace,
+                      Text(
+                        title,
+                        style: context.textTheme.headlineSmall?.copyWith(
+                          fontWeight: FontWeight.w800,
+                        ),
+                      ),
+                      AppSpacing.xs.heightSpace,
+                      Padding(
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: AppSpacing.xl,
+                        ),
+                        child: Text(
+                          subtitle,
+                          textAlign: TextAlign.center,
+                          style: context.textTheme.bodyMedium?.copyWith(
+                            color: scheme.onSurfaceVariant,
+                          ),
+                        ),
+                      ),
+                      AppSpacing.lg.heightSpace,
+                      PinDots(
+                        length: _pinLength,
+                        entered: _current.length,
+                        error: _error,
+                      ),
+                      AppSpacing.xs.heightSpace,
+                      if (_error)
+                        Text(
+                          _isCurrent
+                              ? context.l10n.settingsPinIncorrect
+                              : context.l10n.settingsPinMismatch,
+                          style: context.textTheme.bodySmall?.copyWith(
+                            color: scheme.error,
+                            fontWeight: FontWeight.w600,
+                          ),
+                        ),
+                      const Spacer(),
+                      PinPad(
+                        onDigit: _onDigit,
+                        onBackspace: _onBackspace,
+                      ),
+                      AppSpacing.xxl.heightSpace,
+                    ],
+                  ),
                 ),
               ),
-            ),
-            AppSpacing.lg.heightSpace,
-            PinDots(
-              length: _pinLength,
-              entered: _current.length,
-              error: _error,
-            ),
-            AppSpacing.xs.heightSpace,
-            if (_error)
-              Text(
-                _isCurrent
-                    ? context.l10n.settingsPinIncorrect
-                    : context.l10n.settingsPinMismatch,
-                style: context.textTheme.bodySmall?.copyWith(
-                  color: scheme.error,
-                  fontWeight: FontWeight.w600,
-                ),
-              ),
-            const Spacer(),
-            PinPad(onDigit: _onDigit, onBackspace: _onBackspace),
-            AppSpacing.xxl.heightSpace,
-          ],
+            );
+          },
         ),
       ),
     );

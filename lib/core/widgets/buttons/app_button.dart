@@ -117,7 +117,7 @@ class AppButton extends StatelessWidget {
       AppButtonSize.large => AppSpacing.xxl,
     };
     final double vertical = switch (size) {
-      AppButtonSize.small => AppSpacing.xs,
+      AppButtonSize.small => AppSpacing.sm,
       AppButtonSize.medium => AppSpacing.md,
       AppButtonSize.large => AppSpacing.lg,
     };

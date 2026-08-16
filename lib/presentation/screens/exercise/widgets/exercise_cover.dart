@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 
+import '../../../../core/extensions/context_extensions.dart';
 import '../../../../core/theme/app_radius.dart';
 import '../../../../domain/entities/exercise_category.dart';
 
@@ -63,7 +64,12 @@ class ExerciseCover extends StatelessWidget {
         child: Icon(
           icon ?? exerciseCategoryIconFor(category),
           size: height * 0.4,
-          color: Colors.white.withValues(alpha: 0.92),
+          color: Color.alphaBlend(
+            base.withValues(alpha: 0.72),
+            context.colorScheme.surface,
+          ).computeLuminance() > 0.5
+              ? Colors.black87.withValues(alpha: 0.92)
+              : Colors.white.withValues(alpha: 0.92),
         ),
       ),
     );

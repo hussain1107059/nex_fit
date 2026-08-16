@@ -401,6 +401,15 @@ class AppLocalizationsEn extends AppLocalizations {
   String get authSignOutConfirmMessage => 'Are you sure you want to sign out?';
 
   @override
+  String get authEmailHint => 'you@example.com';
+
+  @override
+  String get authShowPassword => 'Show password';
+
+  @override
+  String get authHidePassword => 'Hide password';
+
+  @override
   String get dashboardTemporaryTitle => 'Temporary Dashboard';
 
   @override
@@ -499,6 +508,33 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get dashboardXp => 'XP';
+
+  @override
+  String get dashboardGamification => 'Gamification';
+
+  @override
+  String get dashboardLevel => 'Level';
+
+  @override
+  String dashboardLevelValue(Object level) {
+    return 'Level $level';
+  }
+
+  @override
+  String dashboardXpProgress(Object current, Object required) {
+    return '$current / $required XP';
+  }
+
+  @override
+  String get dashboardNoActiveChallenge => 'No active challenge';
+
+  @override
+  String dashboardChallengeWithReward(Object reward, Object title) {
+    return '$title • $reward XP';
+  }
+
+  @override
+  String get dashboardProgress => 'Progress';
 
   @override
   String get dashboardSleepHour => 'h';
@@ -3174,6 +3210,11 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get settingsLockSubtitle => 'Enter your PIN to continue';
+
+  @override
+  String settingsLockTooManyAttempts(Object seconds) {
+    return 'Too many attempts. Try again in $seconds s';
+  }
 
   @override
   String get settingsStorageUsage => 'Usage';

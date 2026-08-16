@@ -117,7 +117,9 @@ class _AppTextFieldState extends State<AppTextField> {
     if (_isPasswordField) {
       return IconButton(
         onPressed: () => setState(() => _obscured = !_obscured),
-        tooltip: _obscured ? 'Show' : 'Hide',
+        tooltip: _obscured
+            ? context.l10n.authShowPassword
+            : context.l10n.authHidePassword,
         icon: Icon(
           _obscured ? Icons.visibility_rounded : Icons.visibility_off_rounded,
           size: 22,

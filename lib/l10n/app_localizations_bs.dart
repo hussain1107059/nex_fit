@@ -406,6 +406,15 @@ class AppLocalizationsBs extends AppLocalizations {
       'আপনি কি নিশ্চিত যে সাইন আউট করতে চান?';
 
   @override
+  String get authEmailHint => 'you@example.com';
+
+  @override
+  String get authShowPassword => 'পাসওয়ার্ড দেখুন';
+
+  @override
+  String get authHidePassword => 'পাসওয়ার্ড লুকান';
+
+  @override
   String get dashboardTemporaryTitle => 'অস্থায়ী ড্যাশবোর্ড';
 
   @override
@@ -504,6 +513,33 @@ class AppLocalizationsBs extends AppLocalizations {
 
   @override
   String get dashboardXp => 'এক্সপি';
+
+  @override
+  String get dashboardGamification => 'গেমিফিকেশন';
+
+  @override
+  String get dashboardLevel => 'লেভেল';
+
+  @override
+  String dashboardLevelValue(Object level) {
+    return 'লেভেল $level';
+  }
+
+  @override
+  String dashboardXpProgress(Object current, Object required) {
+    return '$current / $required এক্সপি';
+  }
+
+  @override
+  String get dashboardNoActiveChallenge => 'কোনো সক্রিয় চ্যালেঞ্জ নেই';
+
+  @override
+  String dashboardChallengeWithReward(Object reward, Object title) {
+    return '$title • $reward এক্সপি';
+  }
+
+  @override
+  String get dashboardProgress => 'অগ্রগতি';
 
   @override
   String get dashboardSleepHour => 'ঘণ্টা';
@@ -3181,6 +3217,11 @@ class AppLocalizationsBs extends AppLocalizations {
 
   @override
   String get settingsLockSubtitle => 'চালিয়ে যেতে আপনার PIN লিখুন';
+
+  @override
+  String settingsLockTooManyAttempts(Object seconds) {
+    return 'অনেকবার চেষ্টা হয়েছে। $seconds সেকেন্ড পরে আবার চেষ্টা করুন';
+  }
 
   @override
   String get settingsStorageUsage => 'ব্যবহার';

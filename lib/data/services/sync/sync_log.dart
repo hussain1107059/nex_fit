@@ -40,4 +40,12 @@ abstract final class SyncLog {
         ? uuid
         : '${uuid.substring(0, AppConstants.syncLogMaxEventUuidChars)}…';
   }
+
+  /// Shortens a user id for logs so the full account uuid never leaks.
+  static String maskUserId(String? userId) {
+    if (userId == null || userId.isEmpty) return 'n/a';
+    return userId.length <= AppConstants.syncLogMaxEventUuidChars
+        ? userId
+        : '${userId.substring(0, AppConstants.syncLogMaxEventUuidChars)}…';
+  }
 }

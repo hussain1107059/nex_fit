@@ -81,11 +81,15 @@ class ExerciseCard extends StatelessWidget {
                         color: context.colorScheme.onSurfaceVariant,
                       ),
                       4.widthSpace,
-                      Text(
-                        '${exercise.totalDurationSeconds.toString().toBanglaDigits()} '
-                        '${l10n.workoutSeconds}',
-                        style: context.textTheme.labelSmall?.copyWith(
-                          color: context.colorScheme.onSurfaceVariant,
+                      Flexible(
+                        child: Text(
+                          '${exercise.totalDurationSeconds.toString().toBanglaDigits()} '
+                          '${l10n.workoutSeconds}',
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis,
+                          style: context.textTheme.labelSmall?.copyWith(
+                            color: context.colorScheme.onSurfaceVariant,
+                          ),
                         ),
                       ),
                       12.widthSpace,
@@ -95,11 +99,15 @@ class ExerciseCard extends StatelessWidget {
                         color: context.colorScheme.tertiary,
                       ),
                       4.widthSpace,
-                      Text(
-                        '${exercise.totalEstimatedCalories.round().toString().toBanglaDigits()} '
-                        '${l10n.dashboardKcalUnit}',
-                        style: context.textTheme.labelSmall?.copyWith(
-                          color: context.colorScheme.onSurfaceVariant,
+                      Flexible(
+                        child: Text(
+                          '${exercise.totalEstimatedCalories.round().toString().toBanglaDigits()} '
+                          '${l10n.dashboardKcalUnit}',
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis,
+                          style: context.textTheme.labelSmall?.copyWith(
+                            color: context.colorScheme.onSurfaceVariant,
+                          ),
                         ),
                       ),
                     ],

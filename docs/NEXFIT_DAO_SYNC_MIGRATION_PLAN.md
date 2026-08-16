@@ -1528,3 +1528,80 @@ dedicated tests.
 - `flutter analyze` — clean.
 - Full regression: **518 pass / 2 fail** — the same two pre-existing failures
   (`session_manager` device-change, `hydration_repository` loadStatistics).
+
+## 31. Performance Audit (PROMPT 37)
+
+Audited the SQLite queries, indexes, Riverpod providers, sync batching, memory,
+images, animations, startup and the search/dashboard hot paths. Full detail:
+`docs/NEXFIT_PERFORMANCE_AUDIT.md`.
+
+### Review outcome
+- `EXPLAIN QUERY PLAN` (via `test/performance_audit_test.dart`, 6/6 green)
+  proved every dashboard 7-day range read and every sync/outbox hot path is
+  already index-served by the composite `(user_id, timestamp)` and `(user_id,
+  status)` indexes from migrations v14+. **No new indexes were needed.**
+- Fixed (evidence-driven):
+  1. `workout_seeder.dart` re-committed an ~84-row seed batch on every workout
+     search/build keystroke — added a `COUNT(*)` early-return guard.
+  2. Exercise + workout search lacked debouncing — added 250 ms debounces
+     (mirrors the food search).
+  3. `dashboard_screen.dart` refreshed the sync health card on every build via
+     `addPostFrameCallback` — removed (the sync controller refreshes itself on
+     completion).
+- Deliberately unchanged (documented): sequential per-event push (correctness /
+  ordering contract), `systemHealthProvider` live `integrity_check`
+  (correctness-critical), non-lazy food catalog (bounded, grouped), `repeat()`
+  animations (gated off-tab by `TickerMode`), cold-start tab pre-warm (app-shell
+  design).
+
+### Verification
+- `test/performance_audit_test.dart` — **6/6 green** (EXPLAIN QUERY PLAN
+  evidence).
+- `flutter analyze` — clean.
+- Full regression: **524 pass / 2 fail** — the same two pre-existing failures.
+
+## 32. Complete Application Security Audit (PROMPT 38)
+
+Full client-side security audit of auth & sessions, local storage, the sync
+layer, network posture, logging, Android OS-level backup and dependencies.
+Severity table and rationale: `docs/NEXFIT_SECURITY_AUDIT.md`.
+
+### Fixes applied
+1. **Supabase JWT session moved to the OS keychain.** `SecureLocalStorage`
+   (flutter_secure_storage) replaces the default plaintext
+   `SharedPreferencesLocalStorage` (`supabase_service.dart` → `authOptions`).
+   Closes the access+refresh-token-at-rest exposure.
+2. **PIN hashing upgraded to PBKDF2-HMAC-SHA256** with a random 16-byte salt
+   (120k iterations), stored as `nk2:<iter>:<saltB64>:<hashB64>`, verified in
+   constant time. Legacy SHA-256 static-salt hashes still verify and are
+   re-hashed in place on the next successful unlock (`PinHasher`,
+   `settings_providers.verifyPin`).
+3. **Lock screen escalating retry delay.** After 5 consecutive failures the
+   pad locks for 30 s → 1 min → 2 min → 5 min with a live countdown
+   (`lock_screen.dart`, `pin_ui.dart` `enabled` flag, new `settingsLockTooManyAttempts`
+   l10n key).
+4. **Client-side cross-user push guard.** `SupabaseSyncTransport._requireUserId`
+   now throws non-retryable `security_policy_violation` when the event user ≠
+   the authenticated session user (defense-in-depth below server RLS).
+5. **Android OS backup disabled.** `allowBackup="false"` +
+   `dataExtractionRules`/`fullBackupContent` exclude every domain from cloud
+   backup and device transfer — the unencrypted DB and SharedPreferences no
+   longer leave the device.
+6. **User ids masked in logs.** `SyncLog.maskUserId` applied in the sync engine,
+   transport, session manager and Realtime notifier.
+7. Cleanup: removed 4 dead legacy token keys; `.gitignore` excludes `*.env`.
+
+### Documented by design
+Unencrypted SQLite at rest (mitigated by field encryption, app-lock, FLAG_SECURE,
+no OS backup), plaintext `sessions.token` (device-local random session id),
+account deletion not wiping local data (offline-first + manual "delete local
+data"), logout keeping secure storage (offline-first), client-side ownership
+guards in 2/20 DAOs (server RLS authoritative), `event_uuid` not sent to the
+server (record-uuid upsert dedupes), raw server errors in debug-only logs
+(release emits nothing).
+
+### Verification
+- New `test/security_hardening_test.dart` — **6/6 green** (PBKDF2 format,
+  random salt, tamper rejection, legacy verification, upgrade semantics).
+- `flutter analyze` — clean.
+- Full regression: **530 pass / 2 fail** — the same two pre-existing failures.

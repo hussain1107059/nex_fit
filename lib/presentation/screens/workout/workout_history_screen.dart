@@ -4,6 +4,7 @@ import 'package:go_router/go_router.dart';
 
 import '../../../core/extensions/context_extensions.dart';
 import '../../../core/extensions/string_extensions.dart';
+import '../../../core/utils/date_formatting.dart';
 import '../../../core/theme/app_radius.dart';
 import '../../../core/theme/app_spacing.dart';
 import '../../../core/widgets/cards/app_card.dart';
@@ -208,7 +209,7 @@ class _SessionTile extends StatelessWidget {
                 ),
                 const SizedBox(height: 2),
                 Text(
-                  _formatDate(endedAt),
+                  _formatDate(context.l10n, endedAt),
                   style: context.textTheme.labelSmall?.copyWith(
                     color: context.colorScheme.onSurfaceVariant,
                   ),
@@ -241,7 +242,7 @@ class _SessionTile extends StatelessWidget {
     );
   }
 
-  String _formatDate(DateTime date) {
+  String _formatDate(AppLocalizations l10n, DateTime date) {
     final DateTime now = DateTime.now();
     final DateTime day = DateTime(date.year, date.month, date.day);
     final DateTime today = DateTime(now.year, now.month, now.day);
@@ -252,20 +253,7 @@ class _SessionTile extends StatelessWidget {
     final String time = '$hour:$minute';
 
     if (difference == 0 || difference == 1) return time;
-    final String month = switch (date.month) {
-      1 => 'Jan',
-      2 => 'Feb',
-      3 => 'Mar',
-      4 => 'Apr',
-      5 => 'May',
-      6 => 'Jun',
-      7 => 'Jul',
-      8 => 'Aug',
-      9 => 'Sep',
-      10 => 'Oct',
-      11 => 'Nov',
-      _ => 'Dec',
-    };
+    final String month = localizedMonth(l10n, date.month);
     return '${date.day.toString().toBanglaDigits()} $month'
         '${date.year != now.year ? ' ${date.year.toString().toBanglaDigits()}' : ''}';
   }

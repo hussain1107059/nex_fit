@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+import '../../../../core/extensions/context_extensions.dart';
 import '../../../../core/theme/app_radius.dart';
 import '../../../../core/theme/app_spacing.dart';
 import '../../../providers/auth_provider.dart';
@@ -43,7 +44,7 @@ class GamificationOverviewCard extends ConsumerWidget {
               ),
               const SizedBox(width: AppSpacing.sm),
               Text(
-                'Gamification',
+                context.l10n.dashboardGamification,
                 style: Theme.of(context).textTheme.titleMedium?.copyWith(
                   fontWeight: FontWeight.w800,
                 ),
@@ -62,8 +63,22 @@ class GamificationOverviewCard extends ConsumerWidget {
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
-                      Text('Level $currentLevel'),
-                      Text('${level?.currentXp ?? 0} / $requiredXp XP'),
+                      Text(
+                        context.l10n.dashboardLevelValue(currentLevel),
+                        style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                          fontWeight: FontWeight.w700,
+                        ),
+                      ),
+                      Text(
+                        context.l10n.dashboardXpProgress(
+                          (level?.currentXp ?? 0).toString(),
+                          requiredXp.toString(),
+                        ),
+                        style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                          color: Theme.of(context).colorScheme.onSurfaceVariant,
+                          fontWeight: FontWeight.w600,
+                        ),
+                      ),
                     ],
                   ),
                   const SizedBox(height: AppSpacing.sm),
@@ -89,8 +104,11 @@ class GamificationOverviewCard extends ConsumerWidget {
                   Expanded(
                     child: Text(
                       challenge == null
-                          ? 'No active challenge'
-                          : '${challenge.title} • ${challenge.rewardXp} XP',
+                          ? context.l10n.dashboardNoActiveChallenge
+                          : context.l10n.dashboardChallengeWithReward(
+                              challenge.title,
+                              challenge.rewardXp.toString(),
+                            ),
                       maxLines: 2,
                       overflow: TextOverflow.ellipsis,
                     ),

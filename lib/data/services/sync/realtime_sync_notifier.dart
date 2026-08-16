@@ -58,7 +58,10 @@ class SupabaseRealtimeChannelGateway implements RealtimeChannelGateway {
                   _logger,
                   SyncLog.start,
                   'realtime ${payload.eventType} ${payload.table} '
-                  '${payload.newRecord['id'] ?? payload.oldRecord['id']}',
+                  '${SyncLog.maskEventUuid(
+                    (payload.newRecord['id'] ?? payload.oldRecord['id'])
+                        ?.toString(),
+                  )}',
                 );
                 onEvent();
               },

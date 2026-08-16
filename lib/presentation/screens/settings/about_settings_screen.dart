@@ -20,7 +20,7 @@ class AboutSettingsScreen extends ConsumerWidget {
       body: ListView(
         padding: const EdgeInsets.fromLTRB(
           AppSpacing.md,
-          AppSpacing.lg,
+          AppSpacing.sm,
           AppSpacing.md,
           AppSpacing.xxl,
         ),
@@ -47,7 +47,7 @@ class AboutSettingsScreen extends ConsumerWidget {
           ),
           AppSpacing.xs.heightSpace,
           Text(
-            '${context.l10n.settingsAboutVersion} 1.0.0',
+            '${context.l10n.settingsAboutVersion} ${AppConstants.appVersion}',
             textAlign: TextAlign.center,
             style: context.textTheme.bodyMedium?.copyWith(
               color: scheme.onSurfaceVariant,

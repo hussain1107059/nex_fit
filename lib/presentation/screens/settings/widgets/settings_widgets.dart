@@ -98,6 +98,8 @@ class SettingsTile extends StatelessWidget {
       leading: Icon(icon, color: accent),
       title: Text(
         title,
+        maxLines: 1,
+        overflow: TextOverflow.ellipsis,
         style: context.textTheme.bodyLarge?.copyWith(
           fontWeight: FontWeight.w600,
           color: destructive ? scheme.error : null,
@@ -121,6 +123,8 @@ class SettingsTile extends StatelessWidget {
                           if (value != null)
                             Text(
                               value!,
+                              maxLines: 1,
+                              overflow: TextOverflow.ellipsis,
                               style: context.textTheme.bodyMedium?.copyWith(
                                 color: destructive
                                     ? scheme.error
@@ -140,6 +144,8 @@ class SettingsTile extends StatelessWidget {
                     : (value != null
                           ? Text(
                               value!,
+                              maxLines: 1,
+                              overflow: TextOverflow.ellipsis,
                               style: context.textTheme.bodyMedium?.copyWith(
                                 color: destructive
                                     ? scheme.error

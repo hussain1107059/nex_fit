@@ -28,7 +28,7 @@ class AccountSettingsScreen extends ConsumerWidget {
       body: ListView(
         padding: const EdgeInsets.fromLTRB(
           AppSpacing.md,
-          AppSpacing.lg,
+          AppSpacing.sm,
           AppSpacing.md,
           AppSpacing.xxl,
         ),

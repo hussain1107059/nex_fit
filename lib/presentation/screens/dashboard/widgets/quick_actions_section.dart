@@ -13,7 +13,7 @@ import '../../../router/app_router.dart';
 import 'dashboard_dialogs.dart';
 import 'section_header.dart';
 
-/// Six large quick action tiles wired to real dashboard dialogs.
+/// Seven large quick action tiles wired to real dashboard dialogs.
 class QuickActionsSection extends ConsumerWidget {
   const QuickActionsSection({
     super.key,
@@ -71,7 +71,7 @@ class QuickActionsSection extends ConsumerWidget {
         SectionHeader(title: context.l10n.dashboardQuickActions),
         LayoutBuilder(
           builder: (BuildContext context, BoxConstraints constraints) {
-            final int columns = context.isWide ? 6 : 3;
+            final int columns = context.isWide ? 7 : 3;
             final double spacing = AppSpacing.sm;
             final double cell = (constraints.maxWidth - spacing * (columns - 1)) / columns;
             return Wrap(
@@ -146,7 +146,7 @@ class _QuickActionTile extends StatelessWidget {
         onTap: onTap,
         borderRadius: AppRadius.mdRadius,
         child: Container(
-          height: 92,
+          height: 100,
           padding: const EdgeInsets.symmetric(
             horizontal: AppSpacing.xs,
             vertical: AppSpacing.sm,

@@ -848,6 +848,24 @@ abstract class AppLocalizations {
   /// **'আপনি কি নিশ্চিত যে সাইন আউট করতে চান?'**
   String get authSignOutConfirmMessage;
 
+  /// No description provided for @authEmailHint.
+  ///
+  /// In bs, this message translates to:
+  /// **'you@example.com'**
+  String get authEmailHint;
+
+  /// No description provided for @authShowPassword.
+  ///
+  /// In bs, this message translates to:
+  /// **'পাসওয়ার্ড দেখুন'**
+  String get authShowPassword;
+
+  /// No description provided for @authHidePassword.
+  ///
+  /// In bs, this message translates to:
+  /// **'পাসওয়ার্ড লুকান'**
+  String get authHidePassword;
+
   /// No description provided for @dashboardTemporaryTitle.
   ///
   /// In bs, this message translates to:
@@ -1045,6 +1063,48 @@ abstract class AppLocalizations {
   /// In bs, this message translates to:
   /// **'এক্সপি'**
   String get dashboardXp;
+
+  /// No description provided for @dashboardGamification.
+  ///
+  /// In bs, this message translates to:
+  /// **'গেমিফিকেশন'**
+  String get dashboardGamification;
+
+  /// No description provided for @dashboardLevel.
+  ///
+  /// In bs, this message translates to:
+  /// **'লেভেল'**
+  String get dashboardLevel;
+
+  /// No description provided for @dashboardLevelValue.
+  ///
+  /// In bs, this message translates to:
+  /// **'লেভেল {level}'**
+  String dashboardLevelValue(Object level);
+
+  /// No description provided for @dashboardXpProgress.
+  ///
+  /// In bs, this message translates to:
+  /// **'{current} / {required} এক্সপি'**
+  String dashboardXpProgress(Object current, Object required);
+
+  /// No description provided for @dashboardNoActiveChallenge.
+  ///
+  /// In bs, this message translates to:
+  /// **'কোনো সক্রিয় চ্যালেঞ্জ নেই'**
+  String get dashboardNoActiveChallenge;
+
+  /// No description provided for @dashboardChallengeWithReward.
+  ///
+  /// In bs, this message translates to:
+  /// **'{title} • {reward} এক্সপি'**
+  String dashboardChallengeWithReward(Object reward, Object title);
+
+  /// No description provided for @dashboardProgress.
+  ///
+  /// In bs, this message translates to:
+  /// **'অগ্রগতি'**
+  String get dashboardProgress;
 
   /// No description provided for @dashboardSleepHour.
   ///
@@ -6247,6 +6307,12 @@ abstract class AppLocalizations {
   /// In bs, this message translates to:
   /// **'চালিয়ে যেতে আপনার PIN লিখুন'**
   String get settingsLockSubtitle;
+
+  /// No description provided for @settingsLockTooManyAttempts.
+  ///
+  /// In bs, this message translates to:
+  /// **'অনেকবার চেষ্টা হয়েছে। {seconds} সেকেন্ড পরে আবার চেষ্টা করুন'**
+  String settingsLockTooManyAttempts(Object seconds);
 
   /// No description provided for @settingsStorageUsage.
   ///

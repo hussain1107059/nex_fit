@@ -72,7 +72,12 @@ class WorkoutCover extends StatelessWidget {
         child: Icon(
           icon,
           size: height * 0.4,
-          color: Colors.white.withValues(alpha: 0.9),
+          color: Color.alphaBlend(
+            base.withValues(alpha: 0.72),
+            context.colorScheme.surface,
+          ).computeLuminance() > 0.5
+              ? Colors.black87.withValues(alpha: 0.9)
+              : Colors.white.withValues(alpha: 0.9),
         ),
       ),
     );

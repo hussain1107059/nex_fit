@@ -67,6 +67,7 @@ class AppColors {
       surfaceContainerLowest: Color(0xFFF7F8FA),
       surface: Color(0xFFFFFFFF),
       onSurface: Color(0xFF0E141B),
+      surfaceContainerLow: Color(0xFFF1F4F6),
       surfaceContainerHighest: Color(0xFFEFF2F5),
       onSurfaceVariant: Color(0xFF4A5568),
       outline: Color(0xFFC9D2DB),

@@ -24,7 +24,7 @@ class WeeklyStatsSection extends StatelessWidget {
       children: [
         SectionHeader(title: context.l10n.dashboardWeeklyStats),
         GridView.count(
-          crossAxisCount: context.isWide ? 2 : 2,
+          crossAxisCount: 2,
           shrinkWrap: true,
           physics: const NeverScrollableScrollPhysics(),
           mainAxisSpacing: AppSpacing.sm,
@@ -162,7 +162,6 @@ class _WeeklyBarChart extends StatelessWidget {
                   DateFormat('E').format(point.date),
                   textAlign: TextAlign.center,
                   style: context.textTheme.labelSmall?.copyWith(
-                    fontSize: 9,
                     color: context.colorScheme.onSurfaceVariant,
                   ),
                 ),

@@ -77,8 +77,8 @@ class _Button extends StatelessWidget {
       child: InkWell(
         onTap: onPressed,
         borderRadius: BorderRadius.circular(AppRadius.sm),
-        child: Padding(
-          padding: const EdgeInsets.all(AppSpacing.sm),
+child: Padding(
+          padding: const EdgeInsets.all(AppSpacing.md),
           child: Icon(
             icon,
             size: 20,

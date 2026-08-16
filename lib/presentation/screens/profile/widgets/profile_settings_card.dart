@@ -169,7 +169,7 @@ class ProfileSettingsCard extends ConsumerWidget {
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
               Text(
-                '${context.l10n.settingsAboutVersion} ${AppConstants.appName}',
+                '${context.l10n.settingsAboutVersion} ${AppConstants.appVersion}',
                 style: context.textTheme.labelMedium,
               ),
             ],

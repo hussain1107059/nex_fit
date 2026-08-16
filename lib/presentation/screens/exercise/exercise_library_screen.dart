@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart' hide ErrorWidget;
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
@@ -32,18 +34,24 @@ class ExerciseLibraryScreen extends ConsumerStatefulWidget {
 
 class _ExerciseLibraryScreenState extends ConsumerState<ExerciseLibraryScreen> {
   final TextEditingController _searchController = TextEditingController();
+  Timer? _searchDebounce;
   ExerciseCategory? _category;
   Difficulty? _difficulty;
   bool _favoritesOnly = false;
 
   @override
   void dispose() {
+    _searchDebounce?.cancel();
     _searchController.dispose();
     super.dispose();
   }
 
   void _onSearchChanged(String value) {
-    ref.read(exerciseSearchQueryProvider.notifier).state = value;
+    // Debounce so a keystroke burst does not hammer the LIKE search.
+    _searchDebounce?.cancel();
+    _searchDebounce = Timer(const Duration(milliseconds: 250), () {
+      ref.read(exerciseSearchQueryProvider.notifier).state = value;
+    });
   }
 
   void _resetFilters() {
@@ -298,7 +306,11 @@ class _CategoryChip extends StatelessWidget {
               ),
               child: Icon(
                 icon,
-                color: selected ? Colors.white : color,
+                color: selected
+                    ? color.computeLuminance() > 0.5
+                        ? Colors.black87
+                        : Colors.white
+                    : color,
               ),
             ),
             const SizedBox(height: 6),

@@ -253,7 +253,8 @@ class SyncEngine {
       SyncLog.info(
         _logger,
         SyncLog.start,
-        'reclaimed ${reclaimed.length} stuck PROCESSING events (user=$userId)',
+        'reclaimed ${reclaimed.length} stuck PROCESSING events '
+        '(user=${SyncLog.maskUserId(userId)})',
       );
     }
     return reclaimed.length;
@@ -636,7 +637,7 @@ class SyncEngine {
       SyncLog.info(
         _logger,
         SyncLog.pullStart,
-        'user=$userId cursor=$cursor',
+        'user=${SyncLog.maskUserId(userId)} cursor=$cursor',
       );
       final SyncPullBatch batch = await transport.pull(
         userId: userId,
@@ -684,7 +685,7 @@ class SyncEngine {
     SyncLog.info(
       _logger,
       SyncLog.pullSuccess,
-      'user=$userId cursor=$cursor pulled=$pulled',
+      'user=${SyncLog.maskUserId(userId)} cursor=$cursor pulled=$pulled',
     );
     return pulled;
   }
@@ -747,7 +748,8 @@ class SyncEngine {
         SyncLog.warning(
           _logger,
           SyncLog.pullFailure,
-          'user=$userId error=${ValueMasker.maskText(error.message)}',
+          'user=${SyncLog.maskUserId(userId)} '
+          'error=${ValueMasker.maskText(error.message)}',
         );
         return push.copyWith(
           failed: push.failed + 1,
@@ -759,7 +761,8 @@ class SyncEngine {
         SyncLog.warning(
           _logger,
           SyncLog.pullFailure,
-          'user=$userId ${ValueMasker.maskText(error.message)}',
+          'user=${SyncLog.maskUserId(userId)} '
+          '${ValueMasker.maskText(error.message)}',
         );
         return push.copyWith(
           failed: push.failed + 1,
@@ -769,7 +772,8 @@ class SyncEngine {
       SyncLog.info(
         _logger,
         SyncLog.complete,
-        'user=$userId pushed=${push.succeeded} pulled=$pulled',
+        'user=${SyncLog.maskUserId(userId)} pushed=${push.succeeded} '
+        'pulled=$pulled',
       );
       return push.copyWith(pulled: pulled, hasPulled: true);
     });

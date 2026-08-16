@@ -55,7 +55,9 @@
 | `test/goals_finalization_test.dart` | 12/12 green (PROMPT 32 — goal CRUD + CREATE/UPDATE/DELETE sync events, templates master data `user_id NULL`, template adoption copies to a user-owned goal, soft-delete, progress current/target/percent/remaining/streak, offline progress from local records, reached-goal 100%, user-goal provider, remote apply without loop event, user isolation; see `NEXFIT_DAO_SYNC_MIGRATION_PLAN.md` §28) |
 | `test/gamification_finalization_test.dart` | 10/10 green (PROMPT 33 — completing a session awards XP into the `xp_history` ledger keyed by `session_completed:<historyId>` and applies it to the `user_level` singleton; re-completing/retry never double-awards; XP accumulates and levels up; achievement unlock idempotent; bulk badge/achievement inserts ignore duplicates; streak survives temporary offline; XP + level emit sync events; cloud pull converges without loop events; per-user isolation; see `NEXFIT_DAO_SYNC_MIGRATION_PLAN.md` §29) |
 | `test/reminder_finalization_test.dart` | 17/17 green (PROMPT 34 — reminder create/edit/delete with outbox events; duplicate rejection; offline create/edit/delete with no events and scheduler-readable; remote pull converges without echo; re-apply never duplicates; per-user pull isolation; cloud history converges with FK resolution; `syncMissed` records unattended occurrences once; restart re-reads reminders for scheduling; device-local wall-clock occurrence maths; weekly weekday selection; end-date bound; disabled reminders never schedule; `nextReminderOccurrence` picks the next future occurrence; see `NEXFIT_DAO_SYNC_MIGRATION_PLAN.md` §30) |
-| Full regression | **518 pass / 2 fail** — both pre-existing and unrelated |
+| `test/security_hardening_test.dart` | 6/6 green (PROMPT 38 — PIN PBKDF2 format, random salt, tamper rejection, legacy verify, upgrade semantics) |
+| `test/performance_audit_test.dart` | 6/6 green (PROMPT 37 — EXPLAIN QUERY PLAN evidence for dashboard/sync hot paths) |
+| Full regression | **530 pass / 2 fail** — both pre-existing and unrelated |
 
 > Note on `test/large_dataset_sync_test.dart` (PROMPT 20): the 10,001-record
 > benchmark does real SQLite work (initial pull ≈12s + push ≈22s). On a loaded
@@ -117,6 +119,18 @@
   platform notifications), scheduling stays device-local and timezone-aware,
   and the full offline/sync/restart/timezone behaviour is covered by 17 tests;
   see `NEXFIT_DAO_SYNC_MIGRATION_PLAN.md` §30.
+- Performance audit (PROMPT 37) is complete — workout-seeder early-return,
+  debounced exercise/workout search, dashboard build side-effect removed, and
+  `EXPLAIN QUERY PLAN` evidence for every dashboard/sync hot path; no new
+  indexes were needed. See `NEXFIT_PERFORMANCE_AUDIT.md`.
+- Security audit (PROMPT 38) is complete — Supabase session moved to the OS
+  keychain, PIN upgraded to PBKDF2-HMAC-SHA256 (random salt, legacy hashes
+  upgraded on unlock), lock-screen escalating retry delay, client-side
+  cross-user push guard, Android OS backup disabled (allowBackup=false +
+  dataExtractionRules), user ids masked in logs. Full severity table in
+  `NEXFIT_SECURITY_AUDIT.md`.
+- Final UI/UX polish (PROMPT 39) is complete — light-mode accessibility +
+  consistency pass with no redesign. See `NEXFIT_UI_UX_POLISH.md`.
 
 ## 4. Constants introduced
 

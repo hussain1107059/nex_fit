@@ -128,10 +128,17 @@ class WorkoutCard extends StatelessWidget {
                         color: context.colorScheme.onSurfaceVariant,
                       ),
                       4.widthSpace,
-                      Text(
-                        workoutDurationLabel(context, workout.durationMinutes),
-                        style: context.textTheme.labelSmall?.copyWith(
-                          color: context.colorScheme.onSurfaceVariant,
+                      Flexible(
+                        child: Text(
+                          workoutDurationLabel(
+                            context,
+                            workout.durationMinutes,
+                          ),
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis,
+                          style: context.textTheme.labelSmall?.copyWith(
+                            color: context.colorScheme.onSurfaceVariant,
+                          ),
                         ),
                       ),
                       12.widthSpace,
@@ -141,11 +148,15 @@ class WorkoutCard extends StatelessWidget {
                         color: context.colorScheme.tertiary,
                       ),
                       4.widthSpace,
-                      Text(
-                        '${workout.caloriesBurn?.round() ?? 0} '
-                        '${l10n.dashboardKcalUnit}',
-                        style: context.textTheme.labelSmall?.copyWith(
-                          color: context.colorScheme.onSurfaceVariant,
+                      Flexible(
+                        child: Text(
+                          '${workout.caloriesBurn?.round() ?? 0} '
+                          '${l10n.dashboardKcalUnit}',
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis,
+                          style: context.textTheme.labelSmall?.copyWith(
+                            color: context.colorScheme.onSurfaceVariant,
+                          ),
                         ),
                       ),
                     ],

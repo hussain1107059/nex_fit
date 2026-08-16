@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 
 import '../../../../core/extensions/context_extensions.dart';
-import '../../../../core/theme/app_colors.dart';
 import '../../../../core/theme/app_radius.dart';
 import '../../../../core/theme/app_spacing.dart';
 
@@ -29,8 +28,6 @@ class GoalRing extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final AppColors appColors =
-        AppColors.light;
     return Container(
       padding: const EdgeInsets.all(AppSpacing.md),
       decoration: BoxDecoration(
@@ -103,7 +100,8 @@ class GoalRing extends StatelessWidget {
               context.l10n.dashboardGoalNotSet,
               textAlign: TextAlign.center,
               style: context.textTheme.labelSmall?.copyWith(
-                color: appColors.warning,
+                color: const Color(0xFFB45309),
+                fontWeight: FontWeight.w600,
               ),
             ),
         ],

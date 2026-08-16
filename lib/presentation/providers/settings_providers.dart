@@ -1,7 +1,5 @@
-import 'dart:convert';
 import 'dart:ui' show Locale;
 
-import 'package:crypto/crypto.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:logging/logging.dart';
 
@@ -9,6 +7,7 @@ import '../../core/constants/app_constants.dart';
 import '../../core/utils/release_logger.dart';
 import '../../data/services/security/encryption_service.dart';
 import '../../data/services/security/key_manager.dart';
+import '../../data/services/security/pin_hasher.dart';
 import '../../domain/entities/app_settings.dart';
 import '../../domain/entities/app_user.dart';
 import '../../domain/entities/common_enums.dart';
@@ -19,10 +18,6 @@ import 'locale_provider.dart';
 import 'profile_providers.dart';
 import 'reminder_providers.dart';
 
-/// Salt prepended to the PIN before hashing so the stored digest is not a
-/// plain SHA-256 of the raw digits.
-const String _pinSalt = 'nexfit.app.lock.v1';
-
 /// Applies the field-encryption facade configuration so the data models start
 /// encrypting/decrypting sensitive values.
 Future<void> configureFieldEncryption(
@@ -32,9 +27,9 @@ Future<void> configureFieldEncryption(
   return FieldEncryption.configure(keyManager: keyManager, enabled: enabled);
 }
 
-String _hashPin(String pin) {
-  return sha256.convert(utf8.encode('$_pinSalt:$pin')).toString();
-}
+/// Hashes and verifies the app-lock PIN. Versioned PBKDF2-HMAC-SHA256 with a
+/// random salt; legacy static-salt hashes are still accepted on verify.
+final PinHasher _pinHasher = PinHasher();
 
 /// Loads and mutates the signed-in user's persisted [AppSettings].
 ///
@@ -253,11 +248,17 @@ class SettingsController extends AsyncNotifier<AppSettings?> {
   Future<bool> verifyPin(String pin) async {
     final String? hash = state.valueOrNull?.pinHash;
     if (hash == null || hash.isEmpty) return false;
-    return hash == _hashPin(pin);
+    final bool ok = _pinHasher.verifyPin(pin, hash);
+    // Upgrade a legacy (pre-PBKDF2) hash to the versioned format in place so
+    // the stronger scheme applies from the next unlock onward.
+    if (ok && !PinHasher.isVersioned(hash)) {
+      await setPin(pin);
+    }
+    return ok;
   }
 
   Future<void> setPin(String pin) async {
-    await _update((settings) => settings.copyWith(pinHash: _hashPin(pin)));
+    await _update((settings) => settings.copyWith(pinHash: _pinHasher.hashPin(pin)));
   }
 
   Future<void> setAppLockEnabled(bool enabled) async {

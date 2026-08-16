@@ -367,8 +367,9 @@ class _InstructionsChip extends StatelessWidget {
         child: Container(
           padding: const EdgeInsets.symmetric(
             horizontal: AppSpacing.md,
-            vertical: 6,
+            vertical: AppSpacing.sm,
           ),
+          constraints: const BoxConstraints(minHeight: 40),
           decoration: BoxDecoration(
             borderRadius: AppRadius.pillRadius,
             color: context.colorScheme.secondaryContainer,
@@ -534,7 +535,12 @@ class _WorkoutIntroViewState extends State<_WorkoutIntroView>
             child: Icon(
               categoryIconFor(category?.icon),
               size: 60,
-              color: Colors.white,
+              color: Color.alphaBlend(
+                base.withValues(alpha: 0.72),
+                context.colorScheme.surface,
+              ).computeLuminance() > 0.5
+                  ? Colors.black87
+                  : Colors.white,
             ),
           ),
         ),

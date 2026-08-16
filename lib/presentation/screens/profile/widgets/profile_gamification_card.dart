@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+import '../../../../core/extensions/context_extensions.dart';
 import '../../../../core/theme/app_radius.dart';
 import '../../../../core/theme/app_spacing.dart';
 import '../../../providers/auth_provider.dart';
@@ -29,7 +30,7 @@ class ProfileGamificationCard extends ConsumerWidget {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text(
-            'Gamification',
+            context.l10n.dashboardGamification,
             style: Theme.of(context).textTheme.titleMedium?.copyWith(
               fontWeight: FontWeight.w800,
             ),
@@ -39,13 +40,29 @@ class ProfileGamificationCard extends ConsumerWidget {
             data: (level) {
               final currentLevel = level?.level ?? 1;
               final currentXp = level?.currentXp ?? 0;
-              final totalXp = xpAsync.asData?.value.fold<int>(0, (sum, item) => sum + item.xp) ?? 0;
+              final totalXp = xpAsync.asData?.value.fold<int>(
+                    0,
+                    (sum, item) => sum + item.xp,
+                  ) ??
+                  0;
               return Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  _MetricTile(label: 'Level', value: 'Lv $currentLevel'),
-                  _MetricTile(label: 'XP', value: '$totalXp'),
-                  _MetricTile(label: 'Progress', value: '$currentXp XP'),
+                  _MetricTile(
+                    label: context.l10n.dashboardLevel,
+                    value: context.l10n.dashboardLevelValue(currentLevel),
+                  ),
+                  _MetricTile(
+                    label: context.l10n.dashboardXp,
+                    value: '$totalXp',
+                  ),
+                  _MetricTile(
+                    label: context.l10n.dashboardProgress,
+                    value: context.l10n.dashboardXpProgress(
+                      '$currentXp',
+                      '$totalXp',
+                    ),
+                  ),
                 ],
               );
             },

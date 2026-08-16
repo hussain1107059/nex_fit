@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart' hide ErrorWidget;
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
@@ -136,6 +138,7 @@ class _SearchBody extends ConsumerStatefulWidget {
 
 class _SearchBodyState extends ConsumerState<_SearchBody> {
   late final TextEditingController _controller;
+  Timer? _searchDebounce;
 
   @override
   void initState() {
@@ -145,6 +148,7 @@ class _SearchBodyState extends ConsumerState<_SearchBody> {
 
   @override
   void dispose() {
+    _searchDebounce?.cancel();
     _controller.dispose();
     super.dispose();
   }
@@ -181,7 +185,12 @@ class _SearchBodyState extends ConsumerState<_SearchBody> {
                   )
                 : null,
             onChanged: (String value) {
-              ref.read(workoutSearchQueryProvider.notifier).state = value;
+              _searchDebounce?.cancel();
+              _searchDebounce = Timer(
+                const Duration(milliseconds: 250),
+                () => ref.read(workoutSearchQueryProvider.notifier).state =
+                    value,
+              );
             },
             textInputAction: TextInputAction.search,
           ),

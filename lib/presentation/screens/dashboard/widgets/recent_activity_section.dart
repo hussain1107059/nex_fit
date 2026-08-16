@@ -179,6 +179,7 @@ class _ActivityTile extends StatelessWidget {
   String _formatSleepMinutes(BuildContext context, int minutes) {
     final int hours = minutes ~/ 60;
     final int rest = minutes % 60;
-    return '$hours${context.l10n.dashboardHoursShort} $rest m';
+    return '$hours${context.l10n.dashboardHoursShort} '
+      '$rest${context.l10n.dashboardSleepMinute}';
   }
 }

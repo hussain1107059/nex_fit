@@ -32,6 +32,18 @@ class WorkoutSeeder {
   }
 
   Future<void> _seedExercises(Transaction txn) async {
+    // Early-return once the built-in catalog is present: this runs on every
+    // workout-library build/search, and re-committing an ~84-row batch update
+    // per keystroke is pure waste. A future seed version that adds new entries
+    // makes the count fall short again, so it still self-heals.
+    final List<Map<String, Object?>> countRows = await txn.rawQuery(
+      'SELECT COUNT(*) AS count FROM ${ExerciseModel.table} '
+      'WHERE user_id IS NULL',
+    );
+    if ((countRows.first['count'] as int? ?? 0) >= kSeedExercises.length) {
+      return;
+    }
+
     _logger.info('Seeding ${kSeedExercises.length} built-in exercises');
 
     final List<Map<String, Object?>> rows = await txn.query(

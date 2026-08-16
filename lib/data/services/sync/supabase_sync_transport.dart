@@ -55,6 +55,15 @@ class SupabaseSyncTransport implements SyncTransport {
       // dropping events on auth expiry).
       throw const SyncTransportException('auth_session_expired');
     }
+    // Defense in depth: the event must belong to the authenticated user. The
+    // authoritative check is server-side RLS, but this client guard closes the
+    // gap before a cross-user write is even attempted.
+    if (sessionUserId != userId) {
+      throw SyncTransportException(
+        'security_policy_violation',
+        retryable: false,
+      );
+    }
   }
 
   @override
@@ -365,7 +374,8 @@ class SupabaseSyncTransport implements SyncTransport {
       SyncLog.warning(
         _logger,
         SyncLog.pullFailure,
-        'user=$userId code=${error.code} message=${error.message}',
+        'user=${SyncLog.maskUserId(userId)} code=${error.code} '
+        'message=${error.message}',
       );
       throw SyncTransportException(
         'postgrest_${error.code}_${error.message}',

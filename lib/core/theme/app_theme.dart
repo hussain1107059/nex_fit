@@ -277,7 +277,6 @@ class AppTheme {
       ),
       visualDensity: VisualDensity.adaptivePlatformDensity,
       splashColor: scheme.primary.withValues(alpha: 0.06),
-      materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
     );
   }
 }

@@ -2,6 +2,7 @@ import 'package:logging/logging.dart';
 import 'package:supabase_flutter/supabase_flutter.dart' as supabase;
 
 import '../../../supabase_options.dart';
+import 'secure_local_storage.dart';
 
 /// Owns the Supabase lifecycle for the app.
 ///
@@ -35,6 +36,12 @@ class SupabaseService {
       await supabase.Supabase.initialize(
         url: SupabaseOptions.url,
         publishableKey: SupabaseOptions.anonKey,
+        // Persist the session in the OS keychain, not plaintext
+        // SharedPreferences, so the access/refresh tokens are not readable by
+        // anyone who extracts app data.
+        authOptions: supabase.FlutterAuthClientOptions(
+          localStorage: SecureLocalStorage(),
+        ),
       );
       _client = supabase.Supabase.instance.client;
       _initialized = true;
