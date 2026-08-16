@@ -330,6 +330,15 @@ class AuthController extends Notifier<AuthState> {  StreamSubscription<AppUser?>
     state = state.copyWith(clearPendingVerificationEmail: true);
   }
 
+  /// Records an email that exists but is unverified so the user can be routed
+  /// to the verification/resend screen instead of hitting a dead end.
+  void rememberPendingVerification(String email) {
+    state = state.copyWith(
+      pendingVerificationEmail: email.trim().toLowerCase(),
+      initialized: true,
+    );
+  }
+
   /// Records a fresh secure session so the splash screen can validate the
   /// session on the next launch (auto-login). Best-effort: a session failure
   /// must never fail the sign-in.
