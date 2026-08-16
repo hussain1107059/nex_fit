@@ -1605,3 +1605,58 @@ server (record-uuid upsert dedupes), raw server errors in debug-only logs
   random salt, tamper rejection, legacy verification, upgrade semantics).
 - `flutter analyze` — clean.
 - Full regression: **530 pass / 2 fail** — the same two pre-existing failures.
+
+## 33. Final UI/UX Polish (PROMPT 39)
+
+Light-mode accessibility + consistency pass across the whole app (no redesign).
+Scope decisions: bounded fixes only; visual language preserved; localization
+and Bangla-digit conventions kept. Full finding list: `docs/NEXFIT_UI_UX_POLISH.md`.
+
+### Fixes applied
+1. **Invisible stat tiles fixed.** `AppColors.light` was missing
+   `surfaceContainerLow`, so `surfaceContainerLow`-colored stat tiles fell back
+   to white on a white card. Added `surfaceContainerLow: Color(0xFFF1F4F6)`
+   (`app_colors.dart`). Restores contrast in workout detail / workout history /
+   exercise detail stat tiles.
+2. **Category-color icon contrast.** Icons drawn over arbitrary category colors
+   used plain `Colors.white`. Switched to luminance-based foreground
+   (`computeLuminance() > 0.5 ? black87 : white`) in the workout player header,
+   workout/exercise cover tiles and the exercise category chips
+   (`workout_player_screen.dart`, `workout_cover.dart`, `exercise_cover.dart`,
+   `exercise_library_screen.dart`).
+3. **Overflow fixes.** Quick-action tiles height 92 → 100 and the dashboard grid
+   is now honestly seven columns (`quick_actions_section.dart`); system-health
+   detail row wraps in `Flexible` + ellipsis; workout/exercise card
+   duration+calories and settings tile title/value all get `maxLines: 1` +
+   ellipsis; sleep minute now uses the localized unit.
+4. **Weekly stats cleanup.** Removed the dead `context.isWide ? 2 : 2` ternary
+   and the 9 px day-label font (`weekly_stats_section.dart`).
+5. **Goal ring warning contrast.** "No goal set" switched from `#F59E0B` to
+   `#B45309` + w600 (~4.6:1); backup card icon uses `onSurfaceVariant` instead
+   of `Colors.grey`.
+6. **Small-screen safety.** Lock screen and PIN setup wrap in
+   `LayoutBuilder` + `SingleChildScrollView` + `ConstrainedBox(minHeight)` +
+   `IntrinsicHeight` so the pad never overflows short screens; the PIN bottom
+   row renders a width placeholder instead of a ghost key when biometrics are
+   unavailable (`lock_screen.dart`, `pin_setup_screen.dart`, `pin_ui.dart`).
+7. **Localization.** Hardcoded English removed: dashboard + profile
+   gamification cards (Level/XP/Progress/challenge strings), hardcoded month
+   names in workout history → `localizedMonth`, auth email placeholder and
+   password show/hide tooltips. New keys added to both ARBs (en/bs):
+   `dashboardGamification`, `dashboardLevel`, `dashboardLevelValue`,
+   `dashboardXpProgress`, `dashboardNoActiveChallenge`,
+   `dashboardChallengeWithReward`, `dashboardProgress`, `authEmailHint`,
+   `authShowPassword`, `authHidePassword`.
+8. **Version strings.** About screen and the profile about card now read
+   `AppConstants.appVersion` instead of a hardcoded `1.0.0` / app name.
+9. **Settings consistency.** Account and About screens' top padding aligned to
+   `AppSpacing.sm` (same as every other settings screen).
+10. **Touch targets.** Removed `materialTapTargetSize: shrinkWrap` from the app
+    theme (restores Material's default 48 dp targets); small `AppButton` vertical
+    padding xs → sm; quantity stepper padding sm → md; workout "How to" chip
+    padding + min-height 40.
+11. **Nutrition calorie unit.** Calories goal now renders `kcal` (was `g`).
+
+### Verification
+- `flutter analyze` — clean.
+- Full regression: **530 pass / 2 fail** — the same two pre-existing failures.
