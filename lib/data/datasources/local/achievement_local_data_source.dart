@@ -27,6 +27,7 @@ class AchievementLocalDataSource extends BaseLocalDataSource {
         batch.insert(
           AchievementModel.table,
           AchievementModel.toMap(achievement),
+          conflictAlgorithm: ConflictAlgorithm.ignore,
         );
       }
       await batch.commit(noResult: true);

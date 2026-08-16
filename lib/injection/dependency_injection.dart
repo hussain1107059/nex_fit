@@ -655,6 +655,8 @@ final workoutSessionRepositoryProvider = Provider<WorkoutSessionRepository>(
     achievementRepository: ref.watch(achievementRepositoryProvider),
     badgeRepository: ref.watch(badgeRepositoryProvider),
     workoutRepository: ref.watch(workoutRepositoryProvider),
+    xpHistoryRepository: ref.watch(xpHistoryRepositoryProvider),
+    levelRepository: ref.watch(levelRepositoryProvider),
   ),
 );
 

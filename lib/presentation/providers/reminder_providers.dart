@@ -347,20 +347,29 @@ Future<void> rescheduleReminders(WidgetRef ref) async {
 
 /// Container-based variant so it can be driven from notifiers, the app
 /// bootstrap and the notification action handler alike.
+///
+/// Scheduling is best-effort: a failure to build a provider or touch the
+/// platform (e.g. missing SharedPreferences during a test container, or an
+/// unsupported device) must never crash the caller — the sync pipeline and
+/// settings controllers call this on every completion.
 Future<void> rescheduleRemindersInContainer(ProviderContainer container) async {
-  final AppUser? user = container.read(currentUserProvider);
-  if (user == null || !user.isSignedIn) return;
-  final service = container.read(localNotificationServiceProvider);
-  await service.initialize();
-  await service.requestPermission();
-  await service.cancelAll();
-  final List<Reminder> reminders = await container
-      .read(reminderRepositoryProvider)
-      .getByUserId(user.id);
-  final options = container.read(reminderSettingsProvider).notificationOptions;
-  for (final Reminder reminder in reminders) {
-    if (!reminder.isEnabled) continue;
-    await service.scheduleReminder(reminder, options: options);
+  try {
+    final AppUser? user = container.read(currentUserProvider);
+    if (user == null || !user.isSignedIn) return;
+    final service = container.read(localNotificationServiceProvider);
+    await service.initialize();
+    await service.requestPermission();
+    await service.cancelAll();
+    final List<Reminder> reminders = await container
+        .read(reminderRepositoryProvider)
+        .getByUserId(user.id);
+    final options = container.read(reminderSettingsProvider).notificationOptions;
+    for (final Reminder reminder in reminders) {
+      if (!reminder.isEnabled) continue;
+      await service.scheduleReminder(reminder, options: options);
+    }
+  } catch (_) {
+    // Notification scheduling is best-effort; never let it break the caller.
   }
 }
 

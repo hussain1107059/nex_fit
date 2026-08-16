@@ -53,7 +53,9 @@
 | `test/nutrition_finalization_test.dart` | 10/10 green (PROMPT 30 — meal categories seeded with the six canonical slugs, daily slots always resolve to localized labels, catalog items expose ids, search self-seeds, category-filtered search matches, no corrupted `Â`/`Ã` bytes anywhere under `lib/`, en/bs meal-slot + month labels, localized `formatNutritionDate`, `MealSlotCard` renders clean `× ·` + localized slot name with raw-name fallback; see `NEXFIT_DAO_SYNC_MIGRATION_PLAN.md` §26) |
 | `test/health_tracking_finalization_test.dart` | 6/6 green (PROMPT 31 — water reminders scoped to water type, sleep history newest-first, manual step log drives the dashboard summary, `StepEstimator` distance/calories, `SleepStats` aggregation, localized month/date en+bs with Bangla digits; see `NEXFIT_DAO_SYNC_MIGRATION_PLAN.md` §27) |
 | `test/goals_finalization_test.dart` | 12/12 green (PROMPT 32 — goal CRUD + CREATE/UPDATE/DELETE sync events, templates master data `user_id NULL`, template adoption copies to a user-owned goal, soft-delete, progress current/target/percent/remaining/streak, offline progress from local records, reached-goal 100%, user-goal provider, remote apply without loop event, user isolation; see `NEXFIT_DAO_SYNC_MIGRATION_PLAN.md` §28) |
-| Full regression | **491 pass / 2 fail** — both pre-existing and unrelated |
+| `test/gamification_finalization_test.dart` | 10/10 green (PROMPT 33 — completing a session awards XP into the `xp_history` ledger keyed by `session_completed:<historyId>` and applies it to the `user_level` singleton; re-completing/retry never double-awards; XP accumulates and levels up; achievement unlock idempotent; bulk badge/achievement inserts ignore duplicates; streak survives temporary offline; XP + level emit sync events; cloud pull converges without loop events; per-user isolation; see `NEXFIT_DAO_SYNC_MIGRATION_PLAN.md` §29) |
+| `test/reminder_finalization_test.dart` | 17/17 green (PROMPT 34 — reminder create/edit/delete with outbox events; duplicate rejection; offline create/edit/delete with no events and scheduler-readable; remote pull converges without echo; re-apply never duplicates; per-user pull isolation; cloud history converges with FK resolution; `syncMissed` records unattended occurrences once; restart re-reads reminders for scheduling; device-local wall-clock occurrence maths; weekly weekday selection; end-date bound; disabled reminders never schedule; `nextReminderOccurrence` picks the next future occurrence; see `NEXFIT_DAO_SYNC_MIGRATION_PLAN.md` §30) |
+| Full regression | **518 pass / 2 fail** — both pre-existing and unrelated |
 
 > Note on `test/large_dataset_sync_test.dart` (PROMPT 20): the 10,001-record
 > benchmark does real SQLite work (initial pull ≈12s + push ≈22s). On a loaded
@@ -109,6 +111,12 @@
   data and adopt into user-owned goals, and the template `goal_type` seed bug
   (snake_case vs enum names) is fixed; see
   `NEXFIT_DAO_SYNC_MIGRATION_PLAN.md` §28.
+- Reminders & notifications finalization (PROMPT 34) is complete — reminder
+  config syncs (already `USER_SYNCABLE`) and notifications now reschedule
+  locally after every sync pull (no app-restart requirement, no duplicate
+  platform notifications), scheduling stays device-local and timezone-aware,
+  and the full offline/sync/restart/timezone behaviour is covered by 17 tests;
+  see `NEXFIT_DAO_SYNC_MIGRATION_PLAN.md` §30.
 
 ## 4. Constants introduced
 

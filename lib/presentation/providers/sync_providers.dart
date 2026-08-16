@@ -9,6 +9,7 @@ import '../../domain/entities/app_user.dart';
 import '../../domain/entities/sync_state.dart';
 import '../../injection/dependency_injection.dart';
 import 'auth_provider.dart';
+import 'reminder_providers.dart';
 import 'settings_providers.dart';
 
 /// What the offline sync engine is doing right now.
@@ -174,6 +175,10 @@ class SyncController extends Notifier<SyncUiState> {
           .setLastSyncAt(DateTime.now());
     }
     await _refreshAndMaster();
+    // PROMPT 34: the initial pull may have brought reminder rows onto this
+    // device for the first time, so schedule their local notifications now
+    // instead of waiting for the next app restart.
+    await rescheduleRemindersInContainer(ref.container);
   }
 
   Future<void> _runIncrementalSync(String userId) async {
@@ -199,6 +204,12 @@ class SyncController extends Notifier<SyncUiState> {
         .read(settingsControllerProvider.notifier)
         .setLastSyncAt(DateTime.now());
     await _refreshAndMaster();
+    // PROMPT 34: reminder configuration is user-owned and syncable while
+    // notification execution is device-local. After a pull (or an offline
+    // acknowledgement) re-schedule every enabled reminder so reminders that
+    // arrived via the cloud are scheduled without an app restart and without
+    // duplicating already-scheduled notifications (deterministic id slots).
+    await rescheduleRemindersInContainer(ref.container);
     if (result.hasErrors) {
       state = state.copyWith(failure: result);
     }

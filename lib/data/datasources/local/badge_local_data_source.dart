@@ -24,7 +24,11 @@ class BadgeLocalDataSource extends BaseLocalDataSource {
       final Database db = await dbConnection;
       final Batch batch = db.batch();
       for (final Badge badge in badges) {
-        batch.insert(BadgeModel.table, BadgeModel.toMap(badge));
+        batch.insert(
+          BadgeModel.table,
+          BadgeModel.toMap(badge),
+          conflictAlgorithm: ConflictAlgorithm.ignore,
+        );
       }
       await batch.commit(noResult: true);
     });

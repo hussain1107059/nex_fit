@@ -17,6 +17,9 @@ class WorkoutCompletion extends Equatable {
     this.currentStreak = 0,
     this.newAchievements = const <Achievement>[],
     this.newBadges = const <Badge>[],
+    this.xpEarned = 0,
+    this.xpTotal = 0,
+    this.level = 1,
   });
 
   final int historyId;
@@ -41,6 +44,15 @@ class WorkoutCompletion extends Equatable {
   /// Badges earned by this session.
   final List<Badge> newBadges;
 
+  /// XP awarded for completing this session (0 if already awarded).
+  final int xpEarned;
+
+  /// Running XP total for the user after this session.
+  final int xpTotal;
+
+  /// User level after applying this session's XP.
+  final int level;
+
   double get completionRatio =>
       totalExercises == 0 ? 0 : exercisesCompleted / totalExercises;
 
@@ -57,5 +69,8 @@ class WorkoutCompletion extends Equatable {
         currentStreak,
         newAchievements,
         newBadges,
+        xpEarned,
+        xpTotal,
+        level,
       ];
 }

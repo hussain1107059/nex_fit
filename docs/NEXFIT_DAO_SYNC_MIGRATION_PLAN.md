@@ -1400,3 +1400,131 @@ must not loop.
 - `flutter analyze` — clean.
 - Full regression: **491 pass / 2 fail** — the same two pre-existing failures
   (`session_manager` device-change, `hydration_repository` loadStatistics).
+
+## 29. Gamification Finalization (PROMPT 33)
+
+### Goal
+Finalize the gamification loop without redesigning: XP, levels, achievements,
+badges and streaks must be real, derived from actual user records, offline-first
+and idempotent — a retry, an app restart or a duplicated sync push must never
+award XP twice or re-unlock an achievement.
+
+### Changes
+- **XP is now actually awarded.** The `xp_history` + `user_level` tables, models,
+  repositories, DAOs and sync registry already existed (PROMPT 14/15) but no code
+  path ever wrote XP. `WorkoutSessionRepositoryImpl` (the session-completion
+  trigger) now accepts an `XpHistoryRepository` and `LevelRepository` and, inside
+  `completeSession`, calls `_awardWorkoutXp` (deterministic: 20 XP base + 2 XP per
+  minute + 1 XP per 50 kcal) and then `_progressLevel` to apply the gain to the
+  `user_level` singleton. `WorkoutCompletion` gained `xpEarned`, `xpTotal` and
+  `level` so the UI can surface the result.
+- **Duplicate XP prevention.** The award is keyed by the session itself:
+  `source = 'workout'`, `reason = 'session_completed:<historyId>'`. Before
+  inserting, the repository checks
+  `XpHistoryRepository.getByUserAndSourceAndReason`, and the local
+  `UNIQUE(user_id, source, reason)` index (app_database.dart) is the final
+  guard. Because the reason is unique per session, a retry, an app restart or a
+  duplicated sync push can never double-award; when the award is skipped the
+  level is left untouched (no spurious `user_level` UPDATE event).
+- **Level progression.** `_progressLevel` reads the singleton (`uuid == user_id`),
+  adds the award to `currentXp`/`totalXp` and loops while
+  `currentXp >= requiredXp`, raising the level and growing the requirement
+  (`requiredXp = 100 * level`). Upserts flow through the existing sync-aware
+  `LevelLocalDataSource` so levels propagate via `user_levels` on the cloud.
+- **Idempotent unlocks.** `AchievementLocalDataSource.insertAll` and
+  `BadgeLocalDataSource.insertAll` now insert with
+  `ConflictAlgorithm.ignore`, so even a race or duplicate push can never re-insert
+  an achievement/badge; the existing `owned`-set guard in `_unlockAchievements`
+  and the `byType` map in `_updateBadges` already prevented re-awarding.
+- **Streaks stay local.** No change needed — streak rows are derived caches that
+  never leave the device (outbox-exempt), so temporary offline state cannot reset
+  them.
+- **Wiring.** `workoutSessionRepositoryProvider` (dependency_injection.dart)
+  passes `xpHistoryRepositoryProvider` and `levelRepositoryProvider` into
+  `WorkoutSessionRepositoryImpl`.
+
+### Verification
+- New `test/gamification_finalization_test.dart` — **10/10**:
+  1. completing a session awards XP and creates the level row (88 XP for
+     30 min / 400 kcal),
+  2. re-completing the same session never awards XP twice (retry / restart),
+  3. XP accumulates and levels up across sessions (3×88 XP → level 2, 164/200),
+  4. achievement unlock is idempotent across sessions (`first_workout` once),
+  5. bulk badge and achievement inserts ignore duplicates,
+  6. streak survives temporary offline (recorder disabled, completion still
+     runs end-to-end and preserves the streak),
+  7. completing a session records sync events for `xp_history` and `user_level`,
+  8. pulling XP and level from the cloud converges without duplicates or loop
+     events,
+  9. remote apply converges a second device without double awards,
+  10. per-user XP and levels are isolated.
+- `flutter analyze` — clean.
+- Full regression: **501 pass / 2 fail** — the same two pre-existing failures
+  (`session_manager` device-change, `hydration_repository` loadStatistics).
+
+## 30. Reminders & Notifications Finalization (PROMPT 34)
+
+### Goal
+Close the reminder module's finalization gaps without redesigning: reminder
+configuration is already user-owned and syncable, but notifications were only
+scheduled at app bootstrap — a cloud pull brought new reminders onto the device
+without scheduling them locally until the next restart. Keep notification
+execution device-local (no platform notification ids ever sync), respect the
+device timezone, and prove the offline/sync/restart/timezone guarantees with
+dedicated tests.
+
+### Review outcome
+- **Types.** Workout, water, meal, weight, sleep (and the pre-existing custom /
+  medicine / step) reminder types already exist; no new medical functionality
+  was added.
+- **Local scheduling.** Reminders are scheduled by
+  `LocalNotificationService` (FlutterLocalNotificationsPlugin) at device-local
+  times; `Reminder` persists wall-clock `HH:mm` times, so they keep firing
+  offline via local scheduling.
+- **Sync.** `reminder` + `reminder_history` are `USER_SYNCABLE` (transactional
+  outbox, uuid, row_version, soft delete). The `reminder` table stores no
+  platform notification ids — the DAO holds configuration only, so "pulled from
+  cloud" rows can never collide with already-scheduled platform notifications.
+- **Timezone.** Scheduling maths work in device-local wall-clock time
+  (`reminder_schedule.dart` builds local `DateTime`s; the service converts via
+  `tz.local`). A device timezone change shifts when a reminder fires without
+  corrupting the stored config. The profile already stores its timezone.
+- **No duplicate notifications on pull.** Deterministic notification ids are
+  derived from the local row id (`id * 10000 + base + slot`), and every sync
+  completion runs a `cancelAll()` + re-schedule pass, so re-scheduling after a
+  pull is naturally idempotent.
+
+### Changes
+- **Post-sync rescheduling.** `SyncController` (sync_providers.dart) now calls
+  `rescheduleRemindersInContainer(ref.container)` after the initial sync pull
+  and after every incremental sync completion. Newly-pulled reminder rows are
+  therefore scheduled locally without an app restart, and the cancel-all-then-
+  reschedule pass cannot duplicate already-scheduled notifications.
+- **Best-effort scheduling.** `rescheduleRemindersInContainer` swallows
+  failures (e.g. a missing provider during a test container, an unsupported
+  device) so scheduling can never break the sync pipeline or settings changes.
+
+### Verification
+- New `test/reminder_finalization_test.dart` — **17/17**:
+  1. creating a reminder persists it and records a CREATE event,
+  2. an identical reminder is rejected as a duplicate,
+  3. updating bumps row version and records an UPDATE event,
+  4. deleting soft-deletes and records a DELETE event,
+  5. create/edit/delete work locally while offline (recorder disabled, no
+     outbox events),
+  6. the scheduler reads reminders that were created offline,
+  7. a remote pull converges without an echo event,
+  8. re-applying the same remote reminder never duplicates the row,
+  9. pulls are scoped per user,
+  10. cloud history rows converge (reminder FK resolves, no echo),
+  11. `syncMissed` records unattended occurrences exactly once,
+  12. reminders survive a restart (fresh repos over the same DB) and are
+      re-read for scheduling without new events,
+  13. occurrences are computed in device-local wall-clock time,
+  14. a weekly reminder respects its selected weekdays,
+  15. an end date bounds the occurrence stream,
+  16. disabled reminders never fire and never schedule,
+  17. `nextReminderOccurrence` picks the first future local occurrence.
+- `flutter analyze` — clean.
+- Full regression: **518 pass / 2 fail** — the same two pre-existing failures
+  (`session_manager` device-change, `hydration_repository` loadStatistics).

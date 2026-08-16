@@ -2,18 +2,22 @@ import '../../domain/entities/achievement.dart';
 import '../../domain/entities/badge.dart';
 import '../../domain/entities/common_enums.dart';
 import '../../domain/entities/daily_progress.dart';
+import '../../domain/entities/level.dart';
 import '../../domain/entities/streak.dart';
 import '../../domain/entities/workout.dart';
 import '../../domain/entities/workout_completion.dart';
 import '../../domain/entities/workout_history.dart';
+import '../../domain/entities/xp_history.dart';
 import '../../domain/repositories/achievement_repository.dart';
 import '../../domain/repositories/badge_repository.dart';
 import '../../domain/repositories/daily_progress_repository.dart';
 import '../../domain/repositories/exercise_history_repository.dart';
+import '../../domain/repositories/level_repository.dart';
 import '../../domain/repositories/streak_repository.dart';
 import '../../domain/repositories/workout_history_repository.dart';
 import '../../domain/repositories/workout_repository.dart';
 import '../../domain/repositories/workout_session_repository.dart';
+import '../../domain/repositories/xp_history_repository.dart';
 
 /// Metric a badge tracks.
 enum _BadgeMetric { workouts, calories, streak }
@@ -44,6 +48,8 @@ class WorkoutSessionRepositoryImpl implements WorkoutSessionRepository {
     required this.achievementRepository,
     required this.badgeRepository,
     required this.workoutRepository,
+    required this.xpHistoryRepository,
+    required this.levelRepository,
   });
 
   static const List<_BadgeDefinition> _badgeDefinitions =
@@ -113,6 +119,8 @@ class WorkoutSessionRepositoryImpl implements WorkoutSessionRepository {
   final AchievementRepository achievementRepository;
   final BadgeRepository badgeRepository;
   final WorkoutRepository workoutRepository;
+  final XpHistoryRepository xpHistoryRepository;
+  final LevelRepository levelRepository;
 
   @override
   Future<int> startSession({
@@ -179,6 +187,24 @@ class WorkoutSessionRepositoryImpl implements WorkoutSessionRepository {
       currentStreak: streak.currentStreak,
     );
 
+    final int xpEarned = await _awardWorkoutXp(
+      userId: history.userId,
+      historyId: historyId,
+      durationMinutes: durationMinutes,
+      caloriesBurned: caloriesBurned,
+    );
+    final LevelProgress level = xpEarned > 0
+        ? await _progressLevel(userId: history.userId, xp: xpEarned)
+        : (await levelRepository.getByUserId(history.userId)) ??
+            LevelProgress(
+              userId: history.userId,
+              currentXp: 0,
+              requiredXp: 100,
+              totalXp: 0,
+              createdAt: now,
+              updatedAt: now,
+            );
+
     final String? workoutName = await _workoutName(history.workoutId);
 
     return WorkoutCompletion(
@@ -195,7 +221,93 @@ class WorkoutSessionRepositoryImpl implements WorkoutSessionRepository {
       currentStreak: streak.currentStreak,
       newAchievements: unlocked,
       newBadges: badges,
+      xpEarned: xpEarned,
+      xpTotal: level.totalXp,
+      level: level.level,
     );
+  }
+
+  /// Awards deterministic XP for a completed session.
+  ///
+  /// The award is keyed by the session itself (`source = workout`,
+  /// `reason = session_completed:<historyId>`) and guarded by
+  /// [XpHistoryRepository.getByUserAndSourceAndReason] plus the local
+  /// `UNIQUE(user_id, source, reason)` index, so a retry, an app restart or a
+  /// duplicated sync push can never award the same session twice.
+  Future<int> _awardWorkoutXp({
+    required String userId,
+    required int historyId,
+    required int durationMinutes,
+    required double caloriesBurned,
+  }) async {
+    final String reason = 'session_completed:$historyId';
+    final XpHistory? existing = await xpHistoryRepository
+        .getByUserAndSourceAndReason(userId, 'workout', reason);
+    if (existing != null) return 0;
+
+    final int xp = _xpForSession(durationMinutes, caloriesBurned);
+    final DateTime now = DateTime.now();
+    final int runningTotal = await xpHistoryRepository.totalXpForUser(userId);
+    await xpHistoryRepository.insert(
+      XpHistory(
+        userId: userId,
+        source: 'workout',
+        reason: reason,
+        xp: xp,
+        totalXp: runningTotal + xp,
+        createdAt: now,
+      ),
+    );
+    return xp;
+  }
+
+  static int _xpForSession(int durationMinutes, double caloriesBurned) {
+    // Deterministic: base 20 XP plus 2 XP per minute and 1 XP per 50 kcal.
+    return 20 + (durationMinutes * 2) + (caloriesBurned ~/ 50);
+  }
+
+  /// Applies an XP gain to the user's level singleton, raising the level when
+  /// the running total crosses the required threshold. The required XP for a
+  /// level grows linearly: level N requires `100 * N` XP to complete.
+  Future<LevelProgress> _progressLevel({
+    required String userId,
+    required int xp,
+  }) async {
+    final DateTime now = DateTime.now();
+    final LevelProgress? existing = await levelRepository.getByUserId(userId);
+    if (existing == null) {
+      final LevelProgress created = LevelProgress(
+        userId: userId,
+        level: 1,
+        currentXp: xp,
+        requiredXp: 100,
+        totalXp: xp,
+        createdAt: now,
+        updatedAt: now,
+      );
+      await levelRepository.upsert(created);
+      return created;
+    }
+
+    int level = existing.level;
+    int currentXp = existing.currentXp + xp;
+    int totalXp = existing.totalXp + xp;
+    int requiredXp = existing.requiredXp;
+    while (currentXp >= requiredXp) {
+      currentXp -= requiredXp;
+      level += 1;
+      requiredXp = 100 * level;
+    }
+
+    final LevelProgress updated = existing.copyWith(
+      level: level,
+      currentXp: currentXp,
+      requiredXp: requiredXp,
+      totalXp: totalXp,
+      updatedAt: now,
+    );
+    await levelRepository.upsert(updated);
+    return updated;
   }
 
   Future<String?> _workoutName(int? workoutId) async {
