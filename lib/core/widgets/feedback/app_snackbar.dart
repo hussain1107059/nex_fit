@@ -15,27 +15,14 @@ class AppSnackbar {
     BuildContext context,
     String message, {
     AppSnackbarType type = AppSnackbarType.info,
-    Duration duration = const Duration(milliseconds: 1500),
+    Duration duration = const Duration(milliseconds: 2000),
   }) {
     final ColorScheme scheme = context.colorScheme;
-    final Color background = switch (type) {
-      AppSnackbarType.success => scheme.inverseSurface,
-      AppSnackbarType.error => scheme.error,
-      AppSnackbarType.info => scheme.inverseSurface,
-    };
-    final Color foreground = switch (type) {
-      AppSnackbarType.success => scheme.onInverseSurface,
-      AppSnackbarType.error => scheme.onError,
-      AppSnackbarType.info => scheme.onInverseSurface,
-    };
     final IconData icon = switch (type) {
       AppSnackbarType.success => Icons.check_circle_rounded,
-      AppSnackbarType.error => Icons.error_rounded,
+      AppSnackbarType.error => Icons.info_rounded,
       AppSnackbarType.info => Icons.info_rounded,
     };
-
-    final MaterialLocalizations localizations =
-        MaterialLocalizations.of(context);
 
     ScaffoldMessenger.of(context)
       ..hideCurrentSnackBar()
@@ -43,30 +30,23 @@ class AppSnackbar {
         SnackBar(
           content: Row(
             children: [
-              Icon(icon, color: foreground, size: 20),
+              Icon(icon, color: scheme.onInverseSurface, size: 20),
               8.widthSpace,
               Expanded(
                 child: Text(
                   message,
                   style: context.textTheme.bodyMedium?.copyWith(
-                    color: foreground,
+                    color: scheme.onInverseSurface,
                   ),
                 ),
               ),
             ],
           ),
-          backgroundColor: background,
+          backgroundColor: scheme.inverseSurface,
           duration: duration,
           behavior: SnackBarBehavior.floating,
           shape: RoundedRectangleBorder(
             borderRadius: AppRadius.mdRadius,
-          ),
-          action: SnackBarAction(
-            label: localizations.closeButtonLabel,
-            textColor: foreground,
-            onPressed: () {
-              ScaffoldMessenger.of(context).hideCurrentSnackBar();
-            },
           ),
         ),
       );

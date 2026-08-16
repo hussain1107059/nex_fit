@@ -36,6 +36,21 @@ class Validators {
     return null;
   }
 
+  /// Validates a password without strength requirements: required plus a
+  /// minimum length only. Used by registration so weak passwords are accepted.
+  static String? validatePassword(String? value, {
+    String? requiredError,
+    String? tooShortError,
+    int minLength = 6,
+  }) {
+    final String text = value ?? '';
+    if (text.isEmpty) return requiredError ?? 'This field is required';
+    if (text.length < minLength) {
+      return tooShortError ?? 'Password must be at least $minLength characters';
+    }
+    return null;
+  }
+
   /// Validates a strong password: minimum length plus at least one
   /// uppercase letter, one lowercase letter, one digit and one symbol.
   static String? validateStrongPassword(String? value, {

@@ -159,12 +159,11 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
                 textInputAction: TextInputAction.next,
                 enabled: !busy,
                 onChanged: (_) => setState(() {}),
-                validator: (String? value) => Validators.validateStrongPassword(
+                validator: (String? value) => Validators.validatePassword(
                   value,
                   requiredError: l10n.authPasswordRequired,
                   tooShortError: l10n.authPasswordTooShort,
-                  weakError: l10n.authPasswordWeak,
-                  minLength: AppConstants.strongPasswordLength,
+                  minLength: AppConstants.minPasswordLength,
                 ),
               ),
               PasswordStrengthBar(password: _passwordController.text),
