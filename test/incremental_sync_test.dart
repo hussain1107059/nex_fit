@@ -484,8 +484,9 @@ void main() {
       expect((await stateRepo.getByUserId('user-1'))!.cursor, 10);
     });
 
-    test('offline: processQueue acks pending events locally, no network call',
-        () async {
+    test(
+        'offline: processQueue never acks a not-ready transport, keeps events '
+        'pending for retry, no network call', () async {
       await engine.track(
         userId: 'user-1',
         entity: 'weight_log',
@@ -502,10 +503,18 @@ void main() {
         transport: transport,
       );
 
-      expect(result.succeeded, 1, reason: 'acked locally');
+      expect(result.succeeded, 0,
+          reason: 'a not-ready transport must NOT ack as success');
       expect(transport.pushed, 0, reason: 'never touched the network');
       expect(await stateRepo.getByUserId('user-1'), isNull,
           reason: 'no pull, cursor untouched');
+
+      final Database db = await appDatabase.database;
+      final List<Map<String, Object?>> rows =
+          await db.query('sync_event', where: 'user_id = ?', whereArgs: ['user-1']);
+      expect(rows, hasLength(1), reason: 'event retained for a later run');
+      expect(rows.single['status'], SyncStatus.pending.name,
+          reason: 'still pending so it pushes once the transport is ready');
     });
 
     test('uncommitted batch rolls back and never advances the cursor', () async {

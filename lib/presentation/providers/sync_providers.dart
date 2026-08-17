@@ -197,8 +197,11 @@ class SyncController extends Notifier<SyncUiState> {
         ref.read(syncStatusProvider.notifier).markInitialSyncComplete();
       }
     } else {
-      // Offline-first: acknowledge pending events locally.
-      result = await _engine.processQueue(userId);
+      // Transport not ready (offline or Supabase still initializing). Pass the
+      // transport anyway so the engine keeps pending events retryable instead
+      // of acknowledging them as success — an acked event would never reach
+      // the cloud when connectivity returns.
+      result = await _engine.processQueue(userId, transport: transport);
     }
     await ref
         .read(settingsControllerProvider.notifier)

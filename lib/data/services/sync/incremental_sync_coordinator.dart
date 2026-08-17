@@ -23,6 +23,10 @@ enum SyncTrigger {
   /// Supabase Realtime delivered a postgres change notification.
   realtime,
 
+  /// Periodic foreground timer so a missed realtime event is caught up even
+  /// when the app stays open and no other trigger fires.
+  periodic,
+
   /// Explicit user action in the settings / health UI.
   manual,
 }

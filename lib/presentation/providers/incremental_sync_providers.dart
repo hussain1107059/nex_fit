@@ -13,6 +13,11 @@ import '../../injection/dependency_injection.dart';
 import 'auth_provider.dart';
 import 'sync_providers.dart';
 
+/// Interval for the periodic foreground sync. A missed Realtime event or a
+/// locally queued mutation is caught up within this window even when the app
+/// stays open and no other trigger fires.
+const Duration periodicSyncInterval = Duration(seconds: 30);
+
 /// No-op gateway used on offline-first builds (no Supabase configuration), so
 /// the notifier stays inactive instead of throwing.
 class _NoopRealtimeChannelGateway implements RealtimeChannelGateway {
@@ -76,6 +81,17 @@ final incrementalSyncCoordinatorProvider =
     }
   });
 
+  // Periodic foreground sync (PROMPT 36): while the app is open and a user is
+  // signed in, a 30s timer issues a debounced sync so a missed Realtime event
+  // or a locally queued mutation reaches the cloud even when no other trigger
+  // fires. The coordinator already single-flights and coalesces bursts, so the
+  // timer is cheap and never overlaps a running sync. Requests are dropped
+  // while signed out (canSync), which keeps the timer silent on the login
+  // screen.
+  final Timer periodicTimer = Timer.periodic(periodicSyncInterval, (Timer _) {
+    coordinator.requestSync(SyncTrigger.periodic);
+  });
+
   void syncRealtimeForUser(AppUser? user) {
     final bool signedIn = user != null && user.isSignedIn;
     if (signedIn && !realtime.isActive) {
@@ -97,6 +113,7 @@ final incrementalSyncCoordinatorProvider =
   });
 
   ref.onDispose(() {
+    periodicTimer.cancel();
     connectivitySub.cancel();
     realtime.detach();
     coordinator.dispose();

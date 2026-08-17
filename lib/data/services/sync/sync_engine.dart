@@ -336,12 +336,35 @@ class SyncEngine {
     final int eventId = event.id!;
 
     if (!online) {
-      await repository.markSuccess(
-        eventId,
-        at: runAt,
-        syncedAt: runAt,
+      if (transport == null) {
+        // No transport configured at all (offline-only build): acknowledge
+        // pending events locally so the queue drains and never grows against
+        // a cloud that does not exist.
+        await repository.markSuccess(
+          eventId,
+          at: runAt,
+          syncedAt: runAt,
+        );
+        onSucceeded();
+        return;
+      }
+      // A transport exists but is not ready yet (Supabase configured but the
+      // client is still initializing, auth not loaded, or the device is
+      // offline). NEVER ack as success — that would drop the mutation from
+      // the cloud sync forever. Keep the event pending with a backoff so the
+      // next run (periodic timer, network recovery, resume) pushes it once
+      // the transport becomes ready.
+      await repository.update(
+        event.copyWith(
+          status: SyncStatus.pending,
+          lastError: 'transport_not_ready',
+          nextRetryAt: RetryScheduler.nextRetryAt(
+            event.retryCount,
+            now: runAt,
+          ),
+          updatedAt: runAt,
+        ),
       );
-      onSucceeded();
       return;
     }
 
