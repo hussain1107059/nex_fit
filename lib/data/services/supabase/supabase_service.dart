@@ -27,6 +27,10 @@ class SupabaseService {
   Future<bool> initialize() async {
     if (_initialized) return true;
 
+    // Allow plain `flutter run` (no --dart-define) by loading the bundled
+    // `.env` asset at runtime.
+    await SupabaseOptions.loadFromAsset();
+
     if (!SupabaseOptions.isConfigured) {
       _logger.info('Supabase configuration not provided. Running offline.');
       return false;

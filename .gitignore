@@ -3,6 +3,7 @@
 *.log
 *.env
 .env.*
+!.env.example
 *.pyc
 *.swp
 .DS_Store
@@ -24,6 +25,7 @@ migrate_working_dir/
 # VS Code which you may wish to be included in version control, so this line
 # is commented out by default.
 #.vscode/
+.vscode/
 
 # Flutter/Dart/Pub related
 **/doc/api/

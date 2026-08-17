@@ -199,6 +199,10 @@ class AuthController extends Notifier<AuthState> {  StreamSubscription<AppUser?>
     final Result<AppUser> result = await ref
         .read(signUpWithEmailUsecaseProvider)
         .call(name: name, email: email, password: password);
+    devLog(
+      '[AUTH] signUpWithEmail: usecase returned isSuccess=${result.isSuccess} '
+      'failure=${result.failureOrNull?.code} msg=${result.failureOrNull?.message}',
+    );
     await _finishAction(result);
     if (result.isSuccess) {
       final AppUser? user = result.valueOrNull;

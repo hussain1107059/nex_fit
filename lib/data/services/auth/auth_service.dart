@@ -211,6 +211,10 @@ class AuthService {
   }
 
   AuthException _toAuthException(Object error) {
+    devLog(
+      '[AUTH-SERVICE] error: $error',
+      error: error,
+    );
     if (error is AuthException) return error;
     if (error is supabase.AuthException) {
       final String key = _mapAuthError(error);
