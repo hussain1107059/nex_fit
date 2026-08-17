@@ -79,8 +79,8 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
       // The email is already registered (typically from an earlier sign-up that
       // never completed email verification). Route to the verification/resend
       // screen instead of leaving the user stuck on a dead-end error toast.
-      final String? message = result.failureOrNull?.message;
-      if (message == 'authEmailInUse') {
+      final String? code = result.failureOrNull?.code;
+      if (code == 'authEmailInUse') {
         ref.read(authControllerProvider.notifier)
             .rememberPendingVerification(_emailController.text);
         context.go(AppRoutes.emailVerification);

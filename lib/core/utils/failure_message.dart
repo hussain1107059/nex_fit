@@ -47,6 +47,9 @@ String localizeFailureMessage(AppLocalizations l10n, String message) {
     'backupDecryptFailed' => l10n.backupDecryptFailed,
     'backupInvalidKey' => l10n.backupInvalidKey,
     'errorNoInternet' => l10n.errorNoInternet,
-    _ => l10n.errorUnknown,
+    // Unknown keys are either a raw human-readable server message (shown
+    // verbatim so the user sees the actual auth/API error) or an untranslated
+    // key. Either way the message itself is the best fallback.
+    _ => message,
   };
 }

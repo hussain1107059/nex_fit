@@ -217,10 +217,13 @@ class AuthService {
     );
     if (error is AuthException) return error;
     if (error is supabase.AuthException) {
+      // Keep the raw server message as the user-facing text (shown verbatim in
+      // the toast) while the mapped key stays in [AuthException.code] so the
+      // routing / localization fallback logic keeps working.
       final String key = _mapAuthError(error);
       return AuthException(
-        key,
-        code: error.statusCode ?? 'supabase_auth_error',
+        error.message,
+        code: key,
       );
     }
     if (_isNetworkError(error)) {
@@ -241,6 +244,15 @@ class AuthService {
   String _mapAuthError(supabase.AuthException error) {
     final String message = error.message.toLowerCase();
     final String? status = error.statusCode;
+    // GoTrue rejects known placeholder/test addresses (test@gmail.com,
+    // example@gmail.com, someone@gmail.com, ...) and gmail local parts shorter
+    // than 6 chars when extended email validation is enabled.
+    if (error.code == 'email_address_invalid' ||
+        message.contains(' is invalid') ||
+        message.contains('invalid email') ||
+        message.contains('unable to validate email')) {
+      return 'authEmailInvalid';
+    }
     if (message.contains('email not confirmed')) {
       return 'authEmailVerificationFailed';
     }
@@ -253,10 +265,6 @@ class AuthService {
     }
     if (message.contains('at least 6 characters')) {
       return 'authPasswordTooShort';
-    }
-    if (message.contains('invalid email') ||
-        message.contains('unable to validate email')) {
-      return 'authEmailInvalid';
     }
     if (message.contains('user not found')) {
       return 'authUserNotFound';
