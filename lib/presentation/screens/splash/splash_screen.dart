@@ -102,8 +102,12 @@ class _SplashScreenState extends ConsumerState<SplashScreen>
         activeUserId: user?.isSignedIn == true ? user?.id : null,
       );
 
-      // Validate the secure session: expired or started on another device
-      // forces a re-login; otherwise refresh the activity timestamp.
+      // Validate the secure session. Only a device change (the session was
+      // started on another install/device) forces a re-login: it deactivates
+      // the local session and clears the Supabase session. A merely expired or
+      // absent secure session must NOT log the user out — the Supabase session
+      // is the source of truth for "remember me", so re-establish the secure
+      // session and continue with auto-login.
       if (user?.isSignedIn == true) {
         final SessionManager sessionManager = ref.read(sessionManagerProvider);
         final Duration timeout = Duration(
@@ -115,11 +119,17 @@ class _SplashScreenState extends ConsumerState<SplashScreen>
           user!.id,
           timeout: timeout,
         );
-        if (status == SessionStatus.valid) {
-          unawaited(sessionManager.touch(user.id, timeout: timeout));
-        } else {
-          await sessionManager.endSession(user.id);
-          unawaited(ref.read(authControllerProvider.notifier).signOut());
+        switch (status) {
+          case SessionStatus.valid:
+            unawaited(sessionManager.touch(user.id, timeout: timeout));
+          case SessionStatus.expired:
+          case SessionStatus.none:
+            // Still authenticated with Supabase; re-issue a fresh secure
+            // session so auto-login continues instead of forcing credentials.
+            unawaited(sessionManager.startSession(user.id, timeout: timeout));
+          case SessionStatus.deviceChanged:
+            await sessionManager.endSession(user.id);
+            unawaited(ref.read(authControllerProvider.notifier).signOut());
         }
       }
 

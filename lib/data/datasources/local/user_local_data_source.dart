@@ -21,10 +21,21 @@ class UserLocalDataSource {
   Future<void> saveProfile(AppUser user) async {
     try {
       final Database db = await _db;
-      await db.insert(
-        LocalUserModel.table,
-        LocalUserModel.toMap(user),
-        conflictAlgorithm: ConflictAlgorithm.replace,
+      final Map<String, Object?> map = LocalUserModel.toMap(user);
+      final String columns = map.keys.join(', ');
+      final String placeholders = map.keys.map((_) => '?').join(', ');
+      final String updates = map.keys
+          .map((String key) => '$key = excluded.$key')
+          .join(', ');
+      // UPSERT (ON CONFLICT DO UPDATE) mutates the existing row in place.
+      // ConflictAlgorithm.replace would DELETE + re-INSERT the users row and,
+      // with PRAGMA foreign_keys = ON, cascade-delete every child row (weight
+      // logs, workouts, ...) on each re-login.
+      await db.rawInsert(
+        'INSERT INTO ${LocalUserModel.table} ($columns) '
+        'VALUES ($placeholders) '
+        'ON CONFLICT(id) DO UPDATE SET $updates',
+        map.values.toList(),
       );
     } catch (error, stackTrace) {
       _logger.severe('Failed to save user profile: $error', error, stackTrace);
