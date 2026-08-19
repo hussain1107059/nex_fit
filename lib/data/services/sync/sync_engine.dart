@@ -804,6 +804,46 @@ class SyncEngine {
     });
   }
 
+  /// Full re-sync: pushes pending local events, then resets the pull cursor
+  /// and re-applies every remote change from scratch. Runs under the per-user
+  /// lock so the cursor reset and re-pull are atomic — a concurrent run can
+  /// never interleave a stale cursor write between the delete and the pull.
+  Future<SyncRunResult> resetAndSync({
+    required String userId,
+    required SyncTransport transport,
+    required RemoteChangeApplier applier,
+    DateTime? now,
+  }) {
+    final SyncLock lock = _lockFor(userId);
+    return lock.synchronized(() async {
+      SyncLog.info(
+        _logger,
+        SyncLog.start,
+        'user=${SyncLog.maskUserId(userId)} transport=${transport.name} '
+        'reset',
+      );
+      final SyncRunResult push = await _processQueueUnlocked(
+        userId,
+        transport: transport,
+      );
+      await syncStateRepository?.deleteForUser(userId);
+      final int pulled = await _pullUnlocked(
+        userId: userId,
+        transport: transport,
+        applier: applier,
+        drainToEnd: true,
+        now: now,
+      );
+      SyncLog.info(
+        _logger,
+        SyncLog.complete,
+        'user=${SyncLog.maskUserId(userId)} reset pushed=${push.succeeded} '
+        'pulled=$pulled',
+      );
+      return push.copyWith(pulled: pulled, hasPulled: true);
+    });
+  }
+
   /// Queue statistics plus the most recent successful sync timestamp.
   Future<SyncQueueSnapshot> snapshot(String userId) async {
     final Map<String, int> counts = await repository.countByStatus(userId);

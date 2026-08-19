@@ -33,12 +33,25 @@ class SystemHealthSettingsScreen extends ConsumerWidget {
     if (confirmed != true) return;
     final String? userId = ref.read(currentUserProvider)?.id;
     if (userId == null) return;
-    await ref.read(syncControllerProvider.notifier).resetAndResync();
-    if (context.mounted) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text(context.l10n.settingsSyncNow)),
-      );
+    final SyncResetResult result =
+        await ref.read(syncControllerProvider.notifier).resetAndResync();
+    if (!context.mounted) return;
+    final String message;
+    if (result.success) {
+      message = '${context.l10n.settingsResyncTitle} — '
+          '${result.pulled} changes';
+    } else if (result.error != null) {
+      message = '${context.l10n.settingsResyncTitle} — '
+          '${context.l10n.syncStatusFailed}';
+    } else if (!result.deleted) {
+      message = '${context.l10n.settingsResyncTitle} — '
+          '${context.l10n.settingsSyncPending}';
+    } else {
+      message = context.l10n.settingsResyncTitle;
     }
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(content: Text(message)),
+    );
   }
 
   @override

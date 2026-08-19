@@ -142,7 +142,7 @@ class SyncController extends Notifier<SyncUiState> {
     return syncState == null || !syncState.initialSyncCompleted;
   }
 
-  Future<void> _runInitialSync(String userId) async {
+  Future<InitialSyncResult> _runInitialSync(String userId) async {
     final InitialSyncResult result = await ref
         .read(initialSyncServiceProvider)
         .run(
@@ -179,6 +179,7 @@ class SyncController extends Notifier<SyncUiState> {
     // device for the first time, so schedule their local notifications now
     // instead of waiting for the next app restart.
     await rescheduleRemindersInContainer(ref.container);
+    return result;
   }
 
   Future<void> _runIncrementalSync(String userId) async {
@@ -258,14 +259,66 @@ class SyncController extends Notifier<SyncUiState> {
   /// re-applies every remote change from scratch (parents-first, cursor-atomic).
   /// Used to repair a device whose local rows were written by an older build
   /// or a partial pull. Pending outbox events are preserved and re-pushed.
-  Future<void> resetAndResync() async {
+  ///
+  /// Unlike [runSync] this deliberately bypasses the `state.isSyncing` guard:
+  /// a full reset must never be silently dropped because a periodic sync is in
+  /// flight. The engine's per-user lock makes the cursor reset + re-pull
+  /// atomic and serializes with any in-flight run.
+  Future<SyncResetResult> resetAndResync() async {
     final String? userId = _userId();
-    if (userId == null || state.isSyncing) return;
-    await ref
-        .read(syncStateRepositoryProvider)
-        .deleteForUser(userId);
-    await runSync(trigger: SyncTrigger.manual);
+    if (userId == null) return const SyncResetResult();
+    final SyncTransport transport = ref.read(supabaseSyncTransportProvider);
+    if (!transport.isReady) {
+      return const SyncResetResult(
+        ran: true,
+        deleted: false,
+        error: 'transport_not_ready',
+      );
+    }
+    state = state.copyWith(activity: SyncActivity.syncing, clearFailure: true);
+    try {
+      final SyncRunResult result = await _engine.resetAndSync(
+        userId: userId,
+        transport: transport,
+        applier: ref.read(remoteChangeApplierProvider),
+      );
+      if (result.hasPulled) {
+        ref.read(syncStatusProvider.notifier).markInitialSyncComplete();
+      }
+      await ref
+          .read(settingsControllerProvider.notifier)
+          .setLastSyncAt(DateTime.now());
+      await _refreshAndMaster();
+      return SyncResetResult(ran: true, deleted: true, pulled: result.pulled);
+    } catch (error) {
+      state = state.copyWith(activity: SyncActivity.idle, failure: error);
+      return SyncResetResult(ran: true, deleted: true, error: error);
+    }
   }
+}
+
+/// Result of a full re-sync ([SyncController.resetAndResync]).
+class SyncResetResult {
+  const SyncResetResult({
+    this.ran = false,
+    this.deleted = false,
+    this.pulled = 0,
+    this.error,
+  });
+
+  /// Whether the reset flow was attempted.
+  final bool ran;
+
+  /// Whether the stored pull cursor was actually removed.
+  final bool deleted;
+
+  /// Number of remote changes re-applied by the fresh pull.
+  final int pulled;
+
+  /// Set when the delete or the fresh pull failed.
+  final Object? error;
+
+  bool get success => ran && deleted && error == null;
 }
 
 final syncControllerProvider = NotifierProvider<SyncController, SyncUiState>(

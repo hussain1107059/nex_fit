@@ -1178,12 +1178,15 @@ void main() {
       expect(rowsB.single['is_completed'], 0,
           reason: 'changes at/below the cursor are not re-pulled');
 
-      // The reset path (deleteForUser + fresh pull) re-applies everything in
-      // order and repairs the row.
-      await deviceB.stateRepo.deleteForUser('user-1');
-      final SyncRunResult reset = await deviceB.engine().sync(
+      // The reset path (engine.resetAndSync: push + cursor reset + fresh pull
+      // under the per-user lock) re-applies everything in order and repairs
+      // the row.
+      final SyncRunResult reset = await deviceB.engine().resetAndSync(
             userId: 'user-1',
-            transport: _CloudStoreTransport(store: store, database: deviceB.db),
+            transport: _CloudStoreTransport(
+              store: store,
+              database: deviceB.db,
+            ),
             applier: deviceB.applier,
           );
       expect(reset.pulled, greaterThan(0));
