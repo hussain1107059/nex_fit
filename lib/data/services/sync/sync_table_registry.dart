@@ -16,6 +16,7 @@ class SyncTableMapping {
     this.cloudForeignKeys = const <String, String>{},
     this.cloudForeignKeyNames = const <String, String>{},
     this.cloudHasDeletedAt = true,
+    this.alwaysUpsert = false,
   });
 
   /// Local table name, which is also the outbox `entity` value.
@@ -58,6 +59,14 @@ class SyncTableMapping {
   /// transport sends `deleted_at` (null or ISO) so a locally resurrected row
   /// clears the cloud tombstone. `profiles` is the only table without one.
   final bool cloudHasDeletedAt;
+
+  /// When true, every push uses the idempotent full-row upsert (keyed on the
+  /// cloud `id`) regardless of `base_version`, skipping the optimistic
+  /// `row_version` check. Intended for singletons (e.g. `user_settings`) where
+  /// the whole row is the unit of truth: last-write-wins is correct, and a
+  /// `row_version` drift would otherwise discard the user's latest preferences
+  /// as a stale-write conflict instead of syncing them.
+  final bool alwaysUpsert;
 
   /// The cloud `id` for a pushed row: its local `uuid` (singletons reuse the
   /// user id, which equals `uuid` after the v15 backfill).
@@ -323,6 +332,7 @@ class SyncTableRegistry {
       localTable: 'app_settings',
       cloudTable: 'user_settings',
       localKeyColumn: 'user_id',
+      alwaysUpsert: true,
       localToCloud: <String, String>{
         'theme_mode': 'theme_mode',
         'units': 'units',

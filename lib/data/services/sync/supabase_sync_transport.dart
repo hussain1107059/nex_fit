@@ -220,8 +220,13 @@ class SupabaseSyncTransport implements SyncTransport {
       cloudRow.remove('user_id');
     }
 
-    if (event.operation == SyncOperation.create || event.baseVersion == 0) {
-      // Idempotent upsert keyed on the record uuid (Part 8).
+    if (mapping.alwaysUpsert ||
+        event.operation == SyncOperation.create ||
+        event.baseVersion == 0) {
+      // Idempotent upsert keyed on the record uuid (Part 8). Singletons that
+      // opt into `alwaysUpsert` (user_settings) push the whole row every time
+      // so the latest local preferences always reach the server regardless of
+      // row_version drift.
       final List<Map<String, dynamic>> rows = await _client
           .from(mapping.cloudTable)
           .upsert(cloudRow, onConflict: 'id')
