@@ -91,6 +91,9 @@ class _DeveloperSettingsScreenState
         'pulled=${syncUi.resetPulled} '
         'error=${syncUi.resetError ?? 'null'}',
       );
+      if (syncUi.resetTables != null && syncUi.resetTables!.isNotEmpty) {
+        buffer.writeln('  applied: ${syncUi.resetTables}');
+      }
     }
 
     try {
@@ -108,7 +111,9 @@ class _DeveloperSettingsScreenState
         buffer.writeln(
           '- id=${row['id']} is_completed=${row['is_completed']} '
           'calories=${row['calories_burn']} deleted_at=${row['deleted_at']} '
-          'started=${row['started_at']} uuid=${row['uuid']}',
+          'started=${row['started_at']} ended=${row['ended_at']} '
+          'version=${row['row_version']} workout_id=${row['workout_id']} '
+          'uuid=${row['uuid']}',
         );
       }
     } catch (_) {

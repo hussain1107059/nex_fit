@@ -641,6 +641,8 @@ class SyncEngine {
     bool drainToEnd = false,
     DateTime? now,
     void Function(int applied, int cursor)? onBatchProgress,
+    void Function(Map<String, int> appliedByTable, int cursor)?
+        onAppliedByTable,
   }) async {
     final SyncStateRepository? stateRepository = syncStateRepository;
     if (stateRepository == null) {
@@ -654,6 +656,7 @@ class SyncEngine {
     int pulled = 0;
     bool hasMore = true;
     int batches = 0;
+    final Map<String, int> appliedByTable = <String, int>{};
     // A bounded default guards incremental runs; [drainToEnd] (initial sync)
     // drains the paginator fully.
     final int batchCap = maxBatches ?? AppConstants.syncMaxPullBatches;
@@ -684,12 +687,20 @@ class SyncEngine {
       );
 
       pulled += batch.changes.length;
+      for (final SyncChange change in batch.changes) {
+        appliedByTable[change.cloudTable] =
+            (appliedByTable[change.cloudTable] ?? 0) + 1;
+      }
       final int previousCursor = cursor;
       cursor = batch.nextCursor;
       state = state.copyWith(cursor: cursor, updatedAt: runAt);
       hasMore = batch.hasMore;
       batches += 1;
       onBatchProgress?.call(pulled, cursor);
+      onAppliedByTable?.call(
+        Map<String, int>.unmodifiable(appliedByTable),
+        cursor,
+      );
 
       // Livelock guard: a paginator that claims more data but never advances
       // the keyset cursor would otherwise loop forever on an uncapped run.
@@ -813,6 +824,8 @@ class SyncEngine {
     required SyncTransport transport,
     required RemoteChangeApplier applier,
     DateTime? now,
+    void Function(Map<String, int> appliedByTable, int cursor)?
+        onAppliedByTable,
   }) {
     final SyncLock lock = _lockFor(userId);
     return lock.synchronized(() async {
@@ -846,6 +859,7 @@ class SyncEngine {
         applier: applier,
         drainToEnd: true,
         now: now,
+        onAppliedByTable: onAppliedByTable,
       );
       SyncLog.info(
         _logger,

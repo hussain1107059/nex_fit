@@ -28,6 +28,7 @@ class SyncUiState {
     this.pendingConflictCount = 0,
     this.resetAt,
     this.resetPulled = 0,
+    this.resetTables,
     this.resetError,
   });
 
@@ -50,6 +51,9 @@ class SyncUiState {
   /// stale device can be verified end-to-end.
   final DateTime? resetAt;
   final int resetPulled;
+
+  /// Per-table applied counts from the last full re-sync (formatted string).
+  final String? resetTables;
   final Object? resetError;
 
   bool get isSyncing => activity == SyncActivity.syncing;
@@ -67,6 +71,7 @@ class SyncUiState {
     int? pendingConflictCount,
     DateTime? resetAt,
     int? resetPulled,
+    String? resetTables,
     Object? resetError,
     bool clearFailure = false,
     bool clearResetError = false,
@@ -83,6 +88,7 @@ class SyncUiState {
           pendingConflictCount ?? this.pendingConflictCount,
       resetAt: resetAt ?? this.resetAt,
       resetPulled: resetPulled ?? this.resetPulled,
+      resetTables: resetTables ?? this.resetTables,
       resetError: clearResetError ? null : (resetError ?? this.resetError),
     );
   }
@@ -293,11 +299,19 @@ class SyncController extends Notifier<SyncUiState> {
       );
     }
     state = state.copyWith(activity: SyncActivity.syncing, clearFailure: true);
+    String tables = '';
     try {
       final SyncRunResult result = await _engine.resetAndSync(
         userId: userId,
         transport: transport,
         applier: ref.read(remoteChangeApplierProvider),
+        onAppliedByTable: (Map<String, int> applied, int cursor) {
+          final List<String> parts = <String>[
+            for (final MapEntry<String, int> entry in applied.entries)
+              '${entry.key}=${entry.value}',
+          ];
+          tables = 'cursor=$cursor ${parts.join(' ')}';
+        },
       );
       if (result.hasPulled) {
         ref.read(syncStatusProvider.notifier).markInitialSyncComplete();
@@ -309,6 +323,7 @@ class SyncController extends Notifier<SyncUiState> {
       state = state.copyWith(
         resetAt: DateTime.now(),
         resetPulled: result.pulled,
+        resetTables: tables,
         resetError: null,
         clearResetError: true,
       );
