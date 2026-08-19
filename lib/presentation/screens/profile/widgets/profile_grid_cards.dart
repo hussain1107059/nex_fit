@@ -46,7 +46,7 @@ class ProfilePhysicalCard extends StatelessWidget {
         physics: const NeverScrollableScrollPhysics(),
         mainAxisSpacing: AppSpacing.sm,
         crossAxisSpacing: AppSpacing.sm,
-        childAspectRatio: 1.45,
+        mainAxisExtent: 112,
         children: [
           ProfileStatCell(
             icon: Icons.cake_rounded,
@@ -112,7 +112,7 @@ class ProfileTargetsCard extends StatelessWidget {
         physics: const NeverScrollableScrollPhysics(),
         mainAxisSpacing: AppSpacing.sm,
         crossAxisSpacing: AppSpacing.sm,
-        childAspectRatio: 1.0,
+        mainAxisExtent: 112,
         children: [
           ProfileStatCell(
             icon: Icons.local_fire_department_rounded,

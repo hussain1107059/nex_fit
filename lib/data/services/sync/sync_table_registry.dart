@@ -292,12 +292,17 @@ class SyncTableRegistry {
       booleanColumns: <String>{'is_completed'},
       cloudForeignKeys: <String, String>{'workout_id': 'workout'},
     ),
-    // user_profile -> profiles (singleton; no deleted_at on cloud)
+    // user_profile -> profiles (singleton; no deleted_at on cloud). The whole
+    // row is the unit of truth (like app_settings): a row_version drift that
+    // turned into a stale-write conflict would otherwise discard the user's
+    // latest profile edits (SERVER_WINS) and the pull would revert the local
+    // row, so every push is an idempotent full-row upsert keyed on the id.
     SyncTableMapping(
       localTable: 'user_profile',
       cloudTable: 'profiles',
       localKeyColumn: 'user_id',
       cloudHasDeletedAt: false,
+      alwaysUpsert: true,
       localToCloud: <String, String>{
         'height_cm': 'height_cm',
         'weight_kg': 'weight_kg',

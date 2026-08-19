@@ -269,7 +269,9 @@ class _CloudStoreTransport implements SyncTransport {
     final String recordId = cloudRow['id'] as String;
     final _CloudRow? existing = store.row(mapping.cloudTable, recordId);
 
-    if (event.operation == SyncOperation.create || event.baseVersion == 0) {
+    if (mapping.alwaysUpsert ||
+        event.operation == SyncOperation.create ||
+        event.baseVersion == 0) {
       // Idempotent upsert keyed on the record uuid (Part 8).
       final int version = (existing?.version ?? 0) + 1;
       cloudRow['row_version'] = version;
@@ -1430,6 +1432,114 @@ void main() {
               'repairable by a fresh pull');
       expect(rowsB.single['calories_burn'], 4.5);
       expect(rowsB.single['row_version'], 2);
+    });
+
+    test('13. a profile edit with a stale base version still syncs '
+        '(last-write-wins) and never reverts the local row', () async {
+      // Device A creates its profile (v3) and it reaches the server.
+      await deviceA.raw.insert('user_profile', <String, Object?>{
+        'user_id': 'user-1',
+        'uuid': 'user-1',
+        'height_cm': 170.0,
+        'weight_kg': 70.0,
+        'created_at': DateTime.now().millisecondsSinceEpoch,
+        'updated_at': DateTime.now().millisecondsSinceEpoch,
+        'row_version': 3,
+      });
+      await deviceA.engine().track(
+            userId: 'user-1',
+            entity: 'user_profile',
+            entityId: 'user-1',
+            operation: SyncOperation.update,
+            baseVersion: 2,
+          );
+      await deviceA.engine().sync(
+            userId: 'user-1',
+            transport: _CloudStoreTransport(store: store, database: deviceA.db),
+            applier: deviceA.applier,
+          );
+      expect(store.rowsFor('profiles')['user-1']!.data['height_cm'], 170.0);
+
+      // Device B pulls the profile, then edits it, moving the server AHEAD
+      // (v4). Device A's outbox base version (2) is now stale against v4.
+      await deviceB.engine().sync(
+            userId: 'user-1',
+            transport: _CloudStoreTransport(store: store, database: deviceB.db),
+            applier: deviceB.applier,
+          );
+      await deviceB.raw.update(
+        'user_profile',
+        <String, Object?>{
+          'weight_kg': 72.0,
+          'updated_at': DateTime.now().millisecondsSinceEpoch,
+          'row_version': 4,
+        },
+        where: 'uuid = ?',
+        whereArgs: <Object?>['user-1'],
+      );
+      await deviceB.engine().track(
+            userId: 'user-1',
+            entity: 'user_profile',
+            entityId: 'user-1',
+            operation: SyncOperation.update,
+            baseVersion: 3,
+          );
+      await deviceB.engine().sync(
+            userId: 'user-1',
+            transport: _CloudStoreTransport(store: store, database: deviceB.db),
+            applier: deviceB.applier,
+          );
+      expect(store.rowsFor('profiles')['user-1']!.data['weight_kg'], 72.0);
+
+      // Device A edits its profile again based on its OWN local row (v3 ->
+      // v4), keeping a stale outbox base version (2). last-write-wins must
+      // push the full local profile instead of discarding it as a conflict.
+      await deviceA.raw.update(
+        'user_profile',
+        <String, Object?>{
+          'height_cm': 180.0,
+          'weight_kg': 75.0,
+          'updated_at': DateTime.now().millisecondsSinceEpoch,
+          'row_version': 4,
+        },
+        where: 'uuid = ?',
+        whereArgs: <Object?>['user-1'],
+      );
+      await deviceA.engine().track(
+            userId: 'user-1',
+            entity: 'user_profile',
+            entityId: 'user-1',
+            operation: SyncOperation.update,
+            baseVersion: 2,
+          );
+      final SyncRunResult pushed = await deviceA.engine().sync(
+            userId: 'user-1',
+            transport: _CloudStoreTransport(store: store, database: deviceA.db),
+            applier: deviceA.applier,
+          );
+      expect(pushed.succeeded, greaterThan(0));
+      final Map<String, Object?> server = store.rowsFor('profiles')['user-1']!.data;
+      expect(server['height_cm'], 180.0,
+          reason: 'the full local profile must reach the server despite the '
+              'stale base version');
+      expect(server['weight_kg'], 75.0);
+
+      // Device A's own pull must never revert the newer local row.
+      final List<Map<String, Object?>> rowsA =
+          await _rows(deviceA, 'user_profile');
+      expect(rowsA.single['height_cm'], 180.0);
+      expect(rowsA.single['weight_kg'], 75.0);
+
+      // Device B converges to the latest profile.
+      await deviceB.engine().sync(
+            userId: 'user-1',
+            transport: _CloudStoreTransport(store: store, database: deviceB.db),
+            applier: deviceB.applier,
+          );
+      final List<Map<String, Object?>> rowsB =
+          await _rows(deviceB, 'user_profile');
+      expect(rowsB.single['height_cm'], 180.0);
+      expect(rowsB.single['weight_kg'], 75.0);
     });
   });
 }
