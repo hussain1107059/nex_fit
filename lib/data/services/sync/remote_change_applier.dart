@@ -219,6 +219,18 @@ class RemoteChangeApplier {
       await txn.insert(mapping.localTable, localRow);
       return 1;
     }
+    // Never regress a row to an OLDER remote snapshot. When the existing local
+    // row has a higher row_version than the change being applied, the change is
+    // a replayed/older entry (e.g. an INSERT re-pulled after a local completion)
+    // and must be skipped so it cannot revert local data. Equal versions still
+    // overwrite: re-applying the same snapshot is idempotent and harmless.
+    final Object? incomingVersion = localRow['row_version'];
+    final Object? existingVersion = existing.first['row_version'];
+    if (incomingVersion is int &&
+        existingVersion is int &&
+        existingVersion > incomingVersion) {
+      return 0;
+    }
     await txn.update(
       mapping.localTable,
       localRow,

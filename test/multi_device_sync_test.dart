@@ -1197,5 +1197,146 @@ void main() {
       expect((await deviceB.stateRepo.getByUserId('user-1'))!.cursor,
           staleCursor);
     });
+
+    test('10. a re-pulled older INSERT never regresses a completed local row',
+        () async {
+      // Device A completes a workout and the completion reaches the server.
+      final int whA = await _seedWorkoutHistory(deviceA.raw, uuid: 'wh-1');
+      await deviceA.engine().track(
+            userId: 'user-1',
+            entity: 'workout_history',
+            entityId: '$whA',
+            operation: SyncOperation.create,
+          );
+      await deviceA.engine().sync(
+            userId: 'user-1',
+            transport: _CloudStoreTransport(store: store, database: deviceA.db),
+            applier: deviceA.applier,
+          );
+      final int end = DateTime.now().millisecondsSinceEpoch + 60000;
+      await deviceA.raw.update(
+        'workout_history',
+        <String, Object?>{
+          'ended_at': end,
+          'duration_minutes': 1,
+          'calories_burn': 4.5,
+          'is_completed': 1,
+          'updated_at': end,
+          'row_version': 2,
+        },
+        where: 'uuid = ?',
+        whereArgs: <Object?>['wh-1'],
+      );
+      await deviceA.engine().track(
+            userId: 'user-1',
+            entity: 'workout_history',
+            entityId: '$whA',
+            operation: SyncOperation.update,
+            baseVersion: 1,
+          );
+      await deviceA.engine().sync(
+            userId: 'user-1',
+            transport: _CloudStoreTransport(store: store, database: deviceA.db),
+            applier: deviceA.applier,
+          );
+
+      // Device B pulls everything and ends complete (row_version 2).
+      await deviceB.engine().sync(
+            userId: 'user-1',
+            transport: _CloudStoreTransport(store: store, database: deviceB.db),
+            applier: deviceB.applier,
+          );
+      List<Map<String, Object?>> rowsB = await _rows(deviceB, 'workout_history');
+      expect(rowsB.single['is_completed'], 1);
+      expect(rowsB.single['row_version'], 2);
+
+      // The INSERT change (row_version 1) is re-pulled against the already
+      // completed row — exactly what a fresh pull delivers before the UPDATE.
+      // The applier must NOT overwrite the completed row with the older
+      // incomplete snapshot.
+      await deviceB.stateRepo.deleteForUser('user-1');
+      final SyncRunResult reset = await deviceB.engine().resetAndSync(
+            userId: 'user-1',
+            transport: _CloudStoreTransport(
+              store: store,
+              database: deviceB.db,
+            ),
+            applier: deviceB.applier,
+          );
+      expect(reset.pulled, greaterThan(0));
+      rowsB = await _rows(deviceB, 'workout_history');
+      expect(rowsB.single['is_completed'], 1,
+          reason: 'the INSERT (v1) is applied, then the UPDATE (v2) restores '
+              'the completed state — final state must stay complete');
+      expect(rowsB.single['calories_burn'], 4.5);
+      expect(rowsB.single['row_version'], 2);
+    });
+
+    test('11. a newer local row is never regressed by an older remote change',
+        () async {
+      // Device B starts a local session (INSERT state, v1) and completes it
+      // locally, making the local row NEWER (v2) than the server snapshot.
+      final int whB = await _seedWorkoutHistory(deviceB.raw, uuid: 'wh-1');
+      await deviceB.engine().track(
+            userId: 'user-1',
+            entity: 'workout_history',
+            entityId: '$whB',
+            operation: SyncOperation.create,
+          );
+      final int end = DateTime.now().millisecondsSinceEpoch + 60000;
+      await deviceB.raw.update(
+        'workout_history',
+        <String, Object?>{
+          'ended_at': end,
+          'duration_minutes': 1,
+          'calories_burn': 4.5,
+          'is_completed': 1,
+          'updated_at': end,
+          'row_version': 2,
+        },
+        where: 'uuid = ?',
+        whereArgs: <Object?>['wh-1'],
+      );
+      await deviceB.engine().track(
+            userId: 'user-1',
+            entity: 'workout_history',
+            entityId: '$whB',
+            operation: SyncOperation.update,
+            baseVersion: 1,
+          );
+
+      // The server only knows the OLD INSERT snapshot (v1, incomplete). Pulling
+      // it against the completed local row (v2) must not regress the row.
+      store.seed(
+        table: 'workout_history',
+        recordId: 'wh-1',
+        userId: 'user-1',
+        payload: <String, Object?>{
+          'id': 'wh-1',
+          'user_id': 'user-1',
+          'row_version': 1,
+          'is_completed': false,
+          'calories_burn': null,
+          'ended_at': null,
+          'started_at': '2026-01-01T06:00:00Z',
+          'created_at': '2026-01-01T06:00:00Z',
+          'updated_at': '2026-01-01T06:00:00Z',
+          'deleted_at': null,
+        },
+      );
+      await deviceB.engine().sync(
+            userId: 'user-1',
+            transport: _CloudStoreTransport(store: store, database: deviceB.db),
+            applier: deviceB.applier,
+          );
+
+      final List<Map<String, Object?>> rowsB =
+          await _rows(deviceB, 'workout_history');
+      expect(rowsB.single['is_completed'], 1,
+          reason: 'the local row (v2) is newer than the remote INSERT (v1) and '
+              'must not be overwritten');
+      expect(rowsB.single['calories_burn'], 4.5);
+      expect(rowsB.single['row_version'], 2);
+    });
   });
 }
