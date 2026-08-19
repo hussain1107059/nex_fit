@@ -26,6 +26,9 @@ class SyncUiState {
     this.initialEventsPushed = 0,
     this.initialAnalysis,
     this.pendingConflictCount = 0,
+    this.resetAt,
+    this.resetPulled = 0,
+    this.resetError,
   });
 
   final SyncActivity activity;
@@ -42,6 +45,13 @@ class SyncUiState {
   /// Unresolved manual-merge conflicts in the durable store (PROMPT 19).
   final int pendingConflictCount;
 
+  /// When the last full re-sync ran, how many remote changes it re-applied
+  /// and (if it failed) the error. Surfaces in developer diagnostics so a
+  /// stale device can be verified end-to-end.
+  final DateTime? resetAt;
+  final int resetPulled;
+  final Object? resetError;
+
   bool get isSyncing => activity == SyncActivity.syncing;
 
   bool get isInitialSyncing => initialPhase == InitialSyncPhase.syncing;
@@ -55,7 +65,11 @@ class SyncUiState {
     int? initialEventsPushed,
     OwnershipAnalysis? initialAnalysis,
     int? pendingConflictCount,
+    DateTime? resetAt,
+    int? resetPulled,
+    Object? resetError,
     bool clearFailure = false,
+    bool clearResetError = false,
   }) {
     return SyncUiState(
       activity: activity ?? this.activity,
@@ -67,6 +81,9 @@ class SyncUiState {
       initialAnalysis: initialAnalysis ?? this.initialAnalysis,
       pendingConflictCount:
           pendingConflictCount ?? this.pendingConflictCount,
+      resetAt: resetAt ?? this.resetAt,
+      resetPulled: resetPulled ?? this.resetPulled,
+      resetError: clearResetError ? null : (resetError ?? this.resetError),
     );
   }
 }
@@ -289,9 +306,20 @@ class SyncController extends Notifier<SyncUiState> {
           .read(settingsControllerProvider.notifier)
           .setLastSyncAt(DateTime.now());
       await _refreshAndMaster();
+      state = state.copyWith(
+        resetAt: DateTime.now(),
+        resetPulled: result.pulled,
+        resetError: null,
+        clearResetError: true,
+      );
       return SyncResetResult(ran: true, deleted: true, pulled: result.pulled);
     } catch (error) {
-      state = state.copyWith(activity: SyncActivity.idle, failure: error);
+      state = state.copyWith(
+        activity: SyncActivity.idle,
+        failure: error,
+        resetAt: DateTime.now(),
+        resetError: error,
+      );
       return SyncResetResult(ran: true, deleted: true, error: error);
     }
   }

@@ -14,8 +14,9 @@ import '../../../domain/entities/sync_conflict_record.dart';
 import '../../../domain/entities/sync_event.dart';
 import '../../../domain/entities/sync_state.dart';
 import '../../../injection/dependency_injection.dart';
-import '../../providers/auth_provider.dart';
-import '../../providers/settings_providers.dart';
+import '../../../presentation/providers/auth_provider.dart';
+import '../../../presentation/providers/settings_providers.dart';
+import '../../../presentation/providers/sync_providers.dart';
 import 'widgets/settings_widgets.dart';
 
 /// Debug-only developer options. This screen is only reachable in debug
@@ -76,6 +77,19 @@ class _DeveloperSettingsScreenState
       buffer.writeln(
         '- lastSyncAt=${syncState.lastSyncAt?.toIso8601String() ?? 'null'} '
         'updatedAt=${syncState.updatedAt.toIso8601String()}',
+      );
+    }
+
+    final SyncUiState syncUi = ref.read(syncControllerProvider);
+    buffer.writeln();
+    buffer.writeln('LAST FULL RE-SYNC:');
+    if (syncUi.resetAt == null) {
+      buffer.writeln('- none yet');
+    } else {
+      buffer.writeln(
+        '- at=${syncUi.resetAt!.toIso8601String()} '
+        'pulled=${syncUi.resetPulled} '
+        'error=${syncUi.resetError ?? 'null'}',
       );
     }
 
@@ -187,6 +201,17 @@ class _DeveloperSettingsScreenState
               refreshKey: _diagRefresh,
               onChanged: _reloadDiagnostics,
             ),
+            SettingsCard(
+              children: [
+                ListTile(
+                  leading: const Icon(Icons.sync_problem_rounded),
+                  title: Text(context.l10n.settingsResyncTitle),
+                  subtitle: Text(context.l10n.settingsResyncDescription),
+                  trailing: const Icon(Icons.chevron_right_rounded),
+                  onTap: () => _confirmResync(context, ref),
+                ),
+              ],
+            ),
           ],
           SettingsSectionTitle(context.l10n.settingsDeveloperInfo),
           SettingsCard(
@@ -223,6 +248,44 @@ class _DeveloperSettingsScreenState
         ],
       ),
     );
+  }
+
+  Future<void> _confirmResync(
+    BuildContext context,
+    WidgetRef ref,
+  ) async {
+    final bool? confirmed = await showDialog<bool>(
+      context: context,
+      builder: (BuildContext dialogContext) => AlertDialog(
+        title: Text(context.l10n.settingsResyncTitle),
+        content: Text(context.l10n.settingsResyncConfirmBody),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(dialogContext, false),
+            child: Text(context.l10n.commonCancel),
+          ),
+          FilledButton(
+            onPressed: () => Navigator.pop(dialogContext, true),
+            child: Text(context.l10n.commonConfirm),
+          ),
+        ],
+      ),
+    );
+    if (confirmed != true || !context.mounted) return;
+    final String? userId = ref.read(currentUserProvider)?.id;
+    if (userId == null) return;
+    final SyncResetResult result =
+        await ref.read(syncControllerProvider.notifier).resetAndResync();
+    if (!context.mounted) return;
+    final String message;
+    if (result.success) {
+      message = '${context.l10n.settingsResyncTitle} — '
+          '${result.pulled} changes';
+    } else {
+      message = '${context.l10n.settingsResyncTitle} — '
+          '${context.l10n.syncStatusFailed}';
+    }
+    AppSnackbar.success(context, message);
   }
 
   Future<void> _confirmReset(

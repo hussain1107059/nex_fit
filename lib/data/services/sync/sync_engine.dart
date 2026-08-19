@@ -822,11 +822,24 @@ class SyncEngine {
         'user=${SyncLog.maskUserId(userId)} transport=${transport.name} '
         'reset',
       );
-      final SyncRunResult push = await _processQueueUnlocked(
-        userId,
-        transport: transport,
-      );
+      // Reset the cursor FIRST: even if the push or the pull below fails, the
+      // stored cursor is gone, so the next sync run re-pulls from scratch and
+      // self-heals. The push is best-effort and never blocks the re-pull.
       await syncStateRepository?.deleteForUser(userId);
+      SyncRunResult push = const SyncRunResult();
+      try {
+        push = await _processQueueUnlocked(
+          userId,
+          transport: transport,
+        );
+      } on Exception catch (error) {
+        SyncLog.warning(
+          _logger,
+          SyncLog.pushFailure,
+          'user=${SyncLog.maskUserId(userId)} '
+          'error=${ValueMasker.maskEmailInText(error.toString())}',
+        );
+      }
       final int pulled = await _pullUnlocked(
         userId: userId,
         transport: transport,
