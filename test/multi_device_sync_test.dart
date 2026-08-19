@@ -1338,5 +1338,98 @@ void main() {
       expect(rowsB.single['calories_burn'], 4.5);
       expect(rowsB.single['row_version'], 2);
     });
+
+    test('12. an inflated stale row without a pending write is repaired by a '
+        'fresh pull', () async {
+      // Seed the cloud with the completion flow from device A (INSERT v1 then
+      // UPDATE v2), exactly mirroring the real 285/287 capture order.
+      final int whA = await _seedWorkoutHistory(deviceA.raw, uuid: 'wh-1');
+      await deviceA.engine().track(
+            userId: 'user-1',
+            entity: 'workout_history',
+            entityId: '$whA',
+            operation: SyncOperation.create,
+          );
+      await deviceA.engine().sync(
+            userId: 'user-1',
+            transport: _CloudStoreTransport(store: store, database: deviceA.db),
+            applier: deviceA.applier,
+          );
+      final int end = DateTime.now().millisecondsSinceEpoch + 60000;
+      await deviceA.raw.update(
+        'workout_history',
+        <String, Object?>{
+          'ended_at': end,
+          'duration_minutes': 1,
+          'calories_burn': 4.5,
+          'is_completed': 1,
+          'updated_at': end,
+          'row_version': 2,
+        },
+        where: 'uuid = ?',
+        whereArgs: <Object?>['wh-1'],
+      );
+      await deviceA.engine().track(
+            userId: 'user-1',
+            entity: 'workout_history',
+            entityId: '$whA',
+            operation: SyncOperation.update,
+            baseVersion: 1,
+          );
+      await deviceA.engine().sync(
+            userId: 'user-1',
+            transport: _CloudStoreTransport(store: store, database: deviceA.db),
+            applier: deviceA.applier,
+          );
+
+      // Device B pulls everything, then its row is corrupted by a version
+      // drift (row_version 200, incomplete) with NO outbox event behind it.
+      await deviceB.engine().sync(
+            userId: 'user-1',
+            transport: _CloudStoreTransport(store: store, database: deviceB.db),
+            applier: deviceB.applier,
+          );
+      await deviceB.raw.update(
+        'workout_history',
+        <String, Object?>{
+          'is_completed': 0,
+          'calories_burn': null,
+          'row_version': 200,
+        },
+        where: 'uuid = ?',
+        whereArgs: <Object?>['wh-1'],
+      );
+      final int staleCursor = store
+          .changesAfter(userId: 'user-1', cursor: 0)
+          .last
+          .id;
+      await deviceB.stateRepo.upsert(
+        SyncState(
+          userId: 'user-1',
+          cursor: staleCursor,
+          initialSyncCompleted: true,
+          updatedAt: DateTime.now(),
+        ),
+      );
+
+      // The reset re-pulls the INSERT (v1) and UPDATE (v2). Because the row
+      // has NO pending outbox write, the guard must not freeze it at v200:
+      // the server snapshot repairs it back to the completed state.
+      await deviceB.engine().resetAndSync(
+            userId: 'user-1',
+            transport: _CloudStoreTransport(
+              store: store,
+              database: deviceB.db,
+            ),
+            applier: deviceB.applier,
+          );
+      final List<Map<String, Object?>> rowsB =
+          await _rows(deviceB, 'workout_history');
+      expect(rowsB.single['is_completed'], 1,
+          reason: 'an inflated row without a pending local write must be '
+              'repairable by a fresh pull');
+      expect(rowsB.single['calories_burn'], 4.5);
+      expect(rowsB.single['row_version'], 2);
+    });
   });
 }

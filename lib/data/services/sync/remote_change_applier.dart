@@ -1,6 +1,8 @@
 import 'package:sqflite/sqflite.dart' hide DatabaseException;
 
+import '../../../domain/entities/security_enums.dart';
 import '../../datasources/local/app_database.dart';
+import '../../models/sync_event_model.dart';
 import 'sync_contracts.dart';
 import 'sync_table_registry.dart';
 
@@ -219,17 +221,29 @@ class RemoteChangeApplier {
       await txn.insert(mapping.localTable, localRow);
       return 1;
     }
-    // Never regress a row to an OLDER remote snapshot. When the existing local
-    // row has a higher row_version than the change being applied, the change is
-    // a replayed/older entry (e.g. an INSERT re-pulled after a local completion)
-    // and must be skipped so it cannot revert local data. Equal versions still
-    // overwrite: re-applying the same snapshot is idempotent and harmless.
+    // Never regress a row that holds a genuinely newer local write. When the
+    // existing local row has a higher row_version than the change being applied,
+    // the change is a replayed/older entry (e.g. an INSERT re-pulled after a
+    // local completion) and must be skipped so it cannot revert local data.
+    // Equal versions still overwrite: re-applying the same snapshot is
+    // idempotent and harmless.
     final Object? incomingVersion = localRow['row_version'];
     final Object? existingVersion = existing.first['row_version'];
     if (incomingVersion is int &&
         existingVersion is int &&
         existingVersion > incomingVersion) {
-      return 0;
+      // Only skip when the row still has an un-pushed outbox event (a real
+      // local edit in flight). A row whose version merely drifted above the
+      // remote (e.g. repeated local writes whose events never landed) but has
+      // NO pending event is stale, not newer: the authoritative server snapshot
+      // must be allowed to repair it, or a fresh pull could never converge.
+      final bool hasPendingWrite = await _hasPendingOutboxEvent(
+        txn,
+        mapping,
+        existing.first,
+        whereArg,
+      );
+      if (hasPendingWrite) return 0;
     }
     await txn.update(
       mapping.localTable,
@@ -238,6 +252,33 @@ class RemoteChangeApplier {
       whereArgs: <Object?>[whereArg],
     );
     return 1;
+  }
+
+  /// True when [table]'s row still has an un-pushed outbox event (a genuinely
+  /// newer local write). The DAOs key non-singleton events by the local rowid
+  /// and singleton events by the user id, so both identifiers are probed.
+  Future<bool> _hasPendingOutboxEvent(
+    Transaction txn,
+    SyncTableMapping mapping,
+    Map<String, Object?> existing,
+    String recordId,
+  ) async {
+    final Object? rowId = existing['id'];
+    final List<Map<String, Object?>> rows = await txn.query(
+      SyncEventModel.table,
+      columns: const <String>['id'],
+      where: 'entity = ? AND entity_id IN (?, ?) AND status IN (?, ?, ?)',
+      whereArgs: <Object?>[
+        mapping.localTable,
+        '$rowId',
+        recordId,
+        SyncStatus.pending.name,
+        SyncStatus.failedRetryable.name,
+        SyncStatus.processing.name,
+      ],
+      limit: 1,
+    );
+    return rows.isNotEmpty;
   }
 
   Future<int> _applyDelete(
