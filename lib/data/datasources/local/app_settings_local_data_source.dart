@@ -15,7 +15,7 @@ class AppSettingsLocalDataSource extends BaseLocalDataSource {
   AppSettingsLocalDataSource({required super.database})
     : super(logName: 'AppSettingsLocalDataSource');
 
-  Future<int> upsert(AppSettings settings) {
+  Future<int> upsert(AppSettings settings, {bool trackSync = true}) {
     return guard('upsert', () async {
       final Database db = await dbConnection;
       return db.transaction((Transaction txn) async {
@@ -34,20 +34,29 @@ class AppSettingsLocalDataSource extends BaseLocalDataSource {
           values['uuid'] = existing['uuid'] as String? ?? settings.userId;
           values['created_at'] = existing['created_at'];
           values['updated_at'] = now;
-          values['row_version'] = baseVersion + 1;
+          // Device-local telemetry writes (lastSyncAt / lastActiveAt) must not
+          // bump row_version or enqueue an outbox event, or every sync run
+          // re-stamps the timestamp and the queue can never drain.
+          if (trackSync) {
+            values['row_version'] = baseVersion + 1;
+          } else {
+            values['row_version'] = existing['row_version'];
+          }
           await txn.update(
             AppSettingsModel.table,
             values,
             where: 'user_id = ?',
             whereArgs: <Object?>[settings.userId],
           );
-          await SyncableDao.recordUpdate(
-            txn,
-            entity: AppSettingsModel.table,
-            entityId: settings.userId,
-            userId: settings.userId,
-            baseVersion: baseVersion,
-          );
+          if (trackSync) {
+            await SyncableDao.recordUpdate(
+              txn,
+              entity: AppSettingsModel.table,
+              entityId: settings.userId,
+              userId: settings.userId,
+              baseVersion: baseVersion,
+            );
+          }
           return 1;
         }
         final Map<String, Object?> values = AppSettingsModel.toMap(settings);
@@ -56,6 +65,8 @@ class AppSettingsLocalDataSource extends BaseLocalDataSource {
         values['updated_at'] = now;
         values['row_version'] = SyncableDao.firstRowVersion;
         final int id = await txn.insert(AppSettingsModel.table, values);
+        // A brand-new row must always be announced so the server ever learns
+        // of it, even when this particular write is device-local telemetry.
         await SyncableDao.recordCreate(
           txn,
           entity: AppSettingsModel.table,

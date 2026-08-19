@@ -61,6 +61,29 @@ class SettingsController extends AsyncNotifier<AppSettings?> {
   Future<AppSettings?> _update(
     AppSettings Function(AppSettings) transform,
   ) async {
+    return _apply(
+      transform,
+      trackSync: true,
+    );
+  }
+
+  /// Like [_update] but writes device-local telemetry (last sync / last active
+  /// time) WITHOUT bumping row_version or enqueuing a sync event. Tracking
+  /// these would re-stamp the timestamp after every sync run, queueing a fresh
+  /// UPDATE event each time so the outbox can never drain.
+  Future<AppSettings?> _updateSilent(
+    AppSettings Function(AppSettings) transform,
+  ) async {
+    return _apply(
+      transform,
+      trackSync: false,
+    );
+  }
+
+  Future<AppSettings?> _apply(
+    AppSettings Function(AppSettings) transform, {
+    required bool trackSync,
+  }) async {
     final AppUser? user = ref.read(currentUserProvider);
     if (user == null || !user.isSignedIn) return state.valueOrNull;
 
@@ -69,7 +92,7 @@ class SettingsController extends AsyncNotifier<AppSettings?> {
       current ?? _defaultsFor(user.id),
     ).copyWith(updatedAt: DateTime.now());
 
-    await _repository.upsert(updated);
+    await _repository.upsert(updated, trackSync: trackSync);
     state = AsyncData<AppSettings?>(updated);
     return updated;
   }
@@ -303,13 +326,15 @@ class SettingsController extends AsyncNotifier<AppSettings?> {
     );
   }
 
-  /// Records the last successful sync queue processing run.
+  /// Records the last successful sync queue processing run (device-local
+  /// telemetry: never enqueues a sync event).
   Future<void> setLastSyncAt(DateTime at) =>
-      _update((settings) => settings.copyWith(lastSyncAt: at));
+      _updateSilent((settings) => settings.copyWith(lastSyncAt: at));
 
-  /// Records the last active moment (used by the auto-lock gate).
+  /// Records the last active moment, used by the auto-lock gate (device-local
+  /// telemetry: never enqueues a sync event).
   Future<void> markActive() =>
-      _update((settings) => settings.copyWith(lastActiveAt: DateTime.now()));
+      _updateSilent((settings) => settings.copyWith(lastActiveAt: DateTime.now()));
 
   /// Wipes every locally stored row for the signed-in user (cascading delete),
   /// then re-seeds the shared catalogs so the app starts fresh but offline.

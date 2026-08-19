@@ -822,5 +822,24 @@ test('update preserves uuid, bumps version and records base_version',
       expect(rows.single['row_version'], 5);
       expect(await eventsFor('app_settings'), hasLength(1));
     });
+
+    test('silent upsert (telemetry) keeps version and records no event', () async {
+      final AppSettingsLocalDataSource source = dao();
+      await source.upsert(settings());
+      await source.upsert(
+        settings().copyWith(
+          lastSyncAt: DateTime.utc(2026, 3, 1),
+          updatedAt: DateTime.utc(2026, 3, 1),
+        ),
+        trackSync: false,
+      );
+      final List<Map<String, Object?>> rows = await db.query('app_settings');
+      expect(rows.single['row_version'], 1);
+      expect(rows.single['last_sync_at'], isNotNull);
+      final List<Map<String, Object?>> events =
+          await eventsFor('app_settings');
+      expect(events, hasLength(1));
+      expect(events.single['operation'], SyncOperation.create.name);
+    });
   });
 }

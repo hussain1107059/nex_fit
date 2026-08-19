@@ -9,8 +9,8 @@ class AppSettingsRepositoryImpl implements AppSettingsRepository {
   final AppSettingsLocalDataSource _dataSource;
 
   @override
-  Future<void> upsert(AppSettings settings) async {
-    await _dataSource.upsert(settings);
+  Future<void> upsert(AppSettings settings, {bool trackSync = true}) async {
+    await _dataSource.upsert(settings, trackSync: trackSync);
   }
 
   @override
