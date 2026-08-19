@@ -351,10 +351,13 @@ class SupabaseSyncTransport implements SyncTransport {
       for (final Map<String, dynamic> row in rows) {
         final int id = (row['id'] as num).toInt();
         if (id > nextCursor) nextCursor = id;
-        final String? rawPayload = row['payload'] as String?;
-        final Map<String, Object?> payload = rawPayload == null
-            ? <String, Object?>{}
-            : _decodePayload(rawPayload);
+        // `sync_changes.payload` is jsonb: PostgREST returns it as a decoded
+        // Map (and supabase-dart keeps it that way), so a hard `as String?`
+        // cast would throw on every real change row and stall the cursor.
+        // Accept both forms defensively.
+        final Object? rawPayload = row['payload'];
+        final Map<String, Object?> payload =
+            SupabaseSyncTransport.decodePayloadValue(rawPayload);
         changes.add(
           SyncChange(
             cursorId: id,
@@ -384,7 +387,22 @@ class SupabaseSyncTransport implements SyncTransport {
     }
   }
 
-  Map<String, Object?> _decodePayload(String raw) {
+  /// Parses the value of `sync_changes.payload` (jsonb) into the change map.
+  ///
+  /// PostgREST returns jsonb as a decoded JSON value, so supabase-dart hands
+  /// it over as a `Map`. Accept that form directly and fall back to decoding a
+  /// JSON `String` (older/text transports) or an empty map for anything else.
+  static Map<String, Object?> decodePayloadValue(Object? rawPayload) {
+    if (rawPayload is String) {
+      return _decodePayloadString(rawPayload);
+    }
+    if (rawPayload is Map) {
+      return Map<String, Object?>.from(rawPayload);
+    }
+    return <String, Object?>{};
+  }
+
+  static Map<String, Object?> _decodePayloadString(String raw) {
     try {
       final dynamic decoded = jsonDecode(raw);
       if (decoded is Map<String, dynamic>) {
