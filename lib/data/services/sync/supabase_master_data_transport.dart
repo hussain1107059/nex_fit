@@ -77,8 +77,12 @@ class SupabaseMasterDataTransport implements MasterDataTransport {
 
     try {
       // `dynamic` keeps the filter/transform builder chain legal across the
-      // conditional order/gte/isFilter/range steps of the supabase 2.x DSL.
-      dynamic query = _client.from(spec.cloudTable).select().order('id');
+      // conditional steps of the supabase 2.x DSL. Filters (gte / isFilter)
+      // must run FIRST while the builder is still a PostgrestFilterBuilder:
+      // `.order()` downcasts it to a PostgrestTransformBuilder, which only
+      // has transform methods, so any filter added after it would fail at
+      // runtime with a NoSuchMethodError.
+      dynamic query = _client.from(spec.cloudTable).select();
       if (since != null) {
         // >= so rows whose updated_at equals the stored watermark are
         // re-fetched at worst (idempotent) and never skipped.
@@ -87,11 +91,13 @@ class SupabaseMasterDataTransport implements MasterDataTransport {
           since.toUtc().toIso8601String(),
         );
       }
-      if (spec.hybrid) {
+      if (spec.hybrid && spec.cloudOwnerColumn != null) {
         // Only the developer's master rows are readable; user rows stay out
-        // of the catalog flow entirely.
-        query = query.isFilter('user_id', null);
+        // of the catalog flow entirely. Pure master tables (no owner column,
+        // e.g. goal_templates) skip the filter.
+        query = query.isFilter(spec.cloudOwnerColumn, null);
       }
+      query = query.order('id');
       // Request limit+1 rows so `hasMore` is authoritative without an extra
       // round trip.
       final List<Map<String, dynamic>> rows =

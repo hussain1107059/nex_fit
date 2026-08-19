@@ -28,5 +28,17 @@ void main() {
       expect(ValueMasker.mask('whatever'), '••••');
       expect(ValueMasker.mask(null), '');
     });
+
+    test('masks emails inside text but keeps the rest readable', () {
+      expect(
+        ValueMasker.maskEmailInText(
+          'postgrest_23505_duplicate key user farhan@example.com',
+        ),
+        'postgrest_23505_duplicate key user f••••@example.com',
+      );
+      expect(ValueMasker.maskEmailInText('plain message'), 'plain message');
+      expect(ValueMasker.maskEmailInText(null), '');
+      expect(ValueMasker.maskEmailInText(''), '');
+    });
   });
 }

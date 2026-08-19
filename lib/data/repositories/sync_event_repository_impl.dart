@@ -32,6 +32,16 @@ class SyncEventRepositoryImpl implements SyncEventRepository {
   }) => _dataSource.getPendingByUserId(userId, limit: limit, offset: offset);
 
   @override
+  Future<List<SyncEvent>> getNonCompletedByUserId(
+    String userId, {
+    int limit = 100,
+  }) => _dataSource.getNonCompletedByUserId(userId, limit: limit);
+
+  @override
+  Future<void> requeueAllByUserId(String userId, {required DateTime at}) =>
+      _dataSource.requeueAllByUserId(userId, at: at);
+
+  @override
   Future<List<SyncEvent>> getRetryableByUserId(
     String userId, {
     int? limit,

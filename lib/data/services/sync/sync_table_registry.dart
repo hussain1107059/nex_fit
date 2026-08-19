@@ -313,14 +313,18 @@ class SyncTableRegistry {
       timestampColumns: <String>{'birth_date', 'created_at', 'updated_at'},
       dateColumns: <String>{'birth_date'},
     ),
-    // app_settings -> user_settings (singleton)
+    // app_settings -> user_settings (singleton). `theme_mode` is the
+    // authoritative local column (v11, NOT NULL); the legacy nullable `theme`
+    // is never written and must not be pushed. `locale` is stored in
+    // SharedPreferences (never in the local table) and the local table has no
+    // `created_at`, so both are omitted and the server's NOT NULL defaults
+    // apply instead of the app pushing explicit nulls.
     SyncTableMapping(
       localTable: 'app_settings',
       cloudTable: 'user_settings',
       localKeyColumn: 'user_id',
       localToCloud: <String, String>{
-        'theme': 'theme_mode',
-        'locale': 'locale',
+        'theme_mode': 'theme_mode',
         'units': 'units',
         'week_start': 'week_start',
         'daily_calorie_target': 'daily_calorie_target',
@@ -344,7 +348,6 @@ class SyncTableRegistry {
         'exercise_animation': 'exercise_animation',
         'auto_next_exercise': 'auto_next_exercise',
         'data_sync_enabled': 'data_sync_enabled',
-        'created_at': 'created_at',
         'updated_at': 'updated_at',
       },
       timestampColumns: <String>{'created_at', 'updated_at'},

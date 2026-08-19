@@ -421,13 +421,15 @@ class SyncEngine {
     } catch (error, stackTrace) {
       _logger.warning(
         '[${SyncLog.pushFailure}] event=${SyncLog.maskEventUuid(event.eventUuid)} '
-        'unexpected: ${ValueMasker.maskText(error.toString())}',
+        'unexpected: ${ValueMasker.maskEmailInText(error.toString())}',
         error,
         stackTrace,
       );
       await _markTransportFailure(
         event,
-        SyncTransportException('unexpected_error'),
+        SyncTransportException(
+          'unexpected_${ValueMasker.maskEmailInText(error.toString())}',
+        ),
         runAt,
       );
       onFailed();
@@ -559,7 +561,7 @@ class SyncEngine {
     if (permanent) {
       await repository.markPermanentFailure(
         eventId,
-        lastError: ValueMasker.maskText(error.message),
+        lastError: ValueMasker.maskEmailInText(error.message),
         retryCount: retries,
         at: runAt,
       );
@@ -567,7 +569,7 @@ class SyncEngine {
         _logger,
         SyncLog.pushFailure,
         'event=${SyncLog.maskEventUuid(event.eventUuid)} permanent '
-        'error=${ValueMasker.maskText(error.message)}',
+        'error=${ValueMasker.maskEmailInText(error.message)}',
       );
       return;
     }
@@ -578,7 +580,7 @@ class SyncEngine {
     );
     await repository.markRetryableFailure(
       eventId,
-      lastError: ValueMasker.maskText(error.message),
+      lastError: ValueMasker.maskEmailInText(error.message),
       retryCount: retries,
       at: runAt,
       nextRetryAt: nextRetry,
@@ -588,7 +590,7 @@ class SyncEngine {
       SyncLog.pushRetry,
       'event=${SyncLog.maskEventUuid(event.eventUuid)} attempt=$retries '
       'nextRetryAt=${nextRetry.toIso8601String()} '
-      'error=${ValueMasker.maskText(error.message)}',
+      'error=${ValueMasker.maskEmailInText(error.message)}',
     );
   }
 
@@ -772,7 +774,7 @@ class SyncEngine {
           _logger,
           SyncLog.pullFailure,
           'user=${SyncLog.maskUserId(userId)} '
-          'error=${ValueMasker.maskText(error.message)}',
+          'error=${ValueMasker.maskEmailInText(error.message)}',
         );
         return push.copyWith(
           failed: push.failed + 1,
@@ -785,7 +787,7 @@ class SyncEngine {
           _logger,
           SyncLog.pullFailure,
           'user=${SyncLog.maskUserId(userId)} '
-          '${ValueMasker.maskText(error.message)}',
+          '${ValueMasker.maskEmailInText(error.message)}',
         );
         return push.copyWith(
           failed: push.failed + 1,

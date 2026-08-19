@@ -345,8 +345,12 @@ class SyncStatusController extends Notifier<SyncStatusSnapshot> {
       );
     }
 
-    final bool hasConflicts =
-        (failure?.conflicts ?? 0) > 0 || ui.pendingConflictCount > 0;
+    // Only UNRESOLVED conflicts that need the user's attention surface the
+    // "Conflict needs attention" state. Auto-resolved conflicts (the default
+    // `latestWins` / server-won strategy) are recorded for review but are not
+    // actionable, so they must not keep the status chip stuck in a conflict
+    // state after the run that produced them.
+    final bool hasConflicts = ui.pendingConflictCount > 0;
     final SyncUiStatus status;
     if (hasConflicts) {
       status = SyncUiStatus.conflict;

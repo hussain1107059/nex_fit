@@ -250,6 +250,61 @@ class SyncEventLocalDataSource extends BaseLocalDataSource {
     });
   }
 
+  /// Developer recovery: re-queues every non-final event for [userId] back to
+  /// PENDING with a zeroed retry counter so the next sync run retries them
+  /// (used from the developer diagnostics screen).
+  Future<void> requeueAllByUserId(String userId, {required DateTime at}) {
+    return guard('requeue_all_by_user', () async {
+      final Database db = await dbConnection;
+      await db.update(
+        SyncEventModel.table,
+        <String, Object?>{
+          'status': SyncStatus.pending.name,
+          'retry_count': 0,
+          'next_retry_at': null,
+          'last_error': 'requeued_manually',
+          'updated_at': at.millisecondsSinceEpoch,
+        },
+        where: 'user_id = ? AND status IN (?, ?, ?, ?, ?)',
+        whereArgs: <Object?>[
+          userId,
+          SyncStatus.pending.name,
+          SyncStatus.failedRetryable.name,
+          SyncStatus.processing.name,
+          SyncStatus.failedPermanent.name,
+          SyncStatus.failed.name,
+        ],
+      );
+    });
+  }
+
+  /// Returns all events for [userId] that have not reached a final state
+  /// (pending, retryable, processing or permanently failed), oldest first.
+  /// Used by developer diagnostics to surface stuck outbox events.
+  Future<List<SyncEvent>> getNonCompletedByUserId(
+    String userId, {
+    int limit = 100,
+  }) {
+    return guard('get_non_completed_by_user', () async {
+      final Database db = await dbConnection;
+      final List<Map<String, Object?>> rows = await db.query(
+        SyncEventModel.table,
+        where: 'user_id = ? AND status IN (?, ?, ?, ?, ?)',
+        whereArgs: <Object?>[
+          userId,
+          SyncStatus.pending.name,
+          SyncStatus.failedRetryable.name,
+          SyncStatus.processing.name,
+          SyncStatus.failedPermanent.name,
+          SyncStatus.failed.name,
+        ],
+        orderBy: 'created_at ASC, id ASC',
+        limit: limit,
+      );
+      return rows.map(SyncEventModel.fromMap).toList();
+    });
+  }
+
   Future<List<SyncEvent>> getPendingByUserId(
     String userId, {
     int? limit,

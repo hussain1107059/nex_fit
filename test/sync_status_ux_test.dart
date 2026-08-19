@@ -57,6 +57,14 @@ class _NoopEventRepo implements SyncEventRepository {
   }) async =>
       <SyncEvent>[];
   @override
+  Future<List<SyncEvent>> getNonCompletedByUserId(
+    String userId, {
+    int limit = 100,
+  }) async =>
+      <SyncEvent>[];
+  @override
+  Future<void> requeueAllByUserId(String userId, {required DateTime at}) async {}
+  @override
   Future<List<SyncEvent>> getRetryableByUserId(
     String userId, {
     int? limit,

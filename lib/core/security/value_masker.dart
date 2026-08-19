@@ -30,6 +30,21 @@ class ValueMasker {
     return _mask;
   }
 
+  /// Masks email addresses inside free text but keeps the surrounding message
+  /// readable (used for error messages that may embed user data, so a
+  /// PostgREST error still shows its code and SQL hint without leaking the
+  /// email).
+  static String maskEmailInText(String? value) {
+    if (value == null || value.isEmpty) return '';
+    final RegExp email = RegExp(
+      r'[A-Za-z0-9._%+\-]+@[A-Za-z0-9.\-]+\.[A-Za-z]{2,}',
+    );
+    return value.replaceAllMapped(
+      email,
+      (Match match) => maskEmail(match.group(0)),
+    );
+  }
+
   /// Masks a numeric weight/measurement to its integer part only.
   static String maskNumber(num? value) {
     if (value == null) return '';

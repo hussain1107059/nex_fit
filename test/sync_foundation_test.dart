@@ -58,6 +58,36 @@ class _MemorySyncEventRepository implements SyncEventRepository {
   }) => getRetryableByUserId(userId, limit: limit, offset: offset);
 
   @override
+  Future<List<SyncEvent>> getNonCompletedByUserId(
+    String userId, {
+    int limit = 100,
+  }) async {
+    return events
+        .where(
+          (SyncEvent e) =>
+              e.userId == userId && e.status != SyncStatus.completed,
+        )
+        .take(limit)
+        .toList();
+  }
+
+  @override
+  Future<void> requeueAllByUserId(String userId, {required DateTime at}) async {
+    for (int i = 0; i < events.length; i++) {
+      final SyncEvent e = events[i];
+      if (e.userId == userId && e.status != SyncStatus.completed) {
+        events[i] = e.copyWith(
+          status: SyncStatus.pending,
+          retryCount: 0,
+          nextRetryAt: null,
+          clearNextRetryAt: true,
+          lastError: 'requeued_manually',
+        );
+      }
+    }
+  }
+
+  @override
   Future<List<SyncEvent>> getRetryableByUserId(
     String userId, {
     int? limit,

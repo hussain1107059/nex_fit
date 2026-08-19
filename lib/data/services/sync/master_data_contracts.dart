@@ -33,6 +33,7 @@ class MasterCatalogSpec {
     required this.timestampColumns,
     this.booleanColumns = const <String>{},
     this.hybrid = false,
+    this.cloudOwnerColumn = 'user_id',
     this.naturalKeyCloud,
     this.naturalKeyLocal,
     this.cloudForeignKeys = const <String, String>{},
@@ -61,6 +62,14 @@ class MasterCatalogSpec {
   /// True when the local table is hybrid: master rows have `user_id IS NULL`
   /// and the download must only ever touch those rows (never user rows).
   final bool hybrid;
+
+  /// Cloud column that distinguishes master rows (NULL) on hybrid catalogs.
+  /// The pull filters `cloudOwnerColumn IS NULL` to fetch master rows only.
+  /// `null` when the cloud table has no owner column (a pure master table such
+  /// as `goal_templates`), in which case the filter is skipped entirely while
+  /// the local hybrid handling (user_id NULL on insert, natural-key adoption
+  /// restricted to `user_id IS NULL` rows) still applies.
+  final String? cloudOwnerColumn;
 
   /// Natural (stable, deduplicating) key used to adopt existing seeded rows in
   /// place. Null for uuid-identified tables (workout templates / template
@@ -195,13 +204,16 @@ class MasterCatalogRegistry {
       timestampColumns: <String>{'created_at', 'updated_at'},
       booleanColumns: <String>{'is_custom'},
     ),
-    // goal_templates -> fitness_goal (hybrid; master rows keep user_id NULL
-    // and are matched by goal_type).
+    // goal_templates -> fitness_goal (hybrid local table: master rows keep
+    // user_id NULL and are matched by goal_type). The cloud `goal_templates`
+    // table has NO user_id column, so `cloudOwnerColumn` is null and the pull
+    // skips the master-row IS NULL filter.
     MasterCatalogSpec(
       catalog: 'goal_templates',
       cloudTable: 'goal_templates',
       localTable: 'fitness_goal',
       hybrid: true,
+      cloudOwnerColumn: null,
       naturalKeyCloud: 'goal_type',
       naturalKeyLocal: 'goal_type',
       columns: <MasterCatalogColumn>[

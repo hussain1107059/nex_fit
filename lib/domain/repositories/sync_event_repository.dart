@@ -22,6 +22,19 @@ abstract interface class SyncEventRepository {
     int? offset,
   });
 
+  /// Every event for [userId] that has not reached a final state
+  /// (pending, retryable, processing or permanently failed), oldest first.
+  /// Used by developer diagnostics to surface stuck outbox events and their
+  /// `last_error` without touching the queue.
+  Future<List<SyncEvent>> getNonCompletedByUserId(
+    String userId, {
+    int limit = 100,
+  });
+
+  /// Developer recovery: re-queues every non-final event for [userId] back to
+  /// PENDING with a zeroed retry counter so the next sync run retries them.
+  Future<void> requeueAllByUserId(String userId, {required DateTime at});
+
   /// Events eligible to run right now: pending or retryable whose
   /// `next_retry_at` has passed.
   Future<List<SyncEvent>> getRetryableByUserId(

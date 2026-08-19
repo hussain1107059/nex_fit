@@ -817,7 +817,7 @@ test('update preserves uuid, bumps version and records base_version',
       });
 
       final List<Map<String, Object?>> rows = await db.query('app_settings');
-      expect(rows.single['theme'], 'light');
+      expect(rows.single['theme_mode'], 'light');
       expect(rows.single['units'], 'imperial');
       expect(rows.single['row_version'], 5);
       expect(await eventsFor('app_settings'), hasLength(1));
