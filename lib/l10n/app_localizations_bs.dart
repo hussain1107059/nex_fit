@@ -943,6 +943,14 @@ class AppLocalizationsBs extends AppLocalizations {
   String get settingsBackupRestore => 'ব্যাকআপ ও রিস্টোর';
 
   @override
+  String get settingsBackupSubtitle =>
+      'ডিভাইসের ব্যাকআপ ও ডেটা রিস্টোর পরিচালনা করুন';
+
+  @override
+  String get settingsSystemHealthSubtitle =>
+      'সিঙ্ক, নিরাপত্তা, ডেটাবেস ও ব্যাকআপের অবস্থা';
+
+  @override
   String get settingsAbout => 'সম্পর্কে';
 
   @override

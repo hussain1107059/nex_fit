@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
+import '../../../core/constants/app_constants.dart';
 import '../../../core/extensions/context_extensions.dart';
 import '../../../core/theme/app_spacing.dart';
 import '../../../domain/entities/app_settings.dart';
@@ -129,7 +130,9 @@ class SettingsScreen extends ConsumerWidget {
               SettingsTile(
                 icon: Icons.language_rounded,
                 title: context.l10n.settingsLanguage,
-                value: context.l10n.editLanguageBangla,
+                value: (settings?.locale ?? AppConstants.defaultLocale) == 'bn'
+                    ? context.l10n.editLanguageBangla
+                    : context.l10n.editLanguageEnglish,
                 onTap: () => context.push(AppRoutes.settingsLanguage),
               ),
             ],
@@ -222,8 +225,16 @@ class SettingsScreen extends ConsumerWidget {
             children: [
               SettingsTile(
                 icon: Icons.backup_rounded,
-                title: context.l10n.settingsBackup,
+                title: context.l10n.settingsBackupRestore,
+                subtitle: context.l10n.settingsBackupSubtitle,
                 onTap: () => context.push(AppRoutes.settingsBackup),
+              ),
+              const Divider(height: 1, indent: AppSpacing.xxl),
+              SettingsTile(
+                icon: Icons.monitor_heart_rounded,
+                title: context.l10n.dashboardSystemHealth,
+                subtitle: context.l10n.settingsSystemHealthSubtitle,
+                onTap: () => context.push(AppRoutes.settingsSystemHealth),
               ),
             ],
           ),

@@ -1898,6 +1898,18 @@ abstract class AppLocalizations {
   /// **'ব্যাকআপ ও রিস্টোর'**
   String get settingsBackupRestore;
 
+  /// No description provided for @settingsBackupSubtitle.
+  ///
+  /// In bs, this message translates to:
+  /// **'ডিভাইসের ব্যাকআপ ও ডেটা রিস্টোর পরিচালনা করুন'**
+  String get settingsBackupSubtitle;
+
+  /// No description provided for @settingsSystemHealthSubtitle.
+  ///
+  /// In bs, this message translates to:
+  /// **'সিঙ্ক, নিরাপত্তা, ডেটাবেস ও ব্যাকআপের অবস্থা'**
+  String get settingsSystemHealthSubtitle;
+
   /// No description provided for @settingsAbout.
   ///
   /// In bs, this message translates to:

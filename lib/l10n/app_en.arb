@@ -316,6 +316,8 @@
   "settingsLanguage": "Language",
   "settingsNotifications": "Notifications",
   "settingsBackupRestore": "Backup & restore",
+  "settingsBackupSubtitle": "Manage on-device backups and restore your data",
+  "settingsSystemHealthSubtitle": "Sync, security, database and backup status",
   "settingsAbout": "About",
   "settingsLogout": "Log out",
   "settingsComingSoon": "This feature is coming soon",

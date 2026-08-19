@@ -17,7 +17,7 @@ class AppConstants {
   static const int minPasswordLength = 6;
   static const int strongPasswordLength = 8;
 
-  static const String defaultLocale = 'bn';
+  static const String defaultLocale = 'en';
   static const String fallbackLocale = 'en';
 
   static const double desktopBreakpoint = 900;

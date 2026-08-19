@@ -19,47 +19,61 @@ class WeeklyStatsSection extends StatelessWidget {
     final AppColors colors = AppColors.light;
     final String l10nKg = context.l10n.dashboardKgUnit;
 
+    final List<Widget> cards = <Widget>[
+      _ChartCard(
+        title: context.l10n.dashboardCaloriesBurned,
+        points: data.weeklyCalories,
+        color: colors.primary,
+        valueFormat: (double v) => v.round().toString(),
+      ),
+      _ChartCard(
+        title: context.l10n.dashboardWeight,
+        points: data.weeklyWeight,
+        color: colors.tertiary,
+        valueFormat: (double v) =>
+            v == 0 ? '—' : '${v.toStringAsFixed(1)} $l10nKg',
+        emptyMessage: context.l10n.dashboardNoWeightData,
+      ),
+      _ChartCard(
+        title: context.l10n.dashboardWater,
+        points: data.weeklyWater,
+        color: colors.info,
+        valueFormat: (double v) => v.round().toString(),
+      ),
+      _ChartCard(
+        title: context.l10n.dashboardWorkoutMinutes,
+        points: data.weeklyWorkout,
+        color: colors.warning,
+        valueFormat: (double v) => v.round().toString(),
+      ),
+    ];
+
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         SectionHeader(title: context.l10n.dashboardWeeklyStats),
-        GridView.count(
-          crossAxisCount: 2,
+        // Fixed mainAxisExtent (not childAspectRatio) so a chart card can
+        // never overflow on narrow screens or with larger text scales; the
+        // extent grows with the text scale factor.
+        GridView.builder(
           shrinkWrap: true,
           physics: const NeverScrollableScrollPhysics(),
-          mainAxisSpacing: AppSpacing.sm,
-          crossAxisSpacing: AppSpacing.sm,
-          childAspectRatio: context.isWide ? 1.7 : 1.2,
-          children: [
-            _ChartCard(
-              title: context.l10n.dashboardCaloriesBurned,
-              points: data.weeklyCalories,
-              color: colors.primary,
-              valueFormat: (double v) => v.round().toString(),
-            ),
-            _ChartCard(
-              title: context.l10n.dashboardWeight,
-              points: data.weeklyWeight,
-              color: colors.tertiary,
-              valueFormat: (double v) => v == 0 ? '—' : '${v.toStringAsFixed(1)} $l10nKg',
-              emptyMessage: context.l10n.dashboardNoWeightData,
-            ),
-            _ChartCard(
-              title: context.l10n.dashboardWater,
-              points: data.weeklyWater,
-              color: colors.info,
-              valueFormat: (double v) => v.round().toString(),
-            ),
-            _ChartCard(
-              title: context.l10n.dashboardWorkoutMinutes,
-              points: data.weeklyWorkout,
-              color: colors.warning,
-              valueFormat: (double v) => v.round().toString(),
-            ),
-          ],
+          gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+            crossAxisCount: 2,
+            mainAxisSpacing: AppSpacing.sm,
+            crossAxisSpacing: AppSpacing.sm,
+            mainAxisExtent: _cellExtent(context),
+          ),
+          itemCount: cards.length,
+          itemBuilder: (BuildContext context, int index) => cards[index],
         ),
       ],
     );
+  }
+
+  double _cellExtent(BuildContext context) {
+    final double factor = MediaQuery.textScalerOf(context).scale(1);
+    return 132 * factor + 26;
   }
 }
 
@@ -160,6 +174,8 @@ class _WeeklyBarChart extends StatelessWidget {
               Expanded(
                 child: Text(
                   DateFormat('E').format(point.date),
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
                   textAlign: TextAlign.center,
                   style: context.textTheme.labelSmall?.copyWith(
                     color: context.colorScheme.onSurfaceVariant,

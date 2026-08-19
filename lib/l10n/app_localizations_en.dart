@@ -937,6 +937,14 @@ class AppLocalizationsEn extends AppLocalizations {
   String get settingsBackupRestore => 'Backup & restore';
 
   @override
+  String get settingsBackupSubtitle =>
+      'Manage on-device backups and restore your data';
+
+  @override
+  String get settingsSystemHealthSubtitle =>
+      'Sync, security, database and backup status';
+
+  @override
   String get settingsAbout => 'About';
 
   @override

@@ -316,6 +316,8 @@
   "settingsLanguage": "ভাষা",
   "settingsNotifications": "বিজ্ঞপ্তি",
   "settingsBackupRestore": "ব্যাকআপ ও রিস্টোর",
+  "settingsBackupSubtitle": "ডিভাইসের ব্যাকআপ ও ডেটা রিস্টোর পরিচালনা করুন",
+  "settingsSystemHealthSubtitle": "সিঙ্ক, নিরাপত্তা, ডেটাবেস ও ব্যাকআপের অবস্থা",
   "settingsAbout": "সম্পর্কে",
   "settingsLogout": "লগ আউট",
   "settingsComingSoon": "এই ফিচারটি শীঘ্রই আসছে",

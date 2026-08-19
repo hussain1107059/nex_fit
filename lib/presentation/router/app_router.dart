@@ -46,6 +46,7 @@ import '../screens/settings/settings_screen.dart';
 import '../screens/settings/storage_settings_screen.dart';
 import '../screens/settings/support_settings_screen.dart';
 import '../screens/settings/sync_settings_screen.dart';
+import '../screens/settings/system_health_settings_screen.dart';
 import '../screens/settings/workout_settings_screen.dart';
 import '../screens/shell/app_shell_screen.dart';
 import '../screens/sleep/sleep_history_screen.dart';
@@ -114,6 +115,7 @@ abstract final class AppRoutes {
   static const String settingsStorage = '/settings/storage';
   static const String settingsSync = '/settings/sync';
   static const String settingsBackup = '/settings/backup';
+  static const String settingsSystemHealth = '/settings/system-health';
   static const String settingsSupport = '/settings/support';
   static const String settingsAbout = '/settings/about';
   static const String settingsDeveloper = '/settings/developer';
@@ -472,6 +474,12 @@ final appRouterProvider = Provider<GoRouter>((ref) {
         name: 'settings-backup',
         builder: (BuildContext context, GoRouterState state) =>
             const BackupSettingsScreen(),
+      ),
+      GoRoute(
+        path: AppRoutes.settingsSystemHealth,
+        name: 'settings-system-health',
+        builder: (BuildContext context, GoRouterState state) =>
+            const SystemHealthSettingsScreen(),
       ),
       GoRoute(
         path: AppRoutes.settingsSupport,
