@@ -7070,6 +7070,24 @@ abstract class AppLocalizations {
   /// **'এখন সিঙ্ক'**
   String get settingsSyncNow;
 
+  /// No description provided for @settingsResyncTitle.
+  ///
+  /// In bs, this message translates to:
+  /// **'সম্পূর্ণ রি-সিঙ্ক'**
+  String get settingsResyncTitle;
+
+  /// No description provided for @settingsResyncDescription.
+  ///
+  /// In bs, this message translates to:
+  /// **'সব ক্লাউড পরিবর্তন পুনরায় টেনে স্থানীয় কপি মেরামত করুন'**
+  String get settingsResyncDescription;
+
+  /// No description provided for @settingsResyncConfirmBody.
+  ///
+  /// In bs, this message translates to:
+  /// **'এটি এই ডিভাইসে প্রতিটি ক্লাউড পরিবর্তন পুনরায় প্রয়োগ করবে। সিঙ্ক না হওয়া স্থানীয় পরিবর্তনগুলো সংরক্ষিত থাকবে। চালিয়ে যাবেন?'**
+  String get settingsResyncConfirmBody;
+
   /// No description provided for @syncStatusSynced.
   ///
   /// In bs, this message translates to:

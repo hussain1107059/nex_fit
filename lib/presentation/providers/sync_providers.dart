@@ -253,6 +253,19 @@ class SyncController extends Notifier<SyncUiState> {
     await refresh();
     return result;
   }
+
+  /// Full re-sync: drops the stored pull cursor so the next [runSync]
+  /// re-applies every remote change from scratch (parents-first, cursor-atomic).
+  /// Used to repair a device whose local rows were written by an older build
+  /// or a partial pull. Pending outbox events are preserved and re-pushed.
+  Future<void> resetAndResync() async {
+    final String? userId = _userId();
+    if (userId == null || state.isSyncing) return;
+    await ref
+        .read(syncStateRepositoryProvider)
+        .deleteForUser(userId);
+    await runSync(trigger: SyncTrigger.manual);
+  }
 }
 
 final syncControllerProvider = NotifierProvider<SyncController, SyncUiState>(

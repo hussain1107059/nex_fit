@@ -15,6 +15,7 @@ import 'package:nexfit/data/services/sync/sync_table_registry.dart';
 import 'package:nexfit/domain/entities/security_enums.dart';
 import 'package:nexfit/domain/entities/sync_conflict_record.dart';
 import 'package:nexfit/domain/entities/sync_event.dart';
+import 'package:nexfit/domain/entities/sync_state.dart';
 import 'package:nexfit/domain/repositories/sync_conflict_repository.dart';
 import 'package:nexfit/domain/repositories/sync_event_repository.dart';
 import 'package:nexfit/domain/repositories/sync_state_repository.dart';
@@ -504,6 +505,28 @@ Future<int> _seedWorkout(
   });
 }
 
+Future<int> _seedWorkoutHistory(
+  Database db, {
+  required String uuid,
+  double caloriesBurn = 0,
+  bool isCompleted = false,
+}) async {
+  final int now = DateTime.now().millisecondsSinceEpoch;
+  return db.insert('workout_history', <String, Object?>{
+    'uuid': uuid,
+    'user_id': 'user-1',
+    'workout_id': null,
+    'started_at': now,
+    'ended_at': null,
+    'duration_minutes': null,
+    'calories_burn': isCompleted ? caloriesBurn : null,
+    'is_completed': isCompleted ? 1 : 0,
+    'created_at': now,
+    'updated_at': now,
+    'row_version': 1,
+  });
+}
+
 Future<int> _seedFoodLog(
   Database db, {
   required String uuid,
@@ -595,6 +618,70 @@ void main() {
       expect(workouts, hasLength(1));
       expect(workouts.single['name'], 'Push Day');
       expect(workouts.single['uuid'], 'wk-1');
+    });
+
+    test('1b. workout completed on A arrives completed on B (INSERT + '
+        'UPDATE applied in one pull batch)', () async {
+      // Device A starts a workout session (history row v1, incomplete) and the
+      // mid-workout INSERT is pushed first, mirroring the real capture order.
+      final int whA = await _seedWorkoutHistory(deviceA.raw, uuid: 'wh-1');
+      await deviceA.engine().track(
+            userId: 'user-1',
+            entity: 'workout_history',
+            entityId: '$whA',
+            operation: SyncOperation.create,
+          );
+      await deviceA.engine().sync(
+            userId: 'user-1',
+            transport: _CloudStoreTransport(store: store, database: deviceA.db),
+            applier: deviceA.applier,
+          );
+
+      // Device A completes the session: ONE local update bumps to v2 and sets
+      // ended_at/duration/calories/is_completed together (mirrors
+      // WorkoutSessionRepositoryImpl.completeSession).
+      final int end = DateTime.now().millisecondsSinceEpoch + 60000;
+      await deviceA.raw.update(
+        'workout_history',
+        <String, Object?>{
+          'ended_at': end,
+          'duration_minutes': 1,
+          'calories_burn': 4.5,
+          'is_completed': 1,
+          'updated_at': end,
+          'row_version': 2,
+        },
+        where: 'uuid = ?',
+        whereArgs: <Object?>['wh-1'],
+      );
+      await deviceA.engine().track(
+            userId: 'user-1',
+            entity: 'workout_history',
+            entityId: '$whA',
+            operation: SyncOperation.update,
+            baseVersion: 1,
+          );
+      await deviceA.engine().sync(
+            userId: 'user-1',
+            transport: _CloudStoreTransport(store: store, database: deviceA.db),
+            applier: deviceA.applier,
+          );
+
+      // Device B pulls the INSERT + UPDATE pair in a single batch.
+      await deviceB.engine().sync(
+            userId: 'user-1',
+            transport: _CloudStoreTransport(store: store, database: deviceB.db),
+            applier: deviceB.applier,
+          );
+
+      final List<Map<String, Object?>> rowsB =
+          await _rows(deviceB, 'workout_history');
+      expect(rowsB, hasLength(1));
+      expect(rowsB.single['uuid'], 'wh-1');
+      expect(rowsB.single['is_completed'], 1,
+          reason: 'the completion UPDATE must overwrite the mid-workout INSERT');
+      expect(rowsB.single['calories_burn'], 4.5);
+      expect(rowsB.single['row_version'], 2);
     });
 
     test('2. workout edited on device B propagates back to device A '
@@ -1001,6 +1088,111 @@ void main() {
             applier: deviceB.applier,
           );
       expect(await _rows(deviceB, 'weight_log'), hasLength(1));
+    });
+
+    test('9. resetting the cursor re-applies remote changes and repairs a '
+        'stale local row', () async {
+      // Device A creates + completes a workout, pushing the mid-workout INSERT
+      // first and the completion UPDATE second (as in the real capture order).
+      final int whA = await _seedWorkoutHistory(deviceA.raw, uuid: 'wh-1');
+      await deviceA.engine().track(
+            userId: 'user-1',
+            entity: 'workout_history',
+            entityId: '$whA',
+            operation: SyncOperation.create,
+          );
+      await deviceA.engine().sync(
+            userId: 'user-1',
+            transport: _CloudStoreTransport(store: store, database: deviceA.db),
+            applier: deviceA.applier,
+          );
+      final int end = DateTime.now().millisecondsSinceEpoch + 60000;
+      await deviceA.raw.update(
+        'workout_history',
+        <String, Object?>{
+          'ended_at': end,
+          'duration_minutes': 1,
+          'calories_burn': 4.5,
+          'is_completed': 1,
+          'updated_at': end,
+          'row_version': 2,
+        },
+        where: 'uuid = ?',
+        whereArgs: <Object?>['wh-1'],
+      );
+      await deviceA.engine().track(
+            userId: 'user-1',
+            entity: 'workout_history',
+            entityId: '$whA',
+            operation: SyncOperation.update,
+            baseVersion: 1,
+          );
+      await deviceA.engine().sync(
+            userId: 'user-1',
+            transport: _CloudStoreTransport(store: store, database: deviceA.db),
+            applier: deviceA.applier,
+          );
+
+      // Device B pulls everything and converges to the completed row.
+      await deviceB.engine().sync(
+            userId: 'user-1',
+            transport: _CloudStoreTransport(store: store, database: deviceB.db),
+            applier: deviceB.applier,
+          );
+      List<Map<String, Object?>> rowsB = await _rows(deviceB, 'workout_history');
+      expect(rowsB.single['is_completed'], 1);
+
+      // Simulate the corruption: a stale local row (INSERT state, e.g. written
+      // by an older build) with a cursor already past the completion UPDATE,
+      // so an incremental pull has nothing left to re-apply.
+      final int staleCursor = store
+          .changesAfter(userId: 'user-1', cursor: 0)
+          .last
+          .id;
+      await deviceB.raw.update(
+        'workout_history',
+        <String, Object?>{
+          'is_completed': 0,
+          'calories_burn': null,
+          'row_version': 1,
+        },
+        where: 'uuid = ?',
+        whereArgs: <Object?>['wh-1'],
+      );
+      await deviceB.stateRepo.upsert(
+        SyncState(
+          userId: 'user-1',
+          cursor: staleCursor,
+          initialSyncCompleted: true,
+          updatedAt: DateTime.now(),
+        ),
+      );
+
+      // A normal incremental sync must NOT repair the stale row.
+      await deviceB.engine().sync(
+            userId: 'user-1',
+            transport: _CloudStoreTransport(store: store, database: deviceB.db),
+            applier: deviceB.applier,
+          );
+      rowsB = await _rows(deviceB, 'workout_history');
+      expect(rowsB.single['is_completed'], 0,
+          reason: 'changes at/below the cursor are not re-pulled');
+
+      // The reset path (deleteForUser + fresh pull) re-applies everything in
+      // order and repairs the row.
+      await deviceB.stateRepo.deleteForUser('user-1');
+      final SyncRunResult reset = await deviceB.engine().sync(
+            userId: 'user-1',
+            transport: _CloudStoreTransport(store: store, database: deviceB.db),
+            applier: deviceB.applier,
+          );
+      expect(reset.pulled, greaterThan(0));
+      rowsB = await _rows(deviceB, 'workout_history');
+      expect(rowsB.single['is_completed'], 1,
+          reason: 'the fresh pull re-applies the completion UPDATE');
+      expect(rowsB.single['calories_burn'], 4.5);
+      expect((await deviceB.stateRepo.getByUserId('user-1'))!.cursor,
+          staleCursor);
     });
   });
 }

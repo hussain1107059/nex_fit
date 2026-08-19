@@ -12,6 +12,7 @@ import '../../../domain/entities/app_settings.dart';
 import '../../../domain/entities/security_enums.dart';
 import '../../../domain/entities/sync_conflict_record.dart';
 import '../../../domain/entities/sync_event.dart';
+import '../../../domain/entities/sync_state.dart';
 import '../../../injection/dependency_injection.dart';
 import '../../providers/auth_provider.dart';
 import '../../providers/settings_providers.dart';
@@ -53,6 +54,53 @@ class _DeveloperSettingsScreenState
     buffer.writeln('--- NexFit sync diagnostics ---');
     buffer.writeln('user: $userId');
     buffer.writeln('at: ${DateTime.now().toIso8601String()}');
+
+    SyncState? syncState;
+    try {
+      syncState = await ref
+          .read(syncStateRepositoryProvider)
+          .getByUserId(userId);
+    } catch (_) {
+      syncState = null;
+    }
+    buffer.writeln();
+    buffer.writeln('SYNC STATE:');
+    if (syncState == null) {
+      buffer.writeln('- no sync_state row (never pulled)');
+    } else {
+      buffer.writeln(
+        '- cursor=${syncState.cursor} '
+        'initialSyncCompleted=${syncState.initialSyncCompleted} '
+        'status=${syncState.status ?? 'null'}',
+      );
+      buffer.writeln(
+        '- lastSyncAt=${syncState.lastSyncAt?.toIso8601String() ?? 'null'} '
+        'updatedAt=${syncState.updatedAt.toIso8601String()}',
+      );
+    }
+
+    try {
+      final db = await ref.read(appDatabaseProvider).database;
+      final List<Map<String, Object?>> workouts = await db.query(
+        'workout_history',
+        where: 'user_id = ?',
+        whereArgs: <Object?>[userId],
+        orderBy: 'started_at DESC',
+        limit: 5,
+      );
+      buffer.writeln();
+      buffer.writeln('LOCAL WORKOUT_HISTORY (${workouts.length}):');
+      for (final Map<String, Object?> row in workouts) {
+        buffer.writeln(
+          '- id=${row['id']} is_completed=${row['is_completed']} '
+          'calories=${row['calories_burn']} deleted_at=${row['deleted_at']} '
+          'started=${row['started_at']} uuid=${row['uuid']}',
+        );
+      }
+    } catch (_) {
+      buffer.writeln();
+      buffer.writeln('LOCAL WORKOUT_HISTORY: (query failed)');
+    }
     buffer.writeln();
     buffer.writeln('EVENTS (${events.length} not completed):');
     for (final SyncEvent event in events) {

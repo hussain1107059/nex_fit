@@ -194,6 +194,8 @@ class _CompletedStateRepo implements SyncStateRepository {
     Object txn,
     SyncState state,
   ) async {}
+  @override
+  Future<void> deleteForUser(String userId) async {}
 }
 
 class _CountingStateRepo implements SyncStateRepository {
@@ -210,6 +212,8 @@ class _CountingStateRepo implements SyncStateRepository {
     Object txn,
     SyncState state,
   ) async {}
+  @override
+  Future<void> deleteForUser(String userId) async {}
 }
 
 class _FakeConflictRepo implements SyncConflictRepository {

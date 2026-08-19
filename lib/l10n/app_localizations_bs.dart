@@ -3623,6 +3623,17 @@ class AppLocalizationsBs extends AppLocalizations {
   String get settingsSyncNow => 'এখন সিঙ্ক';
 
   @override
+  String get settingsResyncTitle => 'সম্পূর্ণ রি-সিঙ্ক';
+
+  @override
+  String get settingsResyncDescription =>
+      'সব ক্লাউড পরিবর্তন পুনরায় টেনে স্থানীয় কপি মেরামত করুন';
+
+  @override
+  String get settingsResyncConfirmBody =>
+      'এটি এই ডিভাইসে প্রতিটি ক্লাউড পরিবর্তন পুনরায় প্রয়োগ করবে। সিঙ্ক না হওয়া স্থানীয় পরিবর্তনগুলো সংরক্ষিত থাকবে। চালিয়ে যাবেন?';
+
+  @override
   String get syncStatusSynced => 'সিঙ্ক হয়েছে';
 
   @override

@@ -10,4 +10,8 @@ abstract interface class SyncStateRepository {
 
   /// Advances the cursor inside an existing transaction (see Part 11).
   Future<void> upsertInTransaction(Transaction txn, SyncState state);
+
+  /// Removes the stored cursor for [userId] so the next sync run re-applies
+  /// every remote change from scratch (full re-sync).
+  Future<void> deleteForUser(String userId);
 }

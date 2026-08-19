@@ -20,4 +20,8 @@ class SyncStateRepositoryImpl implements SyncStateRepository {
   @override
   Future<void> upsertInTransaction(Transaction txn, SyncState state) =>
       _dataSource.upsertInTransaction(txn, state);
+
+  @override
+  Future<void> deleteForUser(String userId) =>
+      _dataSource.deleteForUser(userId);
 }

@@ -3615,6 +3615,17 @@ class AppLocalizationsEn extends AppLocalizations {
   String get settingsSyncNow => 'Sync now';
 
   @override
+  String get settingsResyncTitle => 'Full re-sync';
+
+  @override
+  String get settingsResyncDescription =>
+      'Re-pull all cloud changes and repair the local copy';
+
+  @override
+  String get settingsResyncConfirmBody =>
+      'This will re-apply every cloud change on this device. Unsynced local edits are kept. Continue?';
+
+  @override
   String get syncStatusSynced => 'Synced';
 
   @override

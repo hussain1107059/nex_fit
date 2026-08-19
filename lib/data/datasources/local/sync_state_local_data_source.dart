@@ -45,4 +45,17 @@ class SyncStateLocalDataSource extends BaseLocalDataSource {
       );
     });
   }
+
+  /// Removes the stored cursor for [userId] so the next sync run re-applies
+  /// every remote change from scratch (full re-sync).
+  Future<void> deleteForUser(String userId) {
+    return guard('delete_for_user', () async {
+      final Database db = await dbConnection;
+      await db.delete(
+        SyncStateModel.table,
+        where: 'user_id = ?',
+        whereArgs: <Object?>[userId],
+      );
+    });
+  }
 }
