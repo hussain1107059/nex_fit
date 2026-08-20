@@ -232,11 +232,12 @@ class RemoteChangeApplier {
     if (incomingVersion is int &&
         existingVersion is int &&
         existingVersion > incomingVersion) {
-      // Only skip when the row still has an un-pushed outbox event (a real
-      // local edit in flight). A row whose version merely drifted above the
-      // remote (e.g. repeated local writes whose events never landed) but has
-      // NO pending event is stale, not newer: the authoritative server snapshot
-      // must be allowed to repair it, or a fresh pull could never converge.
+      // Only skip when the row still has an outbox event that represents a
+      // real local write (in flight, pending retry, or permanently failed but
+      // not yet on the server). A row whose version merely drifted above the
+      // remote WITHOUT any outbox event is stale, not newer: the authoritative
+      // server snapshot must be allowed to repair it, or a fresh pull could
+      // never converge.
       final bool hasPendingWrite = await _hasPendingOutboxEvent(
         txn,
         mapping,
@@ -254,9 +255,17 @@ class RemoteChangeApplier {
     return 1;
   }
 
-  /// True when [table]'s row still has an un-pushed outbox event (a genuinely
-  /// newer local write). The DAOs key non-singleton events by the local rowid
-  /// and singleton events by the user id, so both identifiers are probed.
+  /// True when [table]'s row still has an outbox event that must protect it
+  /// from being regressed by a stale server snapshot. The DAOs key non-singleton
+  /// events by the local rowid and singleton events by the user id, so both
+  /// identifiers are probed.
+  ///
+  /// Every non-final status is protected: a `pending` write is in flight, a
+  /// `failedRetryable` write will be retried, a `processing` write is claimed,
+  /// and a `failedPermanent` write (e.g. a push rejected by a schema change)
+  /// must NOT be silently reverted by the next pull — that would discard the
+  /// user's data. The row only loses protection once it is `completed` and the
+  /// server snapshot has caught up.
   Future<bool> _hasPendingOutboxEvent(
     Transaction txn,
     SyncTableMapping mapping,
@@ -267,7 +276,7 @@ class RemoteChangeApplier {
     final List<Map<String, Object?>> rows = await txn.query(
       SyncEventModel.table,
       columns: const <String>['id'],
-      where: 'entity = ? AND entity_id IN (?, ?) AND status IN (?, ?, ?)',
+      where: 'entity = ? AND entity_id IN (?, ?) AND status IN (?, ?, ?, ?)',
       whereArgs: <Object?>[
         mapping.localTable,
         '$rowId',
@@ -275,6 +284,7 @@ class RemoteChangeApplier {
         SyncStatus.pending.name,
         SyncStatus.failedRetryable.name,
         SyncStatus.processing.name,
+        SyncStatus.failedPermanent.name,
       ],
       limit: 1,
     );
