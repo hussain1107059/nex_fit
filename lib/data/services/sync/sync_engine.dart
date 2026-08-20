@@ -2,7 +2,7 @@ import 'dart:async';
 import 'dart:convert';
 
 import 'package:logging/logging.dart';
-import 'package:sqflite/sqflite.dart' show Database;
+import 'package:sqflite/sqflite.dart' show Database, DatabaseException;
 
 import '../../../core/constants/app_constants.dart';
 import '../../../core/security/uuid_generator.dart';
@@ -740,7 +740,34 @@ class SyncEngine {
       // foreign-key parent is already resolvable within the same batch.
       for (final SyncChange change
           in orderChangesForApply(batch.changes)) {
-        await applier.apply(txn, change);
+        try {
+          await applier.apply(txn, change);
+        } on UnsupportedTableException catch (error) {
+          // A change for a cloud table with no local mapping can never be
+          // applied (e.g. gamification/streak tables the app does not use).
+          // Skipping it keeps the batch transaction alive so a fresh install
+          // that replays the whole history from cursor 0 can still land every
+          // applicable row instead of stalling forever on one bad record.
+          SyncLog.warning(
+            _logger,
+            SyncLog.pullSkippedUnsupported,
+            'user=${SyncLog.maskUserId(userId)} table=${change.cloudTable} '
+            'record=${change.recordId} ${error.message}',
+          );
+        } on DatabaseException catch (error) {
+          // A row whose foreign keys cannot be resolved locally (e.g. a child
+          // referencing a master catalog uuid before it is synced, or an
+          // orphaned record) must not abort the whole batch and freeze the
+          // cursor. Parents always land first (change-log order + master
+          // catalogs sync before the user pull), so an unresolvable row is a
+          // genuinely unappliable record: skip it and keep going.
+          SyncLog.warning(
+            _logger,
+            SyncLog.pullSkippedUnresolvable,
+            'user=${SyncLog.maskUserId(userId)} table=${change.cloudTable} '
+            'record=${change.recordId} $error',
+          );
+        }
       }
       // The cursor only advances inside the same transaction that committed
       // the applied rows (Part 11).

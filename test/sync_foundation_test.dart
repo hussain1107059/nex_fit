@@ -191,10 +191,11 @@ class _ScriptedTransport implements SyncTransport {
   _ScriptedTransport({List<SyncChange>? remoteChanges})
     : remoteChanges = remoteChanges ?? <SyncChange>[];
 
-  final List<SyncChange> remoteChanges;
+final List<SyncChange> remoteChanges;
   final List<SyncEvent> pushed = <SyncEvent>[];
   bool ready = true;
   bool failPush = false;
+  bool failPull = false;
 
   @override
   String get name => 'scripted';
@@ -210,11 +211,12 @@ class _ScriptedTransport implements SyncTransport {
   }
 
   @override
-  Future<SyncPullBatch> pull({
+Future<SyncPullBatch> pull({
     required String userId,
     required int cursor,
     int limit = 100,
   }) async {
+    if (failPull) throw const SyncTransportException('network_down');
     final List<SyncChange> due = remoteChanges
         .where((SyncChange c) => c.cursorId > cursor)
         .toList();
@@ -667,7 +669,7 @@ void main() {
       expect(await eventRepo.getFailedCount('user-1'), 0);
     });
 
-    test('unsupported table rolls back and does NOT advance the cursor',
+test('an unsupported table change is skipped so the batch can still apply',
         () async {
       final _ScriptedTransport transport = _ScriptedTransport(
         remoteChanges: <SyncChange>[
@@ -676,17 +678,74 @@ void main() {
         ],
       );
 
-      await expectLater(
-        engine.pull(userId: 'user-1', transport: transport, applier: applier),
-        throwsA(isA<UnsupportedTableException>()),
+      final int pulled = await engine.pull(
+        userId: 'user-1',
+        transport: transport,
+        applier: applier,
       );
 
-      // No row applied, cursor untouched.
+      // The unmapped row is skipped, the applicable row still lands and the
+      // cursor advances past both ids (a fresh install replaying its whole
+      // history must never stall on a single permanently-unapplicable change).
+      expect(pulled, 2);
       final Database db = await appDatabase.database;
       final List<Map<String, Object?>> rows = await db.query('weight_log');
-      expect(rows, isEmpty);
+      expect(rows, hasLength(1));
+      expect(rows.single['uuid'], 'uuid-1');
       final SyncState? state = await stateRepo.getByUserId('user-1');
-      expect(state, isNull);
+      expect(state, isNotNull);
+      expect(state!.cursor, 6);
+    });
+
+    test('an unresolvable child FK is skipped so the batch can still apply',
+        () async {
+      // Local master catalog seeded with a LOCAL uuid (fresh install before
+      // master sync adopts it); the pulled user row references the SERVER uuid.
+      final Database db = await appDatabase.database;
+      await db.insert('exercise', <String, Object?>{
+        'id': 1,
+        'uuid': 'local-ex-1',
+        'user_id': null,
+        'name': 'Push Up',
+        'is_custom': 0,
+        'created_at': 1767225600000,
+        'updated_at': 1767225600000,
+        'row_version': 1,
+      });
+      final _ScriptedTransport transport = _ScriptedTransport(
+        remoteChanges: <SyncChange>[
+          weightChange(5),
+          SyncChange(
+            cursorId: 6,
+            cloudTable: 'exercise_favorites',
+            recordId: 'fav-1',
+            operation: SyncOperation.create,
+            payload: <String, Object?>{
+              'user_id': 'user-1',
+              'exercise_id': 'server-ex-1',
+              'created_at': '2026-01-01T06:00:00Z',
+              'updated_at': '2026-01-01T06:00:00Z',
+              'row_version': 1,
+            },
+          ),
+        ],
+      );
+
+      final int pulled = await engine.pull(
+        userId: 'user-1',
+        transport: transport,
+        applier: applier,
+      );
+
+      // The unresolvable favorite is skipped, the weight row still lands and
+      // the cursor advances past both ids instead of stalling forever.
+      expect(pulled, 2);
+      final List<Map<String, Object?>> weights = await db.query('weight_log');
+      expect(weights, hasLength(1));
+      expect(await db.query('exercise_favorite'), isEmpty);
+      final SyncState? state = await stateRepo.getByUserId('user-1');
+      expect(state, isNotNull);
+      expect(state!.cursor, 6);
     });
 
     test('delete changes soft-delete the local row (tombstone)', () async {
@@ -825,16 +884,24 @@ void main() {
         operation: SyncOperation.update,
       );
 
-      final _ScriptedTransport transport = _ScriptedTransport()
-        ..ready = true;
+final _ScriptedTransport transport = _ScriptedTransport()
+        ..ready = true
+        ..failPull = true;
       // Force the pull to fail after a successful push.
       transport.remoteChanges.add(
         SyncChange(
           cursorId: 5,
-          cloudTable: 'unknown_cloud_table',
-          recordId: 'x',
+          cloudTable: 'weight_logs',
+          recordId: 'wl-1',
           operation: SyncOperation.create,
-          payload: const <String, Object?>{},
+          payload: <String, Object?>{
+            'id': 'wl-1',
+            'user_id': 'user-1',
+            'weight_kg': 82.5,
+            'created_at': '2026-01-01T06:00:00Z',
+            'updated_at': '2026-01-01T06:00:00Z',
+            'row_version': 1,
+          },
         ),
       );
 

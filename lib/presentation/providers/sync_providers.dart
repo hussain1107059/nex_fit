@@ -166,6 +166,15 @@ class SyncController extends Notifier<SyncUiState> {
   }
 
   Future<InitialSyncResult> _runInitialSync(String userId) async {
+    // Master catalogs must land BEFORE the user pull (PROMPT 16 ordering):
+    // user rows reference master uuids (workout_exercise -> exercise,
+    // meal_item -> food_item, exercise_favorite -> exercise). A fresh install
+    // only carries the server uuids after master sync adopts and stamps the
+    // seeded catalogs; pulling first would leave every such foreign key
+    // unresolvable and stall the whole initial sync. A best-effort failure here
+    // is tolerated (the pull safety-net skips unresolvable rows) but with the
+    // catalogs in place the pull converges without data loss.
+    await _refreshAndMaster();
     final InitialSyncResult result = await ref
         .read(initialSyncServiceProvider)
         .run(

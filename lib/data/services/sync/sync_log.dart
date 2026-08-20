@@ -17,6 +17,8 @@ abstract final class SyncLog {
   static const String pullStart = 'PULL_START';
   static const String pullSuccess = 'PULL_SUCCESS';
   static const String pullFailure = 'PULL_FAILURE';
+  static const String pullSkippedUnsupported = 'PULL_SKIPPED_UNSUPPORTED';
+  static const String pullSkippedUnresolvable = 'PULL_SKIPPED_UNRESOLVABLE';
   static const String conflictDetected = 'CONFLICT_DETECTED';
   static const String complete = 'SYNC_COMPLETE';
 

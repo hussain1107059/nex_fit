@@ -117,6 +117,51 @@ List<SyncChange> _manyWeightChanges(
   ];
 }
 
+SyncChange _profileChange(
+  int cursorId, {
+  String userId = 'user-1',
+}) {
+  return SyncChange(
+    cursorId: cursorId,
+    cloudTable: 'profiles',
+    recordId: userId,
+    operation: SyncOperation.update,
+    payload: <String, Object?>{
+      'id': userId,
+      'display_name': 'Test User',
+      'avatar_url': null,
+      'height_cm': 180.0,
+      'weight_kg': 84.0,
+      'birth_date': '1993-07-14',
+      'fitness_goal': 'weightLoss',
+      'activity_level': 'moderate',
+      'created_at': '2026-01-01T06:00:00Z',
+      'updated_at': '2026-01-02T06:00:00Z',
+      'row_version': 29,
+    },
+  );
+}
+
+SyncChange _unsupportedChange(
+  int cursorId, {
+  String userId = 'user-1',
+}) {
+  return SyncChange(
+    cursorId: cursorId,
+    cloudTable: 'user_achievements',
+    recordId: 'ach-1',
+    operation: SyncOperation.create,
+    payload: <String, Object?>{
+      'id': 'ach-1',
+      'user_id': userId,
+      'achievement_id': 'ach-def-1',
+      'created_at': '2026-01-01T06:00:00Z',
+      'updated_at': '2026-01-01T06:00:00Z',
+      'row_version': 1,
+    },
+  );
+}
+
 Future<Database> _insertUser(
   AppDatabase appDatabase,
   String id,
@@ -586,6 +631,45 @@ void main() {
       expect(done!.cursor, 150);
       expect(done.initialSyncCompleted, isTrue);
       expect(await db.query('weight_log'), hasLength(150));
+    });
+
+    test('an unappliable change in the history does not stall the initial pull forever',
+        () async {
+      await _insertUser(appDatabase, 'user-1');
+      final Database db = await appDatabase.database;
+      await db.execute('PRAGMA foreign_keys = ON');
+      // The server logs user-owned rows for tables the app has no local mapping
+      // for (gamification/streak tables). A fresh install replays the whole
+      // history from cursor 0, so one such row must not abort the pull and
+      // freeze the cursor forever (the profile row would never land).
+      final _FakePullTransport transport = _FakePullTransport(
+        changes: <SyncChange>[
+          _unsupportedChange(1),
+          _weightChange(2, recordId: 'wl-1'),
+          _profileChange(3),
+        ],
+      );
+
+      final InitialSyncResult result = await buildService(transport).run(
+        userId: 'user-1',
+        ensureProfile: (_) async {},
+      );
+
+      expect(result.success, isTrue,
+          reason: 'a single bad row must not block the whole history');
+      expect(transport.pullCalls, 1);
+      final SyncState? state = await stateRepo.getByUserId('user-1');
+      expect(state, isNotNull);
+      expect(state!.cursor, 3);
+      expect(state.initialSyncCompleted, isTrue);
+      expect(await db.query('weight_log'), hasLength(1));
+      final List<Map<String, Object?>> profiles = await db.query('user_profile');
+      expect(profiles, hasLength(1),
+          reason: 'the profile change after the bad row must still be applied');
+      expect(profiles.single['height_cm'], 180.0);
+      expect(profiles.single['weight_kg'], 84.0);
+      expect(profiles.single['birth_date'], DateTime.parse('1993-07-14').millisecondsSinceEpoch);
+      expect(profiles.single['fitness_goal'], 'weightLoss');
     });
 
     test('progress is reported across the pull stages', () async {
