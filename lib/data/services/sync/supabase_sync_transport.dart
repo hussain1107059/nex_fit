@@ -218,6 +218,13 @@ class SupabaseSyncTransport implements SyncTransport {
     // Remove user_id override for singletons: profiles.user_id does not exist.
     if (mapping.cloudTable == 'profiles') {
       cloudRow.remove('user_id');
+      // The avatar is set once by the device that uploads the photo. A full-row
+      // upsert with a null photo_path from a device that never picked one would
+      // silently erase the shared avatar_url, so omit the column instead of
+      // pushing an explicit null (the server keeps whatever it already has).
+      if (cloudRow['avatar_url'] == null) {
+        cloudRow.remove('avatar_url');
+      }
     }
 
     if (mapping.alwaysUpsert ||

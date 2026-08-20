@@ -266,19 +266,28 @@ class _CloudStoreTransport implements SyncTransport {
     Map<String, Object?> localRow,
   ) {
     final Map<String, Object?> cloudRow = _cloudRow(mapping, localRow);
+    if (mapping.cloudTable == 'profiles') {
+      cloudRow.remove('user_id');
+      if (cloudRow['avatar_url'] == null) cloudRow.remove('avatar_url');
+    }
     final String recordId = cloudRow['id'] as String;
     final _CloudRow? existing = store.row(mapping.cloudTable, recordId);
 
     if (mapping.alwaysUpsert ||
         event.operation == SyncOperation.create ||
         event.baseVersion == 0) {
-      // Idempotent upsert keyed on the record uuid (Part 8).
+      // Idempotent upsert keyed on the record uuid (Part 8). Postgres preserves
+      // columns omitted from the pushed payload, so merge the existing row
+      // under the pushed columns instead of replacing the whole row.
       final int version = (existing?.version ?? 0) + 1;
       cloudRow['row_version'] = version;
+      final Map<String, Object?> stored = existing == null
+          ? Map<String, Object?>.of(cloudRow)
+          : Map<String, Object?>.of(existing.data)..addAll(cloudRow);
       store.put(
         mapping.cloudTable,
         recordId,
-        _CloudRow(cloudRow, version),
+        _CloudRow(stored, version),
       );
       if (existing == null) {
         store.inserts++;
@@ -287,7 +296,7 @@ class _CloudStoreTransport implements SyncTransport {
           recordId: recordId,
           operation: 'INSERT',
           userId: event.userId,
-          payload: cloudRow,
+          payload: stored,
         );
       } else {
         store.updates++;
@@ -296,7 +305,7 @@ class _CloudStoreTransport implements SyncTransport {
           recordId: recordId,
           operation: 'UPDATE',
           userId: event.userId,
-          payload: cloudRow,
+          payload: stored,
         );
       }
       if (timeoutOnPushOnce && !_timedOut) {
@@ -1705,6 +1714,87 @@ void main() {
         isEmpty,
         reason: 'the permanently-failed profile events must be resolved',
       );
+    });
+
+    test('15. a profile push with a null photo_path does not erase the '
+        'shared avatar_url on the server', () async {
+      // Device A creates the profile with an avatar URL and it reaches the
+      // server.
+      await deviceA.raw.insert('user_profile', <String, Object?>{
+        'user_id': 'user-1',
+        'uuid': 'user-1',
+        'height_cm': 170.0,
+        'weight_kg': 70.0,
+        'photo_path': 'https://cdn.example/avatars/user-1/a.jpg',
+        'created_at': DateTime.now().millisecondsSinceEpoch,
+        'updated_at': DateTime.now().millisecondsSinceEpoch,
+        'row_version': 1,
+      });
+      await deviceA.engine().track(
+            userId: 'user-1',
+            entity: 'user_profile',
+            entityId: 'user-1',
+            operation: SyncOperation.create,
+            baseVersion: 0,
+          );
+      await deviceA.engine().sync(
+            userId: 'user-1',
+            transport: _CloudStoreTransport(store: store, database: deviceA.db),
+            applier: deviceA.applier,
+          );
+      expect(
+        store.rowsFor('profiles')['user-1']!.data['avatar_url'],
+        'https://cdn.example/avatars/user-1/a.jpg',
+      );
+
+      // Device B pulls the avatar, then edits its profile but has no photo
+      // locally (photo_path null). The full-row upsert must NOT erase the
+      // avatar_url that device A set.
+      await deviceB.engine().sync(
+            userId: 'user-1',
+            transport: _CloudStoreTransport(store: store, database: deviceB.db),
+            applier: deviceB.applier,
+          );
+      await deviceB.raw.update(
+        'user_profile',
+        <String, Object?>{
+          'weight_kg': 73.0,
+          'photo_path': null,
+          'updated_at': DateTime.now().millisecondsSinceEpoch,
+          'row_version': 2,
+        },
+        where: 'uuid = ?',
+        whereArgs: <Object?>['user-1'],
+      );
+      await deviceB.engine().track(
+            userId: 'user-1',
+            entity: 'user_profile',
+            entityId: 'user-1',
+            operation: SyncOperation.update,
+            baseVersion: 1,
+          );
+      await deviceB.engine().sync(
+            userId: 'user-1',
+            transport: _CloudStoreTransport(store: store, database: deviceB.db),
+            applier: deviceB.applier,
+          );
+
+      final Map<String, Object?> server =
+          store.rowsFor('profiles')['user-1']!.data;
+      expect(server['avatar_url'], 'https://cdn.example/avatars/user-1/a.jpg',
+          reason: 'a device without a photo must not clobber the shared '
+              'avatar_url with null');
+      expect(server['weight_kg'], 73.0);
+
+      // And the server still serves the avatar back to every device.
+      await deviceB.engine().sync(
+            userId: 'user-1',
+            transport: _CloudStoreTransport(store: store, database: deviceB.db),
+            applier: deviceB.applier,
+          );
+      final List<Map<String, Object?>> rowsB =
+          await _rows(deviceB, 'user_profile');
+      expect(rowsB.single['photo_path'], 'https://cdn.example/avatars/user-1/a.jpg');
     });
   });
 }
