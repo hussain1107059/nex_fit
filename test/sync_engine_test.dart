@@ -81,6 +81,24 @@ class _MemorySyncEventRepository implements SyncEventRepository {
   }
 
   @override
+  Future<void> resolvePermanentFailures(
+    String userId, {
+    required DateTime at,
+  }) async {
+    for (int i = 0; i < events.length; i++) {
+      final SyncEvent e = events[i];
+      if (e.userId == userId &&
+          e.status == SyncStatus.failedPermanent) {
+        events[i] = e.copyWith(
+          status: SyncStatus.completed,
+          nextRetryAt: null,
+          clearNextRetryAt: true,
+        );
+      }
+    }
+  }
+
+  @override
   Future<List<SyncEvent>> getRetryableByUserId(
     String userId, {
     int? limit,

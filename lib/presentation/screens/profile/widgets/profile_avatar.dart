@@ -85,11 +85,29 @@ class ProfileAvatar extends StatelessWidget {
             cacheHeight: cacheSide,
           );
         }
+        if (path.startsWith('http')) {
+          return Image.network(
+            path,
+            fit: BoxFit.cover,
+            cacheWidth: cacheSide,
+            cacheHeight: cacheSide,
+            errorBuilder: (_, _, _) => _fallback(context),
+          );
+        }
       } else {
         final File file = File(path);
         if (file.existsSync()) {
           return Image.file(
             file,
+            fit: BoxFit.cover,
+            cacheWidth: cacheSide,
+            cacheHeight: cacheSide,
+            errorBuilder: (_, _, _) => _fallback(context),
+          );
+        }
+        if (path.startsWith('http')) {
+          return Image.network(
+            path,
             fit: BoxFit.cover,
             cacheWidth: cacheSide,
             cacheHeight: cacheSide,

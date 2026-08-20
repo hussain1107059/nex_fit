@@ -153,6 +153,29 @@ class SyncEventLocalDataSource extends BaseLocalDataSource {
     });
   }
 
+  /// Marks every permanently-failed event for [userId] as completed. Used by
+  /// the full re-sync path so a fresh pull can repair the affected rows from
+  /// the server instead of the version guard freezing them forever.
+  Future<void> resolvePermanentFailures(
+    String userId, {
+    required DateTime at,
+  }) {
+    return guard('resolve_permanent_failures', () async {
+      final Database db = await dbConnection;
+      await db.update(
+        SyncEventModel.table,
+        <String, Object?>{
+          'status': SyncStatus.completed.name,
+          'updated_at': at.millisecondsSinceEpoch,
+          'synced_at': at.millisecondsSinceEpoch,
+          'next_retry_at': null,
+        },
+        where: 'user_id = ? AND status = ?',
+        whereArgs: <Object?>[userId, SyncStatus.failedPermanent.name],
+      );
+    });
+  }
+
   /// Returns events for [userId] that are eligible for processing right now:
   /// pending or retryable events whose `next_retry_at` has passed.
   Future<List<SyncEvent>> getRetryableByUserId(

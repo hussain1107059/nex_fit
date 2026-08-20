@@ -243,6 +243,7 @@ class RemoteChangeApplier {
         mapping,
         existing.first,
         whereArg,
+        incomingVersion,
       );
       if (hasPendingWrite) return 0;
     }
@@ -260,22 +261,24 @@ class RemoteChangeApplier {
   /// events by the local rowid and singleton events by the user id, so both
   /// identifiers are probed.
   ///
-  /// Every non-final status is protected: a `pending` write is in flight, a
-  /// `failedRetryable` write will be retried, a `processing` write is claimed,
-  /// and a `failedPermanent` write (e.g. a push rejected by a schema change)
-  /// must NOT be silently reverted by the next pull — that would discard the
-  /// user's data. The row only loses protection once it is `completed` and the
-  /// server snapshot has caught up.
+  /// In-flight writes (`pending`, `processing`, `failedRetryable`) always
+  /// protect the row: they will be pushed and the server will catch up. A
+  /// `failedPermanent` write will never reach the server, so it only protects
+  /// the row against snapshots that are NOT newer than that write's basis —
+  /// when the incoming snapshot's version exceeds the event's `base_version`
+  /// the server is authoritative and the row must be allowed to advance, or a
+  /// permanently-failed row could never converge.
   Future<bool> _hasPendingOutboxEvent(
     Transaction txn,
     SyncTableMapping mapping,
     Map<String, Object?> existing,
     String recordId,
+    int incomingVersion,
   ) async {
     final Object? rowId = existing['id'];
     final List<Map<String, Object?>> rows = await txn.query(
       SyncEventModel.table,
-      columns: const <String>['id'],
+      columns: const <String>['status', 'base_version'],
       where: 'entity = ? AND entity_id IN (?, ?) AND status IN (?, ?, ?, ?)',
       whereArgs: <Object?>[
         mapping.localTable,
@@ -286,9 +289,15 @@ class RemoteChangeApplier {
         SyncStatus.processing.name,
         SyncStatus.failedPermanent.name,
       ],
-      limit: 1,
     );
-    return rows.isNotEmpty;
+    if (rows.isEmpty) return false;
+    for (final Map<String, Object?> row in rows) {
+      final String? status = row['status'] as String?;
+      if (status != SyncStatus.failedPermanent.name) return true;
+      final Object? baseVersion = row['base_version'];
+      if (baseVersion is int && baseVersion >= incomingVersion) return true;
+    }
+    return false;
   }
 
   Future<int> _applyDelete(

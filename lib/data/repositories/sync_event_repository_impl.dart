@@ -42,6 +42,12 @@ class SyncEventRepositoryImpl implements SyncEventRepository {
       _dataSource.requeueAllByUserId(userId, at: at);
 
   @override
+  Future<void> resolvePermanentFailures(
+    String userId, {
+    required DateTime at,
+  }) => _dataSource.resolvePermanentFailures(userId, at: at);
+
+  @override
   Future<List<SyncEvent>> getRetryableByUserId(
     String userId, {
     int? limit,

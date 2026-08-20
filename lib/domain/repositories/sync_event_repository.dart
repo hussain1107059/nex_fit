@@ -35,6 +35,14 @@ abstract interface class SyncEventRepository {
   /// PENDING with a zeroed retry counter so the next sync run retries them.
   Future<void> requeueAllByUserId(String userId, {required DateTime at});
 
+  /// Marks every permanently-failed event for [userId] as completed. Used by
+  /// the full re-sync path so a fresh pull can repair the affected rows from
+  /// the server instead of the version guard freezing them forever.
+  Future<void> resolvePermanentFailures(
+    String userId, {
+    required DateTime at,
+  });
+
   /// Events eligible to run right now: pending or retryable whose
   /// `next_retry_at` has passed.
   Future<List<SyncEvent>> getRetryableByUserId(

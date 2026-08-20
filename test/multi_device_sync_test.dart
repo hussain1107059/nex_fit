@@ -473,6 +473,27 @@ Future<void> _makeDue(_Device device) async {
   }
 }
 
+/// Marks every in-flight [entity] event for user-1 as permanently failed
+/// (simulates a push rejected by the server, e.g. during a schema change).
+Future<void> _failPermanently(_Device device, String entity) async {
+  final List<SyncEvent> events = await device.eventRepo.getNonCompletedByUserId(
+    'user-1',
+  );
+  for (final SyncEvent event in events.where(
+    (SyncEvent e) =>
+        e.entity == entity &&
+        e.status != SyncStatus.completed &&
+        e.status != SyncStatus.failedPermanent,
+  )) {
+    await device.eventRepo.markPermanentFailure(
+      event.id!,
+      lastError: 'test_rejected',
+      retryCount: 3,
+      at: DateTime.now(),
+    );
+  }
+}
+
 Future<int> _seedWeightLog(
   Database db, {
   required String uuid,
@@ -1540,6 +1561,150 @@ void main() {
           await _rows(deviceB, 'user_profile');
       expect(rowsB.single['height_cm'], 180.0);
       expect(rowsB.single['weight_kg'], 75.0);
+    });
+
+    test('14. a permanently-failed profile write does not freeze the row: a '
+        'normal sync converges once the server advances, and a full re-sync '
+        'repairs the inflated case', () async {
+      // Device A creates the profile (v1) and it reaches the server.
+      await deviceA.raw.insert('user_profile', <String, Object?>{
+        'user_id': 'user-1',
+        'uuid': 'user-1',
+        'height_cm': 170.0,
+        'weight_kg': 70.0,
+        'created_at': DateTime.now().millisecondsSinceEpoch,
+        'updated_at': DateTime.now().millisecondsSinceEpoch,
+        'row_version': 1,
+      });
+      await deviceA.engine().track(
+            userId: 'user-1',
+            entity: 'user_profile',
+            entityId: 'user-1',
+            operation: SyncOperation.create,
+            baseVersion: 0,
+          );
+      await deviceA.engine().sync(
+            userId: 'user-1',
+            transport: _CloudStoreTransport(store: store, database: deviceA.db),
+            applier: deviceA.applier,
+          );
+
+      // Device B pulls the profile, then edits it but its push fails
+      // permanently (e.g. the schema-change window). B's local row moves to
+      // v2 while the server stays at v1.
+      await deviceB.engine().sync(
+            userId: 'user-1',
+            transport: _CloudStoreTransport(store: store, database: deviceB.db),
+            applier: deviceB.applier,
+          );
+      await deviceB.raw.update(
+        'user_profile',
+        <String, Object?>{
+          'weight_kg': 72.0,
+          'updated_at': DateTime.now().millisecondsSinceEpoch,
+          'row_version': 2,
+        },
+        where: 'uuid = ?',
+        whereArgs: <Object?>['user-1'],
+      );
+      await deviceB.engine().track(
+            userId: 'user-1',
+            entity: 'user_profile',
+            entityId: 'user-1',
+            operation: SyncOperation.update,
+            baseVersion: 1,
+          );
+      await _failPermanently(deviceB, 'user_profile');
+
+      // Device A edits and its push succeeds, moving the server AHEAD to v2.
+      await deviceA.raw.update(
+        'user_profile',
+        <String, Object?>{
+          'height_cm': 180.0,
+          'updated_at': DateTime.now().millisecondsSinceEpoch,
+          'row_version': 2,
+        },
+        where: 'uuid = ?',
+        whereArgs: <Object?>['user-1'],
+      );
+      await deviceA.engine().track(
+            userId: 'user-1',
+            entity: 'user_profile',
+            entityId: 'user-1',
+            operation: SyncOperation.update,
+            baseVersion: 1,
+          );
+      await deviceA.engine().sync(
+            userId: 'user-1',
+            transport: _CloudStoreTransport(store: store, database: deviceA.db),
+            applier: deviceA.applier,
+          );
+      expect(store.rowsFor('profiles')['user-1']!.data['height_cm'], 180.0);
+
+      // A normal sync on B must converge: the incoming v2 snapshot is not
+      // newer than the failed write's basis, so the guard does not freeze B.
+      await deviceB.engine().sync(
+            userId: 'user-1',
+            transport: _CloudStoreTransport(store: store, database: deviceB.db),
+            applier: deviceB.applier,
+          );
+      List<Map<String, Object?>> rowsB = await _rows(deviceB, 'user_profile');
+      expect(rowsB.single['height_cm'], 180.0,
+          reason: 'a normal sync must let the newer server snapshot through '
+              'even with a permanently-failed event in the outbox');
+      expect(rowsB.single['weight_kg'], 70.0);
+
+      // B makes a second edit that also fails permanently, inflating its
+      // local version to 3 while the server remains at 2.
+      await deviceB.raw.update(
+        'user_profile',
+        <String, Object?>{
+          'weight_kg': 73.0,
+          'updated_at': DateTime.now().millisecondsSinceEpoch,
+          'row_version': 3,
+        },
+        where: 'uuid = ?',
+        whereArgs: <Object?>['user-1'],
+      );
+      await deviceB.engine().track(
+            userId: 'user-1',
+            entity: 'user_profile',
+            entityId: 'user-1',
+            operation: SyncOperation.update,
+            baseVersion: 2,
+          );
+      await _failPermanently(deviceB, 'user_profile');
+
+      // A normal sync now freezes B (local v3 > server v2, failed base 2).
+      await deviceB.engine().sync(
+            userId: 'user-1',
+            transport: _CloudStoreTransport(store: store, database: deviceB.db),
+            applier: deviceB.applier,
+          );
+      rowsB = await _rows(deviceB, 'user_profile');
+      expect(rowsB.single['weight_kg'], 73.0,
+          reason: 'the guard still protects a locally-newer inflated row '
+              'during an incremental sync');
+
+      // A full re-sync resolves the permanently-failed events and repairs
+      // the inflated row from the authoritative server snapshot.
+      await deviceB.engine().resetAndSync(
+            userId: 'user-1',
+            transport: _CloudStoreTransport(store: store, database: deviceB.db),
+            applier: deviceB.applier,
+          );
+      rowsB = await _rows(deviceB, 'user_profile');
+      expect(rowsB.single['height_cm'], 180.0,
+          reason: 'a full re-sync must repair the row from the server');
+      expect(rowsB.single['weight_kg'], 70.0);
+      expect(rowsB.single['row_version'], 2);
+      final List<SyncEvent> remaining =
+          await deviceB.eventRepo.getNonCompletedByUserId('user-1');
+      expect(
+        remaining.where((SyncEvent e) => e.entity == 'user_profile'),
+        isEmpty,
+        reason: 'the permanently-failed profile events must be resolved',
+      );
     });
   });
 }

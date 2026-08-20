@@ -853,6 +853,13 @@ class SyncEngine {
           'error=${ValueMasker.maskEmailInText(error.toString())}',
         );
       }
+      // Permanently-failed writes will never be pushed again. Complete them
+      // before the fresh pull so the version guard cannot freeze the affected
+      // rows: the server snapshot below is authoritative and repairs them.
+      await repository.resolvePermanentFailures(
+        userId,
+        at: now ?? DateTime.now(),
+      );
       final int pulled = await _pullUnlocked(
         userId: userId,
         transport: transport,

@@ -195,7 +195,9 @@ final secureStorageServiceProvider = Provider<SecureStorageService>(
 );
 
 final profilePhotoServiceProvider = Provider<ProfilePhotoService>(
-  (ref) => ProfilePhotoService(),
+  (ref) => ProfilePhotoService(
+    supabaseService: ref.watch(supabaseServiceProvider),
+  ),
 );
 
 final supabaseServiceProvider = Provider<SupabaseService>(
