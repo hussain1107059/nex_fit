@@ -48,19 +48,25 @@ class ProfileGamificationCard extends ConsumerWidget {
               return Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  _MetricTile(
-                    label: context.l10n.dashboardLevel,
-                    value: context.l10n.dashboardLevelValue(currentLevel),
+                  Expanded(
+                    child: _MetricTile(
+                      label: context.l10n.dashboardLevel,
+                      value: context.l10n.dashboardLevelValue(currentLevel),
+                    ),
                   ),
-                  _MetricTile(
-                    label: context.l10n.dashboardXp,
-                    value: '$totalXp',
+                  Expanded(
+                    child: _MetricTile(
+                      label: context.l10n.dashboardXp,
+                      value: '$totalXp',
+                    ),
                   ),
-                  _MetricTile(
-                    label: context.l10n.dashboardProgress,
-                    value: context.l10n.dashboardXpProgress(
-                      '$currentXp',
-                      '$totalXp',
+                  Expanded(
+                    child: _MetricTile(
+                      label: context.l10n.dashboardProgress,
+                      value: context.l10n.dashboardXpProgress(
+                        '$currentXp',
+                        '$totalXp',
+                      ),
                     ),
                   ),
                 ],
@@ -85,9 +91,20 @@ class _MetricTile extends StatelessWidget {
   Widget build(BuildContext context) {
     return Column(
       children: [
-        Text(label, style: Theme.of(context).textTheme.labelSmall),
+        Text(
+          label,
+          maxLines: 1,
+          overflow: TextOverflow.ellipsis,
+          style: Theme.of(context).textTheme.labelSmall,
+        ),
         const SizedBox(height: AppSpacing.xs),
-        Text(value, style: Theme.of(context).textTheme.titleMedium),
+        Text(
+          value,
+          maxLines: 1,
+          overflow: TextOverflow.ellipsis,
+          textAlign: TextAlign.center,
+          style: Theme.of(context).textTheme.titleMedium,
+        ),
       ],
     );
   }

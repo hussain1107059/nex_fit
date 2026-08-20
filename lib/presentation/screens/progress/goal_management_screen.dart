@@ -310,13 +310,17 @@ class _GoalProgressRow extends StatelessWidget {
         const SizedBox(height: AppSpacing.xs),
         Row(
           children: <Widget>[
-            Text(
-              '${l10n.goalCurrentValue}: '
-              '${_format(item.current)} ${_unit(l10n, item.unit)}'
-                  .toBanglaDigits(),
-              style: context.textTheme.labelSmall,
+            Flexible(
+              child: Text(
+                '${l10n.goalCurrentValue}: '
+                '${_format(item.current)} ${_unit(l10n, item.unit)}'
+                    .toBanglaDigits(),
+                maxLines: 1,
+                overflow: TextOverflow.ellipsis,
+                style: context.textTheme.labelSmall,
+              ),
             ),
-            const Spacer(),
+            const SizedBox(width: AppSpacing.xs),
             Text(
               '${item.percent.round().toString().toBanglaDigits()}%',
               style: context.textTheme.labelSmall?.copyWith(

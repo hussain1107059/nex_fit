@@ -36,7 +36,7 @@ class TodayGoalsSection extends StatelessWidget {
           physics: const NeverScrollableScrollPhysics(),
           mainAxisSpacing: AppSpacing.sm,
           crossAxisSpacing: AppSpacing.sm,
-          childAspectRatio: context.isWide ? 1.15 : 0.92,
+          childAspectRatio: context.isWide ? 1.15 : 0.85,
           children: [
             GoalRing(
               progress: _progress(

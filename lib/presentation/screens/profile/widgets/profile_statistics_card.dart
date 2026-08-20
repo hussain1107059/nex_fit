@@ -37,7 +37,7 @@ class ProfileStatisticsCard extends StatelessWidget {
         physics: const NeverScrollableScrollPhysics(),
         mainAxisSpacing: AppSpacing.sm,
         crossAxisSpacing: AppSpacing.sm,
-        childAspectRatio: 1.35,
+        childAspectRatio: 1.2,
         children: [
           ProfileStatCell(
             icon: Icons.fitness_center_rounded,

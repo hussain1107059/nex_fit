@@ -82,13 +82,17 @@ class DashboardHeader extends ConsumerWidget {
               color: context.colorScheme.onSurfaceVariant,
             ),
             const SizedBox(width: AppSpacing.xs),
-            Text(
-              date,
-              style: context.textTheme.bodySmall?.copyWith(
-                color: context.colorScheme.onSurfaceVariant,
+            Flexible(
+              child: Text(
+                date,
+                maxLines: 1,
+                overflow: TextOverflow.ellipsis,
+                style: context.textTheme.bodySmall?.copyWith(
+                  color: context.colorScheme.onSurfaceVariant,
+                ),
               ),
             ),
-            const Spacer(),
+            const SizedBox(width: AppSpacing.sm),
             SyncStatusChip(status: syncStatus, compact: true),
           ],
         ),

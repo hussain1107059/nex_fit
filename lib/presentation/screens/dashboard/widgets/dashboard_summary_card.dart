@@ -132,7 +132,7 @@ class _MetricGrid extends StatelessWidget {
       physics: const NeverScrollableScrollPhysics(),
       mainAxisSpacing: AppSpacing.sm,
       crossAxisSpacing: AppSpacing.sm,
-      childAspectRatio: context.isWide ? 1.6 : 1.5,
+      childAspectRatio: context.isWide ? 1.6 : 1.35,
       children: [
         for (final _MetricData metric in metrics)
           _MetricCell(

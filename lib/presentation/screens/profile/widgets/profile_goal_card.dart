@@ -90,10 +90,15 @@ class _GoalRow extends StatelessWidget {
             ),
           ),
           const SizedBox(width: AppSpacing.sm),
-          Text(
-            value,
-            style: context.textTheme.labelLarge?.copyWith(
-              fontWeight: FontWeight.w800,
+          Flexible(
+            child: Text(
+              value,
+              maxLines: 1,
+              overflow: TextOverflow.ellipsis,
+              textAlign: TextAlign.end,
+              style: context.textTheme.labelLarge?.copyWith(
+                fontWeight: FontWeight.w800,
+              ),
             ),
           ),
         ],

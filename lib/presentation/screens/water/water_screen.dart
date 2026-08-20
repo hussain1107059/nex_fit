@@ -423,18 +423,22 @@ class _EntriesSection extends ConsumerWidget {
       children: [
         Row(
           children: [
-            Text(
-              '${l10n.waterEntries} (${data.entries.length.toString().toBanglaDigits()})',
-              style: theme.textTheme.titleMedium?.copyWith(
-                fontWeight: FontWeight.w700,
+            Flexible(
+              child: Text(
+                '${l10n.waterEntries} (${data.entries.length.toString().toBanglaDigits()})',
+                maxLines: 1,
+                overflow: TextOverflow.ellipsis,
+                style: theme.textTheme.titleMedium?.copyWith(
+                  fontWeight: FontWeight.w700,
+                ),
               ),
             ),
-            const Spacer(),
+            const SizedBox(width: AppSpacing.sm),
             if (isToday)
               TextButton.icon(
                 onPressed: () => showCustomWaterSheet(context, ref),
                 icon: const Icon(Icons.add_rounded, size: 18),
-                label: Text(l10n.waterCustomAmount),
+                label: Text(l10n.waterCustomAmount, maxLines: 1, overflow: TextOverflow.ellipsis),
               ),
           ],
         ),

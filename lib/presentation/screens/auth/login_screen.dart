@@ -90,10 +90,17 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
       footer: Row(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          Text(l10n.authNoAccount, style: context.textTheme.bodyMedium),
+          Flexible(
+            child: Text(
+              l10n.authNoAccount,
+              maxLines: 1,
+              overflow: TextOverflow.ellipsis,
+              style: context.textTheme.bodyMedium,
+            ),
+          ),
           TextButton(
             onPressed: busy ? null : () => context.go(AppRoutes.register),
-            child: Text(l10n.authCreateAccount),
+            child: Text(l10n.authCreateAccount, maxLines: 1, overflow: TextOverflow.ellipsis),
           ),
         ],
       ),

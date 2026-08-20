@@ -150,15 +150,20 @@ return ChoiceChip(
                   }).toList(),
                 ),
                 const SizedBox(height: AppSpacing.lg),
-                Row(
+Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    Text(
-                      context.l10n.nutritionQuantity,
-                      style: theme.textTheme.labelLarge?.copyWith(
-                        fontWeight: FontWeight.w700,
+                    Flexible(
+                      child: Text(
+                        context.l10n.nutritionQuantity,
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
+                        style: theme.textTheme.labelLarge?.copyWith(
+                          fontWeight: FontWeight.w700,
+                        ),
                       ),
                     ),
+                    const SizedBox(width: AppSpacing.sm),
                     QuantityStepper(
                       quantity: _quantity,
                       onChanged: (double value) => setState(() => _quantity = value),
@@ -169,16 +174,26 @@ return ChoiceChip(
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    Text(
-                      context.l10n.nutritionCalories,
-                      style: theme.textTheme.labelLarge,
+                    Flexible(
+                      child: Text(
+                        context.l10n.nutritionCalories,
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
+                        style: theme.textTheme.labelLarge,
+                      ),
                     ),
-                    Text(
-                      '${totalCalories.round().toString().toBanglaDigits()} '
-                      '${context.l10n.dashboardKcalUnit}',
-                      style: theme.textTheme.titleMedium?.copyWith(
-                        fontWeight: FontWeight.w800,
-                        color: theme.colorScheme.primary,
+                    const SizedBox(width: AppSpacing.sm),
+                    Flexible(
+                      child: Text(
+                        '${totalCalories.round().toString().toBanglaDigits()} '
+                        '${context.l10n.dashboardKcalUnit}',
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
+                        textAlign: TextAlign.end,
+                        style: theme.textTheme.titleMedium?.copyWith(
+                          fontWeight: FontWeight.w800,
+                          color: theme.colorScheme.primary,
+                        ),
                       ),
                     ),
                   ],

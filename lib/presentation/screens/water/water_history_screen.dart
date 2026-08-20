@@ -68,20 +68,23 @@ class _PeriodSelector extends ConsumerWidget {
       (WaterHistoryPeriod.yearly, l10n.waterHistoryYearly),
     ];
 
-    return SegmentedButton<WaterHistoryPeriod>(
-      showSelectedIcon: false,
-      segments: <ButtonSegment<WaterHistoryPeriod>>[
-        for (final (WaterHistoryPeriod period, String label) in options)
-          ButtonSegment<WaterHistoryPeriod>(
-            value: period,
-            label: Text(label),
-          ),
-      ],
-      selected: <WaterHistoryPeriod>{current},
-      onSelectionChanged: (Set<WaterHistoryPeriod> selection) {
-        ref.read(waterHistoryPeriodProvider.notifier).state =
-            selection.first;
-      },
+    return SingleChildScrollView(
+      scrollDirection: Axis.horizontal,
+      child: SegmentedButton<WaterHistoryPeriod>(
+        showSelectedIcon: false,
+        segments: <ButtonSegment<WaterHistoryPeriod>>[
+          for (final (WaterHistoryPeriod period, String label) in options)
+            ButtonSegment<WaterHistoryPeriod>(
+              value: period,
+              label: Text(label),
+            ),
+        ],
+        selected: <WaterHistoryPeriod>{current},
+        onSelectionChanged: (Set<WaterHistoryPeriod> selection) {
+          ref.read(waterHistoryPeriodProvider.notifier).state =
+              selection.first;
+        },
+      ),
     );
   }
 }

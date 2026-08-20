@@ -115,10 +115,17 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
       footer: Row(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          Text(l10n.authHaveAccount, style: context.textTheme.bodyMedium),
+          Flexible(
+            child: Text(
+              l10n.authHaveAccount,
+              maxLines: 1,
+              overflow: TextOverflow.ellipsis,
+              style: context.textTheme.bodyMedium,
+            ),
+          ),
           TextButton(
             onPressed: busy ? null : () => context.go(AppRoutes.login),
-            child: Text(l10n.authSignIn),
+            child: Text(l10n.authSignIn, maxLines: 1, overflow: TextOverflow.ellipsis),
           ),
         ],
       ),

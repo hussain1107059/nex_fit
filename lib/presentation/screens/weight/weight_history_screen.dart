@@ -69,19 +69,22 @@ class _PeriodSelector extends ConsumerWidget {
       (WeightHistoryPeriod.yearly, l10n.weightHistoryYearly),
     ];
 
-    return SegmentedButton<WeightHistoryPeriod>(
-      showSelectedIcon: false,
-      segments: <ButtonSegment<WeightHistoryPeriod>>[
-        for (final (WeightHistoryPeriod period, String label) in options)
-          ButtonSegment<WeightHistoryPeriod>(
-            value: period,
-            label: Text(label),
-          ),
-      ],
-      selected: <WeightHistoryPeriod>{current},
-      onSelectionChanged: (Set<WeightHistoryPeriod> selection) {
-        ref.read(weightHistoryPeriodProvider.notifier).state = selection.first;
-      },
+    return SingleChildScrollView(
+      scrollDirection: Axis.horizontal,
+      child: SegmentedButton<WeightHistoryPeriod>(
+        showSelectedIcon: false,
+        segments: <ButtonSegment<WeightHistoryPeriod>>[
+          for (final (WeightHistoryPeriod period, String label) in options)
+            ButtonSegment<WeightHistoryPeriod>(
+              value: period,
+              label: Text(label),
+            ),
+        ],
+        selected: <WeightHistoryPeriod>{current},
+        onSelectionChanged: (Set<WeightHistoryPeriod> selection) {
+          ref.read(weightHistoryPeriodProvider.notifier).state = selection.first;
+        },
+      ),
     );
   }
 }

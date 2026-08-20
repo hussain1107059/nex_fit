@@ -383,21 +383,26 @@ return ChoiceChip(
                   }).toList(),
                 ),
                 const SizedBox(height: AppSpacing.lg),
-                Row(
+Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    Text(
-                      l10n.nutritionSelectedFoods(
-                        _foods.length.toString().toBanglaDigits(),
-                      ),
-                      style: theme.textTheme.labelLarge?.copyWith(
-                        fontWeight: FontWeight.w700,
+                    Flexible(
+                      child: Text(
+                        l10n.nutritionSelectedFoods(
+                          _foods.length.toString().toBanglaDigits(),
+                        ),
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
+                        style: theme.textTheme.labelLarge?.copyWith(
+                          fontWeight: FontWeight.w700,
+                        ),
                       ),
                     ),
+                    const SizedBox(width: AppSpacing.sm),
                     TextButton.icon(
                       onPressed: () => _addFood(context),
                       icon: const Icon(Icons.add_rounded, size: 18),
-                      label: Text(l10n.nutritionAddFood),
+                      label: Text(l10n.nutritionAddFood, maxLines: 1, overflow: TextOverflow.ellipsis),
                     ),
                   ],
                 ),

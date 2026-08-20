@@ -217,14 +217,18 @@ class GoalProgressTile extends StatelessWidget {
                 const SizedBox(height: AppSpacing.xs),
                 Row(
                   children: <Widget>[
-                    Text(
-                      '${_formatValue(goal.current, goal.unit)} $unit'
-                          .toBanglaDigits(),
-                      style: context.textTheme.bodyMedium?.copyWith(
-                        fontWeight: FontWeight.w800,
+                    Flexible(
+                      child: Text(
+                        '${_formatValue(goal.current, goal.unit)} $unit'
+                            .toBanglaDigits(),
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
+                        style: context.textTheme.bodyMedium?.copyWith(
+                          fontWeight: FontWeight.w800,
+                        ),
                       ),
                     ),
-                    const Spacer(),
+                    const SizedBox(width: AppSpacing.xs),
                     if (goal.hasTarget)
                       Text(
                         '${goal.percent.round().toString().toBanglaDigits()}%',
@@ -358,12 +362,17 @@ class RecordTile extends StatelessWidget {
             ),
           ),
           const SizedBox(width: AppSpacing.sm),
-          Text(
-            '${_formatValue(record.value ?? 0, record.unit)} '
-            '${_unitLabel(l10n, record.unit)}'.toBanglaDigits(),
-            style: context.textTheme.titleMedium?.copyWith(
-              fontWeight: FontWeight.w900,
-              color: color,
+          Flexible(
+            child: Text(
+              '${_formatValue(record.value ?? 0, record.unit)} '
+              '${_unitLabel(l10n, record.unit)}'.toBanglaDigits(),
+              maxLines: 1,
+              overflow: TextOverflow.ellipsis,
+              textAlign: TextAlign.end,
+              style: context.textTheme.titleMedium?.copyWith(
+                fontWeight: FontWeight.w900,
+                color: color,
+              ),
             ),
           ),
         ],

@@ -57,10 +57,15 @@ class GoalRing extends StatelessWidget {
                       backgroundColor: context.colorScheme.surfaceContainerHighest,
                     ),
                     Center(
-                      child: Text(
-                        valueText,
-                        style: context.textTheme.labelLarge?.copyWith(
-                          fontWeight: FontWeight.w800,
+                      child: FittedBox(
+                        fit: BoxFit.scaleDown,
+                        child: Text(
+                          valueText,
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis,
+                          style: context.textTheme.labelLarge?.copyWith(
+                            fontWeight: FontWeight.w800,
+                          ),
                         ),
                       ),
                     ),
@@ -78,6 +83,8 @@ class GoalRing extends StatelessWidget {
               Flexible(
                 child: Text(
                   label,
+                  maxLines: 2,
+                  overflow: TextOverflow.ellipsis,
                   textAlign: TextAlign.center,
                   style: context.textTheme.labelSmall?.copyWith(
                     color: context.colorScheme.onSurfaceVariant,
@@ -90,6 +97,8 @@ class GoalRing extends StatelessWidget {
           if (targetText != null && goalSet)
             Text(
               targetText!,
+              maxLines: 1,
+              overflow: TextOverflow.ellipsis,
               textAlign: TextAlign.center,
               style: context.textTheme.labelSmall?.copyWith(
                 color: context.colorScheme.onSurfaceVariant,
@@ -98,6 +107,8 @@ class GoalRing extends StatelessWidget {
           else if (!goalSet)
             Text(
               context.l10n.dashboardGoalNotSet,
+              maxLines: 1,
+              overflow: TextOverflow.ellipsis,
               textAlign: TextAlign.center,
               style: context.textTheme.labelSmall?.copyWith(
                 color: const Color(0xFFB45309),

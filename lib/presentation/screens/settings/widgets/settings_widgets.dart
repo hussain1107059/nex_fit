@@ -115,45 +115,59 @@ class SettingsTile extends StatelessWidget {
             ),
       trailing: selected && !destructive
           ? Icon(Icons.check_rounded, color: scheme.primary)
-          : trailing ??
-                (showChevron
-                    ? Row(
-                        mainAxisSize: MainAxisSize.min,
-                        children: [
-                          if (value != null)
-                            Text(
-                              value!,
-                              maxLines: 1,
-                              overflow: TextOverflow.ellipsis,
-                              style: context.textTheme.bodyMedium?.copyWith(
-                                color: destructive
-                                    ? scheme.error
-                                    : scheme.onSurfaceVariant,
-                                fontWeight: FontWeight.w600,
+          : trailing != null
+                // Custom trailing widgets (e.g. wide action buttons) can
+                // overflow ListTile's fixed trailing box with long Bangla
+                // labels. Scale them down to fit instead of overflowing.
+                ? FittedBox(
+                    fit: BoxFit.scaleDown,
+                    alignment: Alignment.centerRight,
+                    child: ConstrainedBox(
+                      constraints: const BoxConstraints(maxWidth: 160),
+                      child: trailing,
+                    ),
+                  )
+                : (showChevron
+                      ? Row(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            if (value != null)
+                              Flexible(
+                                child: Text(
+                                  value!,
+                                  maxLines: 1,
+                                  overflow: TextOverflow.ellipsis,
+                                  style: context.textTheme.bodyMedium
+                                      ?.copyWith(
+                                        color: destructive
+                                            ? scheme.error
+                                            : scheme.onSurfaceVariant,
+                                        fontWeight: FontWeight.w600,
+                                      ),
+                                ),
                               ),
+                            const SizedBox(width: AppSpacing.xs),
+                            Icon(
+                              Icons.chevron_right_rounded,
+                              color: destructive
+                                  ? scheme.error
+                                  : scheme.onSurfaceVariant,
                             ),
-                          const SizedBox(width: AppSpacing.xs),
-                          Icon(
-                            Icons.chevron_right_rounded,
-                            color: destructive
-                                ? scheme.error
-                                : scheme.onSurfaceVariant,
-                          ),
-                        ],
-                      )
-                    : (value != null
-                          ? Text(
-                              value!,
-                              maxLines: 1,
-                              overflow: TextOverflow.ellipsis,
-                              style: context.textTheme.bodyMedium?.copyWith(
-                                color: destructive
-                                    ? scheme.error
-                                    : scheme.onSurfaceVariant,
-                                fontWeight: FontWeight.w600,
-                              ),
-                            )
-                          : null)),
+                          ],
+                        )
+                      : (value != null
+                            ? Text(
+                                value!,
+                                maxLines: 1,
+                                overflow: TextOverflow.ellipsis,
+                                style: context.textTheme.bodyMedium?.copyWith(
+                                  color: destructive
+                                      ? scheme.error
+                                      : scheme.onSurfaceVariant,
+                                  fontWeight: FontWeight.w600,
+                                ),
+                              )
+                            : null)),
       onTap: enabled ? onTap : null,
     );
   }

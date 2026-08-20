@@ -323,20 +323,30 @@ class _GoalRing extends StatelessWidget {
           },
         ),
         const SizedBox(height: AppSpacing.sm),
-        Text(
-          goalSet ? context.l10n.weightTargetProgress : context.l10n.weightGoalNotSet,
-          textAlign: TextAlign.center,
-          style: context.textTheme.labelSmall?.copyWith(
-            color: context.colorScheme.onSurfaceVariant,
+        SizedBox(
+          width: 88,
+          child: Text(
+            goalSet ? context.l10n.weightTargetProgress : context.l10n.weightGoalNotSet,
+            maxLines: 1,
+            overflow: TextOverflow.ellipsis,
+            textAlign: TextAlign.center,
+            style: context.textTheme.labelSmall?.copyWith(
+              color: context.colorScheme.onSurfaceVariant,
+            ),
           ),
         ),
         const SizedBox(height: AppSpacing.xxs),
-        Text(
-          context.l10n.weightSetGoalHint,
-          textAlign: TextAlign.center,
-          style: context.textTheme.labelSmall?.copyWith(
-            color: context.colorScheme.outline,
-            fontSize: 10,
+        SizedBox(
+          width: 88,
+          child: Text(
+            context.l10n.weightSetGoalHint,
+            maxLines: 3,
+            overflow: TextOverflow.ellipsis,
+            textAlign: TextAlign.center,
+            style: context.textTheme.labelSmall?.copyWith(
+              color: context.colorScheme.outline,
+              fontSize: 10,
+            ),
           ),
         ),
       ],
@@ -603,11 +613,16 @@ class _CalcRow extends StatelessWidget {
           ),
         ),
         const SizedBox(width: AppSpacing.sm),
-        Text(
-          value,
-          style: context.textTheme.bodyMedium?.copyWith(
-            fontWeight: FontWeight.w800,
-            color: color,
+        Flexible(
+          child: Text(
+            value,
+            maxLines: 1,
+            overflow: TextOverflow.ellipsis,
+            textAlign: TextAlign.end,
+            style: context.textTheme.bodyMedium?.copyWith(
+              fontWeight: FontWeight.w800,
+              color: color,
+            ),
           ),
         ),
       ],
@@ -741,45 +756,52 @@ class _TrendSection extends ConsumerWidget {
       children: [
         Row(
           children: [
-            Text(
-              l10n.weightTrend,
-              style: context.textTheme.titleMedium?.copyWith(
-                fontWeight: FontWeight.w800,
+            Flexible(
+              child: Text(
+                l10n.weightTrend,
+                maxLines: 1,
+                overflow: TextOverflow.ellipsis,
+                style: context.textTheme.titleMedium?.copyWith(
+                  fontWeight: FontWeight.w800,
+                ),
               ),
             ),
-            const Spacer(),
+            const SizedBox(width: AppSpacing.sm),
             TextButton(
               onPressed: () => context.push(AppRoutes.weightHistory),
-              child: Text(l10n.commonViewAll),
+              child: Text(l10n.commonViewAll, maxLines: 1, overflow: TextOverflow.ellipsis),
             ),
           ],
         ),
         const SizedBox(height: AppSpacing.xs),
-        SegmentedButton<WeightHistoryPeriod>(
-          showSelectedIcon: false,
-          segments: <ButtonSegment<WeightHistoryPeriod>>[
-            ButtonSegment<WeightHistoryPeriod>(
-              value: WeightHistoryPeriod.daily,
-              label: Text(l10n.weightHistoryDaily),
-            ),
-            ButtonSegment<WeightHistoryPeriod>(
-              value: WeightHistoryPeriod.weekly,
-              label: Text(l10n.weightHistoryWeekly),
-            ),
-            ButtonSegment<WeightHistoryPeriod>(
-              value: WeightHistoryPeriod.monthly,
-              label: Text(l10n.weightHistoryMonthly),
-            ),
-            ButtonSegment<WeightHistoryPeriod>(
-              value: WeightHistoryPeriod.yearly,
-              label: Text(l10n.weightHistoryYearly),
-            ),
-          ],
-          selected: <WeightHistoryPeriod>{period},
-          onSelectionChanged: (Set<WeightHistoryPeriod> selection) {
-            ref.read(weightHistoryPeriodProvider.notifier).state =
-                selection.first;
-          },
+        SingleChildScrollView(
+          scrollDirection: Axis.horizontal,
+          child: SegmentedButton<WeightHistoryPeriod>(
+            showSelectedIcon: false,
+            segments: <ButtonSegment<WeightHistoryPeriod>>[
+              ButtonSegment<WeightHistoryPeriod>(
+                value: WeightHistoryPeriod.daily,
+                label: Text(l10n.weightHistoryDaily),
+              ),
+              ButtonSegment<WeightHistoryPeriod>(
+                value: WeightHistoryPeriod.weekly,
+                label: Text(l10n.weightHistoryWeekly),
+              ),
+              ButtonSegment<WeightHistoryPeriod>(
+                value: WeightHistoryPeriod.monthly,
+                label: Text(l10n.weightHistoryMonthly),
+              ),
+              ButtonSegment<WeightHistoryPeriod>(
+                value: WeightHistoryPeriod.yearly,
+                label: Text(l10n.weightHistoryYearly),
+              ),
+            ],
+            selected: <WeightHistoryPeriod>{period},
+            onSelectionChanged: (Set<WeightHistoryPeriod> selection) {
+              ref.read(weightHistoryPeriodProvider.notifier).state =
+                  selection.first;
+            },
+          ),
         ),
         const SizedBox(height: AppSpacing.md),
         async.when(
@@ -922,17 +944,21 @@ class _EntriesSection extends ConsumerWidget {
       children: [
         Row(
           children: [
-            Text(
-              '${l10n.weightEntries} (${data.entriesCount.toString().toBanglaDigits()})',
-              style: context.textTheme.titleMedium?.copyWith(
-                fontWeight: FontWeight.w800,
+            Flexible(
+              child: Text(
+                '${l10n.weightEntries} (${data.entriesCount.toString().toBanglaDigits()})',
+                maxLines: 1,
+                overflow: TextOverflow.ellipsis,
+                style: context.textTheme.titleMedium?.copyWith(
+                  fontWeight: FontWeight.w800,
+                ),
               ),
             ),
-            const Spacer(),
+            const SizedBox(width: AppSpacing.sm),
             TextButton.icon(
               onPressed: () => showWeightEntrySheet(context, ref),
               icon: const Icon(Icons.add_rounded, size: 18),
-              label: Text(l10n.weightLogTitle),
+              label: Text(l10n.weightLogTitle, maxLines: 1, overflow: TextOverflow.ellipsis),
             ),
           ],
         ),
