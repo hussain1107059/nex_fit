@@ -748,6 +748,66 @@ test('an unsupported table change is skipped so the batch can still apply',
       expect(state!.cursor, 6);
     });
 
+    test('a pulled profile row self-heals a missing users parent row', () async {
+      // Simulate a device whose `users` row was never written (or was lost):
+      // `user_profile.user_id` -> `users(id)` has no parent, so a naive apply
+      // would abort the batch on the FK and the pull safety-net would silently
+      // skip the row forever, leaving the profile blank.
+      final Database db = await appDatabase.database;
+      await db.delete(
+        'users',
+        where: 'id = ?',
+        whereArgs: const <Object?>['user-1'],
+      );
+
+      final _ScriptedTransport transport = _ScriptedTransport(
+        remoteChanges: <SyncChange>[
+          SyncChange(
+            cursorId: 5,
+            cloudTable: 'profiles',
+            recordId: 'user-1',
+            operation: SyncOperation.create,
+            payload: <String, Object?>{
+              'id': 'user-1',
+              'user_id': 'user-1',
+              'display_name': 'Test User',
+              'height_cm': 180.0,
+              'weight_kg': 84.0,
+              'fitness_goal': 'weightLoss',
+              'created_at': '2026-01-01T06:00:00Z',
+              'updated_at': '2026-01-01T06:00:00Z',
+              'row_version': 33,
+            },
+          ),
+        ],
+      );
+
+      final int pulled = await engine.pull(
+        userId: 'user-1',
+        transport: transport,
+        applier: applier,
+      );
+
+      expect(pulled, 1);
+      final List<Map<String, Object?>> profiles =
+          await db.query('user_profile');
+      expect(profiles, hasLength(1));
+      expect(profiles.single['height_cm'], 180.0);
+      expect(profiles.single['weight_kg'], 84.0);
+      expect(profiles.single['fitness_goal'], 'weightLoss');
+      // The applier inserted the minimal parent so the FK resolved.
+      final List<Map<String, Object?>> users = await db.query(
+        'users',
+        where: 'id = ?',
+        whereArgs: const <Object?>['user-1'],
+      );
+      expect(users, hasLength(1));
+      expect(users.single['name'], 'Test User');
+      final SyncState? state = await stateRepo.getByUserId('user-1');
+      expect(state, isNotNull);
+      expect(state!.cursor, 5);
+    });
+
     test('delete changes soft-delete the local row (tombstone)', () async {
       final _ScriptedTransport create = _ScriptedTransport(
         remoteChanges: <SyncChange>[weightChange(5)],

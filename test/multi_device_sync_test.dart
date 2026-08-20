@@ -268,7 +268,9 @@ class _CloudStoreTransport implements SyncTransport {
     final Map<String, Object?> cloudRow = _cloudRow(mapping, localRow);
     if (mapping.cloudTable == 'profiles') {
       cloudRow.remove('user_id');
-      if (cloudRow['avatar_url'] == null) cloudRow.remove('avatar_url');
+      // Mirrors the real transport: a singleton profile is mergeable, so every
+      // null column is omitted and the server keeps its existing values.
+      cloudRow.removeWhere((_, Object? value) => value == null);
     }
     final String recordId = cloudRow['id'] as String;
     final _CloudRow? existing = store.row(mapping.cloudTable, recordId);
@@ -1795,6 +1797,72 @@ void main() {
       final List<Map<String, Object?>> rowsB =
           await _rows(deviceB, 'user_profile');
       expect(rowsB.single['photo_path'], 'https://cdn.example/avatars/user-1/a.jpg');
+    });
+
+    test('16. an empty auto-created profile push does not wipe the shared '
+        'body data on the server', () async {
+      // The server holds the full profile (synced earlier from another
+      // device, e.g. via a full re-sync).
+      store.seed(
+        table: 'profiles',
+        recordId: 'user-1',
+        userId: 'user-1',
+        payload: <String, Object?>{
+          'id': 'user-1',
+          'display_name': 'Test User',
+          'height_cm': 180.0,
+          'weight_kg': 84.0,
+          'birth_date': '1993-07-14',
+          'fitness_goal': 'weightLoss',
+          'created_at': '2026-01-01T06:00:00Z',
+          'updated_at': '2026-01-01T06:00:00Z',
+          'row_version': 1,
+        },
+      );
+
+      // Device B (a fresh install whose initial sync stalled) auto-created an
+      // EMPTY local user_profile row while writing a related metric, then
+      // syncs. The push must NOT clobber height/weight/dob/goal with nulls.
+      await deviceB.raw.insert('user_profile', <String, Object?>{
+        'user_id': 'user-1',
+        'uuid': 'user-1',
+        'created_at': DateTime.now().millisecondsSinceEpoch,
+        'updated_at': DateTime.now().millisecondsSinceEpoch,
+        'row_version': 1,
+      });
+      await deviceB.engine().track(
+            userId: 'user-1',
+            entity: 'user_profile',
+            entityId: 'user-1',
+            operation: SyncOperation.create,
+            baseVersion: 0,
+          );
+      await deviceB.engine().sync(
+            userId: 'user-1',
+            transport: _CloudStoreTransport(store: store, database: deviceB.db),
+            applier: deviceB.applier,
+          );
+
+      final Map<String, Object?> server =
+          store.rowsFor('profiles')['user-1']!.data;
+      expect(server['height_cm'], 180.0,
+          reason: 'an empty local profile must never erase the shared body '
+              'data with nulls');
+      expect(server['weight_kg'], 84.0);
+      expect(server['birth_date'], '1993-07-14');
+      expect(server['fitness_goal'], 'weightLoss');
+
+      // And the server still serves the full profile back to every device.
+      await deviceB.engine().sync(
+            userId: 'user-1',
+            transport: _CloudStoreTransport(store: store, database: deviceB.db),
+            applier: deviceB.applier,
+          );
+      final List<Map<String, Object?>> rowsB =
+          await _rows(deviceB, 'user_profile');
+      expect(rowsB.single['height_cm'], 180.0);
+      expect(rowsB.single['weight_kg'], 84.0);
+      expect(rowsB.single['fitness_goal'], 'weightLoss');
     });
   });
 }

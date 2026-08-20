@@ -11,6 +11,7 @@ import '../../../core/widgets/feedback/error_widget.dart';
 import '../../../domain/entities/profile_data.dart';
 import '../../providers/dashboard_providers.dart';
 import '../../providers/profile_providers.dart';
+import '../../providers/sync_providers.dart';
 import '../../router/app_router.dart';
 import 'widgets/profile_bmi_card.dart';
 import 'widgets/profile_energy_card.dart';
@@ -34,6 +35,17 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
   Widget build(BuildContext context) {
     ref.listen<int>(shellTabIndexProvider, (int? previous, int next) {
       if (next == 4 && previous != null && previous != 4) {
+        ref.read(profileControllerProvider.notifier).refresh();
+      }
+    });
+    // A Full re-sync is started from the Developer Settings route, which sits
+    // on top of the shell — the shell tab index stays 4, so the listen above
+    // never fires and the profile would keep showing the pre-sync (blank) row
+    // forever. Re-read the DB whenever a sync run finishes instead.
+    ref.listen<SyncUiState>(syncControllerProvider, (SyncUiState? prev, SyncUiState next) {
+      final bool finished =
+          prev?.activity == SyncActivity.syncing && next.activity == SyncActivity.idle;
+      if (finished) {
         ref.read(profileControllerProvider.notifier).refresh();
       }
     });

@@ -98,6 +98,54 @@ class _DeveloperSettingsScreenState
 
     try {
       final db = await ref.read(appDatabaseProvider).database;
+      final List<Map<String, Object?>> profiles = await db.query(
+        'user_profile',
+        where: 'user_id = ?',
+        whereArgs: <Object?>[userId],
+        limit: 1,
+      );
+      buffer.writeln();
+      buffer.writeln('LOCAL USER_PROFILE (${profiles.length}):');
+      for (final Map<String, Object?> row in profiles) {
+        buffer.writeln(
+          '- height_cm=${row['height_cm']} weight_kg=${row['weight_kg']} '
+          'birth_date=${row['birth_date']} fitness_goal=${row['fitness_goal']} '
+          'gender=${row['gender']} activity=${row['activity_level']} '
+          'country=${row['country']} language=${row['language']} '
+          'timezone=${row['timezone']} photo=${row['photo_path']} '
+          'target_cal=${row['target_calories']} target_water=${row['target_water_ml']} '
+          'version=${row['row_version']} updated=${row['updated_at']} '
+          'uuid=${row['uuid']}',
+        );
+      }
+    } catch (_) {
+      buffer.writeln();
+      buffer.writeln('LOCAL USER_PROFILE: (query failed)');
+    }
+
+    try {
+      final db = await ref.read(appDatabaseProvider).database;
+      final List<Map<String, Object?>> users = await db.query(
+        'users',
+        where: 'id = ?',
+        whereArgs: <Object?>[userId],
+        limit: 1,
+      );
+      buffer.writeln();
+      buffer.writeln('LOCAL USERS (${users.length}):');
+      for (final Map<String, Object?> row in users) {
+        buffer.writeln(
+          '- name=${row['name']} email=${row['email']} '
+          'provider=${row['provider']} photo=${row['photo']}',
+        );
+      }
+    } catch (_) {
+      buffer.writeln();
+      buffer.writeln('LOCAL USERS: (query failed)');
+    }
+
+    try {
+      final db = await ref.read(appDatabaseProvider).database;
       final List<Map<String, Object?>> workouts = await db.query(
         'workout_history',
         where: 'user_id = ?',

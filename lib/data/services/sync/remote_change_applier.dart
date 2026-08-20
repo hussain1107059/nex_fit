@@ -1,7 +1,9 @@
 import 'package:sqflite/sqflite.dart' hide DatabaseException;
 
+import '../../../domain/entities/app_user.dart';
 import '../../../domain/entities/security_enums.dart';
 import '../../datasources/local/app_database.dart';
+import '../../models/local_user_model.dart';
 import '../../models/sync_event_model.dart';
 import 'sync_contracts.dart';
 import 'sync_table_registry.dart';
@@ -44,6 +46,13 @@ class RemoteChangeApplier {
       mapping,
       change,
     );
+    // The local `users` table is the FK parent for every `user_id`-keyed row
+    // (user_profile, app_settings, user_level, ...). When a device's `users`
+    // row is missing (a sign-in write that never landed, or a DB that lost the
+    // row), applying any such row would abort the batch on the FK and the pull
+    // safety-net would silently skip it — leaving the profile blank forever.
+    // Insert a minimal parent row so the apply always succeeds.
+    await _ensureUserRowIfMissing(txn, mapping, change, localRow);
     await _resolveForeignKeys(txn, mapping, localRow);
 
     if (change.isDelete) {
@@ -79,6 +88,40 @@ class RemoteChangeApplier {
   /// True when [tableName] has a registered local mapping.
   bool isSupported(String cloudTable) =>
       SyncTableRegistry.byCloudTable(cloudTable) != null;
+
+  /// Idempotently guarantees the `users` parent row referenced by [localRow]'s
+  /// `user_id` exists. A minimal placeholder is inserted only when the row is
+  /// absent; a real sign-in write is never overwritten. Returns early for
+  /// non-user-keyed rows.
+  Future<void> _ensureUserRowIfMissing(
+    Transaction txn,
+    SyncTableMapping mapping,
+    SyncChange change,
+    Map<String, Object?> localRow,
+  ) async {
+    final Object? userId = localRow['user_id'];
+    if (userId is! String || userId.isEmpty) return;
+    final List<Map<String, Object?>> existing = await txn.query(
+      LocalUserModel.table,
+      columns: const <String>['id'],
+      where: 'id = ?',
+      whereArgs: <Object?>[userId],
+      limit: 1,
+    );
+    if (existing.isNotEmpty) return;
+    final Object? displayName = change.payload['display_name'];
+    await txn.insert(
+      LocalUserModel.table,
+      <String, Object?>{
+        'id': userId,
+        'name': displayName is String ? displayName : '',
+        'email': '',
+        'provider': AuthProvider.none.name,
+        'created_at': DateTime.now().millisecondsSinceEpoch,
+      },
+      conflictAlgorithm: ConflictAlgorithm.ignore,
+    );
+  }
 
   Map<String, Object?> _toLocalRow(
     SyncTableMapping mapping,

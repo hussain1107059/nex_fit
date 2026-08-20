@@ -165,6 +165,21 @@ class SyncController extends Notifier<SyncUiState> {
     return syncState == null || !syncState.initialSyncCompleted;
   }
 
+  /// Best-effort mirror of the initial-sync `ensureProfile`: writes the
+  /// signed-in user into the local `users` table so every `user_profile`
+  /// foreign key is resolvable during a pull. Never throws — a failure here
+  /// must not block the sync it guards.
+  Future<void> _ensureLocalUserRow() async {
+    final AppUser? user = ref.read(currentUserProvider);
+    if (user == null || !user.isSignedIn) return;
+    try {
+      await ref.read(userProfileRepositoryProvider).saveProfile(user);
+    } catch (_) {
+      // The pull safety-net skips unresolvable rows; this is only a parent
+      // pre-warm and must never fail the sync run.
+    }
+  }
+
   Future<InitialSyncResult> _runInitialSync(String userId) async {
     // Master catalogs must land BEFORE the user pull (PROMPT 16 ordering):
     // user rows reference master uuids (workout_exercise -> exercise,
@@ -219,6 +234,9 @@ class SyncController extends Notifier<SyncUiState> {
         ref.read(supabaseSyncTransportProvider);
     final SyncRunResult result;
     if (transport.isReady) {
+      // A pulled profile row references `user_profile.user_id` -> `users(id)`.
+      // Guarantee the parent exists so the apply never hits an unresolvable FK.
+      await _ensureLocalUserRow();
       // Push + pull under the per-user lock; the pull cursor only advances
       // after each batch commits.
       result = await _engine.sync(
@@ -308,6 +326,12 @@ class SyncController extends Notifier<SyncUiState> {
       );
     }
     state = state.copyWith(activity: SyncActivity.syncing, clearFailure: true);
+    // The pulled profile row references `user_profile.user_id` -> `users(id)`.
+    // A device whose `users` row is missing (or was wiped by an account
+    // switch / cascade) would otherwise fail every profile apply with an FK
+    // violation and the pull safety-net would silently skip it, leaving the
+    // profile blank forever. Guarantee the parent row before the re-pull.
+    await _ensureLocalUserRow();
     String tables = '';
     try {
       final SyncRunResult result = await _engine.resetAndSync(
