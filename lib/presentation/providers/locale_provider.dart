@@ -3,6 +3,7 @@ import 'dart:ui';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../core/constants/app_constants.dart';
+import '../../core/extensions/string_extensions.dart';
 import '../../injection/dependency_injection.dart';
 import '../../domain/repositories/app_preferences_repository.dart';
 
@@ -14,10 +15,13 @@ class LocaleNotifier extends Notifier<Locale> {
   @override
   Locale build() {
     final String? stored = _repository.getLocale();
-    return Locale(stored ?? AppConstants.defaultLocale);
+    final Locale locale = Locale(stored ?? AppConstants.defaultLocale);
+    DigitLocale.currentLanguageCode = locale.languageCode;
+    return locale;
   }
 
   Future<void> setLocale(Locale locale) async {
+    DigitLocale.currentLanguageCode = locale.languageCode;
     state = locale;
     await _repository.setLocale(locale.languageCode);
   }

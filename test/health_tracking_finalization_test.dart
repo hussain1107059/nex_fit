@@ -392,7 +392,7 @@ void main() {
       expect(localizedMonth(en, 12), 'Dec');
       expect(
         formatLocalizedDate(DateTime(2026, 8, 15), en),
-        '১৫ Aug ২০২৬',
+        '15 Aug 2026',
       );
       expect(
         formatLocalizedDate(DateTime(2026, 8, 15), bs),

@@ -22,7 +22,8 @@ String localizedMonth(AppLocalizations l10n, int month) {
 
 /// Formats a date as `12 Aug 2026` (Bangla digits, localized month).
 String formatLocalizedDate(DateTime date, AppLocalizations l10n) {
-  return '${date.day.toString().toBanglaDigits()} '
+  final bool bangla = l10n.localeName == 'bs' || l10n.localeName == 'bn';
+  return '${date.day.toString().toBanglaDigits(asBangla: bangla)} '
       '${localizedMonth(l10n, date.month)} '
-      '${date.year.toString().toBanglaDigits()}';
+      '${date.year.toString().toBanglaDigits(asBangla: bangla)}';
 }
