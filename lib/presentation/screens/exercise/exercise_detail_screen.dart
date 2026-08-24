@@ -109,6 +109,7 @@ class _DetailContent extends ConsumerWidget {
           flexibleSpace: FlexibleSpaceBar(
             background: ExerciseCover(
               category: exercise.category,
+              name: exercise.name,
               borderRadius: BorderRadius.zero,
               height: 220,
             ),

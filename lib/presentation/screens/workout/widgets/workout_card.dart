@@ -96,8 +96,9 @@ class WorkoutCard extends StatelessWidget {
                 width: 84,
                 height: 84,
                 child: WorkoutCover(
-                  colorValue: category?.color,
-                  icon: categoryIconFor(category?.icon),
+                  colorValue:
+                      category?.color ?? workoutColorValueForName(workout.name),
+                  icon: workoutIconFor(workout.name, category?.icon),
                 ),
               ),
             ),

@@ -484,7 +484,7 @@ class _WorkoutIntroViewState extends State<_WorkoutIntroView>
     final WorkoutCategory? category = widget.detail.category;
     final Color base = category?.color != null
         ? Color(category!.color!)
-        : context.colorScheme.primary;
+        : Color(workoutColorValueForName(widget.detail.workout.name));
 
     return Column(
       mainAxisSize: MainAxisSize.min,
@@ -533,7 +533,10 @@ class _WorkoutIntroViewState extends State<_WorkoutIntroView>
               ],
             ),
             child: Icon(
-              categoryIconFor(category?.icon),
+              workoutIconFor(
+                widget.detail.workout.name,
+                category?.icon,
+              ),
               size: 60,
               color: Color.alphaBlend(
                 base.withValues(alpha: 0.72),

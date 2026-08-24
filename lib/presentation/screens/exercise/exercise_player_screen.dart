@@ -196,6 +196,7 @@ class _ExercisePlayerScreenState extends ConsumerState<ExercisePlayerScreen> {
                             height: 120,
                             child: ExerciseCover(
                               category: state.exercise.category,
+                              name: state.exercise.name,
                               height: 120,
                             ),
                           ),
@@ -370,6 +371,7 @@ class _RestScreen extends StatelessWidget {
             height: 96,
             child: ExerciseCover(
               category: exercise.category,
+              name: exercise.name,
               height: 96,
             ),
           ),

@@ -43,6 +43,7 @@ class ExerciseCard extends StatelessWidget {
                 height: 84,
                 child: ExerciseCover(
                   category: category,
+                  name: exercise.name,
                   height: 84,
                 ),
               ),

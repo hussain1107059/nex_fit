@@ -90,8 +90,9 @@ class _DetailContent extends ConsumerWidget {
           ],
           flexibleSpace: FlexibleSpaceBar(
             background: WorkoutCover(
-              colorValue: detail.category?.color,
-              icon: categoryIconFor(detail.category?.icon),
+              colorValue: detail.category?.color ??
+                  workoutColorValueForName(detail.workout.name),
+              icon: workoutIconFor(detail.workout.name, detail.category?.icon),
               borderRadius: BorderRadius.zero,
             ),
           ),

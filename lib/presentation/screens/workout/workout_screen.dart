@@ -415,8 +415,9 @@ class _VerticalWorkoutCard extends StatelessWidget {
                 top: Radius.circular(AppRadius.lg),
               ),
               child: WorkoutCover(
-                colorValue: category?.color,
-                icon: categoryIconFor(category?.icon),
+                colorValue:
+                    category?.color ?? workoutColorValueForName(workout.name),
+                icon: workoutIconFor(workout.name, category?.icon),
                 height: 96,
                 borderRadius: const BorderRadius.vertical(
                   top: Radius.circular(AppRadius.lg),

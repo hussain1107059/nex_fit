@@ -3,24 +3,25 @@ import 'package:flutter/material.dart';
 import '../../../../core/extensions/context_extensions.dart';
 import '../../../../core/theme/app_radius.dart';
 import '../../../../domain/entities/exercise_category.dart';
+import '../../workout/widgets/workout_cover.dart';
 
 /// Resolves a Material icon for an [ExerciseCategory].
 IconData exerciseCategoryIconFor(ExerciseCategory? category) {
   return switch (category) {
-    ExerciseCategory.chest => Icons.fitness_center_rounded,
-    ExerciseCategory.back => Icons.fitness_center_rounded,
-    ExerciseCategory.shoulder => Icons.accessibility_new_rounded,
-    ExerciseCategory.arms => Icons.sports_martial_arts_rounded,
-    ExerciseCategory.biceps => Icons.sports_martial_arts_rounded,
+    ExerciseCategory.chest => Icons.shield_rounded,
+    ExerciseCategory.back => Icons.rowing_rounded,
+    ExerciseCategory.shoulder => Icons.sports_handball_rounded,
+    ExerciseCategory.arms => Icons.front_hand_rounded,
+    ExerciseCategory.biceps => Icons.fitness_center_rounded,
     ExerciseCategory.triceps => Icons.sports_martial_arts_rounded,
-    ExerciseCategory.legs => Icons.directions_run_rounded,
-    ExerciseCategory.core => Icons.accessibility_new_rounded,
-    ExerciseCategory.abs => Icons.self_improvement_rounded,
+    ExerciseCategory.legs => Icons.stairs_rounded,
+    ExerciseCategory.core => Icons.donut_large_rounded,
+    ExerciseCategory.abs => Icons.donut_large_rounded,
     ExerciseCategory.glutes => Icons.airline_seat_legroom_extra_rounded,
     ExerciseCategory.cardio => Icons.local_fire_department_rounded,
     ExerciseCategory.stretching => Icons.airline_seat_legroom_extra_rounded,
     ExerciseCategory.yoga => Icons.self_improvement_rounded,
-    ExerciseCategory.fullBody => Icons.fitness_center_rounded,
+    ExerciseCategory.fullBody => Icons.accessibility_new_rounded,
     null => Icons.fitness_center_rounded,
   };
 }
@@ -30,6 +31,7 @@ class ExerciseCover extends StatelessWidget {
   const ExerciseCover({
     super.key,
     this.category,
+    this.name,
     this.width = double.infinity,
     this.height = 120,
     this.borderRadius,
@@ -37,6 +39,10 @@ class ExerciseCover extends StatelessWidget {
   });
 
   final ExerciseCategory? category;
+
+  /// Exercise name — when provided, a keyword-matched icon wins over the
+  /// generic category icon so each exercise reads distinctly.
+  final String? name;
   final double width;
   final double height;
   final BorderRadius? borderRadius;
@@ -62,7 +68,9 @@ class ExerciseCover extends StatelessWidget {
       ),
       child: Center(
         child: Icon(
-          icon ?? exerciseCategoryIconFor(category),
+          icon ??
+              workoutIconFromName(name) ??
+              exerciseCategoryIconFor(category),
           size: height * 0.4,
           color: Color.alphaBlend(
             base.withValues(alpha: 0.72),
