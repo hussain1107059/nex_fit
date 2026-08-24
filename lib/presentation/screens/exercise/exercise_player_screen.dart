@@ -15,7 +15,7 @@ import '../../../core/widgets/layout/custom_app_bar.dart';
 import '../../../domain/entities/exercise.dart';
 import '../../../l10n/app_localizations.dart';
 import '../../providers/exercise_providers.dart';
-import 'widgets/exercise_cover.dart';
+import 'widgets/exercise_motion_view.dart';
 
 /// Drives a single-exercise session with per-set countdown and rest phases.
 class ExercisePlayerScreen extends ConsumerStatefulWidget {
@@ -194,10 +194,12 @@ class _ExercisePlayerScreenState extends ConsumerState<ExercisePlayerScreen> {
                           child: SizedBox(
                             width: 120,
                             height: 120,
-                            child: ExerciseCover(
-                              category: state.exercise.category,
+                            child: ExerciseMotionView(
                               name: state.exercise.name,
-                              height: 120,
+                              gifPath: state.exercise.gifPath,
+                              imagePath: state.exercise.image,
+                              category: state.exercise.category,
+                              size: 120,
                             ),
                           ),
                         ),
@@ -369,10 +371,12 @@ class _RestScreen extends StatelessWidget {
           child: SizedBox(
             width: 96,
             height: 96,
-            child: ExerciseCover(
-              category: exercise.category,
+            child: ExerciseMotionView(
               name: exercise.name,
-              height: 96,
+              gifPath: exercise.gifPath,
+              imagePath: exercise.image,
+              category: exercise.category,
+              size: 96,
             ),
           ),
         ),

@@ -22,6 +22,7 @@ import '../../../l10n/app_localizations.dart';
 import '../../providers/dashboard_providers.dart';
 import '../../providers/workout_providers.dart';
 import '../../router/app_router.dart';
+import '../exercise/widgets/exercise_motion_view.dart';
 import 'widgets/workout_cover.dart';
 
 /// Drives a single workout session with a live countdown.
@@ -202,15 +203,27 @@ class _WorkoutPlayerScreenState extends ConsumerState<WorkoutPlayerScreen> {
                           .read(workoutPlayerControllerProvider.notifier)
                           .skipExercise(),
                     )
-                  : Column(
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
-                        _CountdownRing(
-                          seconds: state.currentRemainingSeconds,
-                        ),
-                        const SizedBox(height: AppSpacing.lg),
-                        Text(
-                          exercise.exercise.name,
+                  : LayoutBuilder(
+                      builder: (BuildContext context, BoxConstraints bounds) {
+                        final double motionSize =
+                            (bounds.maxHeight - 340).clamp(96.0, 160.0);
+                        return Column(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            _CountdownRing(
+                              seconds: state.currentRemainingSeconds,
+                            ),
+                            const SizedBox(height: AppSpacing.lg),
+                            ExerciseMotionView(
+                              name: exercise.exercise.name,
+                              gifPath: exercise.exercise.gifPath,
+                              imagePath: exercise.exercise.image,
+                              category: exercise.exercise.category,
+                              size: motionSize,
+                            ),
+                            const SizedBox(height: AppSpacing.lg),
+                            Text(
+                              exercise.exercise.name,
                           textAlign: TextAlign.center,
                           style: context.textTheme.headlineSmall?.copyWith(
                             fontWeight: FontWeight.w800,
@@ -246,7 +259,9 @@ class _WorkoutPlayerScreenState extends ConsumerState<WorkoutPlayerScreen> {
                             instructions: exercise.exercise.instructions!,
                           ),
                         ],
-                      ],
+                          ],
+                        );
+                      },
                     ),
             ),
           ),
@@ -642,6 +657,14 @@ class _WorkoutRestScreen extends StatelessWidget {
           style: context.textTheme.titleMedium?.copyWith(
             fontWeight: FontWeight.w700,
           ),
+        ),
+        const SizedBox(height: AppSpacing.md),
+        ExerciseMotionView(
+          name: nextExercise.exercise.name,
+          gifPath: nextExercise.exercise.gifPath,
+          imagePath: nextExercise.exercise.image,
+          category: nextExercise.exercise.category,
+          size: 110,
         ),
         const SizedBox(height: AppSpacing.lg),
         TextButton.icon(

@@ -575,42 +575,46 @@ class _PhotoActionSheet extends StatelessWidget {
       ),
       child: SafeArea(
         top: false,
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          crossAxisAlignment: CrossAxisAlignment.stretch,
-          children: [
-            ListTile(
-              contentPadding: EdgeInsets.zero,
-              leading: Icon(
-                Icons.photo_camera_rounded,
-                color: context.colorScheme.primary,
-              ),
-              title: Text(l10n.editTakePhoto),
-              onTap: () => Navigator.of(context).pop('camera'),
-            ),
-            ListTile(
-              contentPadding: EdgeInsets.zero,
-              leading: Icon(
-                Icons.photo_library_rounded,
-                color: context.colorScheme.primary,
-              ),
-              title: Text(l10n.editChooseFromGallery),
-              onTap: () => Navigator.of(context).pop('gallery'),
-            ),
-            if (hasPhoto)
+        // Material above the decorated container so ListTile ink is visible.
+        child: Material(
+          type: MaterialType.transparency,
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: [
               ListTile(
                 contentPadding: EdgeInsets.zero,
                 leading: Icon(
-                  Icons.delete_forever_rounded,
-                  color: context.colorScheme.error,
+                  Icons.photo_camera_rounded,
+                  color: context.colorScheme.primary,
                 ),
-                title: Text(
-                  l10n.editRemovePhoto,
-                  style: TextStyle(color: context.colorScheme.error),
-                ),
-                onTap: () => Navigator.of(context).pop('remove'),
+                title: Text(l10n.editTakePhoto),
+                onTap: () => Navigator.of(context).pop('camera'),
               ),
-          ],
+              ListTile(
+                contentPadding: EdgeInsets.zero,
+                leading: Icon(
+                  Icons.photo_library_rounded,
+                  color: context.colorScheme.primary,
+                ),
+                title: Text(l10n.editChooseFromGallery),
+                onTap: () => Navigator.of(context).pop('gallery'),
+              ),
+              if (hasPhoto)
+                ListTile(
+                  contentPadding: EdgeInsets.zero,
+                  leading: Icon(
+                    Icons.delete_forever_rounded,
+                    color: context.colorScheme.error,
+                  ),
+                  title: Text(
+                    l10n.editRemovePhoto,
+                    style: TextStyle(color: context.colorScheme.error),
+                  ),
+                  onTap: () => Navigator.of(context).pop('remove'),
+                ),
+            ],
+          ),
         ),
       ),
     );

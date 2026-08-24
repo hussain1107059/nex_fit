@@ -119,35 +119,40 @@ class ProfileSettingsCard extends ConsumerWidget {
             ),
             child: SafeArea(
               top: false,
-              child: Column(
-                mainAxisSize: MainAxisSize.min,
-                crossAxisAlignment: CrossAxisAlignment.stretch,
-                children: [
-                  Text(
-                    context.l10n.settingsBackupRestore,
-                    style: sheetContext.textTheme.titleLarge?.copyWith(
-                      fontWeight: FontWeight.w800,
+              // Material above the decorated container so ListTile ink is
+              // visible instead of hidden behind the sheet background.
+              child: Material(
+                type: MaterialType.transparency,
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  crossAxisAlignment: CrossAxisAlignment.stretch,
+                  children: [
+                    Text(
+                      context.l10n.settingsBackupRestore,
+                      style: sheetContext.textTheme.titleLarge?.copyWith(
+                        fontWeight: FontWeight.w800,
+                      ),
                     ),
-                  ),
-                  const SizedBox(height: AppSpacing.md),
-                  ListTile(
-                    contentPadding: EdgeInsets.zero,
-                    leading: Icon(
-                      Icons.schedule_rounded,
-                      color: sheetContext.colorScheme.primary,
+                    const SizedBox(height: AppSpacing.md),
+                    ListTile(
+                      contentPadding: EdgeInsets.zero,
+                      leading: Icon(
+                        Icons.schedule_rounded,
+                        color: sheetContext.colorScheme.primary,
+                      ),
+                      title: Text(context.l10n.settingsLastBackup),
+                      subtitle: Text(lastLabel),
                     ),
-                    title: Text(context.l10n.settingsLastBackup),
-                    subtitle: Text(lastLabel),
-                  ),
-                  const SizedBox(height: AppSpacing.sm),
-                  Text(
-                    context.l10n.settingsComingSoon,
-                    textAlign: TextAlign.center,
-                    style: sheetContext.textTheme.bodySmall?.copyWith(
-                      color: sheetContext.colorScheme.onSurfaceVariant,
+                    const SizedBox(height: AppSpacing.sm),
+                    Text(
+                      context.l10n.settingsComingSoon,
+                      textAlign: TextAlign.center,
+                      style: sheetContext.textTheme.bodySmall?.copyWith(
+                        color: sheetContext.colorScheme.onSurfaceVariant,
+                      ),
                     ),
-                  ),
-                ],
+                  ],
+                ),
               ),
             ),
           ),

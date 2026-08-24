@@ -255,47 +255,51 @@ Future<T?> showSettingsChoices<T>({
         ),
         child: SafeArea(
           top: false,
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            crossAxisAlignment: CrossAxisAlignment.stretch,
-            children: [
-              Row(
-                children: [
-                  Icon(icon, color: sheetContext.colorScheme.primary),
-                  const SizedBox(width: AppSpacing.sm),
-                  Expanded(
-                    child: Text(
-                      title,
-                      style: sheetContext.textTheme.titleLarge?.copyWith(
-                        fontWeight: FontWeight.w800,
+          // Material above the decorated container so ListTile ink is visible.
+          child: Material(
+            type: MaterialType.transparency,
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: [
+                Row(
+                  children: [
+                    Icon(icon, color: sheetContext.colorScheme.primary),
+                    const SizedBox(width: AppSpacing.sm),
+                    Expanded(
+                      child: Text(
+                        title,
+                        style: sheetContext.textTheme.titleLarge?.copyWith(
+                          fontWeight: FontWeight.w800,
+                        ),
                       ),
                     ),
-                  ),
-                ],
-              ),
-              const SizedBox(height: AppSpacing.sm),
-              for (final SettingsChoice<T> choice in choices)
-                ListTile(
-                  contentPadding: EdgeInsets.zero,
-                  leading: Icon(
-                    choice.value == current
-                        ? Icons.radio_button_checked_rounded
-                        : Icons.radio_button_off_rounded,
-                    color: choice.value == current
-                        ? sheetContext.colorScheme.primary
-                        : sheetContext.colorScheme.onSurfaceVariant,
-                  ),
-                  title: Text(
-                    choice.label,
-                    style: TextStyle(
-                      fontWeight: choice.value == current
-                          ? FontWeight.w700
-                          : FontWeight.w400,
-                    ),
-                  ),
-                  onTap: () => Navigator.of(sheetContext).pop(choice.value),
+                  ],
                 ),
-            ],
+                const SizedBox(height: AppSpacing.sm),
+                for (final SettingsChoice<T> choice in choices)
+                  ListTile(
+                    contentPadding: EdgeInsets.zero,
+                    leading: Icon(
+                      choice.value == current
+                          ? Icons.radio_button_checked_rounded
+                          : Icons.radio_button_off_rounded,
+                      color: choice.value == current
+                          ? sheetContext.colorScheme.primary
+                          : sheetContext.colorScheme.onSurfaceVariant,
+                    ),
+                    title: Text(
+                      choice.label,
+                      style: TextStyle(
+                        fontWeight: choice.value == current
+                            ? FontWeight.w700
+                            : FontWeight.w400,
+                      ),
+                    ),
+                    onTap: () => Navigator.of(sheetContext).pop(choice.value),
+                  ),
+              ],
+            ),
           ),
         ),
       );

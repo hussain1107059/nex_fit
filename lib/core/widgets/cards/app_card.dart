@@ -50,7 +50,16 @@ class AppCard extends StatelessWidget {
           color: context.colorScheme.outlineVariant.withValues(alpha: 0.5),
         ),
       ),
-      child: child,
+      // Gives descendants (ListTile, ExpansionTile, InkWell...) a Material
+      // directly above this decorated box so ink splashes stay visible
+      // instead of being painted on an ancestor hidden behind the card.
+      child: Material(
+        type: MaterialType.transparency,
+        child: DefaultTextStyle(
+          style: DefaultTextStyle.of(context).style,
+          child: child,
+        ),
+      ),
     );
 
     if (onPressed == null) return surface;
