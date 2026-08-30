@@ -5,6 +5,7 @@ import '../../../../core/extensions/string_extensions.dart';
 import '../../../../core/theme/app_radius.dart';
 import '../../../../core/theme/app_spacing.dart';
 import '../../../../core/widgets/cards/app_card.dart';
+import '../../../../data/content/bangla_content.dart';
 import '../../../../domain/entities/exercise.dart';
 import '../../../../domain/entities/exercise_category.dart';
 import '../../../../l10n/app_localizations.dart';
@@ -55,7 +56,7 @@ class ExerciseCard extends StatelessWidget {
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
                   Text(
-                    exercise.name,
+                    bxExerciseName(exercise.name),
                     maxLines: 1,
                     overflow: TextOverflow.ellipsis,
                     style: context.textTheme.titleSmall?.copyWith(
@@ -65,7 +66,7 @@ class ExerciseCard extends StatelessWidget {
                   if (exercise.bodyPart != null) ...[
                     const SizedBox(height: 2),
                     Text(
-                      exercise.bodyPart!,
+                      bxAux(exercise.bodyPart!),
                       maxLines: 1,
                       overflow: TextOverflow.ellipsis,
                       style: context.textTheme.labelSmall?.copyWith(

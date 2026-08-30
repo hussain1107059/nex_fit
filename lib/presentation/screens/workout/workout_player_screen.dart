@@ -12,6 +12,7 @@ import '../../../core/theme/app_spacing.dart';
 import '../../../core/widgets/buttons/app_button.dart';
 import '../../../core/widgets/dialogs/app_dialog.dart';
 import '../../../core/widgets/layout/custom_app_bar.dart';
+import '../../../data/content/bangla_content.dart';
 import '../../../domain/entities/achievement.dart';
 import '../../../domain/entities/badge.dart';
 import '../../../domain/entities/workout_category.dart';
@@ -121,7 +122,7 @@ class _WorkoutPlayerScreenState extends ConsumerState<WorkoutPlayerScreen> {
           child: Column(
             children: [
               CustomAppBar(
-                title: state.detail.workout.name,
+                title: bxWorkoutName(state.detail.workout.name),
                 showBackButton: true,
                 onBackPressed: _confirmExit,
                 actions: [
@@ -223,7 +224,7 @@ class _WorkoutPlayerScreenState extends ConsumerState<WorkoutPlayerScreen> {
                             ),
                             const SizedBox(height: AppSpacing.lg),
                             Text(
-                              exercise.exercise.name,
+                              bxExerciseName(exercise.exercise.name),
                           textAlign: TextAlign.center,
                           style: context.textTheme.headlineSmall?.copyWith(
                             fontWeight: FontWeight.w800,
@@ -232,7 +233,7 @@ class _WorkoutPlayerScreenState extends ConsumerState<WorkoutPlayerScreen> {
                         if (exercise.exercise.bodyPart != null) ...[
                           const SizedBox(height: 4),
                           Text(
-                            exercise.exercise.bodyPart!,
+                            bxAux(exercise.exercise.bodyPart!),
                             style: context.textTheme.bodyMedium?.copyWith(
                               color: context.colorScheme.onSurfaceVariant,
                             ),
@@ -255,8 +256,14 @@ class _WorkoutPlayerScreenState extends ConsumerState<WorkoutPlayerScreen> {
                             exercise.exercise.instructions!.trim().isNotEmpty) ...[
                           const SizedBox(height: AppSpacing.md),
                           _InstructionsChip(
-                            exerciseName: exercise.exercise.name,
-                            instructions: exercise.exercise.instructions!,
+                            exerciseName: bxExerciseName(
+                              exercise.exercise.name,
+                            ),
+                            instructions: bxList(
+                              bxExerciseCopy(exercise.exercise.name),
+                              (BxCopy c) => c.instructions,
+                              exercise.exercise.instructions!.split('\n'),
+                            ).join('\n'),
                           ),
                         ],
                           ],
@@ -565,7 +572,7 @@ class _WorkoutIntroViewState extends State<_WorkoutIntroView>
         if (category != null) ...[
           const SizedBox(height: AppSpacing.md),
           Text(
-            category.name,
+            bxCategoryLabel(category.name),
             style: context.textTheme.labelLarge?.copyWith(
               color: context.colorScheme.primary,
               fontWeight: FontWeight.w700,
@@ -574,7 +581,7 @@ class _WorkoutIntroViewState extends State<_WorkoutIntroView>
         ],
         const SizedBox(height: 4),
         Text(
-          widget.detail.workout.name,
+          bxWorkoutName(widget.detail.workout.name),
           textAlign: TextAlign.center,
           style: context.textTheme.titleMedium?.copyWith(
             fontWeight: FontWeight.w700,
@@ -652,7 +659,7 @@ class _WorkoutRestScreen extends StatelessWidget {
         ),
         const SizedBox(height: AppSpacing.sm),
         Text(
-          nextExercise.exercise.name,
+          bxExerciseName(nextExercise.exercise.name),
           textAlign: TextAlign.center,
           style: context.textTheme.titleMedium?.copyWith(
             fontWeight: FontWeight.w700,
@@ -706,8 +713,8 @@ class WorkoutCompletionView extends ConsumerWidget {
                         ),
                         const SizedBox(height: AppSpacing.md),
                         if (completion.workoutName != null) ...[
-                          Text(
-                            completion.workoutName!,
+                    Text(
+                      bxWorkoutName(completion.workoutName!),
                             textAlign: TextAlign.center,
                             style: context.textTheme.titleMedium?.copyWith(
                               color: context.colorScheme.primary,

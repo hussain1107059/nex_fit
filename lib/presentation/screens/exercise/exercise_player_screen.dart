@@ -12,6 +12,7 @@ import '../../../core/theme/app_spacing.dart';
 import '../../../core/widgets/buttons/app_button.dart';
 import '../../../core/widgets/dialogs/app_dialog.dart';
 import '../../../core/widgets/layout/custom_app_bar.dart';
+import '../../../data/content/bangla_content.dart';
 import '../../../domain/entities/exercise.dart';
 import '../../../l10n/app_localizations.dart';
 import '../../providers/exercise_providers.dart';
@@ -111,7 +112,7 @@ class _ExercisePlayerScreenState extends ConsumerState<ExercisePlayerScreen> {
           child: Column(
             children: [
               CustomAppBar(
-                title: state.exercise.name,
+                title: bxExerciseName(state.exercise.name),
                 showBackButton: true,
                 onBackPressed: _confirmExit,
                 actions: [
@@ -205,7 +206,7 @@ class _ExercisePlayerScreenState extends ConsumerState<ExercisePlayerScreen> {
                         ),
                         const SizedBox(height: AppSpacing.md),
                         Text(
-                          state.exercise.name,
+                          bxExerciseName(state.exercise.name),
                           textAlign: TextAlign.center,
                           style: context.textTheme.headlineSmall?.copyWith(
                             fontWeight: FontWeight.w800,
@@ -214,7 +215,7 @@ class _ExercisePlayerScreenState extends ConsumerState<ExercisePlayerScreen> {
                         if (state.exercise.bodyPart != null) ...[
                           const SizedBox(height: 4),
                           Text(
-                            state.exercise.bodyPart!,
+                            bxAux(state.exercise.bodyPart!),
                             style: context.textTheme.bodyMedium?.copyWith(
                               color: context.colorScheme.onSurfaceVariant,
                             ),
@@ -382,7 +383,7 @@ class _RestScreen extends StatelessWidget {
         ),
         const SizedBox(height: AppSpacing.md),
         Text(
-          exercise.name,
+          bxExerciseName(exercise.name),
           textAlign: TextAlign.center,
           style: context.textTheme.titleMedium?.copyWith(
             fontWeight: FontWeight.w700,

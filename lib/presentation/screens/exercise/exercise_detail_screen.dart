@@ -10,6 +10,7 @@ import '../../../core/widgets/buttons/app_button.dart';
 import '../../../core/widgets/feedback/error_widget.dart';
 import '../../../core/widgets/feedback/loading_widget.dart';
 import '../../../core/widgets/layout/custom_app_bar.dart';
+import '../../../data/content/bangla_content.dart';
 import '../../../domain/entities/exercise.dart';
 import '../../../l10n/app_localizations.dart';
 import '../../providers/exercise_providers.dart';
@@ -82,6 +83,10 @@ class _DetailContent extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final AppLocalizations l10n = context.l10n;
+    final BxCopy? bx = bxExerciseCopy(exercise.name);
+    final String categoryName = exercise.category == null
+        ? ''
+        : bxCategoryLabel(exercise.category!.name.capitalize());
 
     return CustomScrollView(
       slivers: [
@@ -121,9 +126,9 @@ class _DetailContent extends ConsumerWidget {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [
-                if (exercise.category != null)
+                if (exercise.category != null && categoryName.isNotEmpty)
                   Text(
-                    exercise.category!.name.capitalize(),
+                    categoryName,
                     style: context.textTheme.labelMedium?.copyWith(
                       color: context.colorScheme.primary,
                       fontWeight: FontWeight.w700,
@@ -131,7 +136,7 @@ class _DetailContent extends ConsumerWidget {
                   ),
                 const SizedBox(height: 4),
                 Text(
-                  exercise.name,
+                  bx?.name ?? exercise.name,
                   style: context.textTheme.headlineSmall?.copyWith(
                     fontWeight: FontWeight.w800,
                   ),
@@ -140,7 +145,7 @@ class _DetailContent extends ConsumerWidget {
                     exercise.scientificName!.isNotEmpty) ...[
                   const SizedBox(height: 4),
                   Text(
-                    exercise.scientificName!,
+                    bx?.scientificName ?? exercise.scientificName!,
                     style: context.textTheme.bodyMedium?.copyWith(
                       color: context.colorScheme.onSurfaceVariant,
                       fontStyle: FontStyle.italic,
@@ -194,12 +199,12 @@ class _DetailContent extends ConsumerWidget {
                     runSpacing: 8,
                     children: <Widget>[
                       if (exercise.bodyPart != null)
-                        _Chip(text: exercise.bodyPart!),
+                        _Chip(text: bxAux(exercise.bodyPart!)),
                       if (exercise.secondaryMuscle != null)
                         for (final String muscle in exercise.secondaryMuscle!
                             .split(','))
                           if (muscle.trim().isNotEmpty)
-                            _Chip(text: muscle.trim()),
+                            _Chip(text: bxAux(muscle.trim())),
                     ],
                   ),
                   const SizedBox(height: AppSpacing.lg),
@@ -219,7 +224,7 @@ class _DetailContent extends ConsumerWidget {
                     children: <Widget>[
                       for (final String item in exercise.equipment!.split(','))
                         if (item.trim().isNotEmpty)
-                          _Chip(text: item.trim().capitalize()),
+                          _Chip(text: bxAux(item.trim().capitalize())),
                     ],
                   ),
                   const SizedBox(height: AppSpacing.lg),
@@ -234,7 +239,7 @@ class _DetailContent extends ConsumerWidget {
                   ),
                   const SizedBox(height: 6),
                   Text(
-                    exercise.description!,
+                    bx?.description ?? exercise.description!,
                     style: context.textTheme.bodyMedium?.copyWith(
                       color: context.colorScheme.onSurfaceVariant,
                     ),
@@ -250,7 +255,13 @@ class _DetailContent extends ConsumerWidget {
                     ),
                   ),
                   const SizedBox(height: 8),
-                  _InstructionList(instructions: exercise.instructions!),
+                  _InstructionList(
+                    instructions: bxList(
+                      bx,
+                      (BxCopy c) => c.instructions,
+                      exercise.instructions!.split('\n'),
+                    ).join('\n'),
+                  ),
                   const SizedBox(height: AppSpacing.lg),
                 ],
                 if (exercise.tips.isNotEmpty) ...[
@@ -258,7 +269,7 @@ class _DetailContent extends ConsumerWidget {
                     title: l10n.exerciseTips,
                     icon: Icons.lightbulb_rounded,
                     color: context.colorScheme.tertiary,
-                    items: exercise.tips,
+                    items: bxList(bx, (BxCopy c) => c.tips, exercise.tips),
                   ),
                   const SizedBox(height: AppSpacing.md),
                 ],
@@ -267,7 +278,11 @@ class _DetailContent extends ConsumerWidget {
                     title: l10n.exerciseCommonMistakes,
                     icon: Icons.error_outline_rounded,
                     color: context.colorScheme.error,
-                    items: exercise.commonMistakes,
+                    items: bxList(
+                      bx,
+                      (BxCopy c) => c.commonMistakes,
+                      exercise.commonMistakes,
+                    ),
                   ),
                   const SizedBox(height: AppSpacing.md),
                 ],
@@ -276,7 +291,11 @@ class _DetailContent extends ConsumerWidget {
                     title: l10n.exerciseSafety,
                     icon: Icons.health_and_safety_rounded,
                     color: context.colorScheme.secondary,
-                    items: exercise.safetyInstructions,
+                    items: bxList(
+                      bx,
+                      (BxCopy c) => c.safetyInstructions,
+                      exercise.safetyInstructions,
+                    ),
                   ),
                   const SizedBox(height: AppSpacing.md),
                 ],

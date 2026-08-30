@@ -12,6 +12,7 @@ import '../../../core/widgets/feedback/empty_widget.dart';
 import '../../../core/widgets/feedback/error_widget.dart';
 import '../../../core/widgets/feedback/loading_widget.dart';
 import '../../../core/widgets/layout/custom_app_bar.dart';
+import '../../../data/content/bangla_content.dart';
 import '../../../domain/entities/common_enums.dart';
 import '../../../domain/entities/exercise.dart';
 import '../../../domain/entities/exercise_category.dart';
@@ -200,7 +201,7 @@ class _FilterBar extends StatelessWidget {
               }
               final ExerciseCategory category = categories[index - 1];
               return _CategoryChip(
-                label: category.name,
+                label: bxCategoryLabel(category.name),
                 icon: exerciseCategoryIconFor(category),
                 colorValue: category.colorValue,
                 selected: selectedCategory == category,

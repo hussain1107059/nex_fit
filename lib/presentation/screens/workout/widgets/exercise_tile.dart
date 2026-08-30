@@ -4,6 +4,7 @@ import '../../../../core/extensions/context_extensions.dart';
 import '../../../../core/extensions/string_extensions.dart';
 import '../../../../core/theme/app_spacing.dart';
 import '../../../../core/widgets/cards/app_card.dart';
+import '../../../../data/content/bangla_content.dart';
 import '../../../../domain/entities/workout_exercise_detail.dart';
 import '../../../../l10n/app_localizations.dart';
 
@@ -63,7 +64,7 @@ class ExerciseTile extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                  detail.exercise.name,
+                  bxExerciseName(detail.exercise.name),
                   maxLines: 1,
                   overflow: TextOverflow.ellipsis,
                   style: context.textTheme.titleSmall?.copyWith(
@@ -73,7 +74,7 @@ class ExerciseTile extends StatelessWidget {
                 if (detail.exercise.bodyPart != null) ...[
                   const SizedBox(height: 2),
                   Text(
-                    detail.exercise.bodyPart!,
+                    bxAux(detail.exercise.bodyPart!),
                     maxLines: 1,
                     overflow: TextOverflow.ellipsis,
                     style: context.textTheme.labelSmall?.copyWith(

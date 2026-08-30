@@ -10,6 +10,7 @@ import '../../../core/widgets/buttons/app_button.dart';
 import '../../../core/widgets/feedback/error_widget.dart';
 import '../../../core/widgets/feedback/loading_widget.dart';
 import '../../../core/widgets/layout/custom_app_bar.dart';
+import '../../../data/content/bangla_content.dart';
 import '../../../domain/entities/workout_detail.dart';
 import '../../../l10n/app_localizations.dart';
 import '../../providers/workout_providers.dart';
@@ -67,6 +68,7 @@ class _DetailContent extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final AppLocalizations l10n = context.l10n;
+    final BxCopy? bx = bxWorkoutCopy(detail.workout.name);
 
     return CustomScrollView(
       slivers: [
@@ -105,7 +107,7 @@ class _DetailContent extends ConsumerWidget {
               children: [
                 if (detail.category != null)
                   Text(
-                    detail.category!.name,
+                    bxCategoryLabel(detail.category!.name),
                     style: context.textTheme.labelMedium?.copyWith(
                       color: context.colorScheme.primary,
                       fontWeight: FontWeight.w700,
@@ -113,7 +115,7 @@ class _DetailContent extends ConsumerWidget {
                   ),
                 const SizedBox(height: 4),
                 Text(
-                  detail.workout.name,
+                  bx?.name ?? detail.workout.name,
                   style: context.textTheme.headlineSmall?.copyWith(
                     fontWeight: FontWeight.w800,
                   ),
@@ -162,7 +164,7 @@ class _DetailContent extends ConsumerWidget {
                   ),
                   const SizedBox(height: 6),
                   Text(
-                    detail.workout.description!,
+                    bx?.description ?? detail.workout.description!,
                     style: context.textTheme.bodyMedium?.copyWith(
                       color: context.colorScheme.onSurfaceVariant,
                     ),
@@ -179,7 +181,7 @@ class _DetailContent extends ConsumerWidget {
                   const SizedBox(height: 8),
                   _ChipWrap(
                     items: detail.targetMuscles
-                        .map((String muscle) => muscle.capitalize())
+                        .map((String muscle) => bxAux(muscle.capitalize()))
                         .toList(),
                   ),
                 ],
@@ -192,7 +194,9 @@ class _DetailContent extends ConsumerWidget {
                     ),
                   ),
                   const SizedBox(height: 8),
-                  _ChipWrap(items: detail.equipment),
+                  _ChipWrap(
+                    items: detail.equipment.map(bxAux).toList(),
+                  ),
                 ],
                 const SizedBox(height: AppSpacing.lg),
                 Row(

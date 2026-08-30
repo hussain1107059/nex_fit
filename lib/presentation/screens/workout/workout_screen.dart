@@ -10,6 +10,7 @@ import '../../../core/widgets/cards/app_card.dart';
 import '../../../core/widgets/buttons/app_button.dart';
 import '../../../core/widgets/feedback/error_widget.dart';
 import '../../../core/widgets/feedback/loading_widget.dart';
+import '../../../data/content/bangla_content.dart';
 import '../../../domain/entities/app_user.dart';
 import '../../../domain/entities/workout.dart';
 import '../../../domain/entities/workout_category.dart';
@@ -313,7 +314,7 @@ class _CategoryChip extends StatelessWidget {
             ),
             const SizedBox(height: 6),
             Text(
-              category.name,
+              bxCategoryLabel(category.name),
               maxLines: 1,
               overflow: TextOverflow.ellipsis,
               textAlign: TextAlign.center,
@@ -432,7 +433,7 @@ class _VerticalWorkoutCard extends StatelessWidget {
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
                     Text(
-                      workout.name,
+                      bxWorkoutName(workout.name),
                       maxLines: 1,
                       overflow: TextOverflow.ellipsis,
                       style: context.textTheme.labelLarge?.copyWith(

@@ -5,6 +5,7 @@ import '../../../../core/extensions/string_extensions.dart';
 import '../../../../core/theme/app_radius.dart';
 import '../../../../core/theme/app_spacing.dart';
 import '../../../../core/widgets/cards/app_card.dart';
+import '../../../../data/content/bangla_content.dart';
 import '../../../../domain/entities/common_enums.dart';
 import '../../../../domain/entities/workout.dart';
 import '../../../../domain/entities/workout_category.dart';
@@ -109,7 +110,7 @@ class WorkoutCard extends StatelessWidget {
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
                   Text(
-                    workout.name,
+                    bxWorkoutName(workout.name),
                     maxLines: 1,
                     overflow: TextOverflow.ellipsis,
                     style: context.textTheme.titleSmall?.copyWith(

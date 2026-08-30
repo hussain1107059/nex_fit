@@ -12,6 +12,7 @@ import '../../../core/widgets/feedback/error_widget.dart';
 import '../../../core/widgets/feedback/loading_widget.dart';
 import '../../../core/widgets/fields/app_text_field.dart';
 import '../../../core/widgets/layout/custom_app_bar.dart';
+import '../../../data/content/bangla_content.dart';
 import '../../../domain/entities/app_user.dart';
 import '../../../domain/entities/common_enums.dart';
 import '../../../domain/entities/workout.dart';
@@ -51,13 +52,14 @@ class _WorkoutListScreenState extends ConsumerState<WorkoutListScreen> {
   @override
   Widget build(BuildContext context) {
     final AppLocalizations l10n = context.l10n;
-    final String title =
-        widget.args.title ??
-        (widget.args.searchMode
-            ? l10n.workoutSearchTitle
-            : widget.args.favoritesOnly
-            ? l10n.workoutFavorites
-            : l10n.tabWorkout);
+    final String title = bxCategoryLabel(
+      widget.args.title ??
+          (widget.args.searchMode
+              ? l10n.workoutSearchTitle
+              : widget.args.favoritesOnly
+              ? l10n.workoutFavorites
+              : l10n.tabWorkout),
+    );
 
     final Widget body;
     if (widget.args.searchMode) {

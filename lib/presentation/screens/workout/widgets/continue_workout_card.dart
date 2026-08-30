@@ -6,6 +6,7 @@ import '../../../../core/theme/app_radius.dart';
 import '../../../../core/theme/app_spacing.dart';
 import '../../../../core/widgets/buttons/app_button.dart';
 import '../../../../core/widgets/cards/app_card.dart';
+import '../../../../data/content/bangla_content.dart';
 import '../../../../domain/entities/workout_library.dart';
 import '../../../../l10n/app_localizations.dart';
 import 'workout_cover.dart';
@@ -60,7 +61,7 @@ class ContinueWorkoutCard extends StatelessWidget {
                   ),
                   const SizedBox(height: 2),
                   Text(
-                    continueWorkout.workout.name,
+                    bxWorkoutName(continueWorkout.workout.name),
                     maxLines: 1,
                     overflow: TextOverflow.ellipsis,
                     style: context.textTheme.titleSmall?.copyWith(
