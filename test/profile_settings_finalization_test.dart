@@ -185,8 +185,9 @@ class _FakeTransport implements SyncTransport {
     switch (event.operation) {
       case SyncOperation.create:
       case SyncOperation.update:
-        final _CloudRow? existing =
-            store.rowsFor(mapping.cloudTable)[cloud['id'] as String];
+        final _CloudRow? existing = store.rowsFor(
+          mapping.cloudTable,
+        )[cloud['id'] as String];
         final int version = (existing?.version ?? 0) + 1;
         cloud['row_version'] = version;
         store.put(
@@ -228,8 +229,8 @@ class _FakeTransport implements SyncTransport {
           operation: change.operation == 'DELETE'
               ? SyncOperation.delete
               : change.operation == 'INSERT'
-                  ? SyncOperation.create
-                  : SyncOperation.update,
+              ? SyncOperation.create
+              : SyncOperation.update,
           payload: Map<String, Object?>.of(change.payload),
         ),
     ];
@@ -386,30 +387,25 @@ class _Device {
       'email': 'rahim@example.com',
       'provider': 'email',
     });
-    eventRepo = SyncEventRepositoryImpl(
-      SyncEventLocalDataSource(database: db),
-    );
-    stateRepo = SyncStateRepositoryImpl(
-      SyncStateLocalDataSource(database: db),
-    );
+    eventRepo = SyncEventRepositoryImpl(SyncEventLocalDataSource(database: db));
+    stateRepo = SyncStateRepositoryImpl(SyncStateLocalDataSource(database: db));
   }
 
   SyncEngine engine() => SyncEngine(
-        repository: eventRepo,
-        syncStateRepository: stateRepo,
-        conflictRepository: SyncConflictRepositoryImpl(
-          SyncConflictLocalDataSource(database: db),
-        ),
-        database: db,
-        deviceIdProvider: () async => 'device-$name',
-      );
+    repository: eventRepo,
+    syncStateRepository: stateRepo,
+    conflictRepository: SyncConflictRepositoryImpl(
+      SyncConflictLocalDataSource(database: db),
+    ),
+    database: db,
+    deviceIdProvider: () async => 'device-$name',
+  );
 
   Future<void> close() => db.close();
 }
 
 Future<void> _makeDue(_Device device) async {
-  for (final SyncEvent event
-      in await device.eventRepo.getRetryableByUserId(
+  for (final SyncEvent event in await device.eventRepo.getRetryableByUserId(
     'u-1',
     now: DateTime.now().add(const Duration(days: 30)),
   )) {
@@ -442,53 +438,61 @@ void main() {
   });
 
   group('profile timezone (offline-first + sync)', () {
-    test('1. saving a profile persists and round-trips the timezone (v18)',
-        () async {
-      final UserProfileLocalDataSource dataSource =
-          UserProfileLocalDataSource(database: device.db);
+    test(
+      '1. saving a profile persists and round-trips the timezone (v18)',
+      () async {
+        final UserProfileLocalDataSource dataSource =
+            UserProfileLocalDataSource(database: device.db);
 
-      await dataSource.upsert(
-        UserProfile(
-          userId: 'u-1',
-          heightCm: 178,
-          weightKg: 82,
-          targetCalories: 2400,
-          timezone: 'UTC+06:00',
-          updatedAt: DateTime.now(),
-        ),
-      );
+        await dataSource.upsert(
+          UserProfile(
+            userId: 'u-1',
+            heightCm: 178,
+            weightKg: 82,
+            targetCalories: 2400,
+            timezone: 'UTC+06:00',
+            updatedAt: DateTime.now(),
+          ),
+        );
 
-      final UserProfile? reloaded = await dataSource.getById('u-1');
-      expect(reloaded, isNotNull);
-      expect(reloaded!.timezone, 'UTC+06:00');
-      expect(reloaded.heightCm, 178);
-    });
+        final UserProfile? reloaded = await dataSource.getById('u-1');
+        expect(reloaded, isNotNull);
+        expect(reloaded!.timezone, 'UTC+06:00');
+        expect(reloaded.heightCm, 178);
+      },
+    );
 
-    test('2. schema version is 18 and the timezone column exists', () async {
-      expect(AppConstants.databaseVersion, 18);
-      final List<Map<String, Object?>> columns = await device.raw.rawQuery(
-        'PRAGMA table_info(user_profile)',
-      );
-      final Set<String> names = columns
-          .map((Map<String, Object?> c) => c['name'] as String)
-          .toSet();
-      expect(names, contains('timezone'));
-    });
+    test(
+      '2. the schema is at least v18 and the timezone column exists',
+      () async {
+        expect(AppConstants.databaseVersion, greaterThanOrEqualTo(18));
+        final List<Map<String, Object?>> columns = await device.raw.rawQuery(
+          'PRAGMA table_info(user_profile)',
+        );
+        final Set<String> names = columns
+            .map((Map<String, Object?> c) => c['name'] as String)
+            .toSet();
+        expect(names, contains('timezone'));
+      },
+    );
 
-    test('3. the user_profile sync mapping carries timezone and never '
-        'carries auth credentials', () async {
+    test('3. the user_profile sync mapping is local-only for timezone and '
+        'never carries auth credentials', () async {
       final SyncTableMapping mapping = SyncTableRegistry.byLocalTable(
         'user_profile',
       )!;
-      expect(mapping.localToCloud['timezone'], 'timezone');
+      // `profiles` has no timezone column; mapping it would make every profile
+      // push fail with a PostgREST schema-cache error.
+      expect(mapping.localToCloud.containsKey('timezone'), isFalse);
       expect(mapping.localToCloud.containsKey('email'), isFalse);
       expect(mapping.localToCloud.containsKey('password'), isFalse);
     });
 
-    test('4. an offline profile update stays queued and uploads the timezone '
-        'once connectivity returns', () async {
-      final UserProfileLocalDataSource dataSource =
-          UserProfileLocalDataSource(database: device.db);
+    test('4. an offline profile update stays queued and uploads the profile '
+        'body once connectivity returns', () async {
+      final UserProfileLocalDataSource dataSource = UserProfileLocalDataSource(
+        database: device.db,
+      );
       await dataSource.upsert(
         UserProfile(
           userId: 'u-1',
@@ -508,8 +512,11 @@ void main() {
       expect(offlineRun.failed, greaterThan(0));
 
       final SyncQueueSnapshot stuck = await engine.snapshot('u-1');
-      expect(stuck.pending, greaterThan(0),
-          reason: 'the profile change must survive the offline push');
+      expect(
+        stuck.pending,
+        greaterThan(0),
+        reason: 'the profile change must survive the offline push',
+      );
 
       final _FakeCloud store = _FakeCloud();
       await _makeDue(device);
@@ -521,17 +528,22 @@ void main() {
 
       final Map<String, _CloudRow> cloudProfiles = store.rowsFor('profiles');
       expect(cloudProfiles, isNotEmpty);
-      expect(cloudProfiles['u-1']!.data['timezone'], 'UTC+06:00');
+      expect(cloudProfiles['u-1']!.data['height_cm'], 178.0);
+      expect(cloudProfiles['u-1']!.data.containsKey('timezone'), isFalse);
 
       final SyncQueueSnapshot finalSnapshot = await engine.snapshot('u-1');
-      expect(finalSnapshot.pending, 0,
-          reason: 'after the successful push nothing stays queued');
+      expect(
+        finalSnapshot.pending,
+        0,
+        reason: 'after the successful push nothing stays queued',
+      );
     });
 
     test('5. applying a pulled profile change locally never creates a new '
         'outbound event (no sync loop)', () async {
-      final UserProfileLocalDataSource dataSource =
-          UserProfileLocalDataSource(database: device.db);
+      final UserProfileLocalDataSource dataSource = UserProfileLocalDataSource(
+        database: device.db,
+      );
       await dataSource.upsert(
         UserProfile(
           userId: 'u-1',
@@ -554,9 +566,12 @@ void main() {
         applier: RemoteChangeApplier(database: device.db),
       );
 
-      expect(store.rowsFor('profiles')['u-1']!.data['timezone'], 'UTC+06:00');
-      expect(store.changeCount, 1,
-          reason: 'one INSERT change is recorded for the profile');
+      expect(store.rowsFor('profiles')['u-1']!.data['height_cm'], 178.0);
+      expect(
+        store.changeCount,
+        1,
+        reason: 'one INSERT change is recorded for the profile',
+      );
 
       SyncQueueSnapshot after = await engine.snapshot('u-1');
       expect(after.pending, 0);
@@ -569,12 +584,18 @@ void main() {
         applier: RemoteChangeApplier(database: device.db),
       );
       expect(secondRun.failed, 0);
-      expect(transport.pushCalls, 1,
-          reason: 'the pulled change must not be pushed back');
+      expect(
+        transport.pushCalls,
+        1,
+        reason: 'the pulled change must not be pushed back',
+      );
 
       after = await engine.snapshot('u-1');
-      expect(after.pending, 0,
-          reason: 'a round-trip must not create a sync loop');
+      expect(
+        after.pending,
+        0,
+        reason: 'a round-trip must not create a sync loop',
+      );
 
       final UserProfile? local = await dataSource.getById('u-1');
       expect(local!.timezone, 'UTC+06:00');
@@ -605,66 +626,69 @@ void main() {
       expect(repository.currentUser.isSignedIn, isTrue);
     });
 
-    test('7. a rejected password surfaces as a friendly AuthException', () async {
-      await repository.signInWithEmail(
-        email: 'rahim@example.com',
-        password: 'secret123',
-      );
+    test(
+      '7. a rejected password surfaces as a friendly AuthException',
+      () async {
+        await repository.signInWithEmail(
+          email: 'rahim@example.com',
+          password: 'secret123',
+        );
 
-      expect(
-        () => repository.updatePassword(newPassword: 'weak'),
-        throwsA(
-          isA<AuthException>()
-              .having(
-                (AuthException e) => e.code,
-                'code',
-                'weak_password',
-              )
-              .having(
-                (AuthException e) => e.message,
-                'message',
-                'accountChangePasswordShort',
-              ),
-        ),
-      );
-      expect(service.lastChangedPassword, isNull);
-    });
+        expect(
+          () => repository.updatePassword(newPassword: 'weak'),
+          throwsA(
+            isA<AuthException>()
+                .having((AuthException e) => e.code, 'code', 'weak_password')
+                .having(
+                  (AuthException e) => e.message,
+                  'message',
+                  'accountChangePasswordShort',
+                ),
+          ),
+        );
+        expect(service.lastChangedPassword, isNull);
+      },
+    );
 
-    test('8. the updatePassword usecase maps failures to a Result failure',
-        () async {
-      final UpdatePasswordUsecase usecase = UpdatePasswordUsecase(repository);
-      await repository.signInWithEmail(
-        email: 'rahim@example.com',
-        password: 'secret123',
-      );
+    test(
+      '8. the updatePassword usecase maps failures to a Result failure',
+      () async {
+        final UpdatePasswordUsecase usecase = UpdatePasswordUsecase(repository);
+        await repository.signInWithEmail(
+          email: 'rahim@example.com',
+          password: 'secret123',
+        );
 
-      final Result<void> ok = await usecase(newPassword: 'fresh123');
-      expect(ok.isSuccess, isTrue);
+        final Result<void> ok = await usecase(newPassword: 'fresh123');
+        expect(ok.isSuccess, isTrue);
 
-      final Result<void> rejected = await usecase(newPassword: 'weak');
-      expect(rejected.isFailure, isTrue);
-      expect(rejected.failureOrNull!.message, isNotEmpty);
-    });
+        final Result<void> rejected = await usecase(newPassword: 'weak');
+        expect(rejected.isFailure, isTrue);
+        expect(rejected.failureOrNull!.message, isNotEmpty);
+      },
+    );
 
-    test('9. logout clears the session and a fresh sign-in restores it',
-        () async {
-      await repository.signInWithEmail(
-        email: 'rahim@example.com',
-        password: 'secret123',
-      );
-      expect(repository.currentUser.isSignedIn, isTrue);
+    test(
+      '9. logout clears the session and a fresh sign-in restores it',
+      () async {
+        await repository.signInWithEmail(
+          email: 'rahim@example.com',
+          password: 'secret123',
+        );
+        expect(repository.currentUser.isSignedIn, isTrue);
 
-      await repository.signOut();
-      expect(service.signOutCount, 1);
-      expect(repository.currentUser.isSignedIn, isFalse);
+        await repository.signOut();
+        expect(service.signOutCount, 1);
+        expect(repository.currentUser.isSignedIn, isFalse);
 
-      final AppUser again = await repository.signInWithEmail(
-        email: 'rahim@example.com',
-        password: 'secret123',
-      );
-      expect(again.isSignedIn, isTrue);
-      expect(repository.currentUser.id, 'u-1');
-    });
+        final AppUser again = await repository.signInWithEmail(
+          email: 'rahim@example.com',
+          password: 'secret123',
+        );
+        expect(again.isSignedIn, isTrue);
+        expect(repository.currentUser.id, 'u-1');
+      },
+    );
 
     test('10. delete account invokes the service and leaves the user '
         'signed out', () async {

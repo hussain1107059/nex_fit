@@ -7,6 +7,7 @@ import 'common_enums.dart';
 class UserProfile extends Equatable {
   const UserProfile({
     required this.userId,
+    this.displayName,
     this.heightCm,
     this.weightKg,
     this.targetWeightKg,
@@ -28,6 +29,7 @@ class UserProfile extends Equatable {
   });
 
   final String userId;
+  final String? displayName;
   final double? heightCm;
   final double? weightKg;
   final double? targetWeightKg;
@@ -49,6 +51,7 @@ class UserProfile extends Equatable {
 
   UserProfile copyWith({
     String? userId,
+    String? displayName,
     double? heightCm,
     double? weightKg,
     double? targetWeightKg,
@@ -70,6 +73,7 @@ class UserProfile extends Equatable {
   }) {
     return UserProfile(
       userId: userId ?? this.userId,
+      displayName: displayName ?? this.displayName,
       heightCm: heightCm ?? this.heightCm,
       weightKg: weightKg ?? this.weightKg,
       targetWeightKg: targetWeightKg ?? this.targetWeightKg,
@@ -94,6 +98,7 @@ class UserProfile extends Equatable {
   @override
   List<Object?> get props => [
         userId,
+        displayName,
         heightCm,
         weightKg,
         targetWeightKg,

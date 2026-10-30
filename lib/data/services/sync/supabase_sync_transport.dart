@@ -80,10 +80,7 @@ class SupabaseSyncTransport implements SyncTransport {
       );
     }
 
-    final Map<String, Object?>? localRow = await _readLocalRow(
-      mapping,
-      event,
-    );
+    final Map<String, Object?>? localRow = await _readLocalRow(mapping, event);
 
     try {
       switch (event.operation) {
@@ -120,16 +117,14 @@ class SupabaseSyncTransport implements SyncTransport {
       mapping.localTable,
       where: '${mapping.localKeyColumn} = ?',
       whereArgs: <Object?>[
-        mapping.localKeyColumn == 'user_id'
-            ? event.userId
-            : event.entityId,
+        mapping.localKeyColumn == 'user_id' ? event.userId : event.entityId,
       ],
       limit: 1,
     );
     return rows.isEmpty ? null : rows.first;
   }
 
-  Future<Map<String, Object?>> _buildCloudRow(
+  Future<Map<String, Object?>?> _buildCloudRow(
     SyncTableMapping mapping,
     Map<String, Object?> localRow,
   ) async {
@@ -144,15 +139,22 @@ class SupabaseSyncTransport implements SyncTransport {
       final Object? deletedAt = localRow['deleted_at'];
       cloud['deleted_at'] = deletedAt == null
           ? null
-          : DateTime.fromMillisecondsSinceEpoch((deletedAt as num).toInt())
-              .toUtc()
-              .toIso8601String();
+          : DateTime.fromMillisecondsSinceEpoch(
+              (deletedAt as num).toInt(),
+            ).toUtc().toIso8601String();
     }
     for (final MapEntry<String, String> entry in mapping.localToCloud.entries) {
       final Object? value = localRow[entry.key];
       cloud[entry.value] = _convertLocalValue(mapping, entry.value, value);
     }
     await _resolveCloudForeignKeys(mapping, localRow, cloud);
+    // A required cloud FK (e.g. `user_badges.badge_id`) cannot be null. When
+    // the referenced catalog row has not been pulled yet, defer the push so it
+    // retries after master-data sync instead of failing every retry forever.
+    for (final String localFk in mapping.requiredCloudForeignKeys) {
+      final String cloudName = mapping.cloudForeignKeyNames[localFk] ?? localFk;
+      if (cloud[cloudName] == null) return null;
+    }
     return cloud;
   }
 
@@ -165,7 +167,8 @@ class SupabaseSyncTransport implements SyncTransport {
   ) async {
     if (mapping.cloudForeignKeys.isEmpty) return;
     final Database db = await database.database;
-    for (final MapEntry<String, String> fk in mapping.cloudForeignKeys.entries) {
+    for (final MapEntry<String, String> fk
+        in mapping.cloudForeignKeys.entries) {
       final Object? localId = localRow[fk.key];
       if (localId == null) continue;
       final List<Map<String, Object?>> rows = await db.query(
@@ -176,8 +179,7 @@ class SupabaseSyncTransport implements SyncTransport {
         limit: 1,
       );
       if (rows.isNotEmpty) {
-        final String cloudName =
-            mapping.cloudForeignKeyNames[fk.key] ?? fk.key;
+        final String cloudName = mapping.cloudForeignKeyNames[fk.key] ?? fk.key;
         cloud[cloudName] = rows.first['uuid'];
       }
     }
@@ -214,7 +216,16 @@ class SupabaseSyncTransport implements SyncTransport {
     SyncEvent event,
     Map<String, Object?> localRow,
   ) async {
-    final Map<String, Object?> cloudRow = await _buildCloudRow(mapping, localRow);
+    final Map<String, Object?>? built = await _buildCloudRow(mapping, localRow);
+    if (built == null) {
+      // Retryable: master-data sync runs after each push cycle, so the catalog
+      // uuid normally resolves on a later attempt. Never mark this permanent.
+      throw const SyncTransportException(
+        'unresolved_foreign_key',
+        retryable: true,
+      );
+    }
+    final Map<String, Object?> cloudRow = built;
     // Remove user_id override for singletons: profiles.user_id does not exist.
     if (mapping.cloudTable == 'profiles') {
       cloudRow.remove('user_id');
@@ -225,6 +236,27 @@ class SupabaseSyncTransport implements SyncTransport {
       // keeps whatever it already has (avatar_url included), and a device with
       // real data still pushes real values.
       cloudRow.removeWhere((_, Object? value) => value == null);
+    }
+
+    if (mapping.cloudNaturalKey.isNotEmpty) {
+      // Derived per-user counters (achievements, badges, challenges, streaks)
+      // are unique on a natural key on the server. Two devices that computed
+      // the same row offline have different uuids, so an id-keyed insert would
+      // violate the cloud UNIQUE constraint forever. Upsert on the natural key
+      // instead and omit the client id (the server keeps/generates it); the
+      // pull adopts that id locally. Last-write-wins is correct for these
+      // counters.
+      cloudRow.remove('id');
+      final List<Map<String, dynamic>> rows = await _client
+          .from(mapping.cloudTable)
+          .upsert(cloudRow, onConflict: mapping.cloudNaturalKey.join(','))
+          .select('row_version');
+      return SyncPushResult(
+        applied: true,
+        serverRowVersion: rows.isEmpty
+            ? null
+            : (rows.first['row_version'] as num?)?.toInt(),
+      );
     }
 
     if (mapping.alwaysUpsert ||
@@ -291,6 +323,30 @@ class SupabaseSyncTransport implements SyncTransport {
     if (mapping.cloudTable == 'profiles') {
       // The profile row is the auth identity; it cannot be deleted via sync.
       return const SyncPushResult(applied: true);
+    }
+    if (mapping.cloudNaturalKey.isNotEmpty) {
+      final Map<String, Object?>? built = localRow == null
+          ? null
+          : await _buildCloudRow(mapping, localRow);
+      if (built == null) {
+        // The row (or its catalog reference) no longer exists locally, so there
+        // is nothing identifiable to tombstone; acknowledge idempotently.
+        return const SyncPushResult(applied: true);
+      }
+      var query = _client.from(mapping.cloudTable).update(<String, Object?>{
+        'deleted_at': DateTime.now().toUtc().toIso8601String(),
+      });
+      for (final String column in mapping.cloudNaturalKey) {
+        final Object? value = built[column];
+        if (value == null) return const SyncPushResult(applied: true);
+        query = query.eq(column, value);
+      }
+      final List<Map<String, dynamic>> rows = await query.select('row_version');
+      if (rows.isEmpty) return const SyncPushResult(applied: true);
+      return SyncPushResult(
+        applied: true,
+        serverRowVersion: (rows.first['row_version'] as num?)?.toInt(),
+      );
     }
     final String? id = localRow?['uuid'] as String?;
     if (id == null) {

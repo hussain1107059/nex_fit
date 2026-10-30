@@ -239,10 +239,7 @@ class SyncEngine {
 
   /// Reclaims PROCESSING events stuck longer than the safe timeout (Part 18).
   /// Returns the number of reclaimed events.
-  Future<int> resetStuckProcessingEvents(
-    String userId, {
-    DateTime? now,
-  }) async {
+  Future<int> resetStuckProcessingEvents(String userId, {DateTime? now}) async {
     final DateTime at = now ?? DateTime.now();
     final List<int> reclaimed = await repository.resetStuckProcessingEvents(
       userId,
@@ -340,11 +337,7 @@ class SyncEngine {
         // No transport configured at all (offline-only build): acknowledge
         // pending events locally so the queue drains and never grows against
         // a cloud that does not exist.
-        await repository.markSuccess(
-          eventId,
-          at: runAt,
-          syncedAt: runAt,
-        );
+        await repository.markSuccess(eventId, at: runAt, syncedAt: runAt);
         onSucceeded();
         return;
       }
@@ -358,10 +351,7 @@ class SyncEngine {
         event.copyWith(
           status: SyncStatus.pending,
           lastError: 'transport_not_ready',
-          nextRetryAt: RetryScheduler.nextRetryAt(
-            event.retryCount,
-            now: runAt,
-          ),
+          nextRetryAt: RetryScheduler.nextRetryAt(event.retryCount, now: runAt),
           updatedAt: runAt,
         ),
       );
@@ -481,8 +471,9 @@ class SyncEngine {
     final SyncConflictRepository? conflictStore = conflictRepository;
     if (conflictStore == null) return;
 
-    final SyncTableMapping? mapping =
-        SyncTableRegistry.byLocalTable(event.entity);
+    final SyncTableMapping? mapping = SyncTableRegistry.byLocalTable(
+      event.entity,
+    );
     Map<String, Object?>? localRow;
     var localVersion = event.baseVersion;
     DateTime? localUpdatedAt;
@@ -494,9 +485,7 @@ class SyncEngine {
           mapping.localTable,
           where: '${mapping.localKeyColumn} = ?',
           whereArgs: <Object?>[
-            mapping.localKeyColumn == 'user_id'
-                ? event.userId
-                : event.entityId,
+            mapping.localKeyColumn == 'user_id' ? event.userId : event.entityId,
           ],
           limit: 1,
         );
@@ -506,8 +495,9 @@ class SyncEngine {
               (localRow['row_version'] as num?)?.toInt() ?? event.baseVersion;
           final Object? updated = localRow['updated_at'];
           if (updated is num) {
-            localUpdatedAt =
-                DateTime.fromMillisecondsSinceEpoch(updated.toInt());
+            localUpdatedAt = DateTime.fromMillisecondsSinceEpoch(
+              updated.toInt(),
+            );
           }
           final String? uuid = localRow['uuid'] as String?;
           if (uuid != null && uuid.isNotEmpty) recordUuid = uuid;
@@ -642,7 +632,7 @@ class SyncEngine {
     DateTime? now,
     void Function(int applied, int cursor)? onBatchProgress,
     void Function(Map<String, int> appliedByTable, int cursor)?
-        onAppliedByTable,
+    onAppliedByTable,
   }) async {
     final SyncStateRepository? stateRepository = syncStateRepository;
     if (stateRepository == null) {
@@ -738,8 +728,7 @@ class SyncEngine {
     await sqfliteDatabase.transaction((txn) async {
       // Apply parent rows before their children (PROMPT 12) so a child's
       // foreign-key parent is already resolvable within the same batch.
-      for (final SyncChange change
-          in orderChangesForApply(batch.changes)) {
+      for (final SyncChange change in orderChangesForApply(batch.changes)) {
         try {
           await applier.apply(txn, change);
         } on UnsupportedTableException catch (error) {
@@ -751,6 +740,17 @@ class SyncEngine {
           SyncLog.warning(
             _logger,
             SyncLog.pullSkippedUnsupported,
+            'user=${SyncLog.maskUserId(userId)} table=${change.cloudTable} '
+            'record=${change.recordId} ${error.message}',
+          );
+        } on MissingMasterDefinitionException catch (error) {
+          // A gamification row references a catalog definition that has not
+          // landed locally yet. Skip it (master sync runs before the user
+          // pull, so this is a genuinely stale record) rather than freezing
+          // the cursor for every other table.
+          SyncLog.warning(
+            _logger,
+            SyncLog.pullSkippedUnresolvable,
             'user=${SyncLog.maskUserId(userId)} table=${change.cloudTable} '
             'record=${change.recordId} ${error.message}',
           );
@@ -814,10 +814,7 @@ class SyncEngine {
           'user=${SyncLog.maskUserId(userId)} '
           'error=${ValueMasker.maskEmailInText(error.message)}',
         );
-        return push.copyWith(
-          failed: push.failed + 1,
-          hasPulled: false,
-        );
+        return push.copyWith(failed: push.failed + 1, hasPulled: false);
       } on UnsupportedTableException catch (error) {
         // Cursor was rolled back; the pull cannot proceed. The user's push
         // already succeeded, so report a partial failure rather than aborting.
@@ -827,10 +824,7 @@ class SyncEngine {
           'user=${SyncLog.maskUserId(userId)} '
           '${ValueMasker.maskEmailInText(error.message)}',
         );
-        return push.copyWith(
-          failed: push.failed + 1,
-          hasPulled: false,
-        );
+        return push.copyWith(failed: push.failed + 1, hasPulled: false);
       }
       SyncLog.info(
         _logger,
@@ -852,7 +846,7 @@ class SyncEngine {
     required RemoteChangeApplier applier,
     DateTime? now,
     void Function(Map<String, int> appliedByTable, int cursor)?
-        onAppliedByTable,
+    onAppliedByTable,
   }) {
     final SyncLock lock = _lockFor(userId);
     return lock.synchronized(() async {
@@ -868,10 +862,7 @@ class SyncEngine {
       await syncStateRepository?.deleteForUser(userId);
       SyncRunResult push = const SyncRunResult();
       try {
-        push = await _processQueueUnlocked(
-          userId,
-          transport: transport,
-        );
+        push = await _processQueueUnlocked(userId, transport: transport);
       } on Exception catch (error) {
         SyncLog.warning(
           _logger,
@@ -909,9 +900,11 @@ class SyncEngine {
   Future<SyncQueueSnapshot> snapshot(String userId) async {
     final Map<String, int> counts = await repository.countByStatus(userId);
     final DateTime? lastSyncedAt = await repository.latestSyncedAt(userId);
-    final int pending = (counts[SyncStatus.pending.name] ?? 0) +
+    final int pending =
+        (counts[SyncStatus.pending.name] ?? 0) +
         (counts[SyncStatus.failedRetryable.name] ?? 0);
-    final int failed = (counts[SyncStatus.failedPermanent.name] ?? 0) +
+    final int failed =
+        (counts[SyncStatus.failedPermanent.name] ?? 0) +
         (counts[SyncStatus.failed.name] ?? 0);
     return SyncQueueSnapshot(
       pending: pending,

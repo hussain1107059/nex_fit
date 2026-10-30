@@ -42,10 +42,7 @@ class RemoteChangeApplier {
       );
     }
 
-    final Map<String, Object?> localRow = _toLocalRow(
-      mapping,
-      change,
-    );
+    final Map<String, Object?> localRow = _toLocalRow(mapping, change);
     // The local `users` table is the FK parent for every `user_id`-keyed row
     // (user_profile, app_settings, user_level, ...). When a device's `users`
     // row is missing (a sign-in write that never landed, or a DB that lost the
@@ -54,11 +51,39 @@ class RemoteChangeApplier {
     // Insert a minimal parent row so the apply always succeeds.
     await _ensureUserRowIfMissing(txn, mapping, change, localRow);
     await _resolveForeignKeys(txn, mapping, localRow);
+    await _syncUserDisplayName(txn, mapping, change);
 
     if (change.isDelete) {
       return _applyDelete(txn, mapping, change.recordId);
     }
+    await _hydrateLocalOnlyColumns(txn, mapping, localRow);
     return _upsert(txn, mapping, localRow);
+  }
+
+  /// Mirrors the cloud `profiles.display_name` back onto the local `users`
+  /// row so the auth-identity name stays in sync across devices. The `users`
+  /// table is the app's source of truth for the display name and `profiles`
+  /// is its cloud carrier, so every pulled profile write reapplies the name
+  /// rather than waiting for a fresh-sign-in fallback.
+  Future<void> _syncUserDisplayName(
+    Transaction txn,
+    SyncTableMapping mapping,
+    SyncChange change,
+  ) async {
+    if (mapping.localTable != 'user_profile') return;
+    final Object? displayName = change.payload['display_name'];
+    if (displayName == null || change.isDelete) return;
+    final Object? userId = mapping.localKeyColumn == 'user_id'
+        ? change.payload['id']
+        : change.payload['user_id'];
+    final String? uid = userId is String && userId.isNotEmpty ? userId : null;
+    if (uid == null) return;
+    await txn.update(
+      LocalUserModel.table,
+      <String, Object?>{'name': displayName},
+      where: 'id = ?',
+      whereArgs: <Object?>[uid],
+    );
   }
 
   /// Translates cloud uuid foreign keys back to local integer ids (PROMPT 11):
@@ -71,7 +96,8 @@ class RemoteChangeApplier {
     SyncTableMapping mapping,
     Map<String, Object?> localRow,
   ) async {
-    for (final MapEntry<String, String> fk in mapping.cloudForeignKeys.entries) {
+    for (final MapEntry<String, String> fk
+        in mapping.cloudForeignKeys.entries) {
       final Object? cloudValue = localRow[fk.key];
       if (cloudValue is! String || cloudValue.isEmpty) continue;
       final List<Map<String, Object?>> rows = await txn.query(
@@ -82,6 +108,96 @@ class RemoteChangeApplier {
         limit: 1,
       );
       localRow[fk.key] = rows.isEmpty ? null : rows.first['id'];
+    }
+  }
+
+  /// The cloud gamification tables store only the catalog uuid
+  /// (`achievement_id` / `badge_id` / `challenge_id`); the local tables also
+  /// require denormalised display columns (`name`, `badge_type`, `title`, ...)
+  /// that are NOT NULL. Rebuild them from the local master catalog so a pulled
+  /// row can be materialised on a second device.
+  Future<void> _hydrateLocalOnlyColumns(
+    Transaction txn,
+    SyncTableMapping mapping,
+    Map<String, Object?> localRow,
+  ) async {
+    switch (mapping.localTable) {
+      case 'achievement':
+        await _copyMasterColumns(
+          txn,
+          defTable: 'achievement_def',
+          defId: localRow['achievement_def_id'],
+          localRow: localRow,
+          columns: const <String>[
+            'achievement_type',
+            'name',
+            'description',
+            'icon',
+          ],
+        );
+      case 'badge':
+        await _copyMasterColumns(
+          txn,
+          defTable: 'badge_def',
+          defId: localRow['badge_def_id'],
+          localRow: localRow,
+          columns: const <String>['badge_type', 'badge_name', 'icon'],
+        );
+      case 'challenge':
+        await _copyMasterColumns(
+          txn,
+          defTable: 'challenge_def',
+          defId: localRow['challenge_def_id'],
+          localRow: localRow,
+          columns: const <String>[
+            'title',
+            'description',
+            'difficulty',
+            'target',
+            'reward_xp',
+          ],
+          aliases: const <String, String>{'type': 'challenge_type'},
+        );
+    }
+  }
+
+  Future<void> _copyMasterColumns(
+    Transaction txn, {
+    required String defTable,
+    required Object? defId,
+    required Map<String, Object?> localRow,
+    required List<String> columns,
+    Map<String, String> aliases = const <String, String>{},
+  }) async {
+    if (defId is! int) {
+      throw MissingMasterDefinitionException(
+        'Cannot materialise a ${localRow['uuid']} row: $defTable definition '
+        'is not present locally yet',
+      );
+    }
+    final List<String> defColumns = <String>[
+      ...columns,
+      ...aliases.values.where((String column) => !columns.contains(column)),
+    ];
+    final List<Map<String, Object?>> rows = await txn.query(
+      defTable,
+      columns: defColumns,
+      where: 'id = ?',
+      whereArgs: <Object?>[defId],
+      limit: 1,
+    );
+    if (rows.isEmpty) {
+      throw MissingMasterDefinitionException(
+        'Cannot materialise a ${localRow['uuid']} row: $defTable#$defId is '
+        'missing',
+      );
+    }
+    final Map<String, Object?> def = rows.first;
+    for (final String column in columns) {
+      if (def[column] != null) localRow[column] = def[column];
+    }
+    for (final MapEntry<String, String> alias in aliases.entries) {
+      if (def[alias.value] != null) localRow[alias.key] = def[alias.value];
     }
   }
 
@@ -110,17 +226,13 @@ class RemoteChangeApplier {
     );
     if (existing.isNotEmpty) return;
     final Object? displayName = change.payload['display_name'];
-    await txn.insert(
-      LocalUserModel.table,
-      <String, Object?>{
-        'id': userId,
-        'name': displayName is String ? displayName : '',
-        'email': '',
-        'provider': AuthProvider.none.name,
-        'created_at': DateTime.now().millisecondsSinceEpoch,
-      },
-      conflictAlgorithm: ConflictAlgorithm.ignore,
-    );
+    await txn.insert(LocalUserModel.table, <String, Object?>{
+      'id': userId,
+      'name': displayName is String ? displayName : '',
+      'email': '',
+      'provider': AuthProvider.none.name,
+      'created_at': DateTime.now().millisecondsSinceEpoch,
+    }, conflictAlgorithm: ConflictAlgorithm.ignore);
   }
 
   Map<String, Object?> _toLocalRow(
@@ -128,8 +240,7 @@ class RemoteChangeApplier {
     SyncChange change,
   ) {
     final Map<String, String> cloudToLocal = <String, String>{
-      for (final MapEntry<String, String> entry
-          in mapping.localToCloud.entries)
+      for (final MapEntry<String, String> entry in mapping.localToCloud.entries)
         entry.value: entry.key,
     };
 
@@ -138,24 +249,19 @@ class RemoteChangeApplier {
       'user_id': change.isDelete ? '' : _userIdFor(mapping, change),
     };
     // Always stamp sync metadata from the remote snapshot.
-    localRow.addAll(
-      _syncColumnsFromPayload(mapping, change.payload),
-    );
+    localRow.addAll(_syncColumnsFromPayload(mapping, change.payload));
 
     for (final MapEntry<String, Object?> entry in change.payload.entries) {
       final String? localColumn = cloudToLocal[entry.key];
       if (localColumn == null) continue;
-      final Object? value = _convertCloudValue(
-        mapping,
-        entry.key,
-        entry.value,
-      );
+      final Object? value = _convertCloudValue(mapping, entry.key, entry.value);
       localRow[localColumn] = value;
     }
     // Foreign keys share their name on both sides and are not part of
     // [localToCloud]; carry the cloud uuid over so `_resolveForeignKeys` can
     // translate it back to the local integer id.
-    for (final MapEntry<String, String> fk in mapping.cloudForeignKeys.entries) {
+    for (final MapEntry<String, String> fk
+        in mapping.cloudForeignKeys.entries) {
       final String cloudName = mapping.cloudForeignKeyNames[fk.key] ?? fk.key;
       final Object? value = change.payload[cloudName];
       if (value != null) localRow[fk.key] = value;
@@ -254,12 +360,36 @@ class RemoteChangeApplier {
         ? (localRow['user_id'] as String)
         : (localRow['uuid'] as String);
 
-    final List<Map<String, Object?>> existing = await txn.query(
+    List<Map<String, Object?>> existing = await txn.query(
       mapping.localTable,
       where: where,
       whereArgs: <Object?>[whereArg],
       limit: 1,
     );
+    if (existing.isEmpty && mapping.localNaturalKey.isNotEmpty) {
+      // The same logical row may already exist locally under a different uuid
+      // (each device created it independently). Adopt the cloud row instead of
+      // inserting a duplicate that the local UNIQUE index would reject.
+      final List<String> clauses = <String>[];
+      final List<Object?> args = <Object?>[];
+      for (final String column in mapping.localNaturalKey) {
+        final Object? value = localRow[column];
+        if (value == null) {
+          clauses.clear();
+          break;
+        }
+        clauses.add('$column = ?');
+        args.add(value);
+      }
+      if (clauses.isNotEmpty) {
+        existing = await txn.query(
+          mapping.localTable,
+          where: clauses.join(' AND '),
+          whereArgs: args,
+          limit: 1,
+        );
+      }
+    }
     if (existing.isEmpty) {
       await txn.insert(mapping.localTable, localRow);
       return 1;
@@ -290,11 +420,15 @@ class RemoteChangeApplier {
       );
       if (hasPendingWrite) return 0;
     }
+    // When the row was matched by its natural key its stored uuid differs from
+    // the incoming cloud id; update by the local primary key so the cloud uuid
+    // is adopted (and future pulls/deletes match).
+    final Object? localId = existing.first['id'];
     await txn.update(
       mapping.localTable,
       localRow,
-      where: where,
-      whereArgs: <Object?>[whereArg],
+      where: localId == null ? where : 'id = ?',
+      whereArgs: <Object?>[localId ?? whereArg],
     );
     return 1;
   }
@@ -372,6 +506,18 @@ class RemoteChangeApplier {
   }
 }
 
+/// Raised when a pulled user row references a master-catalog definition that
+/// has not landed locally yet. Aborting the batch keeps the pull cursor from
+/// advancing, so the row is applied after the master sync catches up.
+class MissingMasterDefinitionException implements Exception {
+  const MissingMasterDefinitionException(this.message);
+
+  final String message;
+
+  @override
+  String toString() => 'MissingMasterDefinitionException($message)';
+}
+
 /// Raised when a pulled change targets a cloud table with no local mapping.
 class UnsupportedTableException implements Exception {
   const UnsupportedTableException(this.message);
@@ -397,7 +543,8 @@ List<SyncChange> orderChangesForApply(List<SyncChange> changes) {
     );
     final Set<String> deps = <String>{};
     if (mapping != null) {
-      for (final String referencedLocalTable in mapping.cloudForeignKeys.values) {
+      for (final String referencedLocalTable
+          in mapping.cloudForeignKeys.values) {
         final SyncTableMapping? parent = SyncTableRegistry.byLocalTable(
           referencedLocalTable,
         );
@@ -415,11 +562,13 @@ List<SyncChange> orderChangesForApply(List<SyncChange> changes) {
     int picked = -1;
     for (int i = 0; i < remaining.length; i++) {
       final SyncChange candidate = remaining[i];
-      final Set<String> deps = dependencies[candidate.cloudTable] ??
-          const <String>{};
+      final Set<String> deps =
+          dependencies[candidate.cloudTable] ?? const <String>{};
       final bool ready = deps.every(
-        (String dep) => !remaining.any((SyncChange other) =>
-            other.cloudTable == dep && !identical(other, candidate)),
+        (String dep) => !remaining.any(
+          (SyncChange other) =>
+              other.cloudTable == dep && !identical(other, candidate),
+        ),
       );
       if (ready) {
         picked = i;

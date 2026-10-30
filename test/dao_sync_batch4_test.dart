@@ -114,8 +114,11 @@ class _ConflictTransport implements SyncTransport {
     required String userId,
     required int cursor,
     int limit = 100,
-  }) async =>
-      const SyncPullBatch(changes: <SyncChange>[], nextCursor: 0, hasMore: false);
+  }) async => const SyncPullBatch(
+    changes: <SyncChange>[],
+    nextCursor: 0,
+    hasMore: false,
+  );
 }
 
 void main() {
@@ -188,29 +191,29 @@ void main() {
         ReminderLocalDataSource(database: appDatabase);
 
     Reminder reminder({String userId = 'user-1'}) => Reminder(
-          userId: userId,
-          title: 'Workout',
-          body: 'Time to train',
-          reminderType: ReminderType.workout,
-          time: '07:00',
-          daysOfWeek: <int>[1, 3, 5],
-          scheduleType: ReminderScheduleType.weekly,
-          times: <String>['07:00', '19:00'],
-          startDate: DateTime(2026, 1, 1),
-          endDate: DateTime(2026, 1, 31),
-          monthDay: 15,
-          icon: 'fitness_center',
-          colorValue: 0xFF3A86FF,
-          soundEnabled: true,
-          vibrationEnabled: false,
-          silentMode: false,
-          showActionButtons: true,
-          relatedScreen: '/workout',
-          isEnabled: true,
-          lastTriggeredAt: DateTime.utc(2026, 1, 5, 7),
-          createdAt: DateTime.utc(2026, 1, 1),
-          updatedAt: DateTime.utc(2026, 1, 1),
-        );
+      userId: userId,
+      title: 'Workout',
+      body: 'Time to train',
+      reminderType: ReminderType.workout,
+      time: '07:00',
+      daysOfWeek: <int>[1, 3, 5],
+      scheduleType: ReminderScheduleType.weekly,
+      times: <String>['07:00', '19:00'],
+      startDate: DateTime(2026, 1, 1),
+      endDate: DateTime(2026, 1, 31),
+      monthDay: 15,
+      icon: 'fitness_center',
+      colorValue: 0xFF3A86FF,
+      soundEnabled: true,
+      vibrationEnabled: false,
+      silentMode: false,
+      showActionButtons: true,
+      relatedScreen: '/workout',
+      isEnabled: true,
+      lastTriggeredAt: DateTime.utc(2026, 1, 5, 7),
+      createdAt: DateTime.utc(2026, 1, 1),
+      updatedAt: DateTime.utc(2026, 1, 1),
+    );
 
     test('insert stamps uuid, version 1 and a CREATE event', () async {
       final int id = await dao().insert(reminder());
@@ -267,72 +270,77 @@ void main() {
       expect(await eventsFor('reminder'), isEmpty);
     });
 
-    test('remote apply maps all columns including dates/booleans, no outbound',
-        () async {
-      await db.transaction((Transaction txn) async {
-        await applier.apply(
-          txn,
-          SyncChange(
-            cursorId: 1,
-            cloudTable: 'reminders',
-            recordId: 'rem-uuid-1',
-            operation: SyncOperation.create,
-            payload: <String, Object?>{
-              'id': 'rem-uuid-1',
-              'user_id': 'user-1',
-              'title': 'Morning water',
-              'body': 'Drink up',
-              'reminder_type': 'water',
-              'time': '08:30',
-              'days_of_week': '1,2,3',
-              'schedule_type': 'weekly',
-              'times': '["08:30","20:00"]',
-              'start_date': '2026-02-01',
-              'end_date': '2026-02-28',
-              'month_day': 10,
-              'icon': 'water_drop',
-              'color_value': 4280391411,
-              'sound_enabled': false,
-              'vibration_enabled': true,
-              'silent_mode': true,
-              'show_action_buttons': false,
-              'related_screen': '/water',
-              'is_enabled': true,
-              'last_triggered_at': '2026-02-02T08:30:00Z',
-              'created_at': '2026-02-01T08:00:00Z',
-              'updated_at': '2026-02-01T08:00:00Z',
-              'deleted_at': null,
-              'row_version': 1,
-            },
-          ),
-        );
-      });
+    test(
+      'remote apply maps all columns including dates/booleans, no outbound',
+      () async {
+        await db.transaction((Transaction txn) async {
+          await applier.apply(
+            txn,
+            SyncChange(
+              cursorId: 1,
+              cloudTable: 'reminders',
+              recordId: 'rem-uuid-1',
+              operation: SyncOperation.create,
+              payload: <String, Object?>{
+                'id': 'rem-uuid-1',
+                'user_id': 'user-1',
+                'title': 'Morning water',
+                'body': 'Drink up',
+                'reminder_type': 'water',
+                'time': '08:30',
+                'days_of_week': '1,2,3',
+                'schedule_type': 'weekly',
+                'times': '["08:30","20:00"]',
+                'start_date': '2026-02-01',
+                'end_date': '2026-02-28',
+                'month_day': 10,
+                'icon': 'water_drop',
+                'color_value': 4280391411,
+                'sound_enabled': false,
+                'vibration_enabled': true,
+                'silent_mode': true,
+                'show_action_buttons': false,
+                'related_screen': '/water',
+                'is_enabled': true,
+                'last_triggered_at': '2026-02-02T08:30:00Z',
+                'created_at': '2026-02-01T08:00:00Z',
+                'updated_at': '2026-02-01T08:00:00Z',
+                'deleted_at': null,
+                'row_version': 1,
+              },
+            ),
+          );
+        });
 
-      final List<Map<String, Object?>> rows = await db.query('reminder');
-      expect(rows, hasLength(1));
-      final Map<String, Object?> row = rows.single;
-      expect(row['uuid'], 'rem-uuid-1');
-      expect(row['title'], 'Morning water');
-      expect(row['is_enabled'], 1);
-      expect(row['sound_enabled'], 0);
-      expect(row['silent_mode'], 1);
-      expect(row['show_action_buttons'], 0);
-      final DateTime startDate = DateTime.fromMillisecondsSinceEpoch(
-        row['start_date'] as int,
-      );
-      expect(startDate.year, 2026);
-      expect(startDate.month, 2);
-      expect(startDate.day, 1);
-      expect(await eventsFor('reminder'), isEmpty);
-    });
+        final List<Map<String, Object?>> rows = await db.query('reminder');
+        expect(rows, hasLength(1));
+        final Map<String, Object?> row = rows.single;
+        expect(row['uuid'], 'rem-uuid-1');
+        expect(row['title'], 'Morning water');
+        expect(row['is_enabled'], 1);
+        expect(row['sound_enabled'], 0);
+        expect(row['silent_mode'], 1);
+        expect(row['show_action_buttons'], 0);
+        final DateTime startDate = DateTime.fromMillisecondsSinceEpoch(
+          row['start_date'] as int,
+        );
+        expect(startDate.year, 2026);
+        expect(startDate.month, 2);
+        expect(startDate.day, 1);
+        expect(await eventsFor('reminder'), isEmpty);
+      },
+    );
 
     test('events are scoped per user', () async {
       await dao().insert(reminder());
       await dao().insert(reminder(userId: 'user-2'));
       final List<Map<String, Object?>> events = await eventsFor('reminder');
       expect(events, hasLength(2));
-      expect(events.every((e) => e['user_id'] == 'user-1'), isFalse,
-          reason: 'recorder runs for the active user only');
+      expect(
+        events.every((e) => e['user_id'] == 'user-1'),
+        isFalse,
+        reason: 'recorder runs for the active user only',
+      );
     });
   });
 
@@ -360,15 +368,14 @@ void main() {
       String userId = 'user-1',
       int? reminderId,
       DateTime? scheduledFor,
-    }) =>
-        ReminderHistory(
-          userId: userId,
-          reminderId: reminderId,
-          status: ReminderHistoryStatus.missed,
-          scheduledFor: scheduledFor ?? DateTime.utc(2026, 1, 5, 7),
-          actedAt: null,
-          createdAt: DateTime.utc(2026, 1, 5, 7),
-        );
+    }) => ReminderHistory(
+      userId: userId,
+      reminderId: reminderId,
+      status: ReminderHistoryStatus.missed,
+      scheduledFor: scheduledFor ?? DateTime.utc(2026, 1, 5, 7),
+      actedAt: null,
+      createdAt: DateTime.utc(2026, 1, 5, 7),
+    );
 
     test('insert stamps uuid, version 1 and a CREATE event', () async {
       final int reminderId = await seedReminder();
@@ -378,8 +385,9 @@ void main() {
       expect(row['row_version'], 1);
       expect(row['reminder_id'], reminderId);
       expect(row['status'], 'missed');
-      final List<Map<String, Object?>> events =
-          await eventsFor('reminder_history');
+      final List<Map<String, Object?>> events = await eventsFor(
+        'reminder_history',
+      );
       expect(events.single['operation'], SyncOperation.create.name);
       expect(events.single['entity_id'], '$id');
     });
@@ -391,8 +399,9 @@ void main() {
         history(reminderId: reminderId, scheduledFor: DateTime.utc(2026, 1, 6)),
         history(reminderId: reminderId, scheduledFor: DateTime.utc(2026, 1, 7)),
       ]);
-      final List<Map<String, Object?>> rows =
-          await db.query('reminder_history');
+      final List<Map<String, Object?>> rows = await db.query(
+        'reminder_history',
+      );
       expect(rows, hasLength(3));
       expect(await eventsFor('reminder_history'), hasLength(3));
     });
@@ -403,45 +412,61 @@ void main() {
       final String uuid = await uuidById('reminder_history', id);
 
       await dao().update(
-        history(reminderId: reminderId, scheduledFor: DateTime.utc(2026, 1, 5))
-            .copyWith(
+        history(
+          reminderId: reminderId,
+          scheduledFor: DateTime.utc(2026, 1, 5),
+        ).copyWith(
           id: id,
           status: ReminderHistoryStatus.completed,
           actedAt: DateTime.utc(2026, 1, 5, 7, 30),
         ),
       );
 
-      final Map<String, Object?> row =
-          await rowById('reminder_history', id);
+      final Map<String, Object?> row = await rowById('reminder_history', id);
       expect(row['uuid'], uuid);
       expect(row['row_version'], 2);
       expect(row['status'], 'completed');
-      final List<Map<String, Object?>> events =
-          await eventsFor('reminder_history');
+      final List<Map<String, Object?>> events = await eventsFor(
+        'reminder_history',
+      );
       expect(events.last['operation'], SyncOperation.update.name);
       expect(events.last['base_version'], 1);
     });
 
-    test('deleteByReminderId soft-deletes rows and emits a DELETE event each',
-        () async {
-      final int reminderId = await seedReminder();
-      await dao().insert(history(reminderId: reminderId, scheduledFor: DateTime.utc(2026, 1, 5)));
-      await dao().insert(history(reminderId: reminderId, scheduledFor: DateTime.utc(2026, 1, 6)));
+    test(
+      'deleteByReminderId soft-deletes rows and emits a DELETE event each',
+      () async {
+        final int reminderId = await seedReminder();
+        await dao().insert(
+          history(
+            reminderId: reminderId,
+            scheduledFor: DateTime.utc(2026, 1, 5),
+          ),
+        );
+        await dao().insert(
+          history(
+            reminderId: reminderId,
+            scheduledFor: DateTime.utc(2026, 1, 6),
+          ),
+        );
 
-      await dao().deleteByReminderId(reminderId);
+        await dao().deleteByReminderId(reminderId);
 
-      final List<Map<String, Object?>> rows =
-          await db.query('reminder_history');
-      expect(rows, hasLength(2));
-      expect(rows.every((r) => r['deleted_at'] != null), isTrue);
-      expect(await dao().getByReminderId(reminderId), isEmpty);
-      final List<Map<String, Object?>> events =
-          await eventsFor('reminder_history');
-      final List<Map<String, Object?>> deletes = events
-          .where((e) => e['operation'] == SyncOperation.delete.name)
-          .toList();
-      expect(deletes, hasLength(2));
-    });
+        final List<Map<String, Object?>> rows = await db.query(
+          'reminder_history',
+        );
+        expect(rows, hasLength(2));
+        expect(rows.every((r) => r['deleted_at'] != null), isTrue);
+        expect(await dao().getByReminderId(reminderId), isEmpty);
+        final List<Map<String, Object?>> events = await eventsFor(
+          'reminder_history',
+        );
+        final List<Map<String, Object?>> deletes = events
+            .where((e) => e['operation'] == SyncOperation.delete.name)
+            .toList();
+        expect(deletes, hasLength(2));
+      },
+    );
 
     test('remote apply resolves the reminder FK and never echoes', () async {
       final int reminderId = await seedReminder();
@@ -471,11 +496,15 @@ void main() {
         );
       });
 
-      final List<Map<String, Object?>> rows =
-          await db.query('reminder_history');
+      final List<Map<String, Object?>> rows = await db.query(
+        'reminder_history',
+      );
       expect(rows, hasLength(1));
-      expect(rows.single['reminder_id'], reminderId,
-          reason: 'cloud reminder uuid resolves back to the local int id');
+      expect(
+        rows.single['reminder_id'],
+        reminderId,
+        reason: 'cloud reminder uuid resolves back to the local int id',
+      );
       expect(rows.single['status'], 'completed');
       expect(await eventsFor('reminder_history'), isEmpty);
     });
@@ -487,16 +516,16 @@ void main() {
     RewardLocalDataSource dao() => RewardLocalDataSource(database: appDatabase);
 
     Reward reward({String userId = 'user-1'}) => Reward(
-          userId: userId,
-          type: 'coins',
-          title: 'Workout xp bonus',
-          amount: 50,
-          icon: 'monetization_on',
-          isClaimed: false,
-          claimedAt: null,
-          createdAt: DateTime.utc(2026, 1, 1),
-          updatedAt: DateTime.utc(2026, 1, 1),
-        );
+      userId: userId,
+      type: 'coins',
+      title: 'Workout xp bonus',
+      amount: 50,
+      icon: 'monetization_on',
+      isClaimed: false,
+      claimedAt: null,
+      createdAt: DateTime.utc(2026, 1, 1),
+      updatedAt: DateTime.utc(2026, 1, 1),
+    );
 
     test('insert stamps uuid, version 1 and a CREATE event', () async {
       final int id = await dao().insert(reward());
@@ -587,14 +616,14 @@ void main() {
         XpHistoryLocalDataSource(database: appDatabase);
 
     XpHistory entry({String userId = 'user-1'}) => XpHistory(
-          userId: userId,
-          source: 'workout',
-          reason: 'completed_session',
-          xp: 20,
-          totalXp: 20,
-          metadata: '{"historyId":1}',
-          createdAt: DateTime.utc(2026, 1, 1, 9),
-        );
+      userId: userId,
+      source: 'workout',
+      reason: 'completed_session',
+      xp: 20,
+      totalXp: 20,
+      metadata: '{"historyId":1}',
+      createdAt: DateTime.utc(2026, 1, 1, 9),
+    );
 
     test('insert stamps uuid, version 1 and a CREATE event', () async {
       final int id = await dao().insert(entry());
@@ -631,19 +660,28 @@ void main() {
       expect(events.last['operation'], SyncOperation.delete.name);
     });
 
-    test('registry excludes the derived total_xp and the jsonb metadata',
-        () async {
-      final SyncTableMapping? mapping =
-          SyncTableRegistry.byLocalTable('xp_history');
-      expect(mapping, isNotNull);
-      expect(mapping!.cloudTable, 'xp_history');
-      expect(mapping.localToCloud.containsKey('total_xp'), isFalse,
-          reason: 'total_xp is a derived running total (recomputable as SUM)');
-      expect(mapping.localToCloud.containsKey('metadata'), isFalse,
-          reason: 'cloud metadata is jsonb; text transport cannot round-trip');
-      expect(mapping.localToCloud['source'], 'source');
-      expect(mapping.localToCloud['xp'], 'xp');
-    });
+    test(
+      'registry excludes the derived total_xp and the jsonb metadata',
+      () async {
+        final SyncTableMapping? mapping = SyncTableRegistry.byLocalTable(
+          'xp_history',
+        );
+        expect(mapping, isNotNull);
+        expect(mapping!.cloudTable, 'xp_history');
+        expect(
+          mapping.localToCloud.containsKey('total_xp'),
+          isFalse,
+          reason: 'total_xp is a derived running total (recomputable as SUM)',
+        );
+        expect(
+          mapping.localToCloud.containsKey('metadata'),
+          isFalse,
+          reason: 'cloud metadata is jsonb; text transport cannot round-trip',
+        );
+        expect(mapping.localToCloud['source'], 'source');
+        expect(mapping.localToCloud['xp'], 'xp');
+      },
+    );
 
     test('remote apply writes ledger columns and never echoes', () async {
       await db.transaction((Transaction txn) async {
@@ -678,37 +716,47 @@ void main() {
     });
   });
 
-  group('derived / server-authoritative data is never uploaded', () {
+  group('derived vs syncable data classification', () {
     setUp(setUpDb);
 
-    test('daily_progress is a derived rollup: writes create no outbound event',
-        () async {
-      final DailyProgressLocalDataSource dao =
-          DailyProgressLocalDataSource(database: appDatabase);
-      await dao.upsert(
-        DailyProgress(
-          userId: 'user-1',
-          progressDate: DateTime(2026, 1, 5),
-          steps: 8000,
-          waterMl: 2000,
-          caloriesConsumed: 1800,
-          caloriesBurned: 400,
-          workoutMinutes: 45,
-          sleepMinutes: 420,
-          isGoalMet: true,
-          createdAt: DateTime.utc(2026, 1, 5),
-          updatedAt: DateTime.utc(2026, 1, 5),
-        ),
-      );
-      await dao.delete((await dao.getByUserAndDate('user-1', DateTime(2026, 1, 5)))!.id!);
-      expect(await db.query('daily_progress'), isEmpty);
-      expect(await eventsFor('daily_progress'), isEmpty);
-      expect(SyncTableRegistry.byLocalTable('daily_progress'), isNull,
-          reason: 'recomputable rollup; not a sync source-of-truth');
-    });
+    test(
+      'daily_progress is a derived rollup: writes create no outbound event',
+      () async {
+        final DailyProgressLocalDataSource dao = DailyProgressLocalDataSource(
+          database: appDatabase,
+        );
+        await dao.upsert(
+          DailyProgress(
+            userId: 'user-1',
+            progressDate: DateTime(2026, 1, 5),
+            steps: 8000,
+            waterMl: 2000,
+            caloriesConsumed: 1800,
+            caloriesBurned: 400,
+            workoutMinutes: 45,
+            sleepMinutes: 420,
+            isGoalMet: true,
+            createdAt: DateTime.utc(2026, 1, 5),
+            updatedAt: DateTime.utc(2026, 1, 5),
+          ),
+        );
+        await dao.delete(
+          (await dao.getByUserAndDate('user-1', DateTime(2026, 1, 5)))!.id!,
+        );
+        expect(await db.query('daily_progress'), isEmpty);
+        expect(await eventsFor('daily_progress'), isEmpty);
+        expect(
+          SyncTableRegistry.byLocalTable('daily_progress'),
+          isNull,
+          reason: 'recomputable rollup; not a sync source-of-truth',
+        );
+      },
+    );
 
-    test('streak is a derived cache: writes create no outbound event', () async {
-      final StreakLocalDataSource dao = StreakLocalDataSource(database: appDatabase);
+    test('streak now syncs like its sibling counters', () async {
+      final StreakLocalDataSource dao = StreakLocalDataSource(
+        database: appDatabase,
+      );
       final DateTime now = DateTime.utc(2026, 1, 5);
       await dao.upsert(
         Streak(
@@ -722,16 +770,17 @@ void main() {
           updatedAt: now,
         ),
       );
-      expect(await eventsFor('streak'), isEmpty);
-      expect(SyncTableRegistry.byLocalTable('streak'), isNull,
-          reason: 'streak counters are recomputable from synced workout_history');
+      expect(await eventsFor('streak'), hasLength(1));
+      expect(SyncTableRegistry.byLocalTable('streak')?.cloudTable, 'streaks');
     });
 
-    test('hybrid achievement/badge/challenge/milestone are not registered',
-        () async {
-      final DateTime now = DateTime.utc(2026, 1, 5);
-      await AchievementLocalDataSource(database: appDatabase).insertAll(
-        <Achievement>[
+    test(
+      'user-owned gamification rows are registered; master defs are not',
+      () async {
+        final DateTime now = DateTime.utc(2026, 1, 5);
+        await AchievementLocalDataSource(
+          database: appDatabase,
+        ).insertAll(<Achievement>[
           Achievement(
             userId: 'user-1',
             name: 'First Workout',
@@ -740,10 +789,8 @@ void main() {
             unlockedAt: now,
             createdAt: now,
           ),
-        ],
-      );
-      await BadgeLocalDataSource(database: appDatabase).insertAll(
-        <Badge>[
+        ]);
+        await BadgeLocalDataSource(database: appDatabase).insertAll(<Badge>[
           Badge(
             userId: 'user-1',
             badgeType: 'workouts_5',
@@ -756,36 +803,54 @@ void main() {
             createdAt: now,
             updatedAt: now,
           ),
-        ],
-      );
-      await ChallengeLocalDataSource(database: appDatabase).insert(
-        Challenge(
-          userId: 'user-1',
-          title: 'Run 10 km',
-          type: 'run_10km',
-          description: 'Complete 10 km',
-          difficulty: 'medium',
-          target: 10,
-          rewardXp: 50,
-          createdAt: now,
-          updatedAt: now,
-        ),
-      );
+        ]);
+        await ChallengeLocalDataSource(database: appDatabase).insert(
+          Challenge(
+            userId: 'user-1',
+            title: 'Run 10 km',
+            type: 'run_10km',
+            description: 'Complete 10 km',
+            difficulty: 'medium',
+            target: 10,
+            rewardXp: 50,
+            createdAt: now,
+            updatedAt: now,
+          ),
+        );
 
-      expect(await eventsFor('achievement'), isEmpty);
-      expect(await eventsFor('badge'), isEmpty);
-      expect(await eventsFor('challenge'), isEmpty);
-      for (final String table in <String>[
-        'achievement',
-        'badge',
-        'challenge',
-        'milestone',
-      ]) {
-        expect(SyncTableRegistry.byLocalTable(table), isNull,
-            reason: '$table mirrors server-authoritative master definitions; '
-                'the client never uploads master changes');
-      }
-    });
+        // The user-owned rows are now part of two-way sync ...
+        expect(await eventsFor('achievement'), hasLength(1));
+        expect(await eventsFor('badge'), hasLength(1));
+        expect(await eventsFor('challenge'), hasLength(1));
+        expect(
+          SyncTableRegistry.byLocalTable('achievement')?.cloudTable,
+          'user_achievements',
+        );
+        expect(
+          SyncTableRegistry.byLocalTable('badge')?.cloudTable,
+          'user_badges',
+        );
+        expect(
+          SyncTableRegistry.byLocalTable('challenge')?.cloudTable,
+          'user_challenges',
+        );
+        // ... while the server-authoritative master catalogs stay local.
+        for (final String table in <String>[
+          'achievement_def',
+          'badge_def',
+          'challenge_def',
+          'milestone',
+        ]) {
+          expect(
+            SyncTableRegistry.byLocalTable(table),
+            isNull,
+            reason:
+                '$table mirrors server-authoritative master definitions; '
+                'the client never uploads master changes',
+          );
+        }
+      },
+    );
   });
 
   group('engine: incremental pull, cursor, duplicates, conflicts', () {
@@ -804,15 +869,12 @@ void main() {
     });
 
     SyncEngine engine() => SyncEngine(
-          repository: eventRepo,
-          syncStateRepository: stateRepo,
-          deviceIdProvider: () async => 'device-1',
-        );
+      repository: eventRepo,
+      syncStateRepository: stateRepo,
+      deviceIdProvider: () async => 'device-1',
+    );
 
-    SyncChange reminderChange(
-      int cursorId, {
-      String recordId = 'rem-uuid-1',
-    }) =>
+    SyncChange reminderChange(int cursorId, {String recordId = 'rem-uuid-1'}) =>
         SyncChange(
           cursorId: cursorId,
           cloudTable: 'reminders',
@@ -834,79 +896,86 @@ void main() {
           },
         );
 
-    test('incremental pull applies only changes after the stored cursor',
-        () async {
-      final SyncEngine syncEngine = engine();
+    test(
+      'incremental pull applies only changes after the stored cursor',
+      () async {
+        final SyncEngine syncEngine = engine();
 
-      await syncEngine.pull(
-        userId: 'user-1',
-        transport: _PullTransport(
-          remoteChanges: <SyncChange>[
-            reminderChange(5, recordId: 'rem-uuid-1'),
-            reminderChange(6, recordId: 'rem-uuid-2'),
-          ],
-        ),
-        applier: applier,
-      );
-      final SyncState first = (await stateRepo.getByUserId('user-1'))!;
-      expect(first.cursor, 6);
-      expect(await db.query('reminder'), hasLength(2));
+        await syncEngine.pull(
+          userId: 'user-1',
+          transport: _PullTransport(
+            remoteChanges: <SyncChange>[
+              reminderChange(5, recordId: 'rem-uuid-1'),
+              reminderChange(6, recordId: 'rem-uuid-2'),
+            ],
+          ),
+          applier: applier,
+        );
+        final SyncState first = (await stateRepo.getByUserId('user-1'))!;
+        expect(first.cursor, 6);
+        expect(await db.query('reminder'), hasLength(2));
 
-      // Second run only pulls cursor-7+ changes; 5/6 are never re-applied.
-      await syncEngine.pull(
-        userId: 'user-1',
-        transport: _PullTransport(
-          remoteChanges: <SyncChange>[
-            reminderChange(5, recordId: 'rem-uuid-1'),
-            reminderChange(6, recordId: 'rem-uuid-2'),
-            reminderChange(7, recordId: 'rem-uuid-3'),
-          ],
-        ),
-        applier: applier,
-      );
-      final SyncState second = (await stateRepo.getByUserId('user-1'))!;
-      expect(second.cursor, 7);
-      expect(await db.query('reminder'), hasLength(3));
-    });
+        // Second run only pulls cursor-7+ changes; 5/6 are never re-applied.
+        await syncEngine.pull(
+          userId: 'user-1',
+          transport: _PullTransport(
+            remoteChanges: <SyncChange>[
+              reminderChange(5, recordId: 'rem-uuid-1'),
+              reminderChange(6, recordId: 'rem-uuid-2'),
+              reminderChange(7, recordId: 'rem-uuid-3'),
+            ],
+          ),
+          applier: applier,
+        );
+        final SyncState second = (await stateRepo.getByUserId('user-1'))!;
+        expect(second.cursor, 7);
+        expect(await db.query('reminder'), hasLength(3));
+      },
+    );
 
-    test('a parent/child batch applies reminder before reminder_history',
-        () async {
-      await engine().pull(
-        userId: 'user-1',
-        transport: _PullTransport(
-          remoteChanges: <SyncChange>[
-            SyncChange(
-              cursorId: 2,
-              cloudTable: 'reminder_history',
-              recordId: 'rh-uuid-1',
-              operation: SyncOperation.create,
-              payload: <String, Object?>{
-                'id': 'rh-uuid-1',
-                'user_id': 'user-1',
-                'reminder_id': 'rem-uuid-1',
-                'status': 'missed',
-                'scheduled_for': '2026-01-01T07:00:00Z',
-                'created_at': '2026-01-01T07:00:00Z',
-                'updated_at': '2026-01-01T07:00:00Z',
-                'deleted_at': null,
-                'row_version': 1,
-              },
-            ),
-            reminderChange(1, recordId: 'rem-uuid-1'),
-          ],
-        ),
-        applier: applier,
-      );
+    test(
+      'a parent/child batch applies reminder before reminder_history',
+      () async {
+        await engine().pull(
+          userId: 'user-1',
+          transport: _PullTransport(
+            remoteChanges: <SyncChange>[
+              SyncChange(
+                cursorId: 2,
+                cloudTable: 'reminder_history',
+                recordId: 'rh-uuid-1',
+                operation: SyncOperation.create,
+                payload: <String, Object?>{
+                  'id': 'rh-uuid-1',
+                  'user_id': 'user-1',
+                  'reminder_id': 'rem-uuid-1',
+                  'status': 'missed',
+                  'scheduled_for': '2026-01-01T07:00:00Z',
+                  'created_at': '2026-01-01T07:00:00Z',
+                  'updated_at': '2026-01-01T07:00:00Z',
+                  'deleted_at': null,
+                  'row_version': 1,
+                },
+              ),
+              reminderChange(1, recordId: 'rem-uuid-1'),
+            ],
+          ),
+          applier: applier,
+        );
 
-      final List<Map<String, Object?>> history =
-          await db.query('reminder_history');
-      expect(history, hasLength(1));
-      final List<Map<String, Object?>> reminders =
-          await db.query('reminder');
-      expect(reminders, hasLength(1));
-      expect(history.single['reminder_id'], reminders.single['id'],
-          reason: 'parent uuid resolved to the local int id');
-    });
+        final List<Map<String, Object?>> history = await db.query(
+          'reminder_history',
+        );
+        expect(history, hasLength(1));
+        final List<Map<String, Object?>> reminders = await db.query('reminder');
+        expect(reminders, hasLength(1));
+        expect(
+          history.single['reminder_id'],
+          reminders.single['id'],
+          reason: 'parent uuid resolved to the local int id',
+        );
+      },
+    );
 
     test('duplicate pending outbox events are merged into one', () async {
       final SyncEngine syncEngine = engine();
@@ -928,34 +997,41 @@ void main() {
         baseVersion: 1,
       );
 
-      final List<SyncEvent> pending =
-          await eventRepo.getPendingByUserId('user-1');
+      final List<SyncEvent> pending = await eventRepo.getPendingByUserId(
+        'user-1',
+      );
       expect(pending, hasLength(1));
       expect(pending.single.eventUuid, firstUuid);
     });
 
-    test('an optimistic-lock conflict on push is resolved latest-wins',
-        () async {
-      final SyncEngine syncEngine = engine();
-      await syncEngine.track(
-        userId: 'user-1',
-        entity: 'reward',
-        entityId: 'rw-1',
-        operation: SyncOperation.update,
-        baseVersion: 1,
-      );
+    test(
+      'an optimistic-lock conflict on push is resolved latest-wins',
+      () async {
+        final SyncEngine syncEngine = engine();
+        await syncEngine.track(
+          userId: 'user-1',
+          entity: 'reward',
+          entityId: 'rw-1',
+          operation: SyncOperation.update,
+          baseVersion: 1,
+        );
 
-      final SyncRunResult result = await syncEngine.processQueue(
-        'user-1',
-        transport: _ConflictTransport(),
-      );
+        final SyncRunResult result = await syncEngine.processQueue(
+          'user-1',
+          transport: _ConflictTransport(),
+        );
 
-      expect(result.conflicts, 1);
-      final List<SyncEvent> pending =
-          await eventRepo.getPendingByUserId('user-1');
-      expect(pending, isEmpty);
-      expect((await eventRepo.countByStatus('user-1'))[SyncStatus.completed.name], 1,
-          reason: 'latest-wins acknowledges the push; pull converges next');
-    });
+        expect(result.conflicts, 1);
+        final List<SyncEvent> pending = await eventRepo.getPendingByUserId(
+          'user-1',
+        );
+        expect(pending, isEmpty);
+        expect(
+          (await eventRepo.countByStatus('user-1'))[SyncStatus.completed.name],
+          1,
+          reason: 'latest-wins acknowledges the push; pull converges next',
+        );
+      },
+    );
   });
 }

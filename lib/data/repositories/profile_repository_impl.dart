@@ -111,8 +111,14 @@ class ProfileRepositoryImpl implements ProfileRepository {
 
   @override
   Future<void> updateName(String userId, String name) async {
+    final String trimmed = name.trim();
     final AppUser? user = await _userDataSource.getProfile(userId);
-    if (user == null) return;
-    await _userDataSource.saveProfile(user.copyWith(displayName: name));
+    if (user != null && trimmed != (user.displayName ?? '')) {
+      await _userDataSource.saveProfile(user.copyWith(displayName: trimmed));
+    }
+    // Mirror the name onto the sync-synced singleton profile so the outbox
+    // pushes it to the cloud `profiles.display_name`; the pull applies it back
+    // to the `users` table on other devices.
+    await _profileDataSource.updateDisplayName(userId, trimmed);
   }
 }

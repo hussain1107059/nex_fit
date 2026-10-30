@@ -59,6 +59,8 @@ class AppDatabase {
     DatabaseMigration(version: 16, apply: _migrationV16MasterDataSync),
     DatabaseMigration(version: 17, apply: _migrationV17SyncConflictStore),
     DatabaseMigration(version: 18, apply: _migrationV18ProfileFinalization),
+    DatabaseMigration(version: 19, apply: _migrationV19ProfileDisplayName),
+    DatabaseMigration(version: 20, apply: _migrationV20GamificationSync),
   ];
 
   Future<Database> get database async {
@@ -2065,4 +2067,68 @@ class AppDatabase {
     // simply get a NULL timezone (kept local-only until the user sets one).
     await db.execute('ALTER TABLE user_profile ADD COLUMN timezone TEXT');
   }
+
+  /// v19: profile display name (PROMPT 34).
+  ///
+  /// Adds the display_name column to user_profile so display name updates
+  /// sync to the cloud profiles.display_name.
+  static Future<void> _migrationV19ProfileDisplayName(
+    DatabaseExecutor executor,
+    int version,
+  ) async {
+    final DatabaseExecutor db = executor;
+    await db.execute('ALTER TABLE user_profile ADD COLUMN display_name TEXT');
+  }
+
+  /// v20: gamification sync (PROMPT 34).
+  ///
+  /// Adds the FK columns linking the gamification user tables to their master
+  /// definition catalogs so the push transport can resolve the cloud uuids.
+  /// `achievement_def_id` (achievement -> achievement_def), `badge_def_id`
+  /// (badge -> badge_def) and `challenge_def_id` (challenge -> challenge_def)
+  /// are nullable: they are populated when the master-data sync lands the
+  /// catalog uuids, and a NULL value means the local row predates sync (the
+  /// push transport skips FK resolution for those rows rather than failing).
+  static Future<void> _migrationV20GamificationSync(
+    DatabaseExecutor executor,
+    int version,
+  ) async {
+    final DatabaseExecutor db = executor;
+    await db.execute('ALTER TABLE achievement ADD COLUMN achievement_def_id INTEGER');
+    await db.execute('ALTER TABLE badge ADD COLUMN badge_def_id INTEGER');
+    await db.execute('ALTER TABLE challenge ADD COLUMN challenge_def_id INTEGER');
+
+    // Link existing rows to their master-catalog definitions by the natural key
+    // the app already stores (type). Runs before any master sync, so rows whose
+    // definition is not present yet stay NULL and the DAO resolves them on the
+    // next write; the push transport defers unresolved required FKs.
+    await db.execute('''
+      UPDATE achievement
+      SET achievement_def_id = (
+        SELECT d.id FROM achievement_def d
+        WHERE d.achievement_type = achievement.achievement_type
+        LIMIT 1
+      )
+      WHERE achievement_def_id IS NULL
+    ''');
+    await db.execute('''
+      UPDATE badge
+      SET badge_def_id = (
+        SELECT d.id FROM badge_def d
+        WHERE d.badge_type = badge.badge_type
+        LIMIT 1
+      )
+      WHERE badge_def_id IS NULL
+    ''');
+    await db.execute('''
+      UPDATE challenge
+      SET challenge_def_id = (
+        SELECT d.id FROM challenge_def d
+        WHERE d.challenge_type = challenge.type
+        LIMIT 1
+      )
+      WHERE challenge_def_id IS NULL
+    ''');
+  }
+
 }

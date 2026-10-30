@@ -15,6 +15,9 @@ class SyncTableMapping {
     this.localKeyColumn = 'id',
     this.cloudForeignKeys = const <String, String>{},
     this.cloudForeignKeyNames = const <String, String>{},
+    this.requiredCloudForeignKeys = const <String>{},
+    this.localNaturalKey = const <String>[],
+    this.cloudNaturalKey = const <String>[],
     this.cloudHasDeletedAt = true,
     this.alwaysUpsert = false,
   });
@@ -54,6 +57,24 @@ class SyncTableMapping {
   /// it differs from the local column name (defaults to the local name).
   /// Example: local `food_item_id` -> cloud `food_id`.
   final Map<String, String> cloudForeignKeyNames;
+
+  /// Subset of [cloudForeignKeys] whose cloud column is NOT NULL. A push is
+  /// deferred (retryable) until the referenced catalog row is present locally
+  /// and its uuid can be resolved, instead of being rejected by Postgres.
+  final Set<String> requiredCloudForeignKeys;
+
+  /// Local columns of the cloud natural unique constraint (e.g.
+  /// `user_id` + `badge_def_id`). Two devices independently materialising the
+  /// same logical row get different uuids, so the pull resolves an existing
+  /// local row by this key and adopts the cloud uuid instead of inserting a
+  /// duplicate (which the local UNIQUE index would reject).
+  final List<String> localNaturalKey;
+
+  /// Cloud columns of [localNaturalKey], in the same order. The push upserts on
+  /// this conflict target for these tables (last-write-wins on derived
+  /// counters) and omits the client `id`, so an independently created row
+  /// cannot collide with the cloud unique constraint.
+  final List<String> cloudNaturalKey;
 
   /// Whether the cloud table carries a `deleted_at` tombstone column. The push
   /// transport sends `deleted_at` (null or ISO) so a locally resurrected row
@@ -130,7 +151,12 @@ class SyncTableRegistry {
         'created_at': 'created_at',
         'updated_at': 'updated_at',
       },
-      timestampColumns: <String>{'bedtime', 'wake_time', 'created_at', 'updated_at'},
+      timestampColumns: <String>{
+        'bedtime',
+        'wake_time',
+        'created_at',
+        'updated_at',
+      },
       dateColumns: <String>{'sleep_date'},
     ),
     // step_log -> step_logs. step_date is a cloud `date`.
@@ -215,7 +241,11 @@ class SyncTableRegistry {
         'created_at': 'created_at',
         'updated_at': 'updated_at',
       },
-      timestampColumns: <String>{'last_triggered_at', 'created_at', 'updated_at'},
+      timestampColumns: <String>{
+        'last_triggered_at',
+        'created_at',
+        'updated_at',
+      },
       dateColumns: <String>{'start_date', 'end_date'},
       booleanColumns: <String>{
         'is_enabled',
@@ -237,7 +267,12 @@ class SyncTableRegistry {
         'created_at': 'created_at',
         'updated_at': 'updated_at',
       },
-      timestampColumns: <String>{'scheduled_for', 'acted_at', 'created_at', 'updated_at'},
+      timestampColumns: <String>{
+        'scheduled_for',
+        'acted_at',
+        'created_at',
+        'updated_at',
+      },
       cloudForeignKeys: <String, String>{'reminder_id': 'reminder'},
     ),
     // reward -> user_rewards (claim records; all columns are user-owned, no
@@ -288,15 +323,121 @@ class SyncTableRegistry {
         'created_at': 'created_at',
         'updated_at': 'updated_at',
       },
-      timestampColumns: <String>{'started_at', 'ended_at', 'created_at', 'updated_at'},
+      timestampColumns: <String>{
+        'started_at',
+        'ended_at',
+        'created_at',
+        'updated_at',
+      },
       booleanColumns: <String>{'is_completed'},
       cloudForeignKeys: <String, String>{'workout_id': 'workout'},
+    ),
+    // achievement -> user_achievements (PROMPT 34 Batch 6). `achievement_def_id`
+    // is the local FK to the master catalog; resolved through cloudForeignKeys
+    // to the cloud `achievement_id` uuid.
+    SyncTableMapping(
+      localTable: 'achievement',
+      cloudTable: 'user_achievements',
+      localToCloud: <String, String>{
+        'is_unlocked': 'is_unlocked',
+        'unlocked_at': 'unlocked_at',
+        'created_at': 'created_at',
+        'updated_at': 'updated_at',
+      },
+      timestampColumns: <String>{'unlocked_at', 'created_at', 'updated_at'},
+      booleanColumns: <String>{'is_unlocked'},
+      cloudForeignKeys: <String, String>{
+        'achievement_def_id': 'achievement_def',
+      },
+      cloudForeignKeyNames: <String, String>{
+        'achievement_def_id': 'achievement_id',
+      },
+      requiredCloudForeignKeys: <String>{'achievement_def_id'},
+      // Match the local UNIQUE index (user_id, achievement_type) rather than
+      // the def id: a row earned before the master catalog existed has a NULL
+      // `achievement_def_id`, so a def-keyed lookup would miss it and the
+      // insert would violate the type-based local unique index.
+      localNaturalKey: <String>['user_id', 'achievement_type'],
+      cloudNaturalKey: <String>['user_id', 'achievement_id'],
+    ),
+    // badge -> user_badges (PROMPT 34 Batch 6). `badge_def_id` resolves to the
+    // cloud `badge_id` uuid.
+    SyncTableMapping(
+      localTable: 'badge',
+      cloudTable: 'user_badges',
+      localToCloud: <String, String>{
+        'level': 'level',
+        'progress': 'progress',
+        'target': 'target',
+        'is_earned': 'is_earned',
+        'earned_at': 'earned_at',
+        'created_at': 'created_at',
+        'updated_at': 'updated_at',
+      },
+      timestampColumns: <String>{'earned_at', 'created_at', 'updated_at'},
+      booleanColumns: <String>{'is_earned'},
+      cloudForeignKeys: <String, String>{'badge_def_id': 'badge_def'},
+      cloudForeignKeyNames: <String, String>{'badge_def_id': 'badge_id'},
+      requiredCloudForeignKeys: <String>{'badge_def_id'},
+      // Local uniqueness is (user_id, badge_type); a pre-master-sync badge can
+      // have a NULL `badge_def_id`, so match on the type to adopt it instead
+      // of inserting a duplicate.
+      localNaturalKey: <String>['user_id', 'badge_type'],
+      cloudNaturalKey: <String>['user_id', 'badge_id'],
+    ),
+    // challenge -> user_challenges (PROMPT 34 Batch 6). `challenge_def_id`
+    // resolves to the cloud `challenge_id` uuid.
+    SyncTableMapping(
+      localTable: 'challenge',
+      cloudTable: 'user_challenges',
+      localToCloud: <String, String>{
+        'progress': 'progress',
+        'is_completed': 'is_completed',
+        'completed_at': 'completed_at',
+        'created_at': 'created_at',
+        'updated_at': 'updated_at',
+      },
+      timestampColumns: <String>{'completed_at', 'created_at', 'updated_at'},
+      booleanColumns: <String>{'is_completed'},
+      cloudForeignKeys: <String, String>{'challenge_def_id': 'challenge_def'},
+      cloudForeignKeyNames: <String, String>{
+        'challenge_def_id': 'challenge_id',
+      },
+      requiredCloudForeignKeys: <String>{'challenge_def_id'},
+      // Local uniqueness is (user_id, type); match on it so a challenge
+      // created before the master catalog landed (NULL def id) is adopted
+      // instead of colliding with the local unique index.
+      localNaturalKey: <String>['user_id', 'type'],
+      cloudNaturalKey: <String>['user_id', 'challenge_id'],
+    ),
+    // streak -> streaks (PROMPT 34 Batch 6). `last_active_date` and `best_date`
+    // are cloud `date` columns (midnight UTC epoch-ms).
+    SyncTableMapping(
+      localTable: 'streak',
+      cloudTable: 'streaks',
+      localToCloud: <String, String>{
+        'streak_type': 'streak_type',
+        'current_streak': 'current_streak',
+        'longest_streak': 'longest_streak',
+        'last_active_date': 'last_active_date',
+        'best_date': 'best_date',
+        'created_at': 'created_at',
+        'updated_at': 'updated_at',
+      },
+      timestampColumns: <String>{'created_at', 'updated_at'},
+      dateColumns: <String>{'last_active_date', 'best_date'},
+      localNaturalKey: <String>['user_id', 'streak_type'],
+      cloudNaturalKey: <String>['user_id', 'streak_type'],
     ),
     // user_profile -> profiles (singleton; no deleted_at on cloud). The whole
     // row is the unit of truth (like app_settings): a row_version drift that
     // turned into a stale-write conflict would otherwise discard the user's
     // latest profile edits (SERVER_WINS) and the pull would revert the local
     // row, so every push is an idempotent full-row upsert keyed on the id.
+    // `timezone` is intentionally NOT mapped: the deployed `profiles` table has
+    // no such column, and pushing it makes PostgREST reject the whole profile
+    // write ("column not found in schema cache"), so nothing profile-related
+    // ever syncs. Keep it local-only until a cloud column exists.
     SyncTableMapping(
       localTable: 'user_profile',
       cloudTable: 'profiles',
@@ -304,12 +445,12 @@ class SyncTableRegistry {
       cloudHasDeletedAt: false,
       alwaysUpsert: true,
       localToCloud: <String, String>{
+        'display_name': 'display_name',
         'height_cm': 'height_cm',
         'weight_kg': 'weight_kg',
         'gender': 'gender',
         'birth_date': 'birth_date',
         'activity_level': 'activity_level',
-        'timezone': 'timezone',
         'target_calories': 'target_calories',
         'target_protein': 'target_protein',
         'target_carbs': 'target_carbs',
@@ -324,7 +465,7 @@ class SyncTableRegistry {
         'created_at': 'created_at',
         'updated_at': 'updated_at',
       },
-      timestampColumns: <String>{'birth_date', 'created_at', 'updated_at'},
+      timestampColumns: <String>{'created_at', 'updated_at'},
       dateColumns: <String>{'birth_date'},
     ),
     // app_settings -> user_settings (singleton). `theme_mode` is the
@@ -399,7 +540,12 @@ class SyncTableRegistry {
         'created_at': 'created_at',
         'updated_at': 'updated_at',
       },
-      timestampColumns: <String>{'start_date', 'target_date', 'created_at', 'updated_at'},
+      timestampColumns: <String>{
+        'start_date',
+        'target_date',
+        'created_at',
+        'updated_at',
+      },
       dateColumns: <String>{'start_date', 'target_date'},
     ),
     // workout -> workouts (category_id is a local integer id referencing the
@@ -499,9 +645,7 @@ class SyncTableRegistry {
         'food_item_id': 'food_item',
         'meal_id': 'meal',
       },
-      cloudForeignKeyNames: <String, String>{
-        'food_item_id': 'food_id',
-      },
+      cloudForeignKeyNames: <String, String>{'food_item_id': 'food_id'},
     ),
     // food_favorite -> food_favorites (composite-PK join row keyed by uuid)
     SyncTableMapping(
@@ -514,9 +658,7 @@ class SyncTableRegistry {
       },
       timestampColumns: <String>{'created_at', 'updated_at'},
       cloudForeignKeys: <String, String>{'food_item_id': 'food_item'},
-      cloudForeignKeyNames: <String, String>{
-        'food_item_id': 'food_id',
-      },
+      cloudForeignKeyNames: <String, String>{'food_item_id': 'food_id'},
     ),
     // meal -> meals (category_id references the master meal_category catalog
     // which is not uuid-synced, so it is intentionally omitted, like
@@ -555,9 +697,7 @@ class SyncTableRegistry {
         'meal_id': 'meal',
         'food_item_id': 'food_item',
       },
-      cloudForeignKeyNames: <String, String>{
-        'food_item_id': 'food_id',
-      },
+      cloudForeignKeyNames: <String, String>{'food_item_id': 'food_id'},
     ),
     // exercise -> exercises (hybrid table: master rows have user_id IS NULL
     // and stay local-only catalog; only the user's custom rows are synced).

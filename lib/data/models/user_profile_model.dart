@@ -11,6 +11,7 @@ class UserProfileModel {
   static Map<String, Object?> toMap(UserProfile profile) {
     return <String, Object?>{
       'user_id': profile.userId,
+      'display_name': profile.displayName,
       'height_cm': profile.heightCm,
       'weight_kg': profile.weightKg,
       'target_weight_kg': profile.targetWeightKg,
@@ -35,6 +36,7 @@ class UserProfileModel {
   static UserProfile fromMap(Map<String, Object?> row) {
     return UserProfile(
       userId: row['user_id'] as String,
+      displayName: row['display_name'] as String?,
       heightCm: ModelCodec.toDouble(row['height_cm']),
       weightKg: ModelCodec.toDouble(row['weight_kg']),
       targetWeightKg: ModelCodec.toDouble(row['target_weight_kg']),

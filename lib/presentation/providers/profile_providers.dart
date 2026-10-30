@@ -66,6 +66,7 @@ class ProfileController extends AsyncNotifier<ProfileData> {
 
     final UserProfile updated = UserProfile(
       userId: user.id,
+      displayName: name.trim(),
       heightCm: heightCm,
       weightKg: weightKg,
       targetWeightKg: targetWeightKg,
@@ -145,6 +146,7 @@ class ProfileController extends AsyncNotifier<ProfileData> {
   ) {
     return UserProfile(
       userId: userId,
+      displayName: existing?.displayName,
       heightCm: existing?.heightCm,
       weightKg: existing?.weightKg,
       targetWeightKg: existing?.targetWeightKg,

@@ -724,6 +724,64 @@ test('update preserves uuid, bumps version and records base_version',
       expect(rows.single['row_version'], 6);
       expect(await eventsFor('user_profile'), hasLength(1));
     });
+
+    test('updateDisplayName mirrors the name and records a syncable update',
+        () async {
+      final UserProfileLocalDataSource source = dao();
+      await source.upsert(profile());
+      await source.updateDisplayName('user-1', 'Alice Renamed');
+
+      final List<Map<String, Object?>> rows = await db.query('user_profile');
+      expect(rows.single['display_name'], 'Alice Renamed');
+      expect(rows.single['row_version'], 2);
+      final List<Map<String, Object?>> events = await eventsFor('user_profile');
+      expect(events, hasLength(2));
+      expect(events.last['operation'], SyncOperation.update.name);
+      expect(events.last['entity_id'], 'user-1');
+      expect(events.last['base_version'], 1);
+    });
+
+    test('updateDisplayName creates a profile row when none exists yet',
+        () async {
+      final UserProfileLocalDataSource source = dao();
+      await source.updateDisplayName('user-1', 'Alice Fresh');
+
+      final List<Map<String, Object?>> rows = await db.query('user_profile');
+      expect(rows.single['display_name'], 'Alice Fresh');
+      expect(rows.single['uuid'], 'user-1');
+      expect(rows.single['row_version'], 1);
+      final List<Map<String, Object?>> events = await eventsFor('user_profile');
+      expect(events.single['operation'], SyncOperation.create.name);
+    });
+
+    test('remote apply mirrors profiles.display_name back onto the users name',
+        () async {
+      await db.transaction((Transaction txn) async {
+        await applier.apply(
+          txn,
+          SyncChange(
+            cursorId: 1,
+            cloudTable: 'profiles',
+            recordId: 'user-1',
+            operation: SyncOperation.update,
+            payload: <String, Object?>{
+              'id': 'user-1',
+              'display_name': 'Alice From Cloud',
+              'height_cm': 176.0,
+              'row_version': 3,
+              'created_at': _iso(DateTime.utc(2026, 1, 1)),
+              'updated_at': _iso(DateTime.utc(2026, 2, 1)),
+            },
+          ),
+        );
+      });
+
+      final List<Map<String, Object?>> users =
+          await db.query('users', where: 'id = ?', whereArgs: <Object?>['user-1']);
+      expect(users.single['name'], 'Alice From Cloud');
+      final List<Map<String, Object?>> rows = await db.query('user_profile');
+      expect(rows.single['display_name'], 'Alice From Cloud');
+    });
   });
 
   group('app_settings', () {
