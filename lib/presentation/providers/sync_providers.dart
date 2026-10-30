@@ -9,6 +9,8 @@ import '../../domain/entities/app_user.dart';
 import '../../domain/entities/sync_state.dart';
 import '../../injection/dependency_injection.dart';
 import 'auth_provider.dart';
+import 'dashboard_providers.dart';
+import 'profile_providers.dart';
 import 'reminder_providers.dart';
 import 'settings_providers.dart';
 
@@ -222,6 +224,7 @@ class SyncController extends Notifier<SyncUiState> {
           .setLastSyncAt(DateTime.now());
     }
     await _refreshAndMaster();
+    if (result.changesPulled > 0) _refreshUserFacingData();
     // PROMPT 34: the initial pull may have brought reminder rows onto this
     // device for the first time, so schedule their local notifications now
     // instead of waiting for the next app restart.
@@ -258,6 +261,7 @@ class SyncController extends Notifier<SyncUiState> {
         .read(settingsControllerProvider.notifier)
         .setLastSyncAt(DateTime.now());
     await _refreshAndMaster();
+    if (result.pulled > 0) _refreshUserFacingData();
     // PROMPT 34: reminder configuration is user-owned and syncable while
     // notification execution is device-local. After a pull (or an offline
     // acknowledgement) re-schedule every enabled reminder so reminders that
@@ -267,6 +271,15 @@ class SyncController extends Notifier<SyncUiState> {
     if (result.hasErrors) {
       state = state.copyWith(failure: result);
     }
+  }
+
+  /// Repaints user-facing aggregates after a pull actually applied rows.
+  /// The controllers cache their aggregates for the app-shell lifetime, so
+  /// without this a device would keep rendering the pre-sync profile/dashboard
+  /// (body data, BMI, goals and daily targets) until the app is restarted.
+  void _refreshUserFacingData() {
+    ref.invalidate(profileControllerProvider);
+    ref.invalidate(dashboardControllerProvider);
   }
 
   /// Master catalogs are global and server-authoritative (PROMPT 16). They run
@@ -353,6 +366,7 @@ class SyncController extends Notifier<SyncUiState> {
           .read(settingsControllerProvider.notifier)
           .setLastSyncAt(DateTime.now());
       await _refreshAndMaster();
+      if (result.pulled > 0) _refreshUserFacingData();
       state = state.copyWith(
         resetAt: DateTime.now(),
         resetPulled: result.pulled,

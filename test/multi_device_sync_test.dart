@@ -1864,5 +1864,78 @@ void main() {
       expect(rowsB.single['weight_kg'], 84.0);
       expect(rowsB.single['fitness_goal'], 'weightLoss');
     });
+
+    test('17. a long-lived permanently-failed profile write converges when a '
+        'newer server snapshot arrives', () async {
+      // The server holds the full profile written by another device after B's
+      // dead local edit.
+      final DateTime serverUpdatedAt = DateTime.now().toUtc();
+      store.seed(
+        table: 'profiles',
+        recordId: 'user-1',
+        userId: 'user-1',
+        payload: <String, Object?>{
+          'id': 'user-1',
+          'display_name': 'Test User',
+          'height_cm': 180.0,
+          'weight_kg': 84.0,
+          'birth_date': '1993-07-14',
+          'gender': 'male',
+          'activity_level': 'moderate',
+          'fitness_goal': 'weightLoss',
+          'target_calories': 2200.0,
+          'target_water_ml': 3000,
+          'target_steps': 9000,
+          'created_at': '2026-01-01T06:00:00Z',
+          'updated_at': serverUpdatedAt.toIso8601String(),
+          'row_version': 1,
+        },
+      );
+
+      // B has an older, empty profile at an inflated version: many edits whose
+      // pushes all failed permanently under an older build (e.g. a schema
+      // mismatch), so its local row_version is far ahead of the server's.
+      await deviceB.raw.insert('user_profile', <String, Object?>{
+        'user_id': 'user-1',
+        'uuid': 'user-1',
+        'created_at': DateTime.now().millisecondsSinceEpoch,
+        'updated_at': DateTime.now().millisecondsSinceEpoch,
+        'row_version': 5,
+      });
+      await deviceB.engine().track(
+            userId: 'user-1',
+            entity: 'user_profile',
+            entityId: 'user-1',
+            operation: SyncOperation.update,
+            baseVersion: 4,
+          );
+      await _failPermanently(deviceB, 'user_profile');
+      // Age the dead event so the server snapshot is unambiguously newer.
+      final int failedAt = serverUpdatedAt
+          .subtract(const Duration(hours: 1))
+          .millisecondsSinceEpoch;
+      await deviceB.raw.update(
+        'sync_event',
+        <String, Object?>{'created_at': failedAt},
+        where: 'entity = ? AND status = ?',
+        whereArgs: <Object?>['user_profile', SyncStatus.failedPermanent.name],
+      );
+
+      await deviceB.engine().sync(
+            userId: 'user-1',
+            transport: _CloudStoreTransport(store: store, database: deviceB.db),
+            applier: deviceB.applier,
+          );
+
+      final List<Map<String, Object?>> rowsB =
+          await _rows(deviceB, 'user_profile');
+      expect(rowsB.single['height_cm'], 180.0,
+          reason: 'a server snapshot newer than a dead local write must '
+              'replace it instead of freezing the device forever');
+      expect(rowsB.single['weight_kg'], 84.0);
+      expect(rowsB.single['fitness_goal'], 'weightLoss');
+      expect((rowsB.single['target_calories']! as num).toDouble(), 2200.0);
+      expect((rowsB.single['target_steps']! as num).toInt(), 9000);
+    });
   });
 }

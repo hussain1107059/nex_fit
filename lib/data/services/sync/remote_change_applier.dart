@@ -417,6 +417,7 @@ class RemoteChangeApplier {
         existing.first,
         whereArg,
         incomingVersion,
+        localRow['updated_at'],
       );
       if (hasPendingWrite) return 0;
     }
@@ -445,17 +446,26 @@ class RemoteChangeApplier {
   /// when the incoming snapshot's version exceeds the event's `base_version`
   /// the server is authoritative and the row must be allowed to advance, or a
   /// permanently-failed row could never converge.
+  ///
+  /// Version drift alone is ambiguous after a long-lived terminal failure: a
+  /// device that edited the row many times while every push failed locally has
+  /// a high `row_version` the server never saw. If the incoming cloud snapshot
+  /// was written *after* the failed attempt ([incomingUpdatedAt] newer than the
+  /// event's `created_at`), it is unambiguously the newer state and must be
+  /// adopted; otherwise the device would stay frozen on unsyncable data
+  /// forever.
   Future<bool> _hasPendingOutboxEvent(
     Transaction txn,
     SyncTableMapping mapping,
     Map<String, Object?> existing,
     String recordId,
     int incomingVersion,
+    Object? incomingUpdatedAt,
   ) async {
     final Object? rowId = existing['id'];
     final List<Map<String, Object?>> rows = await txn.query(
       SyncEventModel.table,
-      columns: const <String>['status', 'base_version'],
+      columns: const <String>['status', 'base_version', 'created_at'],
       where: 'entity = ? AND entity_id IN (?, ?) AND status IN (?, ?, ?, ?)',
       whereArgs: <Object?>[
         mapping.localTable,
@@ -472,7 +482,12 @@ class RemoteChangeApplier {
       final String? status = row['status'] as String?;
       if (status != SyncStatus.failedPermanent.name) return true;
       final Object? baseVersion = row['base_version'];
-      if (baseVersion is int && baseVersion >= incomingVersion) return true;
+      if (baseVersion is! int || baseVersion < incomingVersion) continue;
+      final Object? failedAt = row['created_at'];
+      if (incomingUpdatedAt is int && failedAt is int) {
+        if (incomingUpdatedAt > failedAt) continue;
+      }
+      return true;
     }
     return false;
   }
