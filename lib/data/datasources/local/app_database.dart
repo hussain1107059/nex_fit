@@ -2097,38 +2097,6 @@ class AppDatabase {
     await db.execute('ALTER TABLE achievement ADD COLUMN achievement_def_id INTEGER');
     await db.execute('ALTER TABLE badge ADD COLUMN badge_def_id INTEGER');
     await db.execute('ALTER TABLE challenge ADD COLUMN challenge_def_id INTEGER');
-
-    // Link existing rows to their master-catalog definitions by the natural key
-    // the app already stores (type). Runs before any master sync, so rows whose
-    // definition is not present yet stay NULL and the DAO resolves them on the
-    // next write; the push transport defers unresolved required FKs.
-    await db.execute('''
-      UPDATE achievement
-      SET achievement_def_id = (
-        SELECT d.id FROM achievement_def d
-        WHERE d.achievement_type = achievement.achievement_type
-        LIMIT 1
-      )
-      WHERE achievement_def_id IS NULL
-    ''');
-    await db.execute('''
-      UPDATE badge
-      SET badge_def_id = (
-        SELECT d.id FROM badge_def d
-        WHERE d.badge_type = badge.badge_type
-        LIMIT 1
-      )
-      WHERE badge_def_id IS NULL
-    ''');
-    await db.execute('''
-      UPDATE challenge
-      SET challenge_def_id = (
-        SELECT d.id FROM challenge_def d
-        WHERE d.challenge_type = challenge.type
-        LIMIT 1
-      )
-      WHERE challenge_def_id IS NULL
-    ''');
   }
 
 }
