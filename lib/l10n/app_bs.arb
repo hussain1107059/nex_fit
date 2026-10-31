@@ -1294,5 +1294,18 @@
   "activityMeters": "মি",
   "activityMinPerKm": "মিনিট/কিমি",
   "activityKmh": "কিমি/ঘণ্টা",
+  "activitySteps": "স্টেপ",
+  "activityTarget": "লক্ষ্য",
+  "activityTargetTitle": "লক্ষ্য নির্ধারণ করুন",
+  "activityTargetNone": "লক্ষ্য ছাড়া",
+  "activityTargetDistance": "দূরত্ব",
+  "activityTargetSteps": "স্টেপ",
+  "activityTargetHintDistance": "দূরত্ব (কিমি)",
+  "activityTargetHintSteps": "স্টেপ সংখ্যা",
+  "activityTargetInvalid": "সঠিক লক্ষ্য লিখুন",
+  "activityTargetReached": "লক্ষ্য পূরণ হয়েছে! চাইলে চালিয়ে যেতে পারেন।",
+  "activityTargetStopSound": "সাউন্ড বন্ধ",
+  "activityTargetAchieved": "লক্ষ্য অর্জিত",
+  "activityStepsUnavailable": "স্টেপ সেন্সর পাওয়া যায়নি — লক্ষ্য ট্র্যাক করা যাবে না।",
   "activityGpsHint": "চলাফেরা শুরু করলে ম্যাপে আপনার রুট আঁকা হবে।"
 }

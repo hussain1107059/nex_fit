@@ -99,6 +99,7 @@ import '../data/services/backup/backup_packaging_service.dart';
 import '../data/services/backup/backup_service.dart';
 import '../data/services/backup/google_drive_backup_service.dart';
 import '../data/services/supabase/supabase_service.dart';
+import '../data/services/audio/activity_alert_service.dart';
 import '../data/services/location/location_service.dart';
 import '../data/services/notifications/local_notification_service.dart';
 import '../data/services/report/report_exporter.dart';
@@ -349,6 +350,14 @@ final activityLocalDataSourceProvider = Provider<ActivityLocalDataSource>(
 final locationServiceProvider = Provider<LocationService>(
   (ref) => const LocationService(),
 );
+
+final activityAlertServiceProvider = Provider<ActivityAlertService>((ref) {
+  final ActivityAlertService service = ActivityAlertService();
+  ref.onDispose(() {
+    service.dispose();
+  });
+  return service;
+});
 
 final reminderLocalDataSourceProvider = Provider<ReminderLocalDataSource>(
   (ref) => ReminderLocalDataSource(database: ref.watch(appDatabaseProvider)),

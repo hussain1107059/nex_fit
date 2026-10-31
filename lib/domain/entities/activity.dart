@@ -24,10 +24,66 @@ enum ActivityType {
   bool get usesPace =>
       this == ActivityType.walking || this == ActivityType.running;
 
+  /// Whether a step-count target can be used for this activity.
+  ///
+  /// Swimming only supports distance targets because the phone is not carried
+  /// on the body during a swim.
+  bool get supportsStepTarget => this != ActivityType.swimming;
+
   static ActivityType fromValue(String value) => ActivityType.values.firstWhere(
     (ActivityType type) => type.value == value,
     orElse: () => ActivityType.walking,
   );
+}
+
+/// Unit used by an activity target.
+enum ActivityGoalType {
+  distance('distance'),
+  steps('steps');
+
+  const ActivityGoalType(this.value);
+
+  /// Stable value persisted in the `activity_session.goal_type` column.
+  final String value;
+
+  static ActivityGoalType? fromValue(String? value) {
+    if (value == null) return null;
+    for (final ActivityGoalType type in ActivityGoalType.values) {
+      if (type.value == value) return type;
+    }
+    return null;
+  }
+}
+
+/// A target to reach while tracking: either a distance in metres or a step
+/// count.
+class ActivityGoal extends Equatable {
+  const ActivityGoal({required this.type, required this.value});
+
+  const ActivityGoal.distance(this.value) : type = ActivityGoalType.distance;
+
+  const ActivityGoal.steps(this.value) : type = ActivityGoalType.steps;
+
+  final ActivityGoalType type;
+
+  /// Distance in metres for [ActivityGoalType.distance], step count for
+  /// [ActivityGoalType.steps].
+  final double value;
+
+  bool get isDistance => type == ActivityGoalType.distance;
+
+  bool get isSteps => type == ActivityGoalType.steps;
+
+  int get targetSteps => value.round();
+
+  bool isReached({required double distanceMeters, required int steps}) =>
+      switch (type) {
+        ActivityGoalType.distance => distanceMeters >= value,
+        ActivityGoalType.steps => steps >= targetSteps,
+      };
+
+  @override
+  List<Object?> get props => <Object?>[type, value];
 }
 
 /// One recorded GPS sample along an activity route.
@@ -98,6 +154,10 @@ class ActivitySession extends Equatable {
     this.elevationGainMeters = 0,
     this.avgSpeedMps = 0,
     this.maxSpeedMps = 0,
+    this.steps = 0,
+    this.goalType,
+    this.goalValue,
+    this.goalReached = false,
     this.route = const <ActivityPoint>[],
     this.note,
     required this.createdAt,
@@ -114,11 +174,23 @@ class ActivitySession extends Equatable {
   final double elevationGainMeters;
   final double avgSpeedMps;
   final double maxSpeedMps;
+  final int steps;
+  final ActivityGoalType? goalType;
+  final double? goalValue;
+  final bool goalReached;
   final List<ActivityPoint> route;
   final String? note;
   final DateTime createdAt;
 
   double get distanceKm => distanceMeters / 1000;
+
+  /// The saved target, or null when the session had no target.
+  ActivityGoal? get goal {
+    final ActivityGoalType? type = goalType;
+    final double? value = goalValue;
+    if (type == null || value == null || value <= 0) return null;
+    return ActivityGoal(type: type, value: value);
+  }
 
   double get durationHours => durationSeconds / 3600;
 
@@ -146,6 +218,10 @@ class ActivitySession extends Equatable {
     double? elevationGainMeters,
     double? avgSpeedMps,
     double? maxSpeedMps,
+    int? steps,
+    ActivityGoalType? goalType,
+    double? goalValue,
+    bool? goalReached,
     List<ActivityPoint>? route,
     String? note,
     DateTime? createdAt,
@@ -162,6 +238,10 @@ class ActivitySession extends Equatable {
       elevationGainMeters: elevationGainMeters ?? this.elevationGainMeters,
       avgSpeedMps: avgSpeedMps ?? this.avgSpeedMps,
       maxSpeedMps: maxSpeedMps ?? this.maxSpeedMps,
+      steps: steps ?? this.steps,
+      goalType: goalType ?? this.goalType,
+      goalValue: goalValue ?? this.goalValue,
+      goalReached: goalReached ?? this.goalReached,
       route: route ?? this.route,
       note: note ?? this.note,
       createdAt: createdAt ?? this.createdAt,
@@ -181,6 +261,10 @@ class ActivitySession extends Equatable {
     elevationGainMeters,
     avgSpeedMps,
     maxSpeedMps,
+    steps,
+    goalType,
+    goalValue,
+    goalReached,
     route,
     note,
     createdAt,

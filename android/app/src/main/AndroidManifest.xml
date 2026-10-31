@@ -7,6 +7,12 @@
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
     <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
 
+    <!-- Step-count targets for walking/running/cycling (Android 10+). -->
+    <uses-permission android:name="android.permission.ACTIVITY_RECOGNITION" />
+    <uses-feature
+        android:name="android.hardware.sensor.stepcounter"
+        android:required="false" />
+
     <!-- Local notifications: post on Android 13+, reschedule after reboot and
          fire hydration reminders at exact scheduled times. -->
     <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />

@@ -3873,5 +3873,45 @@ class AppLocalizationsEn extends AppLocalizations {
   String get activityKmh => 'km/h';
 
   @override
+  String get activitySteps => 'steps';
+
+  @override
+  String get activityTarget => 'Target';
+
+  @override
+  String get activityTargetTitle => 'Set a target';
+
+  @override
+  String get activityTargetNone => 'No target';
+
+  @override
+  String get activityTargetDistance => 'Distance';
+
+  @override
+  String get activityTargetSteps => 'Steps';
+
+  @override
+  String get activityTargetHintDistance => 'Distance (km)';
+
+  @override
+  String get activityTargetHintSteps => 'Step count';
+
+  @override
+  String get activityTargetInvalid => 'Enter a valid target';
+
+  @override
+  String get activityTargetReached => 'Target reached! You can keep going.';
+
+  @override
+  String get activityTargetStopSound => 'Stop sound';
+
+  @override
+  String get activityTargetAchieved => 'Target achieved';
+
+  @override
+  String get activityStepsUnavailable =>
+      'Step sensor unavailable — target cannot be tracked.';
+
+  @override
   String get activityGpsHint => 'Your route is drawn on the map as you move.';
 }

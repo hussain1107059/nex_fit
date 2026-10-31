@@ -4,6 +4,7 @@
 
 list(APPEND FLUTTER_PLUGIN_LIST
   app_links
+  audioplayers_windows
   battery_plus
   connectivity_plus
   dynamic_color
@@ -12,6 +13,7 @@ list(APPEND FLUTTER_PLUGIN_LIST
   flutter_timezone
   geolocator_windows
   local_auth_windows
+  permission_handler_windows
   share_plus
   url_launcher_windows
 )

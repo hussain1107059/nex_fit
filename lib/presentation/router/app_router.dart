@@ -313,10 +313,14 @@ final appRouterProvider = Provider<GoRouter>((ref) {
       GoRoute(
         path: AppRoutes.activityTrack,
         name: 'activity-track',
-        builder: (BuildContext context, GoRouterState state) =>
-            ActivityTrackingScreen(
-              type: state.extra as ActivityType? ?? ActivityType.walking,
-            ),
+        builder: (BuildContext context, GoRouterState state) {
+          final ActivityTrackingArgs? args =
+              state.extra as ActivityTrackingArgs?;
+          return ActivityTrackingScreen(
+            type: args?.type ?? ActivityType.walking,
+            goal: args?.goal,
+          );
+        },
       ),
       GoRoute(
         path: AppRoutes.activityDetail,

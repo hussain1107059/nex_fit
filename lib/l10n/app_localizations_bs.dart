@@ -3883,5 +3883,46 @@ class AppLocalizationsBs extends AppLocalizations {
   String get activityKmh => 'কিমি/ঘণ্টা';
 
   @override
+  String get activitySteps => 'স্টেপ';
+
+  @override
+  String get activityTarget => 'লক্ষ্য';
+
+  @override
+  String get activityTargetTitle => 'লক্ষ্য নির্ধারণ করুন';
+
+  @override
+  String get activityTargetNone => 'লক্ষ্য ছাড়া';
+
+  @override
+  String get activityTargetDistance => 'দূরত্ব';
+
+  @override
+  String get activityTargetSteps => 'স্টেপ';
+
+  @override
+  String get activityTargetHintDistance => 'দূরত্ব (কিমি)';
+
+  @override
+  String get activityTargetHintSteps => 'স্টেপ সংখ্যা';
+
+  @override
+  String get activityTargetInvalid => 'সঠিক লক্ষ্য লিখুন';
+
+  @override
+  String get activityTargetReached =>
+      'লক্ষ্য পূরণ হয়েছে! চাইলে চালিয়ে যেতে পারেন।';
+
+  @override
+  String get activityTargetStopSound => 'সাউন্ড বন্ধ';
+
+  @override
+  String get activityTargetAchieved => 'লক্ষ্য অর্জিত';
+
+  @override
+  String get activityStepsUnavailable =>
+      'স্টেপ সেন্সর পাওয়া যায়নি — লক্ষ্য ট্র্যাক করা যাবে না।';
+
+  @override
   String get activityGpsHint => 'চলাফেরা শুরু করলে ম্যাপে আপনার রুট আঁকা হবে।';
 }

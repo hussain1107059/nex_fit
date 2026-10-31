@@ -7550,6 +7550,84 @@ abstract class AppLocalizations {
   /// **'কিমি/ঘণ্টা'**
   String get activityKmh;
 
+  /// No description provided for @activitySteps.
+  ///
+  /// In bs, this message translates to:
+  /// **'স্টেপ'**
+  String get activitySteps;
+
+  /// No description provided for @activityTarget.
+  ///
+  /// In bs, this message translates to:
+  /// **'লক্ষ্য'**
+  String get activityTarget;
+
+  /// No description provided for @activityTargetTitle.
+  ///
+  /// In bs, this message translates to:
+  /// **'লক্ষ্য নির্ধারণ করুন'**
+  String get activityTargetTitle;
+
+  /// No description provided for @activityTargetNone.
+  ///
+  /// In bs, this message translates to:
+  /// **'লক্ষ্য ছাড়া'**
+  String get activityTargetNone;
+
+  /// No description provided for @activityTargetDistance.
+  ///
+  /// In bs, this message translates to:
+  /// **'দূরত্ব'**
+  String get activityTargetDistance;
+
+  /// No description provided for @activityTargetSteps.
+  ///
+  /// In bs, this message translates to:
+  /// **'স্টেপ'**
+  String get activityTargetSteps;
+
+  /// No description provided for @activityTargetHintDistance.
+  ///
+  /// In bs, this message translates to:
+  /// **'দূরত্ব (কিমি)'**
+  String get activityTargetHintDistance;
+
+  /// No description provided for @activityTargetHintSteps.
+  ///
+  /// In bs, this message translates to:
+  /// **'স্টেপ সংখ্যা'**
+  String get activityTargetHintSteps;
+
+  /// No description provided for @activityTargetInvalid.
+  ///
+  /// In bs, this message translates to:
+  /// **'সঠিক লক্ষ্য লিখুন'**
+  String get activityTargetInvalid;
+
+  /// No description provided for @activityTargetReached.
+  ///
+  /// In bs, this message translates to:
+  /// **'লক্ষ্য পূরণ হয়েছে! চাইলে চালিয়ে যেতে পারেন।'**
+  String get activityTargetReached;
+
+  /// No description provided for @activityTargetStopSound.
+  ///
+  /// In bs, this message translates to:
+  /// **'সাউন্ড বন্ধ'**
+  String get activityTargetStopSound;
+
+  /// No description provided for @activityTargetAchieved.
+  ///
+  /// In bs, this message translates to:
+  /// **'লক্ষ্য অর্জিত'**
+  String get activityTargetAchieved;
+
+  /// No description provided for @activityStepsUnavailable.
+  ///
+  /// In bs, this message translates to:
+  /// **'স্টেপ সেন্সর পাওয়া যায়নি — লক্ষ্য ট্র্যাক করা যাবে না।'**
+  String get activityStepsUnavailable;
+
   /// No description provided for @activityGpsHint.
   ///
   /// In bs, this message translates to:

@@ -20,11 +20,20 @@ import '../../router/app_router.dart';
 import 'widgets/activity_map.dart';
 import 'widgets/activity_type_style.dart';
 
-/// Live GPS tracking screen for [type].
-class ActivityTrackingScreen extends ConsumerStatefulWidget {
-  const ActivityTrackingScreen({super.key, required this.type});
+/// Arguments passed through `GoRouter` when starting a tracked activity.
+class ActivityTrackingArgs {
+  const ActivityTrackingArgs({required this.type, this.goal});
 
   final ActivityType type;
+  final ActivityGoal? goal;
+}
+
+/// Live GPS tracking screen for [type].
+class ActivityTrackingScreen extends ConsumerStatefulWidget {
+  const ActivityTrackingScreen({super.key, required this.type, this.goal});
+
+  final ActivityType type;
+  final ActivityGoal? goal;
 
   @override
   ConsumerState<ActivityTrackingScreen> createState() =>
@@ -40,7 +49,9 @@ class _ActivityTrackingScreenState
   void initState() {
     super.initState();
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      ref.read(activityTrackingControllerProvider.notifier).start(widget.type);
+      ref
+          .read(activityTrackingControllerProvider.notifier)
+          .start(widget.type, goal: widget.goal);
     });
   }
 
@@ -93,6 +104,15 @@ class _ActivityTrackingScreenState
                     right: AppSpacing.md,
                     child: _StatusChip(state: state),
                   ),
+                  if (state.goalAlertPlaying)
+                    Positioned(
+                      top: 54,
+                      left: AppSpacing.md,
+                      right: AppSpacing.md,
+                      child: _GoalReachedBanner(
+                        onStop: controller.stopGoalAlert,
+                      ),
+                    ),
                   if (state.failure != null)
                     Positioned.fill(
                       child: _FailureOverlay(
@@ -100,7 +120,7 @@ class _ActivityTrackingScreenState
                         onRetry: () =>
                             state.status == ActivityTrackingStatus.paused
                             ? controller.resume()
-                            : controller.start(widget.type),
+                            : controller.start(widget.type, goal: widget.goal),
                         onOpenSettings: () => _openSettings(state.failure!),
                       ),
                     ),
@@ -110,7 +130,7 @@ class _ActivityTrackingScreenState
             _MetricsPanel(
               state: state,
               finishing: _finishing,
-              onStart: () => controller.start(widget.type),
+              onStart: () => controller.start(widget.type, goal: widget.goal),
               onPause: controller.pause,
               onResume: controller.resume,
               onFinish: _finish,
@@ -243,6 +263,58 @@ class _StatusChip extends StatelessWidget {
               style: context.textTheme.labelMedium?.copyWith(
                 fontWeight: FontWeight.w600,
               ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+/// Non-blocking banner shown while the target-reached chime is looping.
+class _GoalReachedBanner extends StatelessWidget {
+  const _GoalReachedBanner({required this.onStop});
+
+  final VoidCallback onStop;
+
+  @override
+  Widget build(BuildContext context) {
+    final AppLocalizations l10n = context.l10n;
+
+    return Material(
+      color: context.colorScheme.primaryContainer,
+      borderRadius: AppRadius.pillRadius,
+      elevation: 3,
+      child: Padding(
+        padding: const EdgeInsets.fromLTRB(
+          AppSpacing.md,
+          AppSpacing.xs,
+          AppSpacing.xs,
+          AppSpacing.xs,
+        ),
+        child: Row(
+          children: <Widget>[
+            Icon(
+              Icons.emoji_events_rounded,
+              color: context.colorScheme.onPrimaryContainer,
+              size: 20,
+            ),
+            AppSpacing.xs.widthSpace,
+            Expanded(
+              child: Text(
+                l10n.activityTargetReached,
+                maxLines: 1,
+                overflow: TextOverflow.ellipsis,
+                style: context.textTheme.labelLarge?.copyWith(
+                  color: context.colorScheme.onPrimaryContainer,
+                  fontWeight: FontWeight.w700,
+                ),
+              ),
+            ),
+            TextButton.icon(
+              onPressed: onStop,
+              icon: const Icon(Icons.volume_off_rounded, size: 18),
+              label: Text(l10n.activityTargetStopSound),
             ),
           ],
         ),
@@ -403,6 +475,32 @@ class _MetricsPanel extends StatelessWidget {
                 ),
               ],
             ),
+            if (state.goal != null) ...<Widget>[
+              AppSpacing.sm.heightSpace,
+              _TargetProgress(state: state),
+            ],
+            if (state.stepSensorUnavailable) ...<Widget>[
+              AppSpacing.xs.heightSpace,
+              Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: <Widget>[
+                  Icon(
+                    Icons.directions_walk_rounded,
+                    size: 14,
+                    color: context.colorScheme.error,
+                  ),
+                  AppSpacing.xxs.widthSpace,
+                  Flexible(
+                    child: Text(
+                      l10n.activityStepsUnavailable,
+                      style: context.textTheme.labelSmall?.copyWith(
+                        color: context.colorScheme.error,
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            ],
             AppSpacing.sm.heightSpace,
             Row(
               children: <Widget>[
@@ -443,6 +541,67 @@ class _MetricsPanel extends StatelessWidget {
           ],
         ),
       ),
+    );
+  }
+}
+
+class _TargetProgress extends StatelessWidget {
+  const _TargetProgress({required this.state});
+
+  final ActivityTrackingState state;
+
+  @override
+  Widget build(BuildContext context) {
+    final AppLocalizations l10n = context.l10n;
+    final ActivityGoal goal = state.goal!;
+    final String current = goal.isDistance
+        ? ActivityMetrics.formatDistanceKm(state.distanceMeters)
+        : state.steps.toString();
+    final String target = goal.isDistance
+        ? ActivityMetrics.formatDistanceKm(goal.value)
+        : goal.targetSteps.toString();
+    final String unit = goal.isDistance ? l10n.activityKm : l10n.activitySteps;
+
+    return Column(
+      children: <Widget>[
+        Row(
+          children: <Widget>[
+            Text(
+              l10n.activityTarget,
+              style: context.textTheme.labelSmall?.copyWith(
+                color: context.colorScheme.onSurfaceVariant,
+              ),
+            ),
+            const Spacer(),
+            if (state.goalReached) ...<Widget>[
+              Icon(
+                Icons.check_circle_rounded,
+                size: 14,
+                color: context.colorScheme.primary,
+              ),
+              AppSpacing.xxs.widthSpace,
+            ],
+            Text(
+              '${current.toBanglaDigits()} / ${target.toBanglaDigits()} $unit',
+              style: context.textTheme.labelSmall?.copyWith(
+                fontWeight: FontWeight.w700,
+                color: state.goalReached
+                    ? context.colorScheme.primary
+                    : context.colorScheme.onSurfaceVariant,
+              ),
+            ),
+          ],
+        ),
+        AppSpacing.xxs.heightSpace,
+        ClipRRect(
+          borderRadius: AppRadius.pillRadius,
+          child: LinearProgressIndicator(
+            value: state.goalProgress ?? 0,
+            minHeight: 6,
+            backgroundColor: context.colorScheme.surfaceContainerHighest,
+          ),
+        ),
+      ],
     );
   }
 }

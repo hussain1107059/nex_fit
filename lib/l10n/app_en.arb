@@ -1294,5 +1294,18 @@
   "activityMeters": "m",
   "activityMinPerKm": "min/km",
   "activityKmh": "km/h",
+  "activitySteps": "steps",
+  "activityTarget": "Target",
+  "activityTargetTitle": "Set a target",
+  "activityTargetNone": "No target",
+  "activityTargetDistance": "Distance",
+  "activityTargetSteps": "Steps",
+  "activityTargetHintDistance": "Distance (km)",
+  "activityTargetHintSteps": "Step count",
+  "activityTargetInvalid": "Enter a valid target",
+  "activityTargetReached": "Target reached! You can keep going.",
+  "activityTargetStopSound": "Stop sound",
+  "activityTargetAchieved": "Target achieved",
+  "activityStepsUnavailable": "Step sensor unavailable — target cannot be tracked.",
   "activityGpsHint": "Your route is drawn on the map as you move."
 }

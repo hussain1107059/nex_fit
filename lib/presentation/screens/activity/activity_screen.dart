@@ -19,6 +19,8 @@ import '../../../l10n/app_localizations.dart';
 import '../../providers/activity_providers.dart';
 import '../../router/app_router.dart';
 import '../dashboard/widgets/section_header.dart';
+import 'activity_tracking_screen.dart';
+import 'widgets/activity_goal_sheet.dart';
 import 'widgets/activity_type_style.dart';
 
 /// Activity tracker home: lifetime stats, activity picker and recent sessions.
@@ -59,7 +61,7 @@ class ActivityScreen extends ConsumerWidget {
             SectionHeader(title: l10n.activityChoose),
             _TypePicker(
               onSelected: (ActivityType type) =>
-                  context.push(AppRoutes.activityTrack, extra: type),
+                  _configureActivity(context, type),
             ),
             SectionHeader(title: l10n.activityRecent),
             history.when(
@@ -77,6 +79,18 @@ class ActivityScreen extends ConsumerWidget {
       ),
     );
   }
+}
+
+Future<void> _configureActivity(BuildContext context, ActivityType type) async {
+  final ActivityGoalSelection? selection = await showActivityGoalSheet(
+    context,
+    type: type,
+  );
+  if (selection == null || !context.mounted) return;
+  context.push(
+    AppRoutes.activityTrack,
+    extra: ActivityTrackingArgs(type: type, goal: selection.goal),
+  );
 }
 
 class _StatsCard extends StatelessWidget {

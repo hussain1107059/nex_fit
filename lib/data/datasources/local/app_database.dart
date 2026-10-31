@@ -62,6 +62,7 @@ class AppDatabase {
     DatabaseMigration(version: 19, apply: _migrationV19ProfileDisplayName),
     DatabaseMigration(version: 20, apply: _migrationV20GamificationSync),
     DatabaseMigration(version: 21, apply: _migrationV21ActivityTracking),
+    DatabaseMigration(version: 22, apply: _migrationV22ActivityTargets),
   ];
 
   Future<Database> get database async {
@@ -2142,5 +2143,24 @@ class AppDatabase {
       CREATE INDEX IF NOT EXISTS idx_activity_session_user_started
       ON activity_session(user_id, started_at DESC)
     ''');
+  }
+
+  /// v22: activity targets.
+  ///
+  /// Adds step count plus the optional distance/step target chosen before a
+  /// session and whether that target was reached.
+  static Future<void> _migrationV22ActivityTargets(
+    DatabaseExecutor executor,
+    int version,
+  ) async {
+    final DatabaseExecutor db = executor;
+    await db.execute(
+      'ALTER TABLE activity_session ADD COLUMN steps INTEGER NOT NULL DEFAULT 0',
+    );
+    await db.execute('ALTER TABLE activity_session ADD COLUMN goal_type TEXT');
+    await db.execute('ALTER TABLE activity_session ADD COLUMN goal_value REAL');
+    await db.execute(
+      'ALTER TABLE activity_session ADD COLUMN goal_reached INTEGER NOT NULL DEFAULT 0',
+    );
   }
 }

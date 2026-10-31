@@ -121,6 +121,12 @@ class _DetailContent extends StatelessWidget {
     final String ended = session.endedAt == null
         ? '--'
         : DateFormat('h:mm a').format(session.endedAt!).toBanglaDigits();
+    final ActivityGoal? goal = session.goal;
+    final String? goalText = goal == null
+        ? null
+        : goal.isDistance
+        ? '${ActivityMetrics.formatDistanceKm(goal.value).toBanglaDigits()} ${l10n.activityKm}'
+        : '${goal.targetSteps.toString().toBanglaDigits()} ${l10n.activitySteps}';
 
     return ListView(
       padding: const EdgeInsets.fromLTRB(
@@ -239,6 +245,20 @@ class _DetailContent extends StatelessWidget {
                 value:
                     '${session.elevationGainMeters.round().toString().toBanglaDigits()} ${l10n.activityMeters}',
               ),
+              if (session.steps > 0)
+                _DetailMetric(
+                  icon: Icons.directions_walk_rounded,
+                  label: l10n.activitySteps,
+                  value: session.steps.toString().toBanglaDigits(),
+                ),
+              if (goalText != null)
+                _DetailMetric(
+                  icon: Icons.flag_rounded,
+                  label: session.goalReached
+                      ? l10n.activityTargetAchieved
+                      : l10n.activityTarget,
+                  value: goalText,
+                ),
               _DetailMetric(
                 icon: Icons.schedule_rounded,
                 label: l10n.activityStarted,

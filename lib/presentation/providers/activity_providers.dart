@@ -2,9 +2,14 @@ import 'dart:async';
 import 'dart:math' as math;
 
 import 'package:equatable/equatable.dart';
+import 'package:flutter/foundation.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:pedometer/pedometer.dart';
+import 'package:permission_handler/permission_handler.dart';
 
 import '../../core/utils/activity_metrics.dart';
+import '../../data/services/audio/activity_alert_service.dart';
 import '../../data/services/location/location_service.dart';
 import '../../domain/entities/activity.dart';
 import '../../domain/entities/app_user.dart';
@@ -37,6 +42,11 @@ class ActivityTrackingState extends Equatable {
     this.saveFailed = false,
     this.savedSessionId,
     this.startedAt,
+    this.goal,
+    this.steps = 0,
+    this.goalReached = false,
+    this.goalAlertPlaying = false,
+    this.stepSensorUnavailable = false,
   });
 
   final ActivityType type;
@@ -52,6 +62,11 @@ class ActivityTrackingState extends Equatable {
   final bool saveFailed;
   final int? savedSessionId;
   final DateTime? startedAt;
+  final ActivityGoal? goal;
+  final int steps;
+  final bool goalReached;
+  final bool goalAlertPlaying;
+  final bool stepSensorUnavailable;
 
   bool get isActive =>
       status == ActivityTrackingStatus.acquiring ||
@@ -74,6 +89,17 @@ class ActivityTrackingState extends Equatable {
   double? get paceSecondsPerKm =>
       distanceMeters > 5 ? elapsedSeconds / distanceKm : null;
 
+  /// Fraction (0-1) of the active target that has been completed, or null
+  /// when the session has no target yet.
+  double? get goalProgress {
+    final ActivityGoal? target = goal;
+    if (target == null || target.value <= 0) return null;
+    final double current = target.isDistance
+        ? distanceMeters
+        : steps.toDouble();
+    return (current / target.value).clamp(0, 1).toDouble();
+  }
+
   ActivityTrackingState copyWith({
     ActivityType? type,
     ActivityTrackingStatus? status,
@@ -90,6 +116,11 @@ class ActivityTrackingState extends Equatable {
     int? savedSessionId,
     bool clearSavedSessionId = false,
     DateTime? startedAt,
+    ActivityGoal? goal,
+    int? steps,
+    bool? goalReached,
+    bool? goalAlertPlaying,
+    bool? stepSensorUnavailable,
   }) {
     return ActivityTrackingState(
       type: type ?? this.type,
@@ -107,6 +138,12 @@ class ActivityTrackingState extends Equatable {
           ? null
           : (savedSessionId ?? this.savedSessionId),
       startedAt: startedAt ?? this.startedAt,
+      goal: goal ?? this.goal,
+      steps: steps ?? this.steps,
+      goalReached: goalReached ?? this.goalReached,
+      goalAlertPlaying: goalAlertPlaying ?? this.goalAlertPlaying,
+      stepSensorUnavailable:
+          stepSensorUnavailable ?? this.stepSensorUnavailable,
     );
   }
 
@@ -125,6 +162,11 @@ class ActivityTrackingState extends Equatable {
     saveFailed,
     savedSessionId,
     startedAt,
+    goal,
+    steps,
+    goalReached,
+    goalAlertPlaying,
+    stepSensorUnavailable,
   ];
 }
 
@@ -134,30 +176,41 @@ class ActivityTrackingController
     extends AutoDisposeNotifier<ActivityTrackingState> {
   Timer? _timer;
   StreamSubscription<ActivityPoint>? _subscription;
+  StreamSubscription<StepCount>? _stepSubscription;
+  int? _stepBaseline;
   bool _disposed = false;
   int _generation = 0;
 
   LocationService get _location => ref.read(locationServiceProvider);
+
+  ActivityAlertService get _alert => ref.read(activityAlertServiceProvider);
 
   @override
   ActivityTrackingState build() {
     ref.onDispose(() {
       _disposed = true;
       _cancel();
+      unawaited(_alert.stop());
     });
     return const ActivityTrackingState();
   }
 
-  /// Requests permission and starts tracking [type].
-  Future<void> start(ActivityType type) async {
+  /// Requests permission and starts tracking [type] with an optional [goal].
+  ///
+  /// Step targets are only honoured for activities that can count steps
+  /// (everything except swimming).
+  Future<void> start(ActivityType type, {ActivityGoal? goal}) async {
     if (state.isActive) return;
 
     _cancel();
     final int generation = ++_generation;
+    final ActivityGoal? effectiveGoal =
+        goal?.isSteps == true && !type.supportsStepTarget ? null : goal;
     final AppUser? user = ref.read(currentUserProvider);
     if (user == null || !user.isSignedIn) {
       state = ActivityTrackingState(
         type: type,
+        goal: effectiveGoal,
         failure: LocationFailure.unavailable,
       );
       return;
@@ -165,11 +218,15 @@ class ActivityTrackingController
 
     state = ActivityTrackingState(
       type: type,
+      goal: effectiveGoal,
       status: ActivityTrackingStatus.acquiring,
     );
 
     try {
       await _location.ensureReady();
+      if (_disposed || generation != _generation) return;
+      final bool wantsSteps = effectiveGoal?.isSteps == true;
+      final bool stepsAllowed = wantsSteps && await _ensureStepPermission();
       if (_disposed || generation != _generation) return;
       final double weightKg = await _loadWeight(user.id);
       final ActivityPoint? firstFix = await _location.currentPoint();
@@ -182,9 +239,12 @@ class ActivityTrackingController
         route: firstFix == null
             ? const <ActivityPoint>[]
             : <ActivityPoint>[firstFix],
+        stepSensorUnavailable: wantsSteps && !stepsAllowed,
       );
       _listen();
       _startTimer();
+      if (stepsAllowed) _subscribeSteps();
+      _evaluateGoal();
     } on LocationException catch (error) {
       if (_disposed || generation != _generation) return;
       state = state.copyWith(
@@ -200,11 +260,14 @@ class ActivityTrackingController
     }
   }
 
-  /// Pauses location updates and the elapsed-time timer.
+  /// Pauses location, step and elapsed-time updates.
   void pause() {
     if (state.status != ActivityTrackingStatus.tracking) return;
     _subscription?.cancel();
     _subscription = null;
+    _stepSubscription?.cancel();
+    _stepSubscription = null;
+    _stepBaseline = null;
     _timer?.cancel();
     _timer = null;
     state = state.copyWith(
@@ -225,6 +288,9 @@ class ActivityTrackingController
       );
       _listen();
       _startTimer();
+      if (state.goal?.isSteps == true && !state.stepSensorUnavailable) {
+        _subscribeSteps();
+      }
     } on LocationException catch (error) {
       if (_disposed) return;
       state = state.copyWith(failure: error.failure);
@@ -241,9 +307,13 @@ class ActivityTrackingController
     }
 
     _cancel();
+    stopGoalAlert();
     final DateTime startedAt = state.startedAt ?? DateTime.now();
 
-    if (state.route.length < 2 || state.distanceMeters < 5) {
+    final bool tooShort =
+        (state.route.length < 2 || state.distanceMeters < 5) &&
+        state.steps == 0;
+    if (tooShort) {
       state = state.copyWith(status: ActivityTrackingStatus.paused);
       return null;
     }
@@ -271,6 +341,10 @@ class ActivityTrackingController
       elevationGainMeters: state.elevationGainMeters,
       avgSpeedMps: avgSpeed,
       maxSpeedMps: math.max(state.maxSpeedMps, avgSpeed),
+      steps: state.steps,
+      goalType: state.goal?.type,
+      goalValue: state.goal?.value,
+      goalReached: state.goalReached,
       route: state.route,
       createdAt: DateTime.now(),
     );
@@ -295,10 +369,21 @@ class ActivityTrackingController
     }
   }
 
+  /// Cancels the looping target-reached chime; tracking keeps running.
+  void stopGoalAlert() {
+    if (!state.goalAlertPlaying) {
+      unawaited(_alert.stop());
+      return;
+    }
+    state = state.copyWith(goalAlertPlaying: false);
+    unawaited(_alert.stop());
+  }
+
   /// Drops the current run without saving.
   void discard() {
     _generation++;
     _cancel();
+    unawaited(_alert.stop());
     state = const ActivityTrackingState();
   }
 
@@ -370,6 +455,61 @@ class ActivityTrackingController
       maxSpeedMps: math.max(state.maxSpeedMps, effectiveSpeed),
       elevationGainMeters: state.elevationGainMeters + elevationDelta,
     );
+    _evaluateGoal();
+  }
+
+  /// Android 10+ needs a runtime activity-recognition grant before the step
+  /// counter can be read. iOS prompts through CoreMotion on first use.
+  Future<bool> _ensureStepPermission() async {
+    if (kIsWeb) return false;
+    if (defaultTargetPlatform == TargetPlatform.android) {
+      final PermissionStatus status = await Permission.activityRecognition
+          .request();
+      return status.isGranted;
+    }
+    return defaultTargetPlatform == TargetPlatform.iOS;
+  }
+
+  void _subscribeSteps() {
+    _stepSubscription?.cancel();
+    _stepBaseline = null;
+    _stepSubscription = Pedometer.stepCountStream.listen(
+      _onStepCount,
+      onError: (Object _) {
+        if (_disposed) return;
+        state = state.copyWith(stepSensorUnavailable: true);
+      },
+    );
+  }
+
+  void _onStepCount(StepCount event) {
+    if (state.status != ActivityTrackingStatus.tracking) return;
+
+    final int total = event.steps;
+    final int? baseline = _stepBaseline;
+    if (baseline == null || total < baseline) {
+      _stepBaseline = total;
+      return;
+    }
+    final int steps = total - baseline;
+    if (steps == state.steps) return;
+    state = state.copyWith(steps: steps);
+    _evaluateGoal();
+  }
+
+  /// Starts the looping chime exactly once when the target is first met.
+  void _evaluateGoal() {
+    final ActivityGoal? goal = state.goal;
+    if (goal == null || state.goalReached) return;
+    if (!goal.isReached(
+      distanceMeters: state.distanceMeters,
+      steps: state.steps,
+    )) {
+      return;
+    }
+    state = state.copyWith(goalReached: true, goalAlertPlaying: true);
+    unawaited(_alert.start());
+    unawaited(HapticFeedback.heavyImpact());
   }
 
   void _startTimer() {
@@ -385,6 +525,9 @@ class ActivityTrackingController
     _timer = null;
     _subscription?.cancel();
     _subscription = null;
+    _stepSubscription?.cancel();
+    _stepSubscription = null;
+    _stepBaseline = null;
   }
 
   static double _minMoveMeters(ActivityType type) => switch (type) {
