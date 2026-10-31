@@ -263,6 +263,9 @@ class ActivityTrackingController
   /// Pauses location, step and elapsed-time updates.
   void pause() {
     if (state.status != ActivityTrackingStatus.tracking) return;
+    if (state.goalAlertPlaying) {
+      stopGoalAlert();
+    }
     _subscription?.cancel();
     _subscription = null;
     _stepSubscription?.cancel();
@@ -488,7 +491,7 @@ class ActivityTrackingController
     final int total = event.steps;
     final int? baseline = _stepBaseline;
     if (baseline == null || total < baseline) {
-      _stepBaseline = total;
+      _stepBaseline = total - state.steps;
       return;
     }
     final int steps = total - baseline;

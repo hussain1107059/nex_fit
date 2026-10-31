@@ -91,7 +91,7 @@ class _ActivityGoalSheetState extends State<_ActivityGoalSheet> {
     }
     final ActivityGoal goal = _mode == _TargetMode.distance
         ? ActivityGoal.distance(value * 1000)
-        : ActivityGoal.steps(value);
+        : ActivityGoal.steps(value.roundToDouble());
     Navigator.of(context).pop(ActivityGoalSelection(goal));
   }
 
@@ -101,7 +101,7 @@ class _ActivityGoalSheetState extends State<_ActivityGoalSheet> {
     final AppColors colors = AppColors.light;
     final Color accent = widget.type.color(colors);
 
-    return Padding(
+    return SingleChildScrollView(
       padding: EdgeInsets.fromLTRB(
         AppSpacing.md,
         0,
@@ -198,7 +198,7 @@ class _ActivityGoalSheetState extends State<_ActivityGoalSheet> {
                         ? const <String>['1', '2', '5', '10']
                         : const <String>['1000', '2000', '5000', '10000'])
                   ActionChip(
-                    label: Text(value),
+                    label: Text(value.toBanglaDigits()),
                     onPressed: () => _applyQuickValue(value),
                   ),
               ],
