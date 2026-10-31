@@ -84,6 +84,9 @@ dependencies:
   share_plus: ^13.3.0
   archive: ^4.0.9
   battery_plus: ^7.1.1
+  geolocator: ^14.1.2
+  flutter_map: ^8.3.2
+  latlong2: ^0.10.1
 
 dev_dependencies:
   flutter_test:

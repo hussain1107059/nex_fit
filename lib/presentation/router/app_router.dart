@@ -2,11 +2,15 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
+import '../../domain/entities/activity.dart';
 import '../../domain/entities/app_user.dart';
 import '../../domain/entities/reminder.dart';
 import '../providers/auth_controller.dart';
 import '../providers/exercise_providers.dart';
 import '../providers/workout_providers.dart';
+import '../screens/activity/activity_detail_screen.dart';
+import '../screens/activity/activity_screen.dart';
+import '../screens/activity/activity_tracking_screen.dart';
 import '../screens/auth/email_verification_screen.dart';
 import '../screens/auth/forgot_password_screen.dart';
 import '../screens/auth/login_screen.dart';
@@ -84,6 +88,9 @@ abstract final class AppRoutes {
   static const String macroTracker = '/nutrition/macro-tracker';
   static const String nutritionHistory = '/nutrition/history';
   static const String mealPlanner = '/nutrition/meal-planner';
+  static const String activity = '/activity';
+  static const String activityTrack = '/activity/track';
+  static const String activityDetail = '/activity/detail/:sessionId';
   static const String water = '/water';
   static const String waterHistory = '/water/history';
   static const String waterStatistics = '/water/statistics';
@@ -136,6 +143,10 @@ abstract final class AppRoutes {
 
   /// Resolved detail route for [foodId].
   static String foodDetailPath(int foodId) => '/nutrition/food/$foodId';
+
+  /// Resolved detail route for an activity session.
+  static String activityDetailPath(int sessionId) =>
+      '/activity/detail/$sessionId';
 }
 
 /// Central [GoRouter] configuration.
@@ -292,6 +303,28 @@ final appRouterProvider = Provider<GoRouter>((ref) {
         name: 'meal-planner',
         builder: (BuildContext context, GoRouterState state) =>
             const MealPlannerScreen(),
+      ),
+      GoRoute(
+        path: AppRoutes.activity,
+        name: 'activity',
+        builder: (BuildContext context, GoRouterState state) =>
+            const ActivityScreen(),
+      ),
+      GoRoute(
+        path: AppRoutes.activityTrack,
+        name: 'activity-track',
+        builder: (BuildContext context, GoRouterState state) =>
+            ActivityTrackingScreen(
+              type: state.extra as ActivityType? ?? ActivityType.walking,
+            ),
+      ),
+      GoRoute(
+        path: AppRoutes.activityDetail,
+        name: 'activity-detail',
+        builder: (BuildContext context, GoRouterState state) =>
+            ActivityDetailScreen(
+              sessionId: int.parse(state.pathParameters['sessionId']!),
+            ),
       ),
       GoRoute(
         path: AppRoutes.water,

@@ -114,6 +114,9 @@ class AppLocalizationsBs extends AppLocalizations {
   String get tabWorkout => 'ওয়ার্কআউট';
 
   @override
+  String get tabActivity => 'অ্যাক্টিভিটি';
+
+  @override
   String get tabDiet => 'ডায়েট';
 
   @override
@@ -3716,4 +3719,169 @@ class AppLocalizationsBs extends AppLocalizations {
 
   @override
   String get settingsOptimizationDone => 'অপটিমাইজেশন সম্পন্ন';
+
+  @override
+  String get activityTitle => 'অ্যাক্টিভিটি ট্র্যাকার';
+
+  @override
+  String get activityTrack => 'অ্যাক্টিভিটি ট্র্যাক';
+
+  @override
+  String get activityChoose => 'কোন অ্যাক্টিভিটি করবেন?';
+
+  @override
+  String get activityWalking => 'হাঁটা';
+
+  @override
+  String get activityRunning => 'দৌড়';
+
+  @override
+  String get activityCycling => 'সাইক্লিং';
+
+  @override
+  String get activitySwimming => 'সাঁতার';
+
+  @override
+  String get activityStart => 'শুরু করুন';
+
+  @override
+  String get activityPause => 'বিরতি';
+
+  @override
+  String get activityResume => 'চালিয়ে যান';
+
+  @override
+  String get activityFinish => 'শেষ করুন';
+
+  @override
+  String get activityDiscard => 'বাতিল করুন';
+
+  @override
+  String get activityDiscardTitle => 'এই অ্যাক্টিভিটি বাতিল করবেন?';
+
+  @override
+  String get activityDiscardMessage => 'বর্তমান রুট ও পরিসংখ্যান হারিয়ে যাবে।';
+
+  @override
+  String get activityKeepGoing => 'চালিয়ে যান';
+
+  @override
+  String get activityAcquiring => 'জিপিএস সিগন্যাল খোঁজা হচ্ছে...';
+
+  @override
+  String get activityAcquiringSubtitle =>
+      'ভালো সিগন্যালের জন্য খোলা জায়গায় থাকুন।';
+
+  @override
+  String get activityPermissionTitle => 'লোকেশন অনুমতি প্রয়োজন';
+
+  @override
+  String get activityPermissionDenied =>
+      'রুট ট্র্যাক করতে লোকেশন অনুমতি প্রয়োজন।';
+
+  @override
+  String get activityPermissionForever =>
+      'সিস্টেম সেটিংসে গিয়ে লোকেশন অনুমতি চালু করুন।';
+
+  @override
+  String get activityServiceDisabled =>
+      'ট্র্যাকিং শুরু করতে লোকেশন সার্ভিস চালু করুন।';
+
+  @override
+  String get activityLocationUnavailable =>
+      'বর্তমান লোকেশন পাওয়া যায়নি। আবার চেষ্টা করুন।';
+
+  @override
+  String get activityOpenSettings => 'সেটিংস খুলুন';
+
+  @override
+  String get activityDistance => 'দূরত্ব';
+
+  @override
+  String get activityDuration => 'সময়';
+
+  @override
+  String get activityPace => 'পেস';
+
+  @override
+  String get activitySpeed => 'গতি';
+
+  @override
+  String get activityCalories => 'ক্যালোরি';
+
+  @override
+  String get activityElevation => 'উচ্চতা বৃদ্ধি';
+
+  @override
+  String get activityAvgSpeed => 'গড় গতি';
+
+  @override
+  String get activityMaxSpeed => 'সর্বোচ্চ গতি';
+
+  @override
+  String get activitySessions => 'অ্যাক্টিভিটি';
+
+  @override
+  String get activityTotalDistance => 'মোট দূরত্ব';
+
+  @override
+  String get activityTotalTime => 'মোট সময়';
+
+  @override
+  String get activityRecent => 'সাম্প্রতিক অ্যাক্টিভিটি';
+
+  @override
+  String get activityNoHistory => 'এখনও কোনো অ্যাক্টিভিটি নেই';
+
+  @override
+  String get activityNoHistorySubtitle =>
+      'প্রথম জিপিএস ট্র্যাক করা হাঁটা, দৌড়, সাইক্লিং বা সাঁতার শুরু করুন।';
+
+  @override
+  String get activitySaved => 'অ্যাক্টিভিটি সংরক্ষিত হয়েছে';
+
+  @override
+  String get activityTooShort =>
+      'সংরক্ষণের জন্য খুব ছোট। আরেকটু এগিয়ে আবার চেষ্টা করুন।';
+
+  @override
+  String get activitySaveFailed =>
+      'অ্যাক্টিভিটি সংরক্ষণ করা যায়নি। আবার চেষ্টা করুন।';
+
+  @override
+  String get activityDeleted => 'অ্যাক্টিভিটি মুছে ফেলা হয়েছে';
+
+  @override
+  String get activityDeleteTitle => 'অ্যাক্টিভিটি মুছবেন?';
+
+  @override
+  String get activityDeleteMessage =>
+      'এই অ্যাক্টিভিটি ও এর রুট স্থায়ীভাবে মুছে যাবে।';
+
+  @override
+  String get activityNoRoute => 'কোনো রুট রেকর্ড হয়নি';
+
+  @override
+  String get activityRoute => 'রুট';
+
+  @override
+  String get activitySummary => 'সারসংক্ষেপ';
+
+  @override
+  String get activityStarted => 'শুরু';
+
+  @override
+  String get activityKm => 'কিমি';
+
+  @override
+  String get activityMeters => 'মি';
+
+  @override
+  String get activityMinPerKm => 'মিনিট/কিমি';
+
+  @override
+  String get activityKmh => 'কিমি/ঘণ্টা';
+
+  @override
+  String get activityGpsHint => 'চলাফেরা শুরু করলে ম্যাপে আপনার রুট আঁকা হবে।';
 }

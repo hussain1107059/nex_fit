@@ -13,7 +13,7 @@ import '../../../router/app_router.dart';
 import 'dashboard_dialogs.dart';
 import 'section_header.dart';
 
-/// Seven large quick action tiles wired to real dashboard dialogs.
+/// Large quick action tiles wired to the real feature screens and dialogs.
 class QuickActionsSection extends ConsumerWidget {
   const QuickActionsSection({
     super.key,
@@ -63,6 +63,11 @@ class QuickActionsSection extends ConsumerWidget {
         label: context.l10n.dashboardLogSteps,
         color: colors.info,
       ),
+      _QuickActionData(
+        icon: Icons.route_rounded,
+        label: context.l10n.activityTrack,
+        color: colors.tertiary,
+      ),
     ];
 
     return Column(
@@ -71,7 +76,7 @@ class QuickActionsSection extends ConsumerWidget {
         SectionHeader(title: context.l10n.dashboardQuickActions),
         LayoutBuilder(
           builder: (BuildContext context, BoxConstraints constraints) {
-            final int columns = context.isWide ? 7 : 3;
+            final int columns = context.isWide ? 8 : 3;
             final double spacing = AppSpacing.sm;
             final double cell = (constraints.maxWidth - spacing * (columns - 1)) / columns;
             return Wrap(
@@ -126,6 +131,9 @@ class QuickActionsSection extends ConsumerWidget {
         break;
       case 6:
         DashboardDialogs.showLogSteps(context, ref, userId);
+        break;
+      case 7:
+        context.push(AppRoutes.activity);
         break;
     }
   }

@@ -61,6 +61,7 @@ class AppDatabase {
     DatabaseMigration(version: 18, apply: _migrationV18ProfileFinalization),
     DatabaseMigration(version: 19, apply: _migrationV19ProfileDisplayName),
     DatabaseMigration(version: 20, apply: _migrationV20GamificationSync),
+    DatabaseMigration(version: 21, apply: _migrationV21ActivityTracking),
   ];
 
   Future<Database> get database async {
@@ -2099,4 +2100,47 @@ class AppDatabase {
     await db.execute('ALTER TABLE challenge ADD COLUMN challenge_def_id INTEGER');
   }
 
+  /// v21: GPS activity tracking.
+  ///
+  /// `activity_session` stores completed walk/run/ride/swim sessions with the
+  /// route encoded as JSON. It is deliberately local-only (no outbox events),
+  /// but keeps the standard sync metadata columns so it can be promoted to a
+  /// syncable table later without another migration.
+  static Future<void> _migrationV21ActivityTracking(
+    DatabaseExecutor executor,
+    int version,
+  ) async {
+    final DatabaseExecutor db = executor;
+    await db.execute('''
+      CREATE TABLE IF NOT EXISTS activity_session (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        user_id TEXT NOT NULL,
+        activity_type TEXT NOT NULL,
+        started_at INTEGER NOT NULL,
+        ended_at INTEGER,
+        duration_seconds INTEGER NOT NULL DEFAULT 0,
+        distance_meters REAL NOT NULL DEFAULT 0,
+        calories_burned REAL NOT NULL DEFAULT 0,
+        elevation_gain_meters REAL NOT NULL DEFAULT 0,
+        avg_speed_mps REAL NOT NULL DEFAULT 0,
+        max_speed_mps REAL NOT NULL DEFAULT 0,
+        route_json TEXT,
+        note TEXT,
+        uuid TEXT,
+        created_at INTEGER,
+        updated_at INTEGER,
+        deleted_at INTEGER,
+        row_version INTEGER NOT NULL DEFAULT 0,
+        FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
+      )
+    ''');
+    await db.execute('''
+      CREATE UNIQUE INDEX IF NOT EXISTS idx_activity_session_uuid
+      ON activity_session(uuid)
+    ''');
+    await db.execute('''
+      CREATE INDEX IF NOT EXISTS idx_activity_session_user_started
+      ON activity_session(user_id, started_at DESC)
+    ''');
+  }
 }

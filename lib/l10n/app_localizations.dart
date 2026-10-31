@@ -308,6 +308,12 @@ abstract class AppLocalizations {
   /// **'ওয়ার্কআউট'**
   String get tabWorkout;
 
+  /// No description provided for @tabActivity.
+  ///
+  /// In bs, this message translates to:
+  /// **'অ্যাক্টিভিটি'**
+  String get tabActivity;
+
   /// No description provided for @tabDiet.
   ///
   /// In bs, this message translates to:
@@ -7237,6 +7243,318 @@ abstract class AppLocalizations {
   /// In bs, this message translates to:
   /// **'অপটিমাইজেশন সম্পন্ন'**
   String get settingsOptimizationDone;
+
+  /// No description provided for @activityTitle.
+  ///
+  /// In bs, this message translates to:
+  /// **'অ্যাক্টিভিটি ট্র্যাকার'**
+  String get activityTitle;
+
+  /// No description provided for @activityTrack.
+  ///
+  /// In bs, this message translates to:
+  /// **'অ্যাক্টিভিটি ট্র্যাক'**
+  String get activityTrack;
+
+  /// No description provided for @activityChoose.
+  ///
+  /// In bs, this message translates to:
+  /// **'কোন অ্যাক্টিভিটি করবেন?'**
+  String get activityChoose;
+
+  /// No description provided for @activityWalking.
+  ///
+  /// In bs, this message translates to:
+  /// **'হাঁটা'**
+  String get activityWalking;
+
+  /// No description provided for @activityRunning.
+  ///
+  /// In bs, this message translates to:
+  /// **'দৌড়'**
+  String get activityRunning;
+
+  /// No description provided for @activityCycling.
+  ///
+  /// In bs, this message translates to:
+  /// **'সাইক্লিং'**
+  String get activityCycling;
+
+  /// No description provided for @activitySwimming.
+  ///
+  /// In bs, this message translates to:
+  /// **'সাঁতার'**
+  String get activitySwimming;
+
+  /// No description provided for @activityStart.
+  ///
+  /// In bs, this message translates to:
+  /// **'শুরু করুন'**
+  String get activityStart;
+
+  /// No description provided for @activityPause.
+  ///
+  /// In bs, this message translates to:
+  /// **'বিরতি'**
+  String get activityPause;
+
+  /// No description provided for @activityResume.
+  ///
+  /// In bs, this message translates to:
+  /// **'চালিয়ে যান'**
+  String get activityResume;
+
+  /// No description provided for @activityFinish.
+  ///
+  /// In bs, this message translates to:
+  /// **'শেষ করুন'**
+  String get activityFinish;
+
+  /// No description provided for @activityDiscard.
+  ///
+  /// In bs, this message translates to:
+  /// **'বাতিল করুন'**
+  String get activityDiscard;
+
+  /// No description provided for @activityDiscardTitle.
+  ///
+  /// In bs, this message translates to:
+  /// **'এই অ্যাক্টিভিটি বাতিল করবেন?'**
+  String get activityDiscardTitle;
+
+  /// No description provided for @activityDiscardMessage.
+  ///
+  /// In bs, this message translates to:
+  /// **'বর্তমান রুট ও পরিসংখ্যান হারিয়ে যাবে।'**
+  String get activityDiscardMessage;
+
+  /// No description provided for @activityKeepGoing.
+  ///
+  /// In bs, this message translates to:
+  /// **'চালিয়ে যান'**
+  String get activityKeepGoing;
+
+  /// No description provided for @activityAcquiring.
+  ///
+  /// In bs, this message translates to:
+  /// **'জিপিএস সিগন্যাল খোঁজা হচ্ছে...'**
+  String get activityAcquiring;
+
+  /// No description provided for @activityAcquiringSubtitle.
+  ///
+  /// In bs, this message translates to:
+  /// **'ভালো সিগন্যালের জন্য খোলা জায়গায় থাকুন।'**
+  String get activityAcquiringSubtitle;
+
+  /// No description provided for @activityPermissionTitle.
+  ///
+  /// In bs, this message translates to:
+  /// **'লোকেশন অনুমতি প্রয়োজন'**
+  String get activityPermissionTitle;
+
+  /// No description provided for @activityPermissionDenied.
+  ///
+  /// In bs, this message translates to:
+  /// **'রুট ট্র্যাক করতে লোকেশন অনুমতি প্রয়োজন।'**
+  String get activityPermissionDenied;
+
+  /// No description provided for @activityPermissionForever.
+  ///
+  /// In bs, this message translates to:
+  /// **'সিস্টেম সেটিংসে গিয়ে লোকেশন অনুমতি চালু করুন।'**
+  String get activityPermissionForever;
+
+  /// No description provided for @activityServiceDisabled.
+  ///
+  /// In bs, this message translates to:
+  /// **'ট্র্যাকিং শুরু করতে লোকেশন সার্ভিস চালু করুন।'**
+  String get activityServiceDisabled;
+
+  /// No description provided for @activityLocationUnavailable.
+  ///
+  /// In bs, this message translates to:
+  /// **'বর্তমান লোকেশন পাওয়া যায়নি। আবার চেষ্টা করুন।'**
+  String get activityLocationUnavailable;
+
+  /// No description provided for @activityOpenSettings.
+  ///
+  /// In bs, this message translates to:
+  /// **'সেটিংস খুলুন'**
+  String get activityOpenSettings;
+
+  /// No description provided for @activityDistance.
+  ///
+  /// In bs, this message translates to:
+  /// **'দূরত্ব'**
+  String get activityDistance;
+
+  /// No description provided for @activityDuration.
+  ///
+  /// In bs, this message translates to:
+  /// **'সময়'**
+  String get activityDuration;
+
+  /// No description provided for @activityPace.
+  ///
+  /// In bs, this message translates to:
+  /// **'পেস'**
+  String get activityPace;
+
+  /// No description provided for @activitySpeed.
+  ///
+  /// In bs, this message translates to:
+  /// **'গতি'**
+  String get activitySpeed;
+
+  /// No description provided for @activityCalories.
+  ///
+  /// In bs, this message translates to:
+  /// **'ক্যালোরি'**
+  String get activityCalories;
+
+  /// No description provided for @activityElevation.
+  ///
+  /// In bs, this message translates to:
+  /// **'উচ্চতা বৃদ্ধি'**
+  String get activityElevation;
+
+  /// No description provided for @activityAvgSpeed.
+  ///
+  /// In bs, this message translates to:
+  /// **'গড় গতি'**
+  String get activityAvgSpeed;
+
+  /// No description provided for @activityMaxSpeed.
+  ///
+  /// In bs, this message translates to:
+  /// **'সর্বোচ্চ গতি'**
+  String get activityMaxSpeed;
+
+  /// No description provided for @activitySessions.
+  ///
+  /// In bs, this message translates to:
+  /// **'অ্যাক্টিভিটি'**
+  String get activitySessions;
+
+  /// No description provided for @activityTotalDistance.
+  ///
+  /// In bs, this message translates to:
+  /// **'মোট দূরত্ব'**
+  String get activityTotalDistance;
+
+  /// No description provided for @activityTotalTime.
+  ///
+  /// In bs, this message translates to:
+  /// **'মোট সময়'**
+  String get activityTotalTime;
+
+  /// No description provided for @activityRecent.
+  ///
+  /// In bs, this message translates to:
+  /// **'সাম্প্রতিক অ্যাক্টিভিটি'**
+  String get activityRecent;
+
+  /// No description provided for @activityNoHistory.
+  ///
+  /// In bs, this message translates to:
+  /// **'এখনও কোনো অ্যাক্টিভিটি নেই'**
+  String get activityNoHistory;
+
+  /// No description provided for @activityNoHistorySubtitle.
+  ///
+  /// In bs, this message translates to:
+  /// **'প্রথম জিপিএস ট্র্যাক করা হাঁটা, দৌড়, সাইক্লিং বা সাঁতার শুরু করুন।'**
+  String get activityNoHistorySubtitle;
+
+  /// No description provided for @activitySaved.
+  ///
+  /// In bs, this message translates to:
+  /// **'অ্যাক্টিভিটি সংরক্ষিত হয়েছে'**
+  String get activitySaved;
+
+  /// No description provided for @activityTooShort.
+  ///
+  /// In bs, this message translates to:
+  /// **'সংরক্ষণের জন্য খুব ছোট। আরেকটু এগিয়ে আবার চেষ্টা করুন।'**
+  String get activityTooShort;
+
+  /// No description provided for @activitySaveFailed.
+  ///
+  /// In bs, this message translates to:
+  /// **'অ্যাক্টিভিটি সংরক্ষণ করা যায়নি। আবার চেষ্টা করুন।'**
+  String get activitySaveFailed;
+
+  /// No description provided for @activityDeleted.
+  ///
+  /// In bs, this message translates to:
+  /// **'অ্যাক্টিভিটি মুছে ফেলা হয়েছে'**
+  String get activityDeleted;
+
+  /// No description provided for @activityDeleteTitle.
+  ///
+  /// In bs, this message translates to:
+  /// **'অ্যাক্টিভিটি মুছবেন?'**
+  String get activityDeleteTitle;
+
+  /// No description provided for @activityDeleteMessage.
+  ///
+  /// In bs, this message translates to:
+  /// **'এই অ্যাক্টিভিটি ও এর রুট স্থায়ীভাবে মুছে যাবে।'**
+  String get activityDeleteMessage;
+
+  /// No description provided for @activityNoRoute.
+  ///
+  /// In bs, this message translates to:
+  /// **'কোনো রুট রেকর্ড হয়নি'**
+  String get activityNoRoute;
+
+  /// No description provided for @activityRoute.
+  ///
+  /// In bs, this message translates to:
+  /// **'রুট'**
+  String get activityRoute;
+
+  /// No description provided for @activitySummary.
+  ///
+  /// In bs, this message translates to:
+  /// **'সারসংক্ষেপ'**
+  String get activitySummary;
+
+  /// No description provided for @activityStarted.
+  ///
+  /// In bs, this message translates to:
+  /// **'শুরু'**
+  String get activityStarted;
+
+  /// No description provided for @activityKm.
+  ///
+  /// In bs, this message translates to:
+  /// **'কিমি'**
+  String get activityKm;
+
+  /// No description provided for @activityMeters.
+  ///
+  /// In bs, this message translates to:
+  /// **'মি'**
+  String get activityMeters;
+
+  /// No description provided for @activityMinPerKm.
+  ///
+  /// In bs, this message translates to:
+  /// **'মিনিট/কিমি'**
+  String get activityMinPerKm;
+
+  /// No description provided for @activityKmh.
+  ///
+  /// In bs, this message translates to:
+  /// **'কিমি/ঘণ্টা'**
+  String get activityKmh;
+
+  /// No description provided for @activityGpsHint.
+  ///
+  /// In bs, this message translates to:
+  /// **'চলাফেরা শুরু করলে ম্যাপে আপনার রুট আঁকা হবে।'**
+  String get activityGpsHint;
 }
 
 class _AppLocalizationsDelegate

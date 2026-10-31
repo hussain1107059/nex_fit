@@ -8,13 +8,14 @@ import '../../../core/widgets/layout/app_bottom_navigation_bar.dart';
 import '../../../l10n/app_localizations.dart';
 import '../../providers/connectivity_provider.dart';
 import '../../providers/dashboard_providers.dart';
+import '../activity/activity_screen.dart';
 import '../dashboard/dashboard_screen.dart';
 import '../nutrition/nutrition_screen.dart';
 import '../profile/profile_screen.dart';
 import '../weight/weight_screen.dart';
 import '../workout/workout_screen.dart';
 
-/// Root scaffold hosting the five-module bottom navigation.
+/// Root scaffold hosting the six-module bottom navigation.
 class AppShellScreen extends ConsumerStatefulWidget {
   const AppShellScreen({super.key});
 
@@ -26,6 +27,7 @@ class _AppShellScreenState extends ConsumerState<AppShellScreen> {
   static const List<Widget> _screens = <Widget>[
     DashboardScreen(),
     WorkoutScreen(),
+    ActivityScreen(),
     WeightScreen(),
     NutritionScreen(),
     ProfileScreen(),
@@ -61,6 +63,11 @@ class _AppShellScreenState extends ConsumerState<AppShellScreen> {
             label: l10n.tabWorkout,
             icon: Icons.fitness_center_rounded,
             selectedIcon: Icons.fitness_center_rounded,
+          ),
+          AppBottomNavigationItem(
+            label: l10n.tabActivity,
+            icon: Icons.route_rounded,
+            selectedIcon: Icons.route_rounded,
           ),
           AppBottomNavigationItem(
             label: l10n.tabProgress,

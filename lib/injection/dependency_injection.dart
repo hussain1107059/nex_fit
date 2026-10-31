@@ -2,6 +2,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import '../core/network/network_info.dart';
+import '../data/datasources/local/activity_local_data_source.dart';
 import '../data/datasources/local/app_database.dart';
 import '../data/datasources/local/app_settings_local_data_source.dart';
 import '../data/datasources/local/achievement_local_data_source.dart';
@@ -48,6 +49,7 @@ import '../data/repositories/global_search_repository_impl.dart';
 import '../data/repositories/profile_repository_impl.dart';
 import '../data/repositories/progress_analytics_repository_impl.dart';
 import '../data/repositories/achievement_repository_impl.dart';
+import '../data/repositories/activity_repository_impl.dart';
 import '../data/repositories/backup_history_repository_impl.dart';
 import '../data/repositories/badge_repository_impl.dart';
 import '../data/repositories/bmi_log_repository_impl.dart';
@@ -97,6 +99,7 @@ import '../data/services/backup/backup_packaging_service.dart';
 import '../data/services/backup/backup_service.dart';
 import '../data/services/backup/google_drive_backup_service.dart';
 import '../data/services/supabase/supabase_service.dart';
+import '../data/services/location/location_service.dart';
 import '../data/services/notifications/local_notification_service.dart';
 import '../data/services/report/report_exporter.dart';
 import '../data/services/security/app_error_logger.dart';
@@ -122,6 +125,7 @@ import '../data/services/workout_seeder.dart';
 import '../domain/repositories/app_preferences_repository.dart';
 import '../domain/repositories/app_settings_repository.dart';
 import '../domain/repositories/achievement_repository.dart';
+import '../domain/repositories/activity_repository.dart';
 import '../domain/repositories/auth_repository.dart';
 import '../domain/repositories/challenge_repository.dart';
 import '../domain/repositories/dashboard_repository.dart';
@@ -338,6 +342,14 @@ final stepLogLocalDataSourceProvider = Provider<StepLogLocalDataSource>(
   (ref) => StepLogLocalDataSource(database: ref.watch(appDatabaseProvider)),
 );
 
+final activityLocalDataSourceProvider = Provider<ActivityLocalDataSource>(
+  (ref) => ActivityLocalDataSource(database: ref.watch(appDatabaseProvider)),
+);
+
+final locationServiceProvider = Provider<LocationService>(
+  (ref) => const LocationService(),
+);
+
 final reminderLocalDataSourceProvider = Provider<ReminderLocalDataSource>(
   (ref) => ReminderLocalDataSource(database: ref.watch(appDatabaseProvider)),
 );
@@ -518,6 +530,10 @@ final sleepLogRepositoryProvider = Provider<SleepLogRepository>(
 
 final stepLogRepositoryProvider = Provider<StepLogRepository>(
   (ref) => StepLogRepositoryImpl(ref.watch(stepLogLocalDataSourceProvider)),
+);
+
+final activityRepositoryProvider = Provider<ActivityRepository>(
+  (ref) => ActivityRepositoryImpl(ref.watch(activityLocalDataSourceProvider)),
 );
 
 final reminderRepositoryProvider = Provider<ReminderRepository>(

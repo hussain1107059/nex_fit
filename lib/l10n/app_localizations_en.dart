@@ -114,6 +114,9 @@ class AppLocalizationsEn extends AppLocalizations {
   String get tabWorkout => 'Workout';
 
   @override
+  String get tabActivity => 'Activity';
+
+  @override
   String get tabDiet => 'Diet';
 
   @override
@@ -3707,4 +3710,168 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get settingsOptimizationDone => 'Optimization complete';
+
+  @override
+  String get activityTitle => 'Activity tracker';
+
+  @override
+  String get activityTrack => 'Track activity';
+
+  @override
+  String get activityChoose => 'Choose an activity';
+
+  @override
+  String get activityWalking => 'Walking';
+
+  @override
+  String get activityRunning => 'Running';
+
+  @override
+  String get activityCycling => 'Cycling';
+
+  @override
+  String get activitySwimming => 'Swimming';
+
+  @override
+  String get activityStart => 'Start';
+
+  @override
+  String get activityPause => 'Pause';
+
+  @override
+  String get activityResume => 'Resume';
+
+  @override
+  String get activityFinish => 'Finish';
+
+  @override
+  String get activityDiscard => 'Discard';
+
+  @override
+  String get activityDiscardTitle => 'Discard this activity?';
+
+  @override
+  String get activityDiscardMessage =>
+      'Your current route and stats will be lost.';
+
+  @override
+  String get activityKeepGoing => 'Keep going';
+
+  @override
+  String get activityAcquiring => 'Getting GPS signal...';
+
+  @override
+  String get activityAcquiringSubtitle => 'Stay outdoors for a better signal.';
+
+  @override
+  String get activityPermissionTitle => 'Location permission needed';
+
+  @override
+  String get activityPermissionDenied =>
+      'Location permission is required to track your route.';
+
+  @override
+  String get activityPermissionForever =>
+      'Enable location access in system settings and try again.';
+
+  @override
+  String get activityServiceDisabled =>
+      'Turn on location services to start tracking.';
+
+  @override
+  String get activityLocationUnavailable =>
+      'Could not get your current location. Try again.';
+
+  @override
+  String get activityOpenSettings => 'Open settings';
+
+  @override
+  String get activityDistance => 'Distance';
+
+  @override
+  String get activityDuration => 'Duration';
+
+  @override
+  String get activityPace => 'Pace';
+
+  @override
+  String get activitySpeed => 'Speed';
+
+  @override
+  String get activityCalories => 'Calories';
+
+  @override
+  String get activityElevation => 'Elevation gain';
+
+  @override
+  String get activityAvgSpeed => 'Average speed';
+
+  @override
+  String get activityMaxSpeed => 'Max speed';
+
+  @override
+  String get activitySessions => 'Activities';
+
+  @override
+  String get activityTotalDistance => 'Total distance';
+
+  @override
+  String get activityTotalTime => 'Total time';
+
+  @override
+  String get activityRecent => 'Recent activities';
+
+  @override
+  String get activityNoHistory => 'No activities yet';
+
+  @override
+  String get activityNoHistorySubtitle =>
+      'Start your first GPS-tracked walk, run, ride or swim.';
+
+  @override
+  String get activitySaved => 'Activity saved';
+
+  @override
+  String get activityTooShort =>
+      'Too short to save. Keep moving and try again.';
+
+  @override
+  String get activitySaveFailed => 'Could not save the activity. Try again.';
+
+  @override
+  String get activityDeleted => 'Activity deleted';
+
+  @override
+  String get activityDeleteTitle => 'Delete activity?';
+
+  @override
+  String get activityDeleteMessage =>
+      'This activity and its route will be permanently deleted.';
+
+  @override
+  String get activityNoRoute => 'No route recorded';
+
+  @override
+  String get activityRoute => 'Route';
+
+  @override
+  String get activitySummary => 'Summary';
+
+  @override
+  String get activityStarted => 'Started';
+
+  @override
+  String get activityKm => 'km';
+
+  @override
+  String get activityMeters => 'm';
+
+  @override
+  String get activityMinPerKm => 'min/km';
+
+  @override
+  String get activityKmh => 'km/h';
+
+  @override
+  String get activityGpsHint => 'Your route is drawn on the map as you move.';
 }
